@@ -277,6 +277,7 @@ const
   },
   /**
    * Pull stationSlug from local params if dynamic station page
+   * or locals station object
    *
    * @param {object} data
    * @param {object} locals
@@ -284,20 +285,10 @@ const
    * @return {string} stationSlug
    */
   getStationSlug = (data, locals) => {
-    let stationSlug;
-
-    if (locals && locals.stationSlug) {
-      // This is from load more on a station front
-      stationSlug = locals.stationSlug;
-    } else if (locals && locals.params && locals.params.stationSlug) {
-      stationSlug = locals.params.stationSlug;
-    } else if (locals && locals.station && locals.station.site_slug) {
-      stationSlug = locals.station.site_slug;
-    }
-
     // used for load more queries
-    data.stationSlug = stationSlug;
-    return stationSlug;
+    data.stationId = _get(locals, 'station.id');
+
+    return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
