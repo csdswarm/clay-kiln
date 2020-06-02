@@ -44,10 +44,10 @@ const axios = require('axios'),
           }),
           STORE_IN_CACHE_SECONDS
         );
-
         res.send(response.data);
       } catch (e) {
         log('error', 'There was an error attempting to process the oAuth2 token for cognito', e);
+
         res.status(e.response.status).json(e.response.data);
       }
     });

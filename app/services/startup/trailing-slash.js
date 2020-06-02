@@ -24,6 +24,7 @@ const log = require('../universal/log').setup({ file: __filename }),
  *   Assumption is that these will always have a /_ in them (e.g. /_components,
  *   /_pages, /_layouts, etc) - CSD
  */
+
 module.exports = (req, res, next) => {
   try {
     const { path, originalUrl } = req;
