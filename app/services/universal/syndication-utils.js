@@ -8,7 +8,7 @@ const
     findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
     getOrigin: uri => new URL(uri).origin,
     inStation: stationSlug => syndicationEntry => {
-      return stationSlug === syndicationEntry.stationSlug || DEFAULT_STATION.site_slug
+      return stationSlug === syndicationEntry.stationSlug || DEFAULT_STATION.site_slug;
     },
     noContent: value => !Array.isArray(value) || !value.length
   };
