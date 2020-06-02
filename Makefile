@@ -191,6 +191,13 @@ app-dev:
 generate-local-env:
 	sops --decrypt app/clay-radio.secret.sops.yml > app/unencrypted.yml && yq r app/unencrypted.yml stringData > app/temp.yml && yq r app/local.values.yml configmap.data >> app/temp.yml && yq r -j app/temp.yml | jq . | yq r - --prettyPrint | sed 's/: /=/g' | cat > app/.env && rm app/temp.yml
 
+generate-remote-env:
+ifdef env
+	sops --decrypt deploy/$(env)/clay-radio.secret.sops.yml > deploy/$(env)/unencrypted.yml && yq r deploy/$(env)/unencrypted.yml stringData > deploy/$(env)/temp.yml && yq r deploy/$(env)/$(env).values.yml configmap.data >> deploy/$(env)/temp.yml && yq r -j deploy/$(env)/temp.yml | jq . | yq r - --prettyPrint | sed 's/: /=/g' | cat > app/.env && rm deploy/$(env)/temp.yml
+else
+	echo "pass env=<environment>"
+endif
+
 encrypt-local-env:
 	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 app/unencrypted.yml > app/clay-radio.secret.sops.yml
 
