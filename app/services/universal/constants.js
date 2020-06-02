@@ -64,7 +64,8 @@ const _get = require('lodash/get'),
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos'
   ]),
 
   DEFAULT_STATION = {
