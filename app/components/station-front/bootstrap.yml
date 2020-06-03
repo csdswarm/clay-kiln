@@ -1,0 +1,16 @@
+_components:
+  station-front:
+    instances:
+      new:
+        stationCallsign: ''
+        stationSlug: ''
+        mainContent:
+          - _ref: /_components/section-lead/instances/new
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/two-column-component/instances/station-front
+    stationCallsign: ''
+    stationSlug: ''
+    mainContent:
+      - _ref: /_components/section-lead/instances/new
+      - _ref: /_components/google-ad-manager/instances/billboardBottom
+      - _ref: /_components/two-column-component/instances/station-front

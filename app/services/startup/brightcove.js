@@ -60,6 +60,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {Promise}
    */
   search = async (req, res) => {
+    
     try {
       await brightcoveApi.request('GET', 'videos', { q: buildQuery(req.query), limit: 10 })
         .then(async ({ body }) => await transformVideoResults(body))

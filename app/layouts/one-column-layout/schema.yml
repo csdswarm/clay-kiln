@@ -5,6 +5,7 @@ head:
   _componentList:
     page: true
     include:
+      - meta-title
       - meta-site
       - meta-image
       - meta-icons

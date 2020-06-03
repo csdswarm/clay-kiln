@@ -9,17 +9,22 @@ let desktopNavItems,
   mobileNavItems,
   listenNavToggle,
   listenNavDrawer,
+  listenNavComponent,
+  stationId,
+  stationListenNavInstance,
   lastTarget;
 
-const { isMobileNavWidth } = require('../../services/client/mobile'),
+const { getComponentInstance } = require('clayutils'),
+  { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
+  listenActive = 'listen-active',
   /**
    * load in new data for listen nav from the api
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM('/_components/station-listen-nav/instances/new.html'),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -115,16 +120,26 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    *
    * @param {Object} event -- contains type and currentTarget
    */
-  toggleListenDrawer = ({ type, currentTarget }) => {
+  toggleListenDrawer = ({ currentTarget }) => {
     resetNavs();
-
-    if (type === 'mouseleave') {
+    /*
+     * ON-1889
+     * resetNavs was causing problems toggling active on currentTarget
+     * and didn't want to add lots of conditionals there
+     * so for these purposes, I'm using listenActive instead to track ui state
+     * while remaining unchanged and unaffected everywhere else
+     */
+    if (currentTarget.classList.contains(listenActive)) {
+      // remove
+      currentTarget.classList.remove(listenActive);
       currentTarget.classList.remove(active);
       listenNavDrawer.classList.remove(active);
       navDrawersContainer.classList.remove(active);
       lastTarget = currentTarget;
     } else {
+      // add
       refreshListenNav();
+      currentTarget.classList.add(listenActive);
       currentTarget.classList.add(active);
       listenNavDrawer.classList.add(active);
       navDrawersContainer.classList.add(active);
@@ -170,8 +185,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    */
   addEventListeners = () => {
     // Toggle Listen Nav
-    listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
-    listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
+    listenNavToggle.addEventListener('click', toggleListenDrawer);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
@@ -225,6 +239,9 @@ document.addEventListener('station-nav-mount', function () {
   mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
+  listenNavComponent = document.querySelector('.component--station-listen-nav');
+  stationId = stationNav.dataset.stationId;
+  stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
 
   addEventListeners();
 });

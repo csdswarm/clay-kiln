@@ -9,6 +9,11 @@ $mini-nav-height: em(46);
 $navButton: radiocom-nav__category-button;
 $drawerSelector: nav-drawer;
 
+.component--top-nav {
+  position: relative; /* z-index does not work unless position is specified */
+  z-index: 1000;
+}
+
 .radiocom-nav-placeholder {
   height: $default-nav-height;
 
@@ -296,7 +301,7 @@ $drawerSelector: nav-drawer;
           &:not(:last-of-type) {
             margin-right: em(80);
           }
-          
+
           ul {
             li {
               display: block;
@@ -484,7 +489,7 @@ $drawerSelector: nav-drawer;
 
   .radium {
     &__text {
-     @mixin radium-font1;
+      @mixin radium-font1;
     }
 
     &__link--signed-out {

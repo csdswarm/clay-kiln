@@ -1,10 +1,14 @@
 'use strict';
+
 const db = require('../../services/server/db'),
+  _get = require('lodash/get'),
   { getComponentName } = require('clayutils'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   radioApiService = require('../../services/server/radioApi'),
-  { uploadImage } = require('../../services/universal/s3'),
+  { addAmphoraRenderTime } = require('../../services/universal/utils'),
+  { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  getS3StationFeedImgUrl = require('../../services/server/get-s3-station-feed-img-url'),
   elasticFields = [
     'date',
     'primaryHeadline',
@@ -40,18 +44,24 @@ const db = require('../../services/server/db'),
    * @returns {array} items
    */
   getItemsFromTrendingRecirculation = async (locals) => {
-    const trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+    const trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+      start = new Date();
 
     try {
       const trendingRecircData = await db.get(trendingRecircRef);
 
       return trendingRecircData.items;
     } catch (e) {
-      if (e.message === `Key not found in database [${trendingRecircRef}]`) {
+      if (e.name === 'NotFoundError') {
         return [];
       } else {
         throw e;
       }
+    } finally {
+      addAmphoraRenderTime(locals, {
+        label: 'db.get trendingRecircRef',
+        ms: new Date() - start
+      });
     }
   },
   /**
@@ -63,16 +73,34 @@ const db = require('../../services/server/db'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    if (locals.station.id && locals.station.website) {
-      const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
-        feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
-        nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
-        defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+    const { station } = locals;
 
-      data._computed.station = locals.station.name;
+    if (station.id && station.website) {
+      const feedUrl = `${station.website.replace(/\/$/, '')}/station_feed.json`,
+        feed = await radioApiService.get(
+          feedUrl,
+          null,
+          response => response.nodes,
+          {
+            amphoraTimingLabelPrefix: 'render station',
+            shouldAddAmphoraTimings: true
+          },
+          locals
+        ),
+        nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
+
+      data._computed.station = station.name;
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
+        const feedImgUrl = _get(item, "node['OG Image'].src"),
+          s3FeedImgUrl = feedImgUrl
+            ? await getS3StationFeedImgUrl(feedImgUrl, locals, {
+              shouldAddAmphoraTimings: true,
+              amphoraTimingLabelPrefix: 'render station'
+            })
+            : DEFAULT_RADIOCOM_LOGO;
+
         return {
-          feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
+          feedImgUrl: s3FeedImgUrl,
           externalUrl: item.node.URL,
           primaryHeadline: item.node.field_engagement_title || item.node.title
         };
@@ -93,7 +121,10 @@ const db = require('../../services/server/db'),
       return renderStation(data, locals);
     }
 
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+    const primarySectionFronts = await retrieveList(
+      'primary-section-fronts',
+      { locals, shouldAddAmphoraTimings: true }
+    );
 
     if (data._computed.articles) {
       data._computed.articles = data._computed.articles.map(item => ({
@@ -108,10 +139,23 @@ const db = require('../../services/server/db'),
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: async (uri, data, locals) => ({
-    curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
-    maxItems: getMaxItems(data)
-  }),
+  mapDataToFilters: async (uri, data, locals) => {
+    return {
+      curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
+      maxItems: getMaxItems(data)
+    };
+  },
   render,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
+  shouldAddAmphoraTimings: true,
+  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params,
+  mapResultsToTemplate: (locals, result, item = {}) => {
+    return Object.assign(item, {
+      canonicalUrl: item.url || result.canonicalUrl,
+      date: item.overrideDate || result.date,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label: item.overrideDate || result.label,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      sectionFront: item.overrideSectionFront || result.sectionFront
+    });
+  }
 });

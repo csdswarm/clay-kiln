@@ -2,17 +2,19 @@
 
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
-    es="$1" && http="http";
+    es="$1:9200" && http="http";
   elif [ "$1" == "dev-clay.radio.com" ]; then
-    es="http://dev-es.radio-dev.com" && http="https";
+    es="http://dev-es.radio-dev.com:9200" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
-    es="http://es.radio-stg.com" && http="https";
-  elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="http://es.radio-stg.com:9200" && http="https";
+  elif [ "$1" == "preprod-clay.radio.com" ]; then
+    es='https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com:443' && env='preprod';
+	elif [ "$1" == "www.radio.com" ]; then
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com:443" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
-  set "clay.radio.com" && http="http" && es="$1";
+  set "clay.radio.com" && http="http" && es="$1:9200";
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
@@ -22,29 +24,29 @@ printf "\nContent feed migration\n"
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
 
 # find out which index is currently being used
-printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
-aliases=$(curl -X GET "$es:9200/published-content/_alias" 2>/dev/null);
+printf "\nmaking curl GET to $es/published-content/_alias\n";
+aliases=$(curl -X GET "$es/published-content/_alias" 2>/dev/null);
 IFS=', ' read -r -a array <<< $(node alias "$aliases")
 currentIndex="${array[0]}";
 alias="${array[1]}";
 
-mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings") 2>/dev/null;
+mappings=$(curl -X GET "$es/$currentIndex/_mappings") 2>/dev/null;
 
 if [[ $mappings != *"byline"* ]]; then
-  printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
-  indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
+  printf "\nmaking curl GET to $es/_cat/indices?pretty&s=index:desc\n";
+  indices=$(curl -X GET "$es/_cat/indices?pretty&s=index:desc" 2>/dev/null);
   # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
   newIndex=$(node largest-index "$indices");
-  setting=$(curl -X GET "$es:9200/$currentIndex/_settings") 2>/dev/null;
+  setting=$(curl -X GET "$es/$currentIndex/_settings") 2>/dev/null;
 
   # add byline properties to mapping
   indexPayload=$(node index-payload "$mappings" "$setting");
 
   printf "\n\nCreating new index ($newIndex)...\n\n"
-  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "$indexPayload";
+  curl -X PUT "$es/$newIndex" -H 'Content-Type: application/json' -d "$indexPayload";
 
   printf "\r\n\r\nCopying old index data ($currentIndex) to new index ($newIndex)...\n\n"
-  curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
+  curl -X POST "$es/_reindex" -H 'Content-Type: application/json' -d "
   {
     \"source\": {
       \"index\": \"$currentIndex\"
@@ -57,7 +59,7 @@ if [[ $mappings != *"byline"* ]]; then
   sleep 1;
 
   printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
-  curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
+  curl -X POST "$es/_aliases" -H 'Content-Type: application/json' -d "
   {
       \"actions\" : [
           { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"$alias\" } },

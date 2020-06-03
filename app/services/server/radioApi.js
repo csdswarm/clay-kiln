@@ -8,6 +8,7 @@ const rest = require('../universal/rest'),
   radioStgApi = 'api-stg.radio.com/v1/',
   qs = require('qs'),
   redis = require('./redis'),
+  { addAmphoraRenderTime } = require('../universal/utils'),
   TTL = {
     NONE: 0,
     DEFAULT: 300000,
@@ -86,23 +87,33 @@ const rest = require('../universal/rest'),
    */
   // eslint-disable-next-line max-params
   get = async (route, params, validate, options = {}, locals = {} ) => {
+    if (options.shouldAddAmphoraTimings === undefined) {
+      options.shouldAddAmphoraTimings = false;
+    }
+
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params, locals),
       getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
-          const result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
+          const result = await promises.timeout(
+            getAndSave(requestEndpoint, dbKey, validateFn, options, locals),
+            apiTimeout
+          );
 
-          result.response_cached = false;
+          result.from_cache = false;
+          // Set expires at to now + ttl
+          result.redis_expires_at = getRedisExpiresAt(new Date(), options.ttl);
           return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
-
-          log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
-
           if (!isEmpty(cachedData)) {
-            cachedData.response_cached = true;
+            log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
+            cachedData.from_cache = true;
+            cachedData.redis_expires_at = getRedisExpiresAt(new Date(cachedData.updated_at), options.ttl);
+          } else {
+            log('error', `Radio API error for endpoint ${requestEndpoint} without REDIS cache:`, e);
           }
           return cachedData;
         }
@@ -120,26 +131,47 @@ const rest = require('../universal/rest'),
     try {
       // if there's no ttl, skip the cache miss and try to fetch new data
       if (!options.ttl) {
-        return await getFreshData();
+        return getFreshData();
       }
 
-      const cached = await redis.get(dbKey),
-        data = JSON.parse(cached);
+      const start = new Date();
+
+      let cached;
+
+      try {
+        cached = await redis.get(dbKey);
+      } finally {
+        addAmphoraRenderTime(
+          locals,
+          {
+            data: { dbKey },
+            label: 'get from cache',
+            ms: new Date() - start
+          },
+          {
+            prefix: options.amphoraTimingLabelPrefix,
+            shouldAdd: options.shouldAddAmphoraTimings
+          }
+        );
+      }
+
+      const data = JSON.parse(cached);
 
       // if there is no data in cache, wait on fresh data
       if (!cached) {
-        return await getFreshData();
+        return getFreshData();
       }
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
+      if (new Date() - new Date(data.updated_at) > options.ttl) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
         return getFreshData(2000, data);
       }
 
-      data.response_cached = true;
+      data.redis_expires_at = getRedisExpiresAt(new Date(data.updated_at), options.ttl);
+      data.from_cache = true;
       return data;
     } catch (e) {
-      return await getFreshData();
+      return getFreshData();
     }
   },
   /**
@@ -152,13 +184,37 @@ const rest = require('../universal/rest'),
    * @param {string} dbKey
    * @param {function} validate
    * @param {object} options
+   * @param {object} locals
    * @return {Promise}
    * @throws {Error}
    */
-  getAndSave = async (endpoint, dbKey, validate, options) => {
+  // not worth refactoring right now, and the team agreed this lint rule should
+  //   probably be disabled anyway.
+  // eslint-disable-next-line max-params
+  getAndSave = async (endpoint, dbKey, validate, options, locals) => {
     const ttl = options.ttl,
       expire = options.expire || false,
+      start = new Date();
+
+    let response;
+
+    try {
       response = await rest.get(endpoint, options.headers);
+    } finally {
+      log('error', 'Endpoint not cached in REDIS - Making REST call', { requestTime: new Date() - start, endpoint });
+      addAmphoraRenderTime(
+        locals,
+        {
+          data: { endpoint },
+          label: 'get and save',
+          ms: new Date() - start
+        },
+        {
+          prefix: options.amphoraTimingLabelPrefix,
+          shouldAdd: options.shouldAddAmphoraTimings
+        }
+      );
+    }
 
     if (validate(response)) {
       response.updated_at = new Date();
@@ -168,10 +224,20 @@ const rest = require('../universal/rest'),
         // use REDIS expire
         if (expire) {
           redis.set(dbKey, JSON.stringify(response), 'PX', expire)
-            .catch(() => {});
+            .catch(err => {
+              const msg = 'error when setting with expire'
+                + '\n  dbKey: ' + dbKey;
+
+              log('error', msg, err);
+            });
         } else {
           redis.set(dbKey, JSON.stringify(response))
-            .catch(() => {});
+            .catch(err => {
+              const msg = 'error when saving to redis without expire'
+                + '\n  dbKey: ' + dbKey;
+
+              log('error', msg, err);
+            });
         }
       }
 
@@ -184,8 +250,23 @@ const rest = require('../universal/rest'),
       err.localError = true;
       throw err;
     }
+  },
+  /**
+   * Get the time in which the redis cache record will expire, the date object will be mutated
+   *
+   * @param {date|string} date
+   * @param {number} ttl Milliseconds until cache expires
+   * @return {date} date
+   */
+  getRedisExpiresAt = (date, ttl) => {
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    date.setMilliseconds(date.getMilliseconds() + ttl);
+    return date;
   };
 
 module.exports.get = get;
 module.exports.TTL = TTL;
 module.exports.shouldUseStagingApi = shouldUseStagingApi;
+module.exports.getRedisExpiresAt = getRedisExpiresAt;
