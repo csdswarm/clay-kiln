@@ -12,13 +12,10 @@ async function addBreadcrumbs(data, locals) {
 
   if (_get(podcast,'attributes') && _get(episode,'attributes')) {
     const { site_slug, title, station } = podcast.attributes,
-      episode_site_slug = episode.attributes.site_slug,
-      episode_title = episode.attributes.title,
       breadcrumbs = [
         { slug: data._computed.stationSlug, text: station.length ? station[0].name : null },
         { slug: 'podcasts', text: 'podcasts' },
-        { slug: site_slug, text: title },
-        { slug: episode_site_slug, text: episode_title }
+        { slug: site_slug, text: title }
       ];
 
     await autoLink(data, breadcrumbs, locals);
