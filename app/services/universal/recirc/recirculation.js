@@ -55,7 +55,7 @@ const
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
       }, populateFilter(data.populateFrom)),
-      ...{ stationSlug: getStationSlug(data, locals) }
+      ...{ stationSlug: getStationSlug(locals) }
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -279,15 +279,11 @@ const
    * Pull stationSlug from local params if dynamic station page
    * or locals station object
    *
-   * @param {object} data
    * @param {object} locals
    *
    * @return {string} stationSlug
    */
-  getStationSlug = (data, locals) => {
-    // used for load more queries
-    data.stationId = _get(locals, 'station.id');
-
+  getStationSlug = locals => {
     return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
   },
   /**
@@ -507,7 +503,7 @@ const
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(data, locals)))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
