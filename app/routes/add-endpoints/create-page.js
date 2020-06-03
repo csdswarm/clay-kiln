@@ -19,6 +19,7 @@ module.exports = router => {
   });
 
   router.post('/create-page', wrapInTryCatch(async (req, res) => {
+    console.log('CREATE PAGE')
     const { pageBody, stationSlug } = req.body,
       // pagesUri is required for the amphora.pages.create call
       pagesUri = req.hostname + '/_pages/',
