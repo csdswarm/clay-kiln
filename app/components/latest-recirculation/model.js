@@ -136,6 +136,20 @@ const db = require('../../services/server/db'),
     data._computed.isMultiColumn = isMultiColumn(data);
 
     return Promise.resolve(data);
+  },
+
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {object}
+   */
+  save = (ref, data, locals) => {
+    // If a national page is created, by defualt, we need to set populateFrom to all-content to backfill the component
+    if (locals.station.id === 0) {
+      data.populateFrom = 'all-content';
+    };
+    return data;
   };
 
 module.exports = recirculationData({
@@ -147,6 +161,7 @@ module.exports = recirculationData({
     };
   },
   render,
+  save,
   shouldAddAmphoraTimings: true,
   skipRender: (data, locals) => data.populateFrom === 'station' && locals.params,
   mapResultsToTemplate: (locals, result, item = {}) => {

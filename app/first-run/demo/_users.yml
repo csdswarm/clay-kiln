@@ -36,6 +36,14 @@ _users:
     provider: google
     auth: admin
   -
+    username: moffkr91@gmail.com
+    provider: google
+    auth: admin
+  -
+    username: moffkr91@gmail.com
+    provider: cognito
+    auth: admin
+  -
     username: Morgan.Birman@entercom.com
     provider: google
     auth: admin
