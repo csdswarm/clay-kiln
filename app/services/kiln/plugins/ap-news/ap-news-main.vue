@@ -38,8 +38,6 @@ export default {
       * ON-1979 AP News | create/add AUTO-INGEST tab and 
       * ON-1980 AP News | create/add Manual Import tab to AP News
       */
-
-      this.tab = tab;
     }
   },
   components: {
