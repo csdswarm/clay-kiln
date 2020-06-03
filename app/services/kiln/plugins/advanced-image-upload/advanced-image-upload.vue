@@ -157,8 +157,6 @@ export default {
           this.image.height = img.height;
         }
         img.src = evt.target.result;
-        if(this.image.width < 430 || this.image.height < 430) {
-        }
       }
       reader.onerror = evt => {
         console.error(evt);
