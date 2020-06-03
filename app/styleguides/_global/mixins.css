@@ -90,7 +90,6 @@ $small-screen-nav-width: em(320); /* 360- mobile */
   width: em(32);
   height: em(32);
   border-radius: 50%;
-  margin-left: auto;
   box-shadow: 0 0 em(1) em(1) rgba(0,0,0,0.18), inset 0 0 em(4) em(1) $wildSand;
   background-color: $white;
   outline:0;
@@ -144,6 +143,60 @@ $small-screen-nav-width: em(320); /* 360- mobile */
      width: em(12);
      background-color: $color;
    }
+}
+
+@define-mixin show__play_btn $color: $purple {
+  @mixin show__button;
+  width: em(19.4);
+  height: em(19.4);
+
+  &:after {
+    border-top: em(5) solid transparent;
+    border-bottom: em(5) solid transparent;
+    border-left: em(7) solid $color;
+    margin-left: em(7);
+    margin-top: em(4);
+  }
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@define-mixin show__pause_btn $color: $purple {
+  @mixin show__button;
+  width: em(19.4);
+  height: em(19.4);
+
+  &:after {
+    margin-top: em(6);
+    margin-left: em(6);
+    height: em(8);
+    width: em(7);
+    border: em(2.9) solid $color;
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: em(1);
+  }
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@define-mixin show__stop_btn $color: $purple {
+  @mixin show__button;
+  width: em(19.4);
+  height: em(19.4);
+
+  &:after {
+    margin-top: em(6);
+    margin-left: em(6);
+    height: em(7);
+    width: em(7);
+    background-color: $color;
+  }
+  &:hover {
+    opacity: 1;
+  }
 }
 
 @define-mixin favorite-btn {
