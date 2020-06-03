@@ -10,6 +10,7 @@ module.exports = () => {
   require('./plugins/advanced-image-upload')();
   require('./plugins/alerts')();
   require('./plugins/all-page-override')();
+  require('./plugins/ap-news')();
   require('./plugins/brightcove')();
   require('./plugins/bulk-image-upload')();
   require('./plugins/content-import')();
@@ -27,7 +28,6 @@ module.exports = () => {
   require('./plugins/subscriptions')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
-  require('./plugins/ap-news')();
   require('./validators')();
   secureAllSchemas();
   addStationCheckToSelect();
