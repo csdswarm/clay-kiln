@@ -15,7 +15,6 @@ const
   parse = require('url-parse'),
   { contentTypes, SERVER_SIDE } = require('./constants'),
   { getComponentName, isComponent } = require('clayutils'),
-
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 

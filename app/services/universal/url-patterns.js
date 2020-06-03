@@ -1,6 +1,7 @@
 'use strict';
 
 const exists = require('lodash/identity'),
+  // URL patterns below need to be handled by the site's index.js
   article = opts => {
     // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
     return [
@@ -77,14 +78,6 @@ const exists = require('lodash/identity'),
     ].filter(exists)
       .join('/');
   },
-  stationFront = opts => {
-    // e.g. http://radio.com/weei
-    return [
-      opts.prefix,
-      opts.stationSlug
-    ].filter(exists)
-      .join('/');
-  },
   contest = opts => {
     // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
     return [
@@ -92,6 +85,14 @@ const exists = require('lodash/identity'),
       opts.stationSlug,
       'contests',
       opts.slug
+    ].filter(exists)
+      .join('/');
+  },
+  stationFront = opts => {
+    // e.g. http://radio.com/weei
+    return [
+      opts.prefix,
+      opts.stationSlug
     ].filter(exists)
       .join('/');
   };
@@ -103,8 +104,8 @@ module.exports = {
   date,
   gallery,
   sectionFront,
-  stationFront,
-  contest,
   event,
-  eventsListing
+  eventsListing,
+  contest,
+  stationFront
 };

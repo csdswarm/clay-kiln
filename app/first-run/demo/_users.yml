@@ -1,74 +1,18 @@
 _users:
   -
-    username: Andrew.Brill@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Andy.Drake@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Cory.Calhoun@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Jonathan.Lehman@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Leland.Kwong@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: Leland.Kwong@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Markham.Rollins@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: Max.Campolo@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: Meredith.ganzman@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Morgan.Birman@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Phil.Olson@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: chris.strolia-davis@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: cristhiam.henao@gorillalogic.com
-    provider: cognito
-    auth: admin
-  -
-    username: Ryan.Kroll@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: Spire_admin_test_consultant@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: Victoria.Benecke@entercom.com
-    provider: cognito
-    auth: admin
-  -
     username: aaron.m.ponce@gmail.com
     provider: google
     auth: admin
   -
     username: amy.vanhook@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Andrew.Brill@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Andy.Drake@entercom.com
     provider: google
     auth: admin
   -
@@ -113,6 +57,10 @@ _users:
     auth: admin
   -
     username: chris.strolia-davis@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: Cory.Calhoun@entercom.com
     provider: google
     auth: admin
   -
@@ -164,6 +112,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: Jonathan.Lehman@entercom.com
+    provider: google
+    auth: admin
+  -
     username: jose.penagos@gorillalogic.com
     provider: cognito
     auth: admin
@@ -204,6 +156,14 @@ _users:
     provider: google
     auth: admin
   -
+    username: Leland.Kwong@entercom.com
+    provider: cognito
+    auth: admin
+  -
+    username: Leland.Kwong@entercom.com
+    provider: google
+    auth: admin
+  -
     username: luis.bertel@gorillalogic.com
     provider: cognito
     auth: admin
@@ -216,8 +176,16 @@ _users:
     provider: google
     auth: admin
   -
+    username: Markham.Rollins@entercom.com
+    provider: cognito
+    auth: admin
+  -
     username: markham@swarmsolutions.com
     provider: google
+    auth: admin
+  -
+    username: Max.Campolo@entercom.com
+    provider: cognito
     auth: admin
   -
     username: megan.smith@entercom.com
@@ -237,6 +205,10 @@ _users:
     auth: admin
   -
     username: michael.cerio@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Morgan.Birman@entercom.com
     provider: google
     auth: admin
   -
@@ -262,6 +234,10 @@ _users:
   -
     username: nick@swarmsolutions.com
     provider: google
+    auth: admin
+  -
+    username: Phil.Olson@entercom.com
+    provider: cognito
     auth: admin
   -
     username: phil.olson@swarmsolutions.com
@@ -296,8 +272,16 @@ _users:
     provider: google
     auth: admin
   -
+    username: Ryan.Kroll@entercom.com
+    provider: google
+    auth: admin
+  -
     username: shawn@swarmsolutions.com
     provider: google
+    auth: admin
+  -
+    username: Spire_admin_test_consultant@entercom.com
+    provider: cognito
     auth: admin
   -
     username: taryn.wood-norris@entercom.com
@@ -322,6 +306,10 @@ _users:
   -
     username: tsenes@entercom.com
     provider: google
+    auth: admin
+  -
+    username: Victoria.Benecke@entercom.com
+    provider: cognito
     auth: admin
   -
     username: victoriya.polyakova@entercom.com

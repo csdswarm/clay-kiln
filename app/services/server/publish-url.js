@@ -1,8 +1,8 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
-  urlPatterns = require('../universal/url-patterns'),
-  { PAGE_TYPES } = pubUtils;
+  { PAGE_TYPES } = pubUtils,
+  urlPatterns = require('../universal/url-patterns');
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
@@ -104,22 +104,6 @@ function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
 }
 
 /**
- * Return the url for a contest pg based on its slug, within the contests subdir
- * @param {object} pageData
- * @param {object} locals
- * @param {object} mainComponentRefs
- * @returns {Promise}
- */
-function getContestSlugUrl(pageData, locals, mainComponentRefs) {
-  return getUrlOptions(pageData, locals, mainComponentRefs)
-    .then(urlOptions => {
-      if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
-        return urlPatterns.contest(urlOptions);
-      }
-    });
-}
-
-/**
  * Return the url for a station front based on its station slug
  * @param {object} pageData
  * @param {object} locals
@@ -152,6 +136,22 @@ function getEventSlugUrl(pageData, locals, mainComponentRefs) {
 }
 
 /**
+ * Return the url for a contest pg based on its slug, within the contests subdir
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getContestSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
+        return urlPatterns.contest(urlOptions);
+      }
+    });
+}
+
+/**
  * Return the url for a event pg based on its slug, within the events subdir
  * @param {object} pageData
  * @param {object} locals
@@ -173,8 +173,8 @@ module.exports = {
   getGallerySlugUrl,
   getSectionFrontSlugUrl,
   getAuthorPageSlugUrl,
-  getStationFrontSlugUrl,
-  getContestSlugUrl,
   getEventSlugUrl,
-  getEventsListingUrl
+  getEventsListingUrl,
+  getContestSlugUrl,
+  getStationFrontSlugUrl
 };
