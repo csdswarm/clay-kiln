@@ -115,8 +115,9 @@
             }
           }
         }
-        .text__station-slogan {
+        .text__station-description {
           @mixin station-detail-font3;
+          margin-bottom: em(15);
           @mixin medium-screen {
             margin-bottom: em(20, 18);
           }
