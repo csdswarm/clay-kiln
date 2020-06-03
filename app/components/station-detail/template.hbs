@@ -23,7 +23,7 @@
             {{!-- <button data-fav-station="{{station.id}}" class="station-title__favorite-btn{{station.favoriteModifier}}"></button> --}}
             <h1 class="station-title__name">{{station.name}}</h1>
           </div>
-          <p class="text__station-description">{{ellipsisSubstring 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus iure itaque cupiditate, fuga quo maxime asperiores a, non facilis est architecto iste aliquam perspiciatis, debitis ab quia adipisci. Commodi, harum. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Mollitia unde ullam magnam suscipit et, velit, tempora illo voluptatibus atque, nesciunt aliquam animi distinctio nobis enim temporibus doloribus reiciendis maxime facilis?' 0 250}}</p>
+          <p class="text__station-description">{{ellipsisSubstring station.description 0 250}}</p>
         </div>
         <div class="info__links">
           <div class="links__lede--mobile">
