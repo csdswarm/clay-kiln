@@ -1,6 +1,9 @@
 'use strict';
 
-const _capitalize = (str) => {
+const { getComponentInstance } = require('clayutils'),
+  { unityComponent } = require('../../services/universal/amphora'),
+  { assignStationInfo } = require('../../services/universal/create-content'),
+  _capitalize = (str) => {
     return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
   },
   socialLinks = [
@@ -31,19 +34,22 @@ const _capitalize = (str) => {
     }
   ];
 
-module.exports.render = (ref, data, locals) => {
-  if (locals && locals.params && locals.params.author) {
-    data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
-    data.dynamic = true;
-  }
-  
-  data.socialLinks = socialLinks.map(link => {
-    const handle = data[link.type];
-  
-    if (handle) {
-      return { ...link, url: link.url.replace('{handle}', handle) };
+module.exports = unityComponent({
+  render: (ref, data, locals) => {
+    if (locals && locals.params && locals.params.author) {
+      data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     }
-  }).filter(updatedLink => updatedLink);
-  
-  return data;
-};
+    data._computed.dynamic = getComponentInstance(ref) === 'new';
+    data._computed.socialLinks = socialLinks.map(link => {
+      const handle = data[link.type];
+
+      if (handle) {
+        return { ...link, url: link.url.replace('{handle}', handle) };
+      }
+    }).filter(updatedLink => updatedLink);
+
+    assignStationInfo(ref, data, locals);
+
+    return data;
+  }
+});
