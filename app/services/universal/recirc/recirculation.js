@@ -182,6 +182,27 @@ const
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
+    },
+    videos: {
+      filterCondition: 'must',
+      unique: true,
+      createObj: value => ({
+        bool: {
+          should: [
+            {
+              nested: {
+                path: 'lead',
+                query: {
+                  regexp: {
+                    'lead._ref': value
+                  }
+                }
+              }
+            }
+          ],
+          minimum_should_match: 1
+        }
+      })
     }
   },
   /**

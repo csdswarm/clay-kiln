@@ -70,7 +70,9 @@ const _get = require('lodash/get'),
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
 
   DEFAULT_STATION = {
@@ -115,19 +117,19 @@ const _get = require('lodash/get'),
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  contentTypes,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
   MINUTE,
-  msnFeed,
   PAGE_TYPES,
   PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
-  time,
   WEEK,
-  YEAR
+  YEAR,
+  contentTypes,
+  msnFeed,
+  time
 };

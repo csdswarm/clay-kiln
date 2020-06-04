@@ -13,6 +13,7 @@ const _get = require('lodash/get'),
   { PAGE_TYPES } = require('./../universal/constants'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
   { getComponentName } = require('clayutils'),
   slugify = require('../../services/universal/slugify');
@@ -517,7 +518,10 @@ function addStationSyndicationSlugs(data) {
 
   data.stationSyndication = data.stationSyndication
     .map(station => {
-      if (station.stationSlug) {
+      // if the station is national, there must be a primary section front. otherwise, the slug must just be truthy
+      const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
+
+      if (shouldSetSlug) {
         station.syndicatedArticleSlug = '/' + [
           station.stationSlug,
           slugify(station.sectionFront),

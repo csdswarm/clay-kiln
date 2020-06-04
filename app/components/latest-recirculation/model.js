@@ -122,8 +122,10 @@ const db = require('../../services/server/db'),
     }
 
     const primarySectionFronts = await retrieveList(
-      'primary-section-fronts',
-      { locals, shouldAddAmphoraTimings: true }
+      'primary-section-fronts', {
+        locals,
+        shouldAddAmphoraTimings: true
+      }
     );
 
     if (data._computed.articles) {

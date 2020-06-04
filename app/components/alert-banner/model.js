@@ -71,14 +71,14 @@ async function getMessages(locals) {
           shouldAddAmphoraTimings: true
         },
       ),
-      stationAlerts = getAlerts(
-        alertParams(callsign),
-        locals,
-        {
-          amphoraTimingLabelPrefix: `get alerts for ${callsign}`,
-          shouldAddAmphoraTimings: true
-        }
-      ),
+      stationAlerts = callsign
+        ? getAlerts(alertParams(callsign),
+          locals,
+          {
+            amphoraTimingLabelPrefix: `get alerts for ${callsign}`,
+            shouldAddAmphoraTimings: true
+          })
+        : [],
       potentialMessages = await Promise.all([globalAlerts, stationAlerts]);
 
     messages = potentialMessages

@@ -260,6 +260,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: Ricky.Harkins@entercom.com
+    provider: cognito
+    auth: admin
+  -
     username: ricky.harkins@swarmsolutions.com
     provider: google
     auth: admin

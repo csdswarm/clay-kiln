@@ -12,45 +12,15 @@ const
 
   HOUR_IN_SECONDS = 3600,
 
-  /**
-   * Adds amphora timings for redis and postgres requests
-   * @param {string} label
-   * @param {object} data
-   * @param {object} options
-   * @returns {function(...[*]=)} function that takes a callback and runs it
-   */
-  addTimings = (label, data, options) => async cb => {
-    const start = new Date();
-
-    try {
-      // await is necessary for timings to work
-      return await cb();
-    } finally {
-      addAmphoraRenderTime(
-        options.locals || {},
-        {
-          label,
-          data,
-          ms: new Date() - start
-        },
-        {
-          prefix: options.amphoraTimingLabelPrefix,
-          shouldAdd: options.shouldAddAmphoraTimings
-        }
-      );
-    }
-  },
-
   __ = {
     CACHE_TTL: HOUR_IN_SECONDS,
     STATION_LISTS,
-    addTimings,
     cacheKeyPrefix: name => `list:${name}`,
     db,
     equals: value => other => _isEqual(value, other),
     get: _get,
-    getFromCache: name => __.redis.get(__.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
-    getFromDb: (name, host) => __.db.get(`${host}/_lists/${name}`),
+    getFromCache,
+    getFromDb,
     getFromLocals: (name, locals) => __.get(locals, ['lists', name]),
     getStationPrefix: locals => __.postfix(__.get(locals, 'stationForPermissions.site_slug', ''), '-'),
     log: logger.setup({ file: __filename }),
@@ -171,21 +141,18 @@ function getSectionFrontName(slug, data) {
    * @returns {Promise<any[]>}
    */
 async function retrieveList(name, options) {
-  const { addTimings, cacheKeyPrefix, getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
-    locals = options.locals,
+  const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
+    { locals } = options,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals),
-    redisTimings = addTimings('get from redis', { key: cacheKeyPrefix(list) }, options),
-    saved = getFromLocals(list, locals) || await redisTimings(() => getFromCache(list));
+    saved = getFromLocals(list, locals) || await getFromCache(list, options);
 
   if (saved) {
     return saved;
   }
 
   try {
-    const
-      postgresTimings = addTimings('get from postgres', { uri: `${host}/_lists/${name}` }, options),
-      data = await postgresTimings(() => getFromDb(list, host));
+    const data = await getFromDb(list, host, options);
 
     await saveToCache(list, data);
     saveToLocals(list, locals, data);
@@ -215,6 +182,8 @@ async function retrieveList(name, options) {
    * @param {object} options
    * @param {object} [options.locals] the locals object
    * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @param {boolean} [options.shouldAddAmphoraTimings]
+   * @param {string} [options.amphoraTimingLabelPrefix]
    * @returns {Promise<object|undefined>}
    */
 async function updateListItem(name, item, key, options) {
@@ -245,6 +214,57 @@ async function updateListItem(name, item, key, options) {
   return out;
 }
 
+function getPrefixAndShouldAdd(options) {
+  const {
+    amphoraTimingLabelPrefix,
+    shouldAddAmphoraTimings = false
+  } = options;
+
+  return {
+    prefix: amphoraTimingLabelPrefix,
+    shouldAdd: shouldAddAmphoraTimings
+  };
+}
+
+function getFromCache(name, options) {
+  const cacheKey = __.cacheKeyPrefix(name),
+    beforeRedis = new Date(),
+    { locals } = options;
+
+  try {
+    return __.redis.get(cacheKey).then(cached => cached && JSON.parse(cached));
+  } finally {
+    addAmphoraRenderTime(
+      locals,
+      {
+        data: { cacheKey },
+        label: 'get from redis',
+        ms: new Date() - beforeRedis
+      },
+      getPrefixAndShouldAdd(options)
+    );
+  }
+}
+
+function getFromDb(name, host, options) {
+  const beforePostgres = new Date(),
+    uri = `${host}/_lists/${name}`,
+    { locals } = options;
+
+  try {
+    return __.db.get(uri);
+  } finally {
+    addAmphoraRenderTime(
+      locals,
+      {
+        data: { uri },
+        label: 'get from postgres',
+        ms: new Date() - beforePostgres
+      },
+      getPrefixAndShouldAdd(options)
+    );
+  }
+}
 
 module.exports = {
   _internals: __,
