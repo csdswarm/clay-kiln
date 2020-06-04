@@ -80,7 +80,7 @@ const
         addTag('station_logo', _get(locals, 'station.square_logo_small'));
       }
       // both national & station pages
-      addTag('station_name', _get(locals, 'station.name'));
+      addTag('station_name', _get(locals, 'station.name', 'Radio.com'));
     }
 
     // timestamp
