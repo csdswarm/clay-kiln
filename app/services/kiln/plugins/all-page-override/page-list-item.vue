@@ -73,7 +73,7 @@
     const site = sites[page.siteSlug];
 
     return uriToUrl(page.uri, {
-      protocol: 'http:', // note: assumes http (until we have protocol in site configs)
+      protocol: site.protocol,
       port: site.port.toString(),
       hostname: site.host,
       host: site.host

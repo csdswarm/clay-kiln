@@ -1,0 +1,104 @@
+@import "_global/colors";
+
+.manage-syndicated-content {
+  min-width: em(920);
+  overflow-y: auto;
+  padding: em(10);
+
+  .page-list-controls {
+    &__column {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+  }
+
+  .filters {
+    &__station-select {
+      display: flex;
+      margin: em(8) 0;
+  
+      .ui-select {
+        margin: 0 3px 8px 0;
+        flex-grow: 1;
+      }
+      .ui-button {
+        display: none;
+      }
+    }
+  }
+
+  .page-list-headers {
+    &__title {
+      flex: 1 1 400px;
+    }
+    &__station, &__status {
+      flex: 0 1 150px;
+      text-align: center;
+    }
+    &__manage {
+      flex: 1 1 100px;
+      text-align: center;
+    }
+  }
+  
+  .page-list-item {
+    &__title {
+      flex: 1 1 400px;
+    }
+    &__station {
+      flex: 0 1 150px;
+      font-family: Noto Sans,Arial,sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: em(20, 14);
+      text-align: center;
+    },
+    &__station, &__status {
+      flex: 0 1 150px;
+      align-items: center !important;
+    }
+    &__manage {
+      flex: 1 1 100px;
+      text-align: center;
+    }
+    .available {
+      color: $keenUiAlertIconYellow;
+    }
+  }
+
+  .manage-syndicated-content__rows {
+    overflow-y: hidden;
+  }
+
+  .buttons-group {
+    &__syndicate {
+      margin-top: em(3);
+    }
+    &__syndicate, &__clone {
+      height: em(24);
+      margin-bottom: em(3);
+      width: 80%;
+    }
+    &__unpublish {
+      width: 80%;
+    }
+  }
+
+  @media screen and (max-width:1200px) {
+    .page-list-controls__syndicated-status-large {
+      .ui-radio__label-text {
+        width: min-content;
+        line-height: em(20);
+      }
+    }
+  }
+}
+
+.manage-syndicated-content-menu {
+  .nav-menu-button-text {
+    text-align: left;
+  }
+}
+

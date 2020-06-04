@@ -17,6 +17,7 @@ module.exports = () => {
   require('./plugins/content-syndication')();
   require('./plugins/default-text-with-override')();
   require('./plugins/instagram')();
+  require('./plugins/manage-syndicated-content')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
   require('./plugins/select-list')();
