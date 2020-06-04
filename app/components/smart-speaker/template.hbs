@@ -1,3 +1,13 @@
-<div data-uri="{{ default _ref _self }}" class="smartspeaker">
-  
+<div data-uri="{{ default _ref _self }}" class="smart-speaker">
+    {{#if station.phonetic_name }}
+    <div class="smart-speaker__divider smart-speaker__divider__start"></div>
+    <div class="smart-speaker__container">
+        <i class="smart-speaker__icon material-icons">chat_bubble</i>
+        <div>
+            <span>Ask your smart speaker to play</span>
+            <h3 class="smart-speaker__phonetic_name">{{ station.phonetic_name }}</h3>
+        </div>
+    </div>
+    <div class="smart-speaker__divider smart-speaker__divider__end"></div>
+    {{/if }}
 </div>

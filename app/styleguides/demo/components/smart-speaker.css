@@ -1,2 +1,34 @@
+@import "_global/colors";
+@import "_global/fonts";
+
 .smart-speaker {
+    font-family: CircularStd-Medium, sans-serif;
+    font-size: em(14);
+
+    &__container {
+        display: flex;
+    }
+
+    &__icon {
+        color: theme(primaryColor, $parisM);
+        font-size: em(50) !important;
+        margin-right: em(5);
+    }
+
+    &__divider {
+        border-bottom: 1px solid theme(primaryColor, $parisM);
+
+        &__start {
+        margin-bottom: em(18.5);
+        }
+
+        &__end {
+        margin-top: em(18.5);
+        }
+    }
+
+    &__phonetic_name {
+        padding-top: em(5);
+        font-size: em(20);
+    }
 }
