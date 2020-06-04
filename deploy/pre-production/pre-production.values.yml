@@ -24,7 +24,7 @@ configmap:
     CLAY_STORAGE_POSTGRES_DB: "cms"
     CLAY_STORAGE_POSTGRES_HOST: "prdcms-preprod-instance3.cshzsblq8qo8.us-east-1.rds.amazonaws.com"
     COGNITO_CONSUMER_DOMAIN: "https://preprod-clay.radio.com"
-    COGNITO_CONSUMER_REGION: "us-east-1"
+    COGNITO_CONSUMER_REGION: "us-east-1_08jVRRsHJ"
     COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
     COMPACT_BUILD: "1"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
@@ -48,7 +48,7 @@ configmap:
     REDIS_SESSION_HOST: "redis://prdcms-preprod-redis.yk1mn4.ng.0001.use1.cache.amazonaws.com:6379"
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
-    URPS_AUTHORIZATIONS_URL: "http://roc-urps-api-sbx.pcwpuime6w.us-west-1.elasticbeanstalk.com"
+    URPS_AUTHORIZATIONS_URL: "https://roc.radio.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
 clayconfig:
