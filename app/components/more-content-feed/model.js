@@ -25,9 +25,9 @@ const _get = require('lodash/get'),
    * @returns {Promise<object> | object}
    */
   render = async function (ref, data, locals) {
-    const isDynamicAuthorPage = _get(locals, 'params.dynamicAuthor');
+    const isDynamicAuthorPage = _get(locals, 'params.author');
 
-    data.dynamicTagPage = _get(locals, 'params.dynamicTag');
+    data.dynamicTagPage = _get(locals, 'params.dynamicTag', _get(locals, 'params.stationSlug'));
 
     if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0) {
       sendError(`${data.populateFrom} not found`, 404);

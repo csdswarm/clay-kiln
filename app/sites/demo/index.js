@@ -15,6 +15,7 @@ const publishing = require('../../services/publishing'),
 module.exports.routes = [
   // Partially static
   { path: '/authors/:author' },
+  { path: '/:stationSlug/authors/:author' },
   { path: '/blogs/:author/:title' }, // Frequency URL pattern
   { path: '/blogs/:title' }, // Frequency URL pattern
   { path: '/articles/:author/:title' }, // Frequency URL pattern
@@ -61,7 +62,8 @@ module.exports.routes = [
   { path: '/music/:dynamicTag', dynamicPage: 'topic' },
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
+  { path: '/authors/:author', dynamicPage: 'author' },
+  { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/contests', dynamicPage: 'contest-rules-page' },

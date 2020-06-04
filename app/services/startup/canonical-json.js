@@ -51,8 +51,41 @@ function getPrefixAndKey(path) {
 function parsePathParts(pathname) {
   return pathname.match(/[^\/]+/g) || [];
 }
+/**
+  * Returns curated or dynamic page data
+  *
+  * @param {Object} req
+  * @param {string} dynamicPageKey
+  * @returns {Promise<Promise<Object>>}
+*/
+function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
+ return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+   .then(pageKey => db.get(`${ pageKey }@published`))
+   .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
+}
 
 const routes = [
+  // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
+  // https://regex101.com/r/TFNbVH/1
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return !!pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        [ , stationSlug, author ] = pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+
+      if (stationSlug) {
+        params.stationSlug = stationSlug;
+      }
+      if (author) {
+        params.author = author;
+      }
+    },
+    getPageData: req => curatedOrDynamicRouteHandler(req, 'author')
+  },
   // `/contest-rules` or `{stationSlug}/contest-rules`
   {
     testPath: req => {
@@ -127,11 +160,10 @@ function middleware(req, res, next) {
   }
 
   // Define Curated/Dynamic routes.
-  // Match against section-front, topic, and author slug prefixes
+  // Match against section-front and topic slug prefixes
   const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
 
   curatedOrDynamicRoutePrefixes.push('topic');
-  curatedOrDynamicRoutePrefixes.push('authors');
   if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
     curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
   }
@@ -139,6 +171,9 @@ function middleware(req, res, next) {
   // Define curated/dynamic routing logic
   const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
+  /* @TODO TECH DEBT: change topic and section fronts to use
+  *  curatedOrDynamicRouteHandler() like we did for author pages
+  */
   // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
     // Define param extraction logic.
@@ -190,7 +225,6 @@ function middleware(req, res, next) {
       // Set locals
       fakeLocals(req, res, params);
       return composer.composePage(data, res.locals);
-      
     })
     .then(composed => res.json(composed))
     .catch(err => {
