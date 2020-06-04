@@ -1,37 +1,34 @@
 ingress:
   hostedZones:
-    - cms.radio-prd.com
+    - cms.radio-dev.com
   staticDomains:
-  # using prd-clay-k8s for now, to run alongside existing prod. this will be switched out.
-    - prd-clay-k8s.radio-prd.com
-  # update to this when ready to cut over
-  #  - prd-clay.radio-prd.com DO NOT ENABLE UNTIL READY FOR PROD CUTOVER
+    - preprod-clay.radio-dev.com
   # verify the healthCheckDomain before cutting over
-  healthCheckDomain: "prd-clay-k8s.radio.com"
+  healthCheckDomain: "preprod-clay.radio.com"
 configmap:
   data:
     APPLE_NEWS_ENABLED: "TRUE"
     APPLE_NEWS_PREVIEW_ONLY: "TRUE"
-    AWS_S3_BUCKET: "radioimg"
-    AWS_S3_CDN_HOST: "images.radio.com"
+    AWS_S3_BUCKET: "radioimg-stg"
+    AWS_S3_CDN_HOST: "stg-images.radio.com"
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
-    CLAY_BUS_HOST: "redis://redis.radio-prd.com:6379"
-    CLAY_LOG_PRETTY: "true"
+    CLAY_BUS_HOST: "redis://prdcms-preprod-redis.yk1mn4.ng.0001.use1.cache.amazonaws.com:6379"
+    CLAY_LOG_PRETTY: ""
     CLAY_PROVIDER: "google"
     CLAY_SCHEDULING_ENABLED: "true"
-    CLAY_SITE_HOST: "www.radio.com"
+    CLAY_SITE_HOST: "preprod-clay.radio.com"
     CLAY_SITE_NAME: "Radio.com"
     CLAY_SITE_PORT: "443"
     CLAY_SITE_PROTOCOL: "https"
     CLAY_SITE_SHORTKEY: "cd"
     CLAY_STORAGE_POSTGRES_DB: "cms"
-    CLAY_STORAGE_POSTGRES_HOST: "cmsdb-write.radio-prd.com"
-    COGNITO_CONSUMER_DOMAIN: "https://www.radio.com"
+    CLAY_STORAGE_POSTGRES_HOST: "prdcms-preprod-instance3.cshzsblq8qo8.us-east-1.rds.amazonaws.com"
+    COGNITO_CONSUMER_DOMAIN: "https://preprod-clay.radio.com"
     COGNITO_CONSUMER_REGION: "us-east-1"
     COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
     COMPACT_BUILD: "1"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
-    ELASTIC_HOST: "https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com"
+    ELASTIC_HOST: "https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com"
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
     ENABLE_GZIP: "true"
     FACEBOOK_CALLBACK_URL: "https://radio.auth.us-east-1.amazoncognito.com/oauth2/token"
@@ -47,8 +44,8 @@ configmap:
     NODE_ENV: "production"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
-    REDIS_HOST: "tcp://redis.radio-prd.com:6379"
-    REDIS_SESSION_HOST: "redis://redisses.radio-prd.com:6379"
+    REDIS_HOST: "tcp://prdcms-preprod-redis.yk1mn4.ng.0001.use1.cache.amazonaws.com:6379"
+    REDIS_SESSION_HOST: "redis://prdcms-preprod-redis.yk1mn4.ng.0001.use1.cache.amazonaws.com:6379"
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
     URPS_AUTHORIZATIONS_URL: "http://roc-urps-api-sbx.pcwpuime6w.us-west-1.elasticbeanstalk.com"
@@ -60,10 +57,17 @@ clayconfig:
       [keys]
         demo = accesskey
       [urls]
-        demosite = http://www.radio.com
+        demosite = http://preprod-clay.radio.com
 hpa:
   enabled: True
-  min: 10
-  max: 24
+  min: 8
+  max: 10
   metric: cpu
-  cpuTarget: 50
+  cpuTarget: 30
+resources:
+  limits:
+    cpu: 2
+    memory: 1G
+  requests:
+    cpu: 1
+    memory: 1G

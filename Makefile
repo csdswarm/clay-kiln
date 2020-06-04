@@ -203,6 +203,9 @@ encrypt-staging-env:
 encrypt-production-env:
 	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/df2d9bbc-3eb3-47cf-acc9-457cf1823b29 deploy/production/unencrypted.yml> deploy/production/clay-radio.secret.sops.yml
 
+encrypt-pre-production-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/df2d9bbc-3eb3-47cf-acc9-457cf1823b29 deploy/pre-production/unencrypted.yml> deploy/pre-production/clay-radio.secret.sops.yml
+
 decrypt-env:
 ifdef env
 	sops --decrypt deploy/$(env)/clay-radio.secret.sops.yml > deploy/$(env)/unencrypted.yml
