@@ -89,7 +89,7 @@
           (slug is different of empty string).
         */
         if (page.stationSlug) {
-          pageStatus = page.stationSlug !== selectedStation.slug && syndicationStatus || '';
+          pageStatus = page.stationSlug !== selectedStation.slug ? syndicationStatus : '';
         } else if (selectedStation.slug !== '') {
           pageStatus = syndicationStatus;
         }

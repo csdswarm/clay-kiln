@@ -1,9 +1,9 @@
 @import "_global/colors";
 
 .manage-syndicated-content {
-  min-width: em(920);
+  min-width: 920px;
   overflow-y: auto;
-  padding: em(10);
+  padding: 10px;
 
   .page-list-controls {
     &__column {
@@ -16,7 +16,7 @@
   .filters {
     &__station-select {
       display: flex;
-      margin: em(8) 0;
+      margin: 8px 0;
   
       .ui-select {
         margin: 0 3px 8px 0;
@@ -52,7 +52,7 @@
       font-style: normal;
       font-weight: 400;
       font-size: 14px;
-      line-height: em(20, 14);
+      line-height: 20px;
       text-align: center;
     },
     &__station, &__status {
@@ -74,24 +74,15 @@
 
   .buttons-group {
     &__syndicate {
-      margin-top: em(3);
+      margin-top: 3px;
     }
     &__syndicate, &__clone {
-      height: em(24);
-      margin-bottom: em(3);
+      height: 24px;
+      margin-bottom: 3px;
       width: 80%;
     }
     &__unpublish {
       width: 80%;
-    }
-  }
-
-  @media screen and (max-width:1200px) {
-    .page-list-controls__syndicated-status-large {
-      .ui-radio__label-text {
-        width: min-content;
-        line-height: em(20);
-      }
     }
   }
 }
