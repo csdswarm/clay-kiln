@@ -22,7 +22,7 @@ pipeline {
       agent {
         docker {
           label 'docker && !php' 
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
+          image 'quay.io/reactiveops/ci-images:v11-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
       }
