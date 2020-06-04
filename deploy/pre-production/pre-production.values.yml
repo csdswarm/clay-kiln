@@ -22,7 +22,7 @@ configmap:
     CLAY_SITE_PROTOCOL: "https"
     CLAY_SITE_SHORTKEY: "cd"
     CLAY_STORAGE_POSTGRES_DB: "cms"
-    CLAY_STORAGE_POSTGRES_HOST: "prdcms-preprod-instance.cshzsblq8qo8.us-east-1.rds.amazonaws.com"
+    CLAY_STORAGE_POSTGRES_HOST: "prdcms-preprod-instance3.cshzsblq8qo8.us-east-1.rds.amazonaws.com"
     COGNITO_CONSUMER_DOMAIN: "https://preprod-clay.radio.com"
     COGNITO_CONSUMER_REGION: "us-east-1"
     COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
