@@ -109,7 +109,8 @@
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
-        {{#if author}}data-author="{{ author }}"{{/if}}>
+        {{#if author}}data-author="{{ author }}"{{/if}}
+        {{#if _computed.stationId}}data-station="{{ _computed.stationId }}"{{/if}}>
       <button class="more-content-feed__loadmore">
         <div class="loadmore__text">Load More</div>
       </button>
