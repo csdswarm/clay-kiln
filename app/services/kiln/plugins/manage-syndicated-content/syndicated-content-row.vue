@@ -4,7 +4,6 @@
       class="page-list-item__title page-list-item-title"
       :href="url"
       target="_blank"
-      @click="onUrlClick"
     >
       <span class="page-list-item-title-inner" :class="{ 'no-title': !page.pageTitle }">{{ title }}</span>
     </a>
@@ -35,8 +34,6 @@
   import { _internals } from '../../../universal/syndication-utils';
 
   const { UiButton } = window.kiln.utils.components,
-    { htmlExt } = window.kiln.utils.references,
-    { uriToUrl } = window.kiln.utils.urls,
     nationalStationName = DEFAULT_STATION.name,
     formatHM = (date) => ' ' + dateFormat(date, 'h:mm A'),
     { findSyndicatedStation } = _internals;
@@ -67,11 +64,11 @@
   }
 
   export default {
-    props: ['page', 'isPopoverOpen'],
+    props: ['page', 'stationFilter'],
     computed: {
       selectedStation() {
-        const { slug: site_slug } = this.page.selectedStation;
-        return { ...this.page.selectedStation, site_slug };
+        const { slug: site_slug } = this.stationFilter;
+        return { ...this.stationFilter, site_slug };
       },
       station() {
         return this.page.stationName || nationalStationName;
@@ -123,12 +120,6 @@
       }
     },
     methods: {
-      onUrlClick(e) {
-        if (this.isPopoverOpen) {
-          // don't navigate links if the site select or status select popover menus are open
-          e.preventDefault();
-        }
-      },
       /**
        * generate a page url to link to
        * @param  {object} syndicatedStation

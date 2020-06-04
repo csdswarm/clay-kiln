@@ -28,7 +28,7 @@
         v-for="(page, pageIndex) in pages"
         :key="pageIndex"
         :page="page"
-        :isPopoverOpen="isPopoverOpen"
+        :stationFilter="selectedStation"
       ></syndicated-content-row>
       <div class="content-rows__load-more page-list-load-more" v-if="showLoadMore">
         <ui-button type="secondary" class="page-list-load-more-button" @click="performSearch">Load More</ui-button>
@@ -39,7 +39,6 @@
 
 <script>
   import _ from 'lodash';
-  import axios from 'axios';
   import { mapGetters } from 'vuex';
   import stationSelect from '../../shared-vue-components/station-select';
   import StationSelectInput from '../../shared-vue-components/station-select/input.vue';
@@ -76,37 +75,25 @@
         query: '',
         offset: 0,
         total: null,
-        pages: [],
-        isPopoverOpen: false,
-        stations: Object.keys(window.kiln.locals.stationsIHaveAccessTo)
+        pages: []
       };
     },
-    computed: Object.assign(
-      {},
-      mapGetters(stationSelect.storeNs, ['selectedStation']),
-      {
-        showLoadMore() {
-          return this.offset < this.total;
-        },
-        queryText() {
-          return this.query.replace(/user:\S+/i, '').trim();
-        }
+    computed: {
+      ...mapGetters(stationSelect.storeNs, ['selectedStation']),
+      showLoadMore() {
+        return this.offset < this.total;
+      },
+      queryText() {
+        return this.query.replace(/user:\S+/i, '').trim();
       }
-    ),
+    },
     methods: {
-      onPopoverOpen() {
-        this.isPopoverOpen = true;
-      },
-      onPopoverClose() {
-        this.isPopoverOpen = false;
-      },
       async search() {
         const { sanitizeSearchTerm } = queryService,
           query = queryService.newQueryWithCount(INDEX, DEFAULT_QUERY_SIZE, locals),
           searchString = this.queryText.replace(/^https?:\/\//, ''),
           host = isUrl(this.queryText) ? searchString.split('/')[0] : '',
-          // Get query raw result
-          transformResult = (formattedResult, rawResult) => ({ content: rawResult });
+          transformResult = (formattedResult, rawResult) => ({ content: formattedResult, total: _.get(rawResult, 'hits.total') });
 
         queryService.addSort(query, { dateModified: { order: 'desc'} });
         queryService.addOffset(query, this.offset);
@@ -148,24 +135,19 @@
 
         queryService.addMust(query, searchCondition);
 
-        const { content } = await queryService.searchByQuery(
+        const result = await queryService.searchByQuery(
           query,
           locals,
           { shouldDedupeContent: true, transformResult }
         );
 
-        return content.hits;
+        return result;
       },
       performSearch() {
         const offset = this.offset,
-          query = this.query,
-          stationFilter = this.selectedStation;
+          query = this.query;
 
-        query && this.search().then(res => {
-          const hits = _.get(res, 'hits') || [],
-            total = _.get(res, 'total'),
-            pages = hits.map(hit => Object.assign({}, hit._source, { uri: hit._id, selectedStation: stationFilter }));
-
+        query && this.search().then(({ content: pages, total }) => {
           if (offset === 0) {
             this.pages = pages;
           } else {
@@ -177,7 +159,6 @@
         });
       },
       filterList: _.debounce(function() {
-        this.$store.commit('FILTER_PAGELIST_SEARCH', this.query);
         this.cleanSearch();
         this.performSearch();
       }, 300),
