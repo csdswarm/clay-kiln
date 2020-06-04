@@ -59,9 +59,9 @@ function parsePathParts(pathname) {
   * @returns {Promise<Promise<Object>>}
 */
 function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
- return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
-   .then(pageKey => db.get(`${ pageKey }@published`))
-   .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
+  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    .then(pageKey => db.get(`${ pageKey }@published`))
+    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
 }
 
 const routes = [
