@@ -60,9 +60,7 @@ primaryLinks:
         _has:
           input: complex-list
           validate:
-            required:
-              field: drawer
-              operator: truthy
+            required: false
           props:
             -
               prop: text
