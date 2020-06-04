@@ -565,7 +565,7 @@ function assignStationInfo(uri, data, locals) {
   if (locals.newPageStation !== undefined) {
     const station = locals.newPageStation,
       componentName = getComponentName(uri);
-
+    console.log('assignStationInfo: ', station.name)
     Object.assign(data, {
       stationSlug: station.site_slug,
       stationName: station.name,
