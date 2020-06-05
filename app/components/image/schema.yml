@@ -37,20 +37,15 @@ alt:
     help: Alternative text for screen readers
     validate:
       required: true
-creditOverride:
-  _label: Credit Override
-  _has:
-    input: wysiwyg
-    buttons:
-      - bold
-      - italic
-      - link
 imageLink:
   _label: URL
   _has:
     input: text
     type: url
     help: Add a link to the image
+    validate:
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
 
 _groups:
   inlinestuff:
@@ -61,12 +56,9 @@ _groups:
       - credit
       - alt
       - borderToggle
+      - imageLink
     _label: Image
     _placeholder:
       text: New Image
       height: 250px
       ifEmpty: url
-  settings:
-    fields:
-      - imageLink
-      - creditOverride
