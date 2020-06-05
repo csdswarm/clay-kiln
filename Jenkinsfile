@@ -22,7 +22,7 @@ pipeline {
       agent {
         docker {
           label 'docker && !php'
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
+          image 'quay.io/reactiveops/ci-images:v11-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
       }
@@ -135,12 +135,11 @@ pipeline {
           agent {
             docker {
               label 'docker && !php'
-              image 'quay.io/reactiveops/ci-images:v10-stretch'
+              image 'quay.io/reactiveops/ci-images:v11-stretch'
             }
           }
           steps {
             sh ''
-            sh 'helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
             sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml'
             sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml > ${ROK8S_TMP}/out.yaml'
@@ -158,7 +157,7 @@ pipeline {
       agent {
         docker {
           label 'docker && !php'
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
+          image 'quay.io/reactiveops/ci-images:v11-stretch'
         }
       }
 
