@@ -546,5 +546,6 @@ const
   });
 
 module.exports = {
-  recirculationData
+  recirculationData,
+  sectionOrTagCondition
 };
