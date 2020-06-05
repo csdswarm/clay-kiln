@@ -9,5 +9,5 @@ module.exports.save = (uri, data, locals) => {
     data.title       = locals.newPageStation.name;
     data.kilnTitle   = locals.newPageStation.name;
   };
-  return sanitize.recursivelyStripSeperators(data)
+  return sanitize.recursivelyStripSeperators(data);
 };
