@@ -1,5 +1,4 @@
 {{#if _computed.initialLoad}}
-  {{#if _computed.content.length}}
     <section
       class="component component--more-content-feed
       {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
@@ -36,14 +35,13 @@
                   <div class="ui-ripple-ink"></div>
                 </div>
               </div>
+            {{else}}
+              <!-- No content for {{ default _ref _self }} -->
             {{/if}}
           {{/unless}}
           {{#ifAny _computed.content.length @root.locals.edit}}
             <ul class="more-content-feed__links" data-editable="contentFeed">
           {{/ifAny}}
-  {{else}}
-    <!-- No content for {{ default _ref _self }} -->
-  {{/if}}
 {{/if}}
           {{#each _computed.content as |feedItem|}}
             <li>
