@@ -1,6 +1,7 @@
 'use strict';
 
-const { getComponentInstance } = require('clayutils'),
+const _get = require('lodash/get'),
+  { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
   { assignStationInfo } = require('../../services/universal/create-content'),
   _capitalize = (str) => {
@@ -36,7 +37,7 @@ const { getComponentInstance } = require('clayutils'),
 
 module.exports = unityComponent({
   render: (ref, data, locals) => {
-    if (locals && locals.params && locals.params.author) {
+    if (_get(locals, 'params.author')) {
       data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     }
     data._computed.dynamic = getComponentInstance(ref) === 'new';
