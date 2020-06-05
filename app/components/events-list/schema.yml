@@ -6,13 +6,16 @@ curatedEvents:
   _has:
     input: complex-list
     props:
-      -
-        prop: url
-        _label: URL
-        _has:
-          input: content-search
-          validate:
-            required: true
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: content-search
+        type: url
+        validate:
+          required: true
+          pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
+          patternMessage: e.g. http://domain.com/path or /path
   _placeholder:
     text: Add Event
     height: 60px
