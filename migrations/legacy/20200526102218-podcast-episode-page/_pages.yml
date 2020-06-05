@@ -3,12 +3,10 @@ _pages:
     _dynamic: true
     head:
       - /_components/dynamic-meta-url/instances/general
-      # @TODO:    Uncomment the following lines when completing ON-1361
-#      - /_components/dynamic-meta-title/instances/podcast-episode
-#      - /_components/dynamic-meta-description/instances/podcast-episode
-#      - /_components/dynamic-meta-image/instances/podcast-episode
-
-    # @TODO: Uncomment the rest of these lines (and remove the brackets on line 12) when completing the ad requirements ticket
+      - /_components/dynamic-meta-title/instances/podcast-episode
+      - /_components/dynamic-meta-description/instances/podcast-episode
+      - /_components/dynamic-meta-image/instances/podcast-episode
+    # @TODO: Uncomment the rest of these lines (and remove the brackets on line 10) when completing the ad requirements ticket
     layoutHeader: []
 #      - /_components/google-ad-manager/instances/billboardTop
     main:

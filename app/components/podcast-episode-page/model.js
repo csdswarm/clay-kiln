@@ -68,6 +68,7 @@ module.exports = unityComponent({
 
     data._computed = {
       componentClass,
+      title:episodeData.attributes.title,
       stationSlug: _get(locals, 'params.stationSlug'),
       podcastDisplayData: JSON.stringify(podcastData, null , 4),// remove this line when completing the front-end ticket for podcast episode pages
       episodeDisplayData: JSON.stringify(episodeData, null, 4)// remove this line when completing the front-end ticket for podcast episode pages

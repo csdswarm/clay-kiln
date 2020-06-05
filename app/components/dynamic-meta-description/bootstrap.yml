@@ -8,3 +8,6 @@ _components:
       podcast-show:
         description: '${paramValue}'
         localsPath: 'podcast.attributes.description'
+      podcast-episode:
+        description: '${paramValue}'
+        localsPath: 'episode.attributes.description'
