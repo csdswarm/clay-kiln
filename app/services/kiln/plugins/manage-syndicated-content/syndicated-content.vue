@@ -13,7 +13,6 @@
         <station-select
           class="filters__station-select"
           allowClear="false"
-          :onChange="stationChanged"
         />
       </div>
     </div>
@@ -28,7 +27,7 @@
         v-for="(page, pageIndex) in pages"
         :key="pageIndex"
         :page="page"
-        :stationFilter="selectedStation"
+        :stationFilter="stationFilter"
       ></syndicated-content-row>
       <div class="content-rows__load-more page-list-load-more" v-if="showLoadMore">
         <ui-button type="secondary" class="page-list-load-more-button" @click="performSearch">Load More</ui-button>
@@ -75,7 +74,8 @@
         query: '',
         offset: 0,
         total: null,
-        pages: []
+        pages: [],
+        stationFilter: null
       };
     },
     computed: {
@@ -85,6 +85,13 @@
       },
       queryText() {
         return this.query.replace(/user:\S+/i, '').trim();
+      }
+    },
+    watch: {
+      selectedStation(newStation) {
+        this.stationFilter = newStation;
+        this.cleanSearch();
+        this.performSearch();
       }
     },
     methods: {
@@ -145,9 +152,10 @@
       },
       performSearch() {
         const offset = this.offset,
-          query = this.query;
+          query = this.query,
+          stationFilter = this.stationFilter;
 
-        query && this.search().then(({ content: pages, total }) => {
+        query && stationFilter && this.search().then(({ content: pages, total }) => {
           if (offset === 0) {
             this.pages = pages;
           } else {
@@ -162,10 +170,6 @@
         this.cleanSearch();
         this.performSearch();
       }, 300),
-      stationChanged() {
-        this.cleanSearch();
-        this.performSearch();
-      },
       cleanSearch() {
         this.offset = 0;
         this.total = 0;

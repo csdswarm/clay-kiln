@@ -31,12 +31,11 @@
   import isYesterday from 'date-fns/is_yesterday';
   import isThisYear from 'date-fns/is_this_year';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
-  import { _internals } from '../../../universal/syndication-utils';
+  import { findSyndicatedStation } from '../../../universal/syndication-utils';
 
   const { UiButton } = window.kiln.utils.components,
     nationalStationName = DEFAULT_STATION.name,
-    formatHM = (date) => ' ' + dateFormat(date, 'h:mm A'),
-    { findSyndicatedStation } = _internals;
+    formatHM = (date) => ' ' + dateFormat(date, 'h:mm A');
 
   /**
    * format time for pages
@@ -67,8 +66,7 @@
     props: ['page', 'stationFilter'],
     computed: {
       selectedStation() {
-        const { slug: site_slug } = this.stationFilter;
-        return { ...this.stationFilter, site_slug };
+        return this.stationFilter;
       },
       station() {
         return this.page.stationName || nationalStationName;
@@ -76,10 +74,12 @@
       pageStatus() {
         let pageStatus = '';
         const page = this.page,
-          selectedStation = this.selectedStation,
-          findSyndication = findSyndicatedStation(selectedStation),
+          selectedStationSlug = this.selectedStation.slug,
+          findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(page.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
+
+        console.log(syndicatedStation);
 
         /*
           if the station slug of a content is equal to current selected station
@@ -89,8 +89,8 @@
           (slug is different of empty string).
         */
         if (page.stationSlug) {
-          pageStatus = page.stationSlug !== selectedStation.slug ? syndicationStatus : '';
-        } else if (selectedStation.slug !== '') {
+          pageStatus = page.stationSlug !== selectedStationSlug ? syndicationStatus : '';
+        } else if (selectedStationSlug !== '') {
           pageStatus = syndicationStatus;
         }
 

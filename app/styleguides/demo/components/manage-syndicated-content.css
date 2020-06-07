@@ -73,12 +73,12 @@
   }
 
   .buttons-group {
+    padding: 4px;
     &__syndicate {
-      margin-top: 3px;
+      margin-bottom: 3px;
     }
     &__syndicate, &__clone {
-      height: 24px;
-      margin-bottom: 3px;
+      height: 20px;
       width: 80%;
     }
     &__unpublish {
