@@ -9,7 +9,7 @@ const PAGES_INSERT_COMPONENT = [
   '_pages/station'
 ];
 
-async function createDefaultAlertBanner() {
+async function createDefaultSmartSpeaker() {
   try {
     const { data } = await readFile({ path: './smart-speaker.yml' });
     await clayImport({ payload: data, hostUrl });
@@ -50,7 +50,7 @@ function importContent(content) {
     }));
 }
 
-createDefaultAlertBanner()
+createDefaultSmartSpeaker()
   .then(logMessage('Default smart-speaker instance created.'))
   .then(() => Promise.all([getPages()]))
   .then(logMessage('Got layout pages.'))
