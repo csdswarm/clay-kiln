@@ -1,4 +1,4 @@
-<div class="component--station-listen-nav">
+<div class="component--station-listen-nav" data-uri="{{ default _ref _self }}">
   {{#ifAny nowPlaying onAir }}
     <section class="drawer__playing">
       <ul>
@@ -50,6 +50,15 @@
           <h3>{{ station.phonetic_name }}</h3>
         </li>
       {{/if }}
+      <div class="drawer__social">
+        {{#each socialButtons as |button|}}
+          <a href="{{button.url}}" title="{{ button.url }}">
+            <object type="image/svg+xml" data="/media/components/station-listen-nav/{{ button.type }}.svg">
+              <img src="/media/components/station-listen-nav/{{ button.type }}.svg">
+            </object>
+          </a>
+        {{/each}}
+      </div>
     </ul>
   </section>
   <section class="drawer__featured">

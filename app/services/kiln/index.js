@@ -17,11 +17,13 @@ module.exports = () => {
   require('./plugins/national-subscriptions')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
+  require('./plugins/restrict-users')();
   require('./plugins/select-list')();
   require('./plugins/stations')();
   require('./plugins/stores')();
   require('./plugins/subscriptions')();
   require('./plugins/select-list')();
+  require('./plugins/sign-out-override')();
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();

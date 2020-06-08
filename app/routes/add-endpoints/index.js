@@ -7,6 +7,7 @@ module.exports = {
   importContent: require('./import-content'),
   nationalSubscriptions: require('./national-subscription'),
   refreshPermissions: require('./refresh-permissions'),
+  signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
   validSource: require('./valid-source')
 };

@@ -167,7 +167,9 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // add branch io meta tags
-  data.metaTags.push(...await getBranchMetaTags(locals, data));
+  data.metaTags.push(...await getBranchMetaTags(locals, data, {
+    shouldAddAmphoraTimings: true
+  }));
 
   return data;
 };

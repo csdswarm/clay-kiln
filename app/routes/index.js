@@ -161,4 +161,5 @@ module.exports = router => {
   addEndpoints.nationalSubscriptions(router);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
+  addEndpoints.signOut(router);
 };

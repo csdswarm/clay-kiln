@@ -1,5 +1,6 @@
 'use strict';
 const
+  _clone = require('lodash/clone'),
   _filter = require('lodash/filter'),
   _get = require('lodash/get'),
   _identity = require('lodash/identity'),
@@ -9,9 +10,11 @@ const
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
+  _setWith = require('lodash/setWith'),
+  _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
-  { contentTypes } = require('./constants'),
+  { contentTypes, SERVER_SIDE } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -406,7 +409,58 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
+/**
+ * Immutable version of Lodash's set. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {*} value
+ * @returns {Object}
+ */
+function setImmutable(object, path, value) {
+  return _setWith(_clone(object), path, value, _clone);
+}
+
+/**
+ * Immutable version of Lodash's update. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {Function} updater
+ * @returns {Object}
+ */
+function updateImmutable(object, path, updater) {
+  return _updateWith(_clone(object), path, updater, _clone);
+}
+
+/**
+ * When on the server, pushes an time entry onto locals.amphoraRenderTimes
+ *
+ * @param {object} locals
+ * @param {object} timeEntry
+ * @param {object} [opts]
+ * @param {object} [opts.shouldAddAmphoraTimings]
+ * @param {object} [opts.prefix]
+ */
+function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
+  const {
+    prefix = '',
+    shouldAdd = true
+  } = opts;
+
+  if (shouldAdd && SERVER_SIDE && locals.amphoraRenderTimes) {
+    const { label } = timeEntry;
+
+    if (prefix) {
+      timeEntry = Object.assign({}, timeEntry, {
+        label: `${prefix} - ${label}`
+      });
+    }
+
+    locals.amphoraRenderTimes.push(timeEntry);
+  }
+}
+
 module.exports = {
+  addAmphoraRenderTime,
   boolKeys,
   cleanUrl,
   debugLog,
@@ -427,8 +481,10 @@ module.exports = {
   prettyJSON,
   removeFirstLine,
   replaceVersion,
+  setImmutable,
   textToEncodedSlug,
   toTitleCase,
+  updateImmutable,
   uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,
