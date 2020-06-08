@@ -79,8 +79,6 @@
           syndicatedStation = findSyndication(page.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
 
-        console.log(syndicatedStation);
-
         /*
           if the station slug of a content is equal to current selected station
           we don't check for syndication status because we have an original content.
@@ -89,7 +87,7 @@
           (slug is different of empty string).
         */
         if (page.stationSlug) {
-          pageStatus = page.stationSlug !== selectedStationSlug ? syndicationStatus : '';
+          pageStatus = page.stationSlug === selectedStationSlug ? '' : syndicationStatus;
         } else if (selectedStationSlug !== '') {
           pageStatus = syndicationStatus;
         }
