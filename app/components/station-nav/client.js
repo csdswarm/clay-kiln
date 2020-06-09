@@ -9,9 +9,14 @@ let desktopNavItems,
   mobileNavItems,
   listenNavToggle,
   listenNavDrawer,
-  lastTarget;
+  listenNavComponent,
+  stationId,
+  stationListenNavInstance,
+  lastTarget,
+  isMobile = false;
 
-const { isMobileNavWidth } = require('../../services/client/mobile'),
+const { getComponentInstance } = require('clayutils'),
+  { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
   /**
@@ -19,7 +24,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM('/_components/station-listen-nav/instances/new.html'),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -116,19 +121,48 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleListenDrawer = ({ type, currentTarget }) => {
-    resetNavs();
-
-    if (type === 'mouseleave') {
-      currentTarget.classList.remove(active);
-      listenNavDrawer.classList.remove(active);
-      navDrawersContainer.classList.remove(active);
-      lastTarget = currentTarget;
-    } else {
-      refreshListenNav();
-      currentTarget.classList.add(active);
-      listenNavDrawer.classList.add(active);
-      navDrawersContainer.classList.add(active);
+    if (!isMobile) {
+      resetNavs();
+      type === 'mouseleave'
+        ? closeListenDrawer(currentTarget)
+        : openListenDrawer(currentTarget);
     }
+  },
+  /**
+   * Toggle listen nav arrow direction & listen nav drawer on touch for mobile
+   *
+   * @param {Object} currentTarget -- currentTarget
+   * @return {void}
+   */
+  toggleListenDrawerInMobile = ({ currentTarget }) => {
+    isMobile = true;
+
+    if (!currentTarget.classList.contains(active)) {
+      return openListenDrawer(currentTarget);
+    }
+    closeListenDrawer(currentTarget);
+  },
+  /**
+   * Opens listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  openListenDrawer = (target) => {
+    refreshListenNav();
+    target.classList.add(active);
+    listenNavDrawer.classList.add(active);
+    navDrawersContainer.classList.add(active);
+  },
+  /**
+   * Closes listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  closeListenDrawer = (target) => {
+    target.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+    navDrawersContainer.classList.remove(active);
+    lastTarget = target;
   },
   /**
    * Toggle mobile nav arrow direction & mobile nav on click of caret
@@ -172,13 +206,16 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     // Toggle Listen Nav
     listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
     listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
+    listenNavToggle.addEventListener('touchstart', toggleListenDrawerInMobile, true);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      item.addEventListener('click', toggleMobileSecondaryLinks);
+      if (item.querySelectorAll('.item__label>.label__menu-toggle')) {
+        item.addEventListener('click', () => toggleMobileSecondaryLinks(item));
+      }
     });
 
     // Toggle Nav Desktop Drawers
@@ -225,6 +262,9 @@ document.addEventListener('station-nav-mount', function () {
   mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
+  listenNavComponent = document.querySelector('.component--station-listen-nav');
+  stationId = stationNav.dataset.stationId;
+  stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
 
   addEventListeners();
 });

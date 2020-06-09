@@ -94,5 +94,11 @@
       vertical-align: top;
       color: $white;
     }
+
+    .radiocom-footer__rdc-logo-link {
+      display: inline-block;
+      width: em(220, 14);
+      margin: 0 0 em(30, 14) 0;
+    }
   }
 }

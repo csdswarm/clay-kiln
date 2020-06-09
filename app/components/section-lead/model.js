@@ -46,7 +46,10 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
 module.exports = recirculationData({
   elasticFields,
   mapDataToFilters: (uri, data) => ({
-    maxItems: getMaxItems(data)
+    maxItems: getMaxItems(data),
+    filters: {
+      includeSyndicated: false
+    }
   }),
 
   /**
@@ -64,13 +67,13 @@ module.exports = recirculationData({
       ...item,
       date: result.date,
       uri: result._id,
-      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      primaryHeadline: result.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
-      canonicalUrl: item.url || result.canonicalUrl,
-      feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
-      plaintextTitle: toPlainText(item.title)
+      canonicalUrl: result.url || result.canonicalUrl,
+      feedImgUrl: result.overrideImage || result.feedImgUrl,
+      label: result.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
+      plaintextTitle: toPlainText(result.title)
     };
   },
 

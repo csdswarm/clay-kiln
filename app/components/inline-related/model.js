@@ -12,7 +12,7 @@ const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'lead',
+    'lead._ref',
     'contentType'
   ],
   maxItems = 2,

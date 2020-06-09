@@ -18,16 +18,16 @@
  */
 
 const
+  _merge = require('lodash/merge'),
   _get = require('lodash/get'),
   _has = require('lodash/has'),
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
   _pick = require('lodash/pick'),
-  _set = require('lodash/set'),
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -54,7 +54,8 @@ const
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
-      }, populateFilter(data.populateFrom))
+      }, populateFilter(data.populateFrom)),
+      ...{ stationSlug: getStationSlug(data, locals) }
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -139,28 +140,40 @@ const
     },
     stationSlug: {
       filterCondition: 'must',
-      createObj: stationSlug => {
+      createObj: (stationSlug, includeSyndicated = true) => {
+
         const qs = {
           bool: {
             should: [
-              { match: { stationSlug } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    match: {
-                      'stationSyndication.stationSlug': stationSlug
-                    }
-                  }
-                }
-              }
+              { match: { stationSlug } }
             ],
             minimum_should_match: 1
           }
         };
 
+        if (includeSyndicated) {
+          qs.bool.should.push({
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                match: {
+                  'stationSyndication.stationSlug': stationSlug
+                }
+              }
+            }
+          });
+        }
+
         if (stationSlug === DEFAULT_STATION.site_slug) {
-          _set(qs, 'bool.should[2].bool.must_not.exists.field', 'stationSlug');
+          qs.bool.should.push({
+            bool: {
+              must_not: {
+                exists: {
+                  field: 'stationSlug'
+                }
+              }
+            }
+          });
         }
 
         return qs;
@@ -169,6 +182,27 @@ const
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
+    },
+    videos: {
+      filterCondition: 'must',
+      unique: true,
+      createObj: value => ({
+        bool: {
+          should: [
+            {
+              nested: {
+                path: 'lead',
+                query: {
+                  regexp: {
+                    'lead._ref': value
+                  }
+                }
+              }
+            }
+          ],
+          minimum_should_match: 1
+        }
+      })
     }
   },
   /**
@@ -210,7 +244,7 @@ const
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj)
+      { condition = conditionOverride || filterCondition, value, includeSyndicated } = _isPlainObject(valueObj)
         ? valueObj
         : { value: valueObj };
 
@@ -228,6 +262,10 @@ const
         return;
       }
 
+      if (typeof includeSyndicated !== 'undefined') {
+        queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
+        return;
+      }
       queryService[getQueryType(condition)](query, createObj(value));
     }
   },
@@ -257,6 +295,17 @@ const
     data.author = author;
 
     return { author };
+  },
+  /**
+   * Pull stationSlug from local params if dynamic station page
+   *
+   * @param {object} data
+   * @param {object} locals
+   *
+   * @return {string} stationSlug
+   */
+  getStationSlug = (data, locals) => {
+    return _get(locals, 'params.stationSlug');
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
@@ -343,17 +392,26 @@ const
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
+   * Use filters to query elastic for content
+   *
+   * @param {object} config
+   * @param {object} config.filters
+   * @param {object} config.excludes
+   * @param {array} config.elasticFields
+   * @param {number} config.maxItems
+   * @param {boolean} config.shouldAddAmphoraTimings
+   * @param {Object} locals
+   * @returns {array} elasticResults
+   */
+  fetchRecirculation = async (config, locals) => {
+    const {
+      filters,
+      excludes,
+      elasticFields,
+      maxItems,
+      shouldAddAmphoraTimings
+    } = config;
+
     let results = {
       content: [],
       totalHits: 0
@@ -377,10 +435,15 @@ const
       if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
         return;
       }
+      if (key === 'includeSyndicated') {
+        return;
+      }
+      if (key === 'stationSlug' && !filters.includeSyndicated) {
+        value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
+      }
       addCondition(query, key, value);
     });
     Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
-
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
@@ -389,11 +452,22 @@ const
       query.body.query.bool.minimum_should_match = 1;
     }
 
+    const start = new Date();
+
     try {
       results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          label: 'recirculation.js -> searchByQuery',
+          ms: new Date() - start
+        },
+        { shouldAdd: shouldAddAmphoraTimings }
+      );
     }
 
     return results;
@@ -418,6 +492,7 @@ const
     mapResultsToTemplate = defaultTemplate,
     render = returnData,
     save = returnData,
+    shouldAddAmphoraTimings = false,
     skipRender = () => false } = {}) => unityComponent({
     async render(uri, data, locals) {
       const curatedIds = (data.items || []).map(anItem => anItem.uri),
@@ -431,19 +506,20 @@ const
       }
 
       try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = {
-            ...defaultMapDataToFilters(uri, data, locals),
-            ...await mapDataToFilters(uri, data, locals)
-          },
+        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
+            defaultMapDataToFilters(uri, data, locals),
+            await mapDataToFilters(uri, data, locals)
+          ),
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
           stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: { ...filters, ...stationFilter },
+              filters: _merge(filters, stationFilter),
               excludes,
               elasticFields: esFields,
               pagination,
-              maxItems: itemsNeeded
+              maxItems: itemsNeeded,
+              shouldAddAmphoraTimings
             },
             locals);
 

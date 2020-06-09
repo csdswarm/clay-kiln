@@ -21,6 +21,7 @@
           <ui-select
                   :placeholder="'Primary Section Front'"
                   :hasSearch="true"
+                  :invalid="!isPrimarySectionFrontValid(slug, sectionFronts.selectedPrimary)"
                   :options="sectionFronts.primaryOptions"
                   :value="sectionFronts.selectedPrimary"
                   @input="updateSectionFront(slug, 'selectedPrimary', ...arguments)"/>
@@ -39,6 +40,7 @@
   import _ from 'lodash';
   const { retrieveList } = require('../../../../services/client/lists');
   const { setImmutable, updateImmutable } = require('../../../../services/universal/utils');
+  const { DEFAULT_STATION } = require('../../../../services/universal/constants');
 
   const UiSelect = window.kiln.utils.components.UiSelect;
 
@@ -104,6 +106,7 @@
 
               return {
                 stationSlug: value,
+                stationName: station.name,
                 callsign: station.callsign,
                 sectionFront: _.get(sectionFront, 'selectedPrimary.value'),
                 secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value')
@@ -115,7 +118,16 @@
           });
       },
       /**
-       *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
+       * Tests if a primary section front input is valid.
+       * @param {string} slug
+       * @param {object} value
+       */
+      isPrimarySectionFrontValid(slug, value) {
+        // if national, primary section front is required
+        return slug !== DEFAULT_STATION.site_slug || value;
+      },
+      /**
+       * Called when a station is selected from the dropdown. Sets it as currently selected.
        * @param {Array<Object>} input
        */
       updateSelectedStation(input) {
@@ -164,9 +176,15 @@
         }));
         const findSectionFrontOption = (value, options) => options.find(o => o.value === value);
 
+        let listPrefix = '';
+
+        if (slug !== DEFAULT_STATION.site_slug) {
+          listPrefix = `${slug}-`;
+        }
+
         const [primarySectionFronts, secondarySectionFronts] = await Promise.all([
-          retrieveList(`${slug}-primary-section-fronts`),
-          retrieveList(`${slug}-secondary-section-fronts`),
+          retrieveList(`${listPrefix}primary-section-fronts`, true),
+          retrieveList(`${listPrefix}secondary-section-fronts`, true),
         ]);
 
         if (this.isStationSelected(slug)) {

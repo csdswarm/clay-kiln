@@ -16,7 +16,7 @@
       {{#unless stationFront}}
         <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
       {{/unless}}
-      {{#if stationFront}}<span>Site Slug <span class="warn">*required</span> : {{ default stationSiteSlug 'No Slug Set' }}</span>{{/if}}
+      {{#if stationFront}}<span>Site Slug <span class="warn">*required</span> : {{ default stationSlug 'No Slug Set' }}</span>{{/if}}
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
       <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
@@ -29,5 +29,8 @@
   {{#if includePodcastModule }}
     {{> podcast-list podcastList }}
   {{/if}}
+  <div class="divider-container" data-editable="dividerContainer">
+    {{> component-list dividerContainer}}
+  </div>
   {{> two-column-component twoColumnComponent }}
 </section>

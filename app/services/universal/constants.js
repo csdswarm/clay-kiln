@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  { getStationDomainName } = require('./urps'),
   // Time Constants
   SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -65,16 +64,14 @@ const _get = require('lodash/get'),
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
-
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
-  defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
     id: 0,
-    name: defaultStationName,
+    name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
@@ -101,24 +98,29 @@ const _get = require('lodash/get'),
     //   it's something that could probably be removed/cleaned up as I don't
     //   believe the www is used anywhere
     slug: 'www',
-    site_slug: ''
-  };
+    site_slug: '',
+    // in an ideal world we could store our hardcoded station in URPS, but due
+    //   to them keeping their stations in sync with the radio api, we've
+    //   decided to instead use the permissions from the 'National' market to
+    //   cover national rdc content.
+    urpsDomainName: 'National'
+  },
 
-DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  contentTypes,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
   MINUTE,
-  msnFeed,
   PAGE_TYPES,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
-  time,
   WEEK,
-  YEAR
+  YEAR,
+  contentTypes,
+  msnFeed,
+  time
 };
