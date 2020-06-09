@@ -11,8 +11,10 @@ curatedEvents:
         _label: URL
         _has:
           input: content-search
+          type: url
           validate:
             required: true
+
   _placeholder:
     text: Add Event
     height: 60px
