@@ -450,8 +450,8 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         }
       },
       stations () {
-        return Object.entries(window.kiln.locals.stationsIHaveAccessTo).map(arr => {
-          return { label: `${arr[1].name} (${arr[1].callsign})`, value: arr[1].slug}
+        return Object.entries(window.kiln.locals.stationsIHaveAccessTo).map(station => {
+          return { label: `${station[1].name} (${station[1].callsign})`, value: station[1].slug}
         })
       }
     },
