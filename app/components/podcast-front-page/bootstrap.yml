@@ -1,13 +1,11 @@
 _components:
   podcast-front-page:
     allowed: true
-    hero: []
-      # @TODO undo comment when merging to envs with ON-1563
-      # - _ref: /_components/podcast-hero-carousel/instances/default
+    hero:
+      - _ref: /_components/podcast-hero-carousel/instances/new
     content: []
     instances:
       default:
-        hero: []
-        # @TODO undo comment when merging to envs with ON-1563
-        # - _ref: /_components/podcast-hero-carousel/instances/default
+        hero:
+          - _ref: /_components/podcast-hero-carousel/instances/new
         content: []
