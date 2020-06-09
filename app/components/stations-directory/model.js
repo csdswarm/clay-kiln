@@ -1,4 +1,5 @@
 'use strict';
+
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   SPORTS_SLUG = 'sports',
@@ -15,26 +16,36 @@ const radioApiService = require('../../services/server/radioApi'),
 function getAllMarkets(locals) {
   const route = 'markets',
     params = {
-      'page[size]': 100,
+      'page[size]': 1000,
       sort: 'name'
     };
 
-  return radioApiService.get(route, params, null, {}, locals).then(response => {
-    if (response.data) {
-      return response.data.map(data => {
-        data.attributes.slug = slugifyService(data.attributes.display_name);
-        return data;
-      });
-    }
-    return [];
-  });
+  return radioApiService.get(
+    route,
+    params,
+    null,
+    {
+      amphoraTimingLabelPrefix: 'get all markets',
+      shouldAddAmphoraTimings: true
+    },
+    locals
+  )
+    .then(response => {
+      if (response.data) {
+        return response.data.map(data => {
+          data.attributes.slug = slugifyService(data.attributes.display_name);
+          return data;
+        });
+      }
+      return [];
+    });
 }
 
 /**
  * fetch all music genres from
  * radio api into an array
  * @param {object} locals
- * @param {boolean} newsTalk
+ * @param {boolean} [newsTalk]
  * @returns {Promise<array>}
  */
 function getAllGenres(locals, newsTalk = false) {
@@ -47,21 +58,31 @@ function getAllGenres(locals, newsTalk = false) {
     params['sort'] = 'name';
   }
 
-  return radioApiService.get(route, params, null, {}, locals).then(response => {
-    if (response.data) {
-      const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
-        onlyNewsTalkGenres = genre => [NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
-        addSlugAttribute = data => {
-          data.attributes.slug = slugifyService(data.attributes.name);
-          return data;
-        };
+  return radioApiService.get(
+    route,
+    params,
+    null,
+    {
+      amphoraTimingLabelPrefix: 'get all genres',
+      shouldAddAmphoraTimings: true
+    },
+    locals
+  )
+    .then(response => {
+      if (response.data) {
+        const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
+          onlyNewsTalkGenres = genre => [NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
+          addSlugAttribute = data => {
+            data.attributes.slug = slugifyService(data.attributes.name);
+            return data;
+          };
 
-      return response.data
-        .filter(newsTalk ? onlyNewsTalkGenres : onlyMusicGenres)
-        .map(addSlugAttribute);
-    }
-    return [];
-  });
+        return response.data
+          .filter(newsTalk ? onlyNewsTalkGenres : onlyMusicGenres)
+          .map(addSlugAttribute);
+      }
+      return [];
+    });
 }
 
 module.exports.render = async (uri, data, locals) => {

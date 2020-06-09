@@ -182,3 +182,9 @@ module.exports['13.0'] = function (uri, data) {
     enableSharethrough: true
   };
 };
+
+module.exports['14.0'] = function (uri, data) {
+  delete data.tagInfo;
+
+  return data;
+};

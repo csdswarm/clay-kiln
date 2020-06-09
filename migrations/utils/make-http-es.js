@@ -1,20 +1,8 @@
 'use strict';
 
 const httpGet = require('./http-get').v1,
-  httpRequest = require('./http-request').v1;
-
-/**
- * Adds the prefix to the beginning if the string doesn't already start with it
- *
- * @param {string} prefix
- * @param {string} str
- * @returns {string}
- */
-const ensureStartsWith = (prefix, str) => {
-  return str.startsWith(prefix)
-    ? str
-    : prefix + str;
-}
+  httpRequest = require('./http-request').v1,
+  ensureStartsWith = require('./ensure-starts-with').v1;
 
 /**
  * Returns a readable helper to avoid constructing the requests manually
@@ -57,9 +45,9 @@ const makeHttpEs_v1 = parsedHost => {
   const { es, es: { http: protocol } } = parsedHost,
     validResponseTypes = new Set(['json', 'text']),
     validResponseTypesStr = Array.from(validResponseTypes).join(', '),
-    esUrl = `${protocol}://${es.hostname}:9200`,
+    esUrl = `${protocol}://${es.hostname}:${es.port}`,
     get = restOfUrl => {
-      restOfUrl= ensureStartsWith('/', restOfUrl);
+      restOfUrl = ensureStartsWith('/')(restOfUrl);
 
       return httpGet({ url: esUrl + restOfUrl, http: protocol });
     },
@@ -70,7 +58,7 @@ const makeHttpEs_v1 = parsedHost => {
             body,
             headers
           } = argObj,
-          restOfUrl = ensureStartsWith('/', argObj.restOfUrl);
+          restOfUrl = ensureStartsWith('/')(argObj.restOfUrl);
 
         if (!validResponseTypes.has(responseType)) {
           throw new Error(

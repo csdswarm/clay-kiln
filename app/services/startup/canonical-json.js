@@ -60,6 +60,9 @@ function middleware(req, res, next) {
 
   curatedOrDynamicRoutePrefixes.push('topic');
   curatedOrDynamicRoutePrefixes.push('authors');
+  if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
+    curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
+  }
 
   // Define curated/dynamic routing logic
   const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
@@ -89,7 +92,6 @@ function middleware(req, res, next) {
           params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
           return db.get(`${req.hostname}/_pages/${routePrefix}@published`);
         } else {
-
           throw error;
         }
       });
@@ -114,6 +116,7 @@ function middleware(req, res, next) {
       // Set locals
       fakeLocals(req, res, params);
       return composer.composePage(data, res.locals);
+      
     })
     .then(composed => res.json(composed))
     .catch(err => {

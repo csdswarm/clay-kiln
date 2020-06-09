@@ -5,6 +5,7 @@ head:
   _componentList:
     page: true
     include:
+      - meta-title
       - meta-site
       - meta-image
       - meta-icons
@@ -27,6 +28,15 @@ top:
   _componentList:
     include:
       - header
+topSection:
+  _componentList:
+    page: true
+    include:
+      - station-nav
+topAd:
+  _componentList:
+    include:
+      - google-ad-manager
 layoutHeader:
   _componentList:
     include:
@@ -57,6 +67,17 @@ bottom:
   _componentList:
     include:
       - footer
+
+bottomSection:
+  _componentList:
+    page: true
+    include:
+      - station-footer
+
+bottomAd:
+  _componentList:
+    include:
+      - google-ad-manager
 
 kilnInternals:
   _componentList:

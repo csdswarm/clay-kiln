@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront',
     'date',
-    'lead',
+    'lead._ref',
     'subHeadline',
     'contentType'
   ],
@@ -32,7 +32,7 @@ const _get = require('lodash/get'),
     if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0) {
       sendError(`${data.populateFrom} not found`, 404);
     }
- 
+
     Object.assign(data._computed, {
       lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
     });
@@ -48,7 +48,7 @@ module.exports = recirculationData({
       page: _get(locals, 'page')
     }
   }),
-  mapResultsToTemplate: (result, item = {}) => {
+  mapResultsToTemplate: (locals, result, item = {}) => {
     return Object.assign(item, {
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       subHeadline: item.overrideSubHeadline || result.subHeadline,
