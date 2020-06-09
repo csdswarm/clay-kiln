@@ -180,7 +180,7 @@
     },
     {
       key: 'station_slug',
-      display: 'to sation',
+      display: 'to station',
       isHeader: false,
       isDataProp: false,
       dataType: String
