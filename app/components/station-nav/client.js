@@ -224,7 +224,11 @@ const { getComponentInstance } = require('clayutils'),
    *
    * @param {Object} event -- contains currentTarget
    */
-  toggleMobileSecondaryLinks = ({ currentTarget }) => {
+  toggleMobileSecondaryLinks = ( event ) => {
+    event.preventDefault();
+
+    const { currentTarget } = event;
+
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
       for (const item of mobileNavItems) {
