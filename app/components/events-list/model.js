@@ -71,7 +71,9 @@ async function getCuratedEventsFromElastic(data, locals) {
       stationSlug
     } = data,
     query = queryService.newQueryWithCount(elasticIndex, curatedEvents.length, locals),
-    urlsToMatch = curatedEvents.map(({ url }) => toElasticCanonicalUrl(url));
+    urlsToMatch = curatedEvents
+      .filter(({ url }) => url)
+      .map(({ url }) => toElasticCanonicalUrl(url));
 
   queryService.addMust(query, {
     terms: {
@@ -124,6 +126,7 @@ async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip })
     urlsToDedupe = [
       eventsLedeUrl,
       ...curatedEvents
+        .filter(({ url }) => url)
         .map(({ url }) => url)
     ].map(toElasticCanonicalUrl);
 
