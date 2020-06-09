@@ -524,8 +524,6 @@ footer:
       - youtube
       - html-embed
       - omny
-    validate:
-      max: 2
 
 # Component properties
 contentPageSponsorLogo:
