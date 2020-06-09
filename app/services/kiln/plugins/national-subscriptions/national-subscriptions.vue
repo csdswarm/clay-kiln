@@ -449,9 +449,9 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           }
         }
       },
-      stations () {
-        return Object.entries(window.kiln.locals.stationsIHaveAccessTo).map(station => {
-          return { label: `${station[1].name} (${station[1].callsign})`, value: station[1].slug}
+      stations =  () => {
+        return Object.values(window.kiln.locals.stationsIHaveAccessTo).map(station => {
+          return { label: `${station.name} (${station.callsign})`, value: station.slug }
         })
       }
     },
