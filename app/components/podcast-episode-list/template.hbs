@@ -10,7 +10,9 @@
           <span class="podcast-episode-list__meta-icon">
             {{{ read 'components/podcast-episode-list/media/ic_time.svg' }}}
           </span>
-          {{duration_seconds_formatted}}
+          <span class="podcast-episode-list__duration-text">
+            {{duration_seconds_formatted}}
+          </span>
         </div>
         <a class="podcast-episode-list__download-link" href="{{audio_url}}">
           <span class="podcast-episode-list__meta-icon">
