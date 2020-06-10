@@ -1,8 +1,15 @@
 @import "_global/colors";
-@import "_global/fonts";
+
+@define-mixin smart-speaker-font {
+    font-family: CircularStd-Medium, sans-serif;
+    font-size: 14px;
+    color: $black;
+    letter-spacing: -0.23px;
+    line-height: 17px;
+}
 
 .smart-speaker {
-    @mixin station-detail-font5;
+    @mixin smart-speaker-font;
     margin: em(5, 14) 0 em(40, 14) 0;
 
     &__container {
