@@ -126,6 +126,7 @@ export default {
         editNewPageUrl = uriToUrl(newPage[refProp]) + htmlExt + editExt;
 
       this.$store.dispatch('finishProgress', 'save');
+      
       window.location.href = editNewPageUrl;
     },
     editTemplate(id) {
