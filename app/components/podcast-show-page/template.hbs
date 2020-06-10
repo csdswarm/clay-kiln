@@ -1,4 +1,5 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
+  data-podcast-site-slug="{{ _computed.podcastSiteSlug }}"
   class="component component--podcast-show-page podcast-show-page
   {{ if @root.locals.edit ' editing' }}"
 >
@@ -7,16 +8,18 @@
   {{> podcast-lead podcastLead }}
   <div class="podcast-show-page-body">
     <ul class="tabs">
-      {{!-- @TODO: ON-1398 Tabbing --}}
-      <!-- add tab for each component here -->
+      <li class="tabs-tab tabs-tab--episodes">
+        <a href="#episodes">episodes</a>
+      </li>
+      <li class="tabs-tab tabs-tab--discover">
+        <a href="#discover">discover</a>
+      </li>
     </ul>
     <div class="tabbed-content">
-      {{!-- @TODO: ON-1398 Tabbing --}}
-
-      <div class="tabbed-content-episodes">
+      <div class="tabbed-content-container tabbed-content-container--episodes">
         {{> podcast-episode-list episodeList }}
       </div>
-      <div class="tabbed-content-discover">
+      <div class="tabbed-content-container tabbed-content-container--discover">
         {{!-- @TODO: ON-1359 ON-1382 Podcast Discover --}}
         {{!-- add component partial here --}}
       </div>
