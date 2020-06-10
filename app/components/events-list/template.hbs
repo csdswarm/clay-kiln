@@ -1,8 +1,8 @@
-<div class="component component--events-list events-list"  data-uri="{{ default _ref _self }}" data-load-more-amount="{{ loadMoreAmount }}">
+<div class="component component--events-list events-list" data-uri="{{ default _ref _self }}" data-load-more-amount="{{ loadMoreAmount }}">
   {{#if @root.locals.edit}}
     <div data-editable="curatedEvents"></div>
   {{/if}}
-  <div class="events-list__cards">
+  <div class="events-list__cards" data-editable="settings">
     {{#each _computed.events as |event|}}
       {{> content-card event _self=true }}
     {{/each}}
