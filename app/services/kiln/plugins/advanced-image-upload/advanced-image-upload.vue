@@ -143,8 +143,13 @@ export default {
       this.setImageUrl('');
     },
     getFileSize(file) {
+      const hero =  window.location.hash.indexOf("podcast-hero-carousel");
       if(!file || file.type.indexOf('image/') !== 0) return;
-      
+      if(hero <= 0) {
+        this.verifiedfile = !this.verifiedfile;
+        this.failedFileCheck = false;
+        return;
+      }
       this.image.size = file.size;
       
       let reader = new FileReader();
