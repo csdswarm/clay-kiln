@@ -6,18 +6,17 @@ const parseHttpDate = require('parsehttpdate'),
   redis = require('../../server/redis'),
   url = require('url'),
   xmlParser = require('xml2json'),
-  _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
   _isEqual = require('lodash/isEqual'),
   /**
-     * Parsing the values from Redis key
-     * this will return and object with two properties
-     * lastModified: a date in string
-	   * feed: MSN Feed data as XML
-	   *
-	   * @param {string} redisData MSN Feed Data
-	   * @return {Object}
-	   */
+   * Parsing the values from Redis key
+   * this will return and object with two properties
+   * lastModified: a date in string
+   * feed: MSN Feed data as XML
+   *
+   * @param {string} redisData MSN Feed Data
+   * @return {Object}
+   */
   parseOldModifiedFeed = redisData => JSON.parse(redisData),
 
   /**
@@ -42,7 +41,10 @@ const parseHttpDate = require('parsehttpdate'),
         arrayNotation: false
       }),
       items = _get(json.rss.channel, 'item');
-
+      
+    if (!items) {
+      return;
+    }
     return items.map(item => ({
       link: item.link,
       pubDate: item.pubDate
@@ -84,64 +86,40 @@ module.exports = router => {
     // instead of creating our own ETag header I thought it'd be easier to
     //   implement last-modified
     removeEtag(res);
-    const query = _get(url.parse(req.url), 'query'),
-      ifModifiedSinceStr = req.get('if-modified-since'),
-      lastModifiedDate = new Date(),
-      endpoint = `${protocol}://${host}/_components/feeds/instances/msn.msn`;
 
-    if (!query) {
-      if (ifModifiedSinceStr) {
-        // apparently the http spec defines two obsolete date formats which
-        //   parseHttpDate doesn't support:
-        //
-        //   https://www.npmjs.com/package/parsehttpdate#other-formats
-        //
-        //   If MSN sends us dates in those formats then we'll have to find
-        //   another solution
-        const ifModifiedSinceDate = parseHttpDate(ifModifiedSinceStr);
-    
-        if (lastModifiedDate <= ifModifiedSinceDate) {
-          res.status(304).end();
-          return;
-        }
-      }
-    
-      const resp = await axios.get(endpoint);
-    
-      return res.send(resp.data);
-    }
-    // This lane is when the endpoint request comes with query param to filter by station
-    let lastModifiedStr,
+    const endpoint = `${protocol}://${host}/_components/feeds/instances/msn.msn`;
+
+    let query = url.parse(req.url).query,
+      lastModifiedStr,
       oldFeedData;
-    // Get the old feed result from Redis
-    const oldFeedResult = await redis.get(`msn-feed:${query}`);
 
-    if (!_isEmpty(oldFeedResult)) {
-      // the data from redis needs to be parsed
+    query = query
+      ? `?${query}`
+      : '';
+    
+    const ifModifiedSinceStr = req.get('if-modified-since'),
+      [oldFeedResult, newFeedResult] = await Promise.all([
+        redis.get(`msn-feed:${query}`),
+        axios.get(endpoint + query)
+      ]),
+      newFeedData = getXMLItems(newFeedResult.data);
+    
+    if (oldFeedResult) {
       const { lastModified, feed } = parseOldModifiedFeed(oldFeedResult);
-
-      // The list and pubDate data need to be extracted from the XML
-      oldFeedData = getXMLItems(feed);
-      // Assign lastModified date from Redis to a variable
+      
+      oldFeedData = JSON.parse(feed);
       lastModifiedStr = lastModified;
     }
-    // Get the MSN feed data filter by station
-    const newFeedResult = await axios.get(`${endpoint}?${query}`),
-      // The list and pubDate data need to be extracted from the XML
-      newFeedData = getXMLItems(newFeedResult.data);
-
-    // Check if the lastModified date was assigned or if the newFeedData and the oldFeedData are equal
-    // If they're different then a new Redis key is assigned
-    // Otherwise the request will return a 304 message
-    if (!lastModifiedStr || !areEqual(oldFeedData, newFeedData)) {
+    
+    if (!areEqual(oldFeedData, newFeedData)) {
+      lastModifiedStr = new Date().toUTCString();
       redis.set(`msn-feed:${query}`, JSON.stringify({
-        lastModified: new Date().toUTCString(),
-        feed: newFeedResult.data
+        lastModified: lastModifiedStr,
+        feed: JSON.stringify(newFeedData)
       }));
-    } else {
-      res.status(304).end();
-      return;
     }
+
+    res.set('Last-Modified', lastModifiedStr);
 
     if (ifModifiedSinceStr) {
       // apparently the http spec defines two obsolete date formats which
@@ -151,7 +129,8 @@ module.exports = router => {
       //
       //   If MSN sends us dates in those formats then we'll have to find
       //   another solution
-      const ifModifiedSinceDate = parseHttpDate(ifModifiedSinceStr);
+      const ifModifiedSinceDate = parseHttpDate(ifModifiedSinceStr),
+        lastModifiedDate = new Date(lastModifiedStr);
 
       if (lastModifiedDate <= ifModifiedSinceDate) {
         res.status(304).end();
