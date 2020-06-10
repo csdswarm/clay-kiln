@@ -3,7 +3,7 @@
     <span class="latest-videos__title-bg">{{{ title }}}</span>
   </h2>
   <div class="latest-videos__videos latest-videos__videos--{{ sectionFront }}">
-    {{#each articles as |article|}}
+    {{#each _computed.content as |article|}}
       {{#if @first}}
         <div class="latest-videos__video latest-videos__video--main latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"

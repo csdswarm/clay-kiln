@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -55,7 +55,7 @@ const
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
       }, populateFilter(data.populateFrom)),
-      ...{ stationSlug: getStationSlug(data, locals) }
+      ...{ stationSlug: getStationSlug(locals) }
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -182,6 +182,27 @@ const
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
+    },
+    videos: {
+      filterCondition: 'must',
+      unique: true,
+      createObj: value => ({
+        bool: {
+          should: [
+            {
+              nested: {
+                path: 'lead',
+                query: {
+                  regexp: {
+                    'lead._ref': value
+                  }
+                }
+              }
+            }
+          ],
+          minimum_should_match: 1
+        }
+      })
     }
   },
   /**
@@ -277,27 +298,14 @@ const
   },
   /**
    * Pull stationSlug from local params if dynamic station page
+   * or locals station object
    *
-   * @param {object} data
    * @param {object} locals
    *
    * @return {string} stationSlug
    */
-  getStationSlug = (data, locals) => {
-    let stationSlug;
-
-    if (locals && locals.stationSlug) {
-      // This is from load more on a station front
-      stationSlug = locals.stationSlug;
-    } else if (locals && locals.params && locals.params.stationSlug) {
-      stationSlug = locals.params.stationSlug;
-    } else if (locals && locals.station && locals.station.site_slug) {
-      stationSlug = locals.station.site_slug;
-    }
-
-    // used for load more queries
-    data.stationSlug = stationSlug;
-    return stationSlug;
+  getStationSlug = locals => {
+    return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
@@ -384,17 +392,26 @@ const
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
+   * Use filters to query elastic for content
+   *
+   * @param {object} config
+   * @param {object} config.filters
+   * @param {object} config.excludes
+   * @param {array} config.elasticFields
+   * @param {number} config.maxItems
+   * @param {boolean} config.shouldAddAmphoraTimings
+   * @param {Object} locals
+   * @returns {array} elasticResults
+   */
+  fetchRecirculation = async (config, locals) => {
+    const {
+      filters,
+      excludes,
+      elasticFields,
+      maxItems,
+      shouldAddAmphoraTimings
+    } = config;
+
     let results = {
       content: [],
       totalHits: 0
@@ -435,11 +452,22 @@ const
       query.body.query.bool.minimum_should_match = 1;
     }
 
+    const start = new Date();
+
     try {
       results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          label: 'recirculation.js -> searchByQuery',
+          ms: new Date() - start
+        },
+        { shouldAdd: shouldAddAmphoraTimings }
+      );
     }
 
     return results;
@@ -464,6 +492,7 @@ const
     mapResultsToTemplate = defaultTemplate,
     render = returnData,
     save = returnData,
+    shouldAddAmphoraTimings = false,
     skipRender = () => false } = {}) => unityComponent({
     async render(uri, data, locals) {
       const curatedIds = (data.items || []).map(anItem => anItem.uri),
@@ -472,7 +501,7 @@ const
 
       locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
-      if (skipRender(data, locals)) {
+      if (await skipRender(data, locals)) {
         return render(uri, data, locals);
       }
 
@@ -488,13 +517,14 @@ const
               excludes,
               elasticFields: esFields,
               pagination,
-              maxItems: itemsNeeded
+              maxItems: itemsNeeded,
+              shouldAddAmphoraTimings
             },
             locals);
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(data, locals)))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,

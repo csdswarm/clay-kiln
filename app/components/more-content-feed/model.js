@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront',
     'date',
-    'lead',
+    'lead._ref',
     'subHeadline',
     'contentType'
   ],
@@ -34,6 +34,7 @@ const _get = require('lodash/get'),
     }
 
     Object.assign(data._computed, {
+      stationId: _get(locals, 'station.id'),
       lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
     });
 

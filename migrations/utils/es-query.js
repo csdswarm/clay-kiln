@@ -17,7 +17,7 @@ const axios = require('../../app/node_modules/axios'),
  * @returns {Promise<{result: ('success'|'fail'), data?: Object, params: Object, error?: Object}>}
  */
 function esQuery_v1(params) {
-  const { query, hostname, http, index = '', yaml = false, size = 10, headers = {} } = params;
+  const { query, hostname, http, index = '', yaml = false, size = 10, headers = {}, port } = params;
   console.log(`Querying elastic on ${hostname}, index: ${index} for: ${JSON.stringify(query)}`);
 
   return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ function esQuery_v1(params) {
 
       const options = {
         method: 'POST',
-        port: '9200',
+        port,
         path: `${index || ''}/_search${searchParams.length ? '?' + searchParams.join('&') : ''}`,
         hostname,
         headers: {
@@ -81,7 +81,7 @@ function esQuery_v1(params) {
  * @param {boolean} [params.logError] - whether this method should log the error before rethrowing it
  * @returns {Promise<{object}>}
  */
-async function esQuery_v2(query, { hostname, http, index, logError = false }) {
+async function esQuery_v2(query, { hostname, http, index, logError = false, port }) {
   try {
     if (!hostname || !http || !index) {
       throw new Error(
@@ -89,7 +89,7 @@ async function esQuery_v2(query, { hostname, http, index, logError = false }) {
       );
     }
 
-    const elasticUrl = `${http}://${hostname}:9200/${index}/_search`,
+    const elasticUrl = `${http}://${hostname}:${port}/${index}/_search`,
       { data: result } = await axios.post(elasticUrl, query)
 
     return result;
