@@ -9,16 +9,6 @@ const PAGES_INSERT_COMPONENT = [
   '_pages/station'
 ];
 
-async function createDefaultSmartSpeaker() {
-  try {
-    const { data } = await readFile({ path: './smart-speaker.yml' });
-    await clayImport({ payload: data, hostUrl });
-  } catch (error) {
-    console.log('An error occurred while trying to create the default Smart Speaker instance.', prettyJSON({error}));
-    throw error;
-  }
-}
-
 function getPages(){
   return Promise.all(PAGES_INSERT_COMPONENT.map(page => clayExport({ componentUrl: `${hostUrl}/${page}` })));
 }
@@ -50,9 +40,7 @@ function importContent(content) {
     }));
 }
 
-createDefaultSmartSpeaker()
-  .then(logMessage('Default smart-speaker instance created.'))
-  .then(() => Promise.all([getPages()]))
+Promise.all([getPages()])
   .then(logMessage('Got layout pages.'))
   .then(([pages]) => Promise.all([addSmartSpeakerToPages(pages)]))
   .then(logMessage('Added smart-speaker to layout pages.'))

@@ -2,9 +2,8 @@
 @import "_global/fonts";
 
 .smart-speaker {
-    font-family: CircularStd-Medium, sans-serif;
-    font-size: em(14);
-    margin: em(5) 0 em(40) 0;
+    @mixin station-detail-font5;
+    margin: em(5, 14) 0 em(40, 14) 0;
 
     &__container {
         display: flex;
@@ -12,7 +11,6 @@
 
     &__icon {
         color: theme(primaryColor, $parisM);
-        font-size: em(50) !important;
         margin-right: em(5);
         svg > path {
             fill: theme(primaryColor, $parisM);
@@ -20,7 +18,7 @@
     }
 
     &__divider {
-        border-bottom: 1px solid theme(primaryColor, $parisM);
+        border-bottom: em(1) solid theme(primaryColor, $parisM);
 
         &__start {
         margin-bottom: em(18.5);
@@ -32,7 +30,7 @@
     }
 
     &__phonetic_name {
-        padding-top: em(10);
+        padding-top: em(5);
         font-size: em(20);
     }
 }
