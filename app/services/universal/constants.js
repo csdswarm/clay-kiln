@@ -64,14 +64,14 @@ const _get = require('lodash/get'),
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
-
-  defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
     id: 0,
-    name: defaultStationName,
+    name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
@@ -109,18 +109,18 @@ const _get = require('lodash/get'),
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  contentTypes,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
   MINUTE,
-  msnFeed,
   PAGE_TYPES,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
-  time,
   WEEK,
-  YEAR
+  YEAR,
+  contentTypes,
+  msnFeed,
+  time
 };

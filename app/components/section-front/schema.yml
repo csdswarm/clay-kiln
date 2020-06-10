@@ -64,6 +64,15 @@ podcastList:
     include:
       - podcast-list
 
+
+dividerContainer:
+  _placeholder:
+    text: Add Divider Title
+    height: 30px
+  _componentList:
+    include:
+      - divider
+
 twoColumnComponent:
   _component:
     include:

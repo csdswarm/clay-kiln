@@ -19,6 +19,7 @@ module.exports = () => {
   require('./plugins/instagram')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
+  require('./plugins/restrict-users')();
   require('./plugins/select-list')();
   require('./plugins/sign-out-override')();
   require('./plugins/stations')();
