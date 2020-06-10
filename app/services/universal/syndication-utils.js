@@ -3,9 +3,9 @@
 const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
-
+  findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
   __ =  {
-    findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
+    findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
     inStation: stationSlug => syndicationEntry => {
       return stationSlug === (syndicationEntry.stationSlug || DEFAULT_STATION.site_slug);
@@ -46,5 +46,6 @@ function syndicationUrlPremap(stationSlug) {
 
 module.exports = {
   _internals: __,
-  syndicationUrlPremap
+  syndicationUrlPremap,
+  findSyndicatedStation
 };
