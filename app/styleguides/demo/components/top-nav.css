@@ -546,6 +546,12 @@ $drawerSelector: nav-drawer;
 
 .kiln-wrapper.view-mode {
   top: $default-nav-height !important;
+  button.view-new-button {
+    visibility: hidden;
+  }
+  button.view-menu-button {
+    visibility: hidden;
+  }
 }
 
 .kiln-edit-mode {
