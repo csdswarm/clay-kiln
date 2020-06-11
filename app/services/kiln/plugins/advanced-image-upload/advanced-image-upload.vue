@@ -102,14 +102,18 @@ export default {
      *
      * @param {array} files - FileList array of files.
      */
-    localFileAttached(files) {
+    async localFileAttached(files) {
       // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
       const file = files[0]
-      this.getFileSize(file)
+      if(!file || file.type.indexOf('image/') !== 0) return;
       
+      const base = await this.getFileSize(file);
+      const image = await this.createImage(base);
+      const valid = this.checkImageDimemsions(image);
+
       // If file attached, exec upload logic.
-      if (file && this.verifiedfile) {
+      if (file && valid) {
         /*
         Send file name and type to backend so backend can generate aws pre-signed request url.
         This allows us to keep our aws secret on the backend, while still uploading directly
@@ -143,37 +147,45 @@ export default {
       this.setImageUrl('');
     },
     getFileSize(file) {
-      const hero =  window.location.hash.indexOf("podcast-hero-carousel");
-      if(!file || file.type.indexOf('image/') !== 0) return;
-      if(hero <= 0) {
-        this.verifiedfile = !this.verifiedfile;
-        this.failedFileCheck = false;
-        return;
-      }
-      this.image.size = file.size;
-      
+      return new Promise((resolve, reject) => {
       let reader = new FileReader();
-      
-      reader.readAsDataURL(file);
       reader.onload = evt => {
-        let img = new Image();
-        img.onload = () => {
-          this.image.width = img.width;
-          this.image.height = img.height;
-        }
-        img.src = evt.target.result;
+        this.failedFileCheck = false;
+        resolve(evt.target.result)
       }
+      reader.readAsDataURL(file);
       reader.onerror = evt => {
         console.error(evt);
+        reject(new Error(evt))
       }
-      if(this.image.width < 430 || this.image.height < 430) {
-        this.fileUploadButtonDisabled = false;
-        this.failedFileCheck = true;
-      } else {
-        this.verifiedfile = !this.verifiedfile;
-        this.failedFileCheck = false;
-      }
+
+      })
     },
+    createImage(base) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.src = base
+        image.onload = () => {
+          resolve({width: image.width, height: image.height})
+        }
+        image.onerror = evt => {
+          reject(evt)
+        }
+      })
+    },
+    checkImageDimemsions({width, height}) {
+      const hero =  window.location.hash.indexOf("podcast-hero-carousel");
+      if(hero <= 0) {
+        this.failedFileCheck = false;
+        return true;
+      };
+      if((width < 430) || (height < 430)) {
+        this.failedFileCheck = true;
+        this.fileUploadButtonDisabled = false;
+        return false;
+      }
+      return true;
+    }
   },
   components: {
     UiFileupload,
@@ -181,4 +193,3 @@ export default {
   }
 }
 </script>
-
