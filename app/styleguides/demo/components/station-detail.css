@@ -1,4 +1,6 @@
 /* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 
 @define-mixin station-detail-font1 {
