@@ -4,8 +4,8 @@ _layouts:
       podcast-show:
         top:
           - _ref: /_components/top-nav/instances/default
-          # - _ref: /_components/theme/instances/default
-          # - _ref: /_components/station-nav/instances/default
+          - _ref: /_components/theme/instances/default
+          - _ref: /_components/station-nav/instances/default
           - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
         head: head
         main: main
@@ -17,7 +17,7 @@ _layouts:
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          # - _ref: /_components/station-footer/instances/default
+          - _ref: /_components/station-footer/instances/default
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
         static:

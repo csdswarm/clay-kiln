@@ -1,7 +1,12 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  db = require('../services/server/db');
+  db = require('../services/server/db'),
+  axios = require('axios'),
+  {
+    CLAY_SITE_PROTOCOL: protocol,
+    CLAY_SITE_HOST: host
+  } = process.env;
 /**
  * Returns a standard site-map for all podcast show pages
  * @param {object} req
@@ -10,6 +15,9 @@ const _get = require('lodash/get'),
  */
 
 module.exports = async function (req, res) {
+  await axios.put(`${protocol}://${host}/_podcasts`, {},
+    { headers: { Authorization: 'token accesskey' } });
+
   const schemaLocationInfo = req.query.schemaCheck
       ? ', \'http://www.w3.org/2001/XMLSchema-instance\' as "xmlns:xsi", ' +
         "'http://www.sitemaps.org/schemas/sitemap/0.9 " +
@@ -18,8 +26,10 @@ module.exports = async function (req, res) {
       : '',
 
     urlsInXMLFormatSQL = `
-    SELECT data->>id as id, xmlelement(name url,
-      xmlelement(name loc, '' + data->'attributes'->>'site_slug'
+    SELECT data->>id as id,
+    xmlelement(name url,
+      xmlelement(name loc, data->>'url'),
+      xmlelement(name lastmod, data->>'updated')
     ) as xml_data
     FROM podcasts
     ORDER BY id ASC
@@ -33,17 +43,16 @@ module.exports = async function (req, res) {
             'http://www.sitemaps.org/schemas/sitemap/0.9' as xmlns${schemaLocationInfo}
           ),
           xmlagg(xml_data)
-        ), version '1.0" encoding="UTF-8' -- postgres does not have a direct way to add encoding
+        ),
+        version '1.0" encoding="UTF-8' -- postgres does not have a direct way to add encoding
       )::text as data
     FROM _urls`,
 
     podcastsSiteMapSQL = `WITH _urls as (${urlsInXMLFormatSQL}) ${urlsetAggregationSQL};`,
-
     emptySiteMap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     </urlset>`,
-
     data = await db.raw(podcastsSiteMapSQL);
 
   res.type('application/xml');

@@ -4,52 +4,77 @@ const db = require('../server/db'),
   moment = require('moment'),
   log = require('../universal/log').setup({ file: __filename }),
   radioApiService = require('./radioApi'),
-  CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
-  /**
-   * Transform Postgres response into just data
-   *
-   * @param {object} response
-   * @returns {array}
-   */
-  pullDataFromResponse = (response) => response.rows.map(({ id, data }) => ({ id, ...data })),
-  /**
-   * Get all podcasts from Radio API and store in DB daily
-   *
-   * @returns {Promise<Array<Object>>}
-   */
-  storePodcastsFromAPItoDB = async () => {
+  {
+    CLAY_SITE_PROTOCOL: protocol,
+    CLAY_SITE_HOST: host
+  } = process.env,
+  getPodcastsFromAPI = async (podcastsFromAPI, pageNumber = 1) => {
     const route = 'podcasts',
+      PAGE_SIZE = 10000,
       params = {
-        'page[size]': 50000
+        'page[size]': PAGE_SIZE,
+        'page[number]': pageNumber
       },
-      podcastsFromAPI = radioApiService.get(route, params, null, {}).then(response => {
-        return response.data || [];
-      });
+      { data, links: { next } } = await radioApiService.get(route, params, null, {});
 
-    console.log('get podcasts from API:', podcastsFromAPI);
-    if (podcastsFromAPI.length) {
-      const podcastsSQL = podcastsFromAPI.map(podcast => {
-        const id = `${CLAY_SITE_HOST}/_podcasts/${podcast.id}`,
-          updatedPodcast = { ...podcast, updated: new Date().toISOString() };
-
-        return `VALUES (${ id }, ${ updatedPodcast })`;
-      }).join(',');
-
-      console.log('podcastsSQL:', podcastsSQL);
-      await db.ensureTableExists('podcasts');
-      const insertResults = await db.raw(`
-        INSERT INTO podcasts (id, data)
-        ${ podcastsSQL }
-      `);
-
-      console.log('results of inserting multiple', insertResults);
-      return insertResults;
+    podcastsFromAPI = podcastsFromAPI.concat(data);
+    if (next) {
+      return await getPodcastsFromAPI(podcastsFromAPI, pageNumber + 1);
+    } else {
+      return podcastsFromAPI;
     }
   },
   /**
-   * Get the current podcasts directly from the db
+   * Fetch podcasts & station slug from API and store in DB
    */
-  getPodcasts = async () => {
+  storePodcastsFromAPItoDB = async () => {
+    const podcastsFromAPI = await getPodcastsFromAPI([]),
+      { data: stationsFromAPI } = await radioApiService.get('stations', {
+        'page[size]': 10000
+      }, null, {});
+
+    if (podcastsFromAPI.length) {
+      const podcastsSQL = [],
+        podcastsSQLValues = [];
+
+      podcastsFromAPI.forEach(podcast => {
+        let url = `${protocol}://${host}/podcasts/${podcast.attributes.site_slug}`;
+
+        if (podcast.attributes.station.length) {
+          const [{ id: stationID }] = podcast.attributes.station,
+            stations = stationsFromAPI
+              .filter(station => station.id === stationID);
+
+          if (stations.length) {
+            const [{ attributes: { site_slug: stationSiteSlug } }] = stations;
+
+            url = `${protocol}://${host}/${stationSiteSlug}/podcasts/${podcast.attributes.site_slug}`;
+          }
+        }
+
+        const id = `${host}/_podcasts/${podcast.id}`,
+          updatedPodcast = {
+            ...podcast,
+            url,
+            updated: new Date().toISOString()
+          };
+
+        podcastsSQL.push('(?, ?)');
+        podcastsSQLValues.push(id);
+        podcastsSQLValues.push(updatedPodcast);
+      });
+      await db.raw('DELETE FROM podcasts');
+      await db.raw(`
+        INSERT INTO podcasts (id, data)
+        VALUES
+        ${ podcastsSQL.join(',\n') }
+      `, podcastsSQLValues);
+    }
+  },
+  /**
+   * Update the podcasts in db if they are a day old or not there
+   */
+  updatePodcasts = async () => {
     await db.ensureTableExists('podcasts');
 
     const queryForOnePodcast = `
@@ -58,50 +83,36 @@ const db = require('../server/db'),
         ORDER BY data->>id
         LIMIT 1
       `,
-      { rows: podcastsResults } = db.raw(queryForOnePodcast)
-        .then(pullDataFromResponse);
-
-    console.log('get one podcast from DB:', podcastsResults);
+      { rows: podcastsResults } = await db.raw(queryForOnePodcast);
 
     // Check when podcasts were last updated
     // fetch from API & update DB if more than a day old or not in DB
     if (!podcastsResults.length || moment(new Date()).isAfter(podcastsResults[0].updated, 'day')) {
-      console.log('podcast does not exist in DB or is more than a day old');
-      return storePodcastsFromAPItoDB();
+      await storePodcastsFromAPItoDB();
     }
-
-    const queryForAllPodcasts = `
-      SELECT id, data
-      FROM podcasts
-      ORDER BY data->>id
-    `;
-
-    console.log('get all podcasts from DB existing');
-    return db.raw(queryForAllPodcasts)
-      .then(pullDataFromResponse);
   },
   /**
    * Add routes for podcasts
    *
    * @param {object} app
+   * @param {function} checkAuth
    */
-  inject = (app) => {
+  inject = (app, checkAuth) => {
     /**
      * Get the current podcasts
      */
-    app.get('/_podcasts', async (req, res) => {
+    app.put('/_podcasts', checkAuth, async (req, res) => {
       try {
-        const { rows: podcasts } = await getPodcasts();
+        await updatePodcasts();
 
-        res.status(200).send(podcasts);
+        res.status(200).send('podcasts in DB refreshed');
       } catch (e) {
         log('error', e.message);
-        res.status(500).send('There was an error getting current podcasts');
+        res.status(500).send(`There was an error getting current podcasts: ${e.message}`);
       }
     });
   };
 
 module.exports = {
-  getPodcasts,
   inject
 };

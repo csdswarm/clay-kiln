@@ -166,7 +166,7 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
-  podcasts.inject(router);
+  podcasts.inject(router, checkAuth);
 
   addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
