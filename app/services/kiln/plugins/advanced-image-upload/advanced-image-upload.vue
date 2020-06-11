@@ -107,28 +107,26 @@ export default {
       this.fileUploadButtonDisabled = true;
       const file = files[0]
       if(!file || file.type.indexOf('image/') !== 0) return;
-      
-      const base = await this.getFileSize(file);
-      const image = await this.createImage(base);
-      const valid = this.checkImageDimemsions(image);
 
-      // If file attached, exec upload logic.
-      if (file && valid) {
-        /*
-        Send file name and type to backend so backend can generate aws pre-signed request url.
-        This allows us to keep our aws secret on the backend, while still uploading directly
-        from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing
-        attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
-        */
-        uploadFile(file)
-          .then((s3) => {
-            // Build the full s3 image url.
-            this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
-          })
-          .catch(console.error)
-          .finally(() => {
-            this.fileUploadButtonDisabled = false; // Re-enable file upload button.
-          });
+      try {
+        const image = await this.getImageDimensions(file);
+        const valid = this.checkImageDimemsions(image);
+        // If file attached, exec upload logic.
+        if (file && valid) {
+          /*
+          Send file name and type to backend so backend can generate aws pre-signed request url.
+          This allows us to keep our aws secret on the backend, while still uploading directly
+          from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing
+          attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
+          */
+          const s3 = await uploadFile(file);
+          // Build the full s3 image url.
+          this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.fileUploadButtonDisabled = false; // Re-enable file upload button.
       }
     },
     setImageUrl(imageUrl) {
@@ -146,12 +144,15 @@ export default {
 
       this.setImageUrl('');
     },
-    getFileSize(file) {
+    getImageDimensions(file) {
       return new Promise((resolve, reject) => {
       let reader = new FileReader();
       reader.onload = evt => {
-        this.failedFileCheck = false;
-        resolve(evt.target.result)
+        const image = new Image();
+        image.src = evt.target.result;
+        image.onload = () => {
+          resolve({width: image.width, height: image.height})
+        }
       }
       reader.readAsDataURL(file);
       reader.onerror = evt => {
@@ -159,18 +160,6 @@ export default {
         reject(new Error(evt))
       }
 
-      })
-    },
-    createImage(base) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.src = base
-        image.onload = () => {
-          resolve({width: image.width, height: image.height})
-        }
-        image.onerror = evt => {
-          reject(evt)
-        }
       })
     },
     checkImageDimemsions({width, height}) {
@@ -184,6 +173,7 @@ export default {
         this.fileUploadButtonDisabled = false;
         return false;
       }
+      this.failedFileCheck = false;
       return true;
     }
   },
