@@ -134,7 +134,6 @@ const db = require('../../services/server/db'),
       }));
     }
     data._computed.isMultiColumn = isMultiColumn(data);
-
     return Promise.resolve(data);
   },
 
@@ -145,12 +144,12 @@ const db = require('../../services/server/db'),
    * @returns {object}
    */
   save = (ref, data, locals) => {
-    // National recirculation data should default to all-content on the initial render.
-    // locals.newPageStation only exists when saving a station page for the first time.
-    // Ensure we are editing a national page by checking the station id and track that this component has been initialized.
-    if (!locals.newPageStation && locals.station.id === 0 && !data.initialized) {
-      data.populateFrom = 'all-content';
-      data.initialized  = true;
+    // National recirculation data should default to all-content on the initial save.
+    // locals.newPageStation will only exist for station pages. 
+    // Create data.setPopulateFrom in order to only set.
+    if (!locals.newPageStation && data.setPopulateFrom === undefined) {
+      data.populateFrom     = 'all-content';
+      data.setPopulateFrom  = false;
     };
 
     return data;
