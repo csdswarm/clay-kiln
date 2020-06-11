@@ -2,6 +2,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "station-detail";
 
 .component--station-discover {
   .station-discover__dropdown--mobile {
