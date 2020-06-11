@@ -43,7 +43,7 @@
 {{/if}}
           {{#each _computed.content as |feedItem|}}
             <li>
-              <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
+              <a class="links__link {{#if ../_computed.applyStationTheme }}links__link--station-theme {{else}} links__link--{{ feedItem.sectionFront }}{{/if}}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
                  data-track-component-name="more-content-feed"
                  data-track-page-uri="{{ feedItem.pageUri }}"

@@ -185,6 +185,7 @@
       @mixin labelBackground news, $lightningYellow;
       @mixin labelBackground sports, $azureRadience;
       @mixin labelBackground podcasts, $robinsEggBlue;
+      @mixin labelBackground station-theme, $purple;
 
       .link__info {
         padding-left: em(20);
