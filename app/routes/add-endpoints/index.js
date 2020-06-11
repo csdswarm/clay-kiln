@@ -7,7 +7,7 @@ module.exports = {
   importContent: require('./import-content'),
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
-  validSource: require('./valid-source')
+  validSource: require('./valid-source'),
   editorialGroup: require('./editorialGroup'),
   sitemap: require('./sitemap')
 };
