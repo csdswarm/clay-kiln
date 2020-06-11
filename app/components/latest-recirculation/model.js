@@ -145,7 +145,7 @@ const db = require('../../services/server/db'),
    */
   save = (ref, data, locals) => {
     // National recirculation data should default to all-content on the initial save.
-    // locals.newPageStation will only exist for station pages. 
+    // locals.newPageStation will only exist for station pages.
     // Create data.setPopulateFrom in order to only set.
     if (!locals.newPageStation && data.setPopulateFrom === undefined) {
       data.populateFrom     = 'all-content';
