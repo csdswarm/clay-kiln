@@ -1,7 +1,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
-@import "station-detail";
+@import "station-detail.css";
 
 .component--station-recently-played {
   min-height: em(210);
