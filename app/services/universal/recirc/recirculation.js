@@ -489,7 +489,7 @@ const
 
       locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
-      if (skipRender(data, locals)) {
+      if (await skipRender(data, locals)) {
         return render(uri, data, locals);
       }
 

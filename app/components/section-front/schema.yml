@@ -55,6 +55,38 @@ primarySectionFront:
         field: primary
         operator: falsy
 
+includePodcastModule:
+  _label: Include podcast module on page?
+  _has: checkbox
+
+podcastList:
+  _component:
+    include:
+      - podcast-list
+
+
+dividerContainer:
+  _placeholder:
+    text: Add Divider Title
+    height: 30px
+  _componentList:
+    include:
+      - divider
+
+twoColumnComponent:
+  _component:
+    include:
+      - two-column-component
+
+stationsCarousel:
+  _placeholder:
+    text: Stations Carousel
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - stations-carousel
+
 canonicalUrl:
   _publish: url
   _has:
