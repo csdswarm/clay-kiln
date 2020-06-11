@@ -21,9 +21,6 @@
 @define-mixin station-detail-font10 {
   @mixin font CircularStd-Medium, 11px, $boulder, -.58px, 13px;
 }
-@define-mixin station-detail-font11 {
-  @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
-}
 @define-mixin station-detail-font12 {
   @mixin font CircularStd-Medium, 16px, $white, .6px, 20px;
 }
