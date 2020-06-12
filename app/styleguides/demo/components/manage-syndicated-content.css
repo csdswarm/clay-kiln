@@ -1,5 +1,13 @@
 @import "_global/colors";
 
+@define-mixin text-styles {
+  font-family: Noto Sans,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 .manage-syndicated-content {
   min-width: 920px;
   overflow-y: auto;
@@ -48,11 +56,7 @@
     }
     &__station {
       flex: 0 1 150px;
-      font-family: Noto Sans,Arial,sans-serif;
-      font-style: normal;
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 20px;
+      @mixin text-styles;
       text-align: center;
     },
     &__station, &__status {
@@ -83,6 +87,20 @@
     }
     &__unpublish {
       width: 80%;
+    }
+  }
+
+  .syndication-modal {
+    padding: 8px;
+    &__title {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    p {
+      @mixin text-styles;
+    }
+    &__buttons {
+      margin-top: 20px;
     }
   }
 }
