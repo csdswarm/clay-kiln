@@ -60,15 +60,15 @@ _users:
     provider: google
     auth: admin
   -
+    username: Cory.Calhoun@entercom.com
+    provider: google
+    auth: admin
+  -
     username: cristhiam.henao@gorillalogic.com
     provider: cognito
     auth: admin
   -
     username: cristhiam.henao@gorillalogic.com
-    provider: google
-    auth: admin
-  -
-    username: Cory.Calhoun@entercom.com
     provider: google
     auth: admin
   -
@@ -152,11 +152,7 @@ _users:
     provider: google
     auth: admin
   -
-    username: micah.allen@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: micah.allen@swarmsolutions.com
+    username: lauren.hoffman@entercom.com
     provider: google
     auth: admin
   -
@@ -245,6 +241,10 @@ _users:
     auth: admin
   -
     username: phil.olson@swarmsolutions.com
+    provider: cognito
+    auth: admin
+  -
+    username: phil.olson@swarmsolutions.com
     provider: google
     auth: admin
   -
@@ -319,3 +319,4 @@ _users:
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
+

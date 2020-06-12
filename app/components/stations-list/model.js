@@ -1,4 +1,5 @@
 'use strict';
+
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   { playingClass, favoriteModifier } = require('../../services/universal/spaLocals'),
@@ -28,17 +29,27 @@ function getMarketData(locals, { slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params, null, {}, locals).then(response => {
-    if (response.data) {
-      if (id) {
-        return response.data.shift();
+  return radioApiService.get(
+    route,
+    params,
+    null,
+    {
+      amphoraTimingLabelPrefix: 'get market data',
+      shouldAddAmphoraTimings: true
+    },
+    locals
+  )
+    .then(response => {
+      if (response.data) {
+        if (id) {
+          return response.data.shift();
+        }
+        return response.data.find(({ attributes }) => slugifyService(attributes.display_name) === slug) || {};
+      } else {
+        console.log('Error with getMarketData request', response);
+        return {};
       }
-      return response.data.find(({ attributes }) => slugifyService(attributes.display_name) === slug) || {};
-    } else {
-      console.log('Error with getMarketData request', response);
-      return {};
-    }
-  });
+    });
 }
 
 /**
@@ -61,17 +72,27 @@ function getGenreData(locals, { slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params, null, {}, locals).then(response => {
-    if (response.data) {
-      if (id) {
-        return response.data.shift();
+  return radioApiService.get(
+    route,
+    params,
+    null,
+    {
+      amphoraTimingLabelPrefix: 'get genre data',
+      shouldAddAmphoraTimings: true
+    },
+    locals
+  )
+    .then(response => {
+      if (response.data) {
+        if (id) {
+          return response.data.shift();
+        }
+        return response.data.find(({ attributes }) => slugifyService(attributes.name) === slug) || {};
+      } else {
+        console.log('Error with getGenreData request', response);
+        return {};
       }
-      return response.data.find(({ attributes }) => slugifyService(attributes.name) === slug) || {};
-    } else {
-      console.log('Error with getGenreData request', response);
-      return {};
-    }
-  });
+    });
 }
 
 /**
@@ -100,31 +121,41 @@ module.exports.render = async (uri, data, locals) => {
       params['filter[id]'] = stationIDs;
     }
 
-    return radioApiService.get(route, params, null, {}, locals).then(response => {
-      if (response.data) {
-        const stations = stationIDs.split(',').map(stationID => {
-          const station = response.data.find(station => {
-            if (station.id === parseInt(stationID)) {
-              return station;
+    return radioApiService.get(
+      route,
+      params,
+      null,
+      {
+        amphoraTimingLabelPrefix: 'station ids or favorites',
+        shouldAddAmphoraTimings: true
+      },
+      locals
+    )
+      .then(response => {
+        if (response.data) {
+          const stations = stationIDs.split(',').map(stationID => {
+            const station = response.data.find(station => {
+              if (station.id === parseInt(stationID)) {
+                return station;
+              }
+            });
+
+            if (station) {
+              station.attributes.playingClass = playingClass(locals, station.attributes.id);
+              station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
+
+              return station.attributes;
             }
+
+            return null;
           });
 
-          if (station) {
-            station.attributes.playingClass = playingClass(locals, station.attributes.id);
-            station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
-
-            return station.attributes;
-          }
-
-          return null;
-        });
-
-        data.stations = stations.filter(station => station);
-        return data;
-      } else {
-        return returnStationless(data);
-      }
-    });
+          data.stations = stations.filter(station => station);
+          return data;
+        } else {
+          return returnStationless(data);
+        }
+      });
   }
 
   if (data.filterBy === 'recent') {
@@ -246,19 +277,29 @@ module.exports.render = async (uri, data, locals) => {
       }
     }
 
-    return radioApiService.get(route, params, null, {}, locals).then(response => {
-      if (response.data) {
-        data.stations = response.data ? response.data.map((station) => {
-          station.attributes.playingClass = playingClass(locals, station.attributes.id);
-          station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
+    return radioApiService.get(
+      route,
+      params,
+      null,
+      {
+        amphoraTimingLabelPrefix: 'render else',
+        shouldAddAmphoraTimings: true
+      },
+      locals
+    )
+      .then(response => {
+        if (response.data) {
+          data.stations = response.data ? response.data.map((station) => {
+            station.attributes.playingClass = playingClass(locals, station.attributes.id);
+            station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
 
-          return station.attributes;
-        }) : [];
-        data.stationIds = data.stations.map((station) => { return { id: station.id }; });
-        return data;
-      } else {
-        return data;
-      }
-    });
+            return station.attributes;
+          }) : [];
+          data.stationIds = data.stations.map((station) => { return { id: station.id }; });
+          return data;
+        } else {
+          return data;
+        }
+      });
   }
 };

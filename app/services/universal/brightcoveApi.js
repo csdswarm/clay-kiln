@@ -8,7 +8,7 @@ const log = require('./log').setup({ file: __filename }),
   rest = require('./rest'),
   brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/`,
   brightcoveIngestApi = `ingest.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/videos/`,
-  brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
+  brightcoveVideoViewsApi = `analytics.api.brightcove.com/v1/alltime/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/videos/`,
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
   radioApi = require('../server/radioApi'),
@@ -26,17 +26,12 @@ const log = require('./log').setup({ file: __filename }),
    * @param {object} params
    * @returns {string}
    */
-  getBrightcoveUrl = (api, params) => {
+  getBrightcoveUrl = (api) => {
     let url;
 
     switch (api) {
       case 'analytics':
-        // analytics data endpoint is odd... "accounts" is a param
-        // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
-        url = brightcoveAnalyticsApi;
-        if (params) {
-          params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
-        }
+        url = brightcoveVideoViewsApi;
         break;
       case 'ingest':
         url = brightcoveIngestApi;
@@ -56,7 +51,7 @@ const log = require('./log').setup({ file: __filename }),
    * @returns {string}
    */
   createEndpoint = (route, params, api) => {
-    const apiUrl = getBrightcoveUrl(api, params),
+    const apiUrl = getBrightcoveUrl(api),
       decodeParams = params ? `?${ decodeURIComponent(qs.stringify(params)) }` : '';
 
     route = route || '';
