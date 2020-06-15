@@ -36,7 +36,7 @@ module.exports = unityComponent({
           for (let i = 0; i < podcasts.length; i++) {
             const podcast = podcasts[i];
 
-            podcast.attributes.url = podcastService.createUrl(podcast.attributes.title);
+            podcast.attributes.url = podcastService.createUrl(podcast.attributes.site_slug);
           }
         }
 

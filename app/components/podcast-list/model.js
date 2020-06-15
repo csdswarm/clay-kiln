@@ -69,7 +69,7 @@ module.exports.render = async function (ref, data, locals) {
       const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
         numItemsToBackFill = maxItems - curatedCount,
         uniqueUrls = (podcast) => {
-          const url = utils.createUrl(podcast.attributes.title);
+          const url = utils.createUrl(podcast.attributes.site_slug);
 
           return !containsUrl(data.items, url);
         },

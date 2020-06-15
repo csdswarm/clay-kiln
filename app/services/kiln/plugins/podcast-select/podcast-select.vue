@@ -78,7 +78,7 @@
                             return {
                                 label: podcast.attributes.title,
                                 title: podcast.attributes.title,
-                                url: utils.createUrl(podcast.attributes.title),
+                                url: utils.createUrl(podcast.attributes.site_slug),
                                 imageUrl: utils.createImageUrl(podcast.attributes.image),
                                 description: podcast.attributes.description
                             }
