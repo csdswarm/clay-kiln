@@ -108,7 +108,7 @@ const db = require('../server/db'),
         res.status(200).send('podcasts in DB refreshed');
       } catch (e) {
         log('error', e.message);
-        res.status(500).send(`There was an error getting current podcasts: ${e.message}`);
+        res.status(500).send('There was an error getting current podcasts');
       }
     });
   };
