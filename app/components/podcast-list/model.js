@@ -77,7 +77,7 @@ module.exports.render = async function (ref, data, locals) {
           .filter(uniqueUrls)
           .slice(0, numItemsToBackFill)
           .map((podcast) => {
-            const url = utils.createUrl(podcast.attributes.title);
+            const url = utils.createUrl(podcast.attributes.site_slug);
 
             return {
               podcast: {
