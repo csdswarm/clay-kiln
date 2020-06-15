@@ -1,5 +1,6 @@
-const { clayImport, clayExport, readFile, prettyJSON, _has, _set } = require('../migration-utils').v1,
-  axios = require('../../../app/node_modules/axios'),
+'use strict';
+
+const axios = require('../../../app/node_modules/axios'),
   host = process.argv.slice(2)[0];
 
 console.log('\n NATIONAL CONTEST PAGE \n');
@@ -22,7 +23,7 @@ async function createLatestRecircInstance () {
 
   await axios.put(`http://${host}/_components/latest-recirculation/instances/national-contest`, data, { headers: { Authorization: 'token accesskey', 'Content-Type': 'application/json' } })
     .then((response) => {
-      console.log('Successfully added to National Latest Recirculation instance. \n', response.data);
+      console.log('Successfully created National Latest Recirculation instance. \n', response.data);
     })
     .catch((error) => {
       console.log('An error occured creating the National Latest Reciculation instance. \n ERROR: ', error);
@@ -57,7 +58,7 @@ async function createNationalContestPage () {
 
   await axios.put(`http://${host}/_pages/national-contest`, data, { headers: { Authorization: 'token accesskey', 'Content-Type': 'application/json' } })
     .then((response) => {
-      console.log('Successfully added National Contest Page. \n', response.data);
+      console.log('Successfully created National Contest Page. \n', response.data);
     })
     .catch((error) => {
       console.log('An error occured creating the National Contest page. \n ERROR: ', error);
