@@ -1,53 +1,61 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .national-subscriptions {
-
-    &__header {
-        width: 900px;
-    }
-
-    &__page-list-headers {
-        width: 900px;
-
-        &.page-list-headers {
-            &__description, &__updated {
-                flex: 1 1 em(225);
-                align-items: center;
-            }
+  min-width: calc(100vw - 200px);
+  padding: 1em;
+  overflow-y: auto;
+  .add-subscription-btn {
+    margin-bottom: 0.5em;
+  }
+  .subscriptions {
+    width: 100%;
+    thead {
+      background: $mineShaft;
+      color: $white;
+      text-transform: uppercase;
+      th {
+        padding: 0.5em 1em;
+        &.filter, &.description {
+          width: 35%;
         }
-    }
-
-    &__page-list-item {
-        &__description, &__updated {
-            flex: 1 1 em(225);
-            padding: em(5);
+        &.actions, &.slug {
+          width: 5%;
         }
-
-        &__filter {
-            flex: 1 1 em(225);
-            padding: em(6);
-
-            > dt, > dd {
-                display: inline-block;
-                padding: em(6);
-            }
-
-            > dt {
-                font-weight: bold;
-            }
-        }
+      }
     }
-
-    &-page-list-item__link {
-        font-size: em(14);
-
-        > a {
-            font-style: italic;
-            color: inherit;
-            text-decoration: inherit;
-        }
+    tbody {
+      tr {
+      background: $white;
+      &:nth-of-type(odd) {
+        background: $alabaster;
+      }
+      td {
+        padding: 0.5em 1em;
+      }
     }
-
-}
-
-.national-subscriptions__button {
-    text-align: left;
+    }
+    .filterList {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .filterList-item-key {
+      font-weight: bold;
+    }
+    .filterList-item-value {
+      padding-left: 0.5em;
+      color: $doveGray;
+      font-weight: 300;
+    }
+    .edit-subscription-btn {
+      margin-right: 0.35em;
+    }
+    .row-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
