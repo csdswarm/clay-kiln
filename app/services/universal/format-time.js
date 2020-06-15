@@ -31,18 +31,20 @@ function formatDateRange(dateFrom = '', dateTo = '', format = 'MMMM D, YYYY') {
  *
  * @param {Date} dateFrom
  * @param {Date} dateTo
+ * @param {String} [parseFormat]
  * @param {String} [format]
  * @param {String} [separator]
  * @returns {String}
  *
  */
-function formatDateTimeRange(dateFrom, dateTo,
+function formatDateTimeRange({ hash: {
+  dateFrom, dateTo,
   format = 'MMMM D, YYYY [at] h:mma',
-  separator = ' through ') {
+  separator = ' through ' } }) {
 
   if (dateFrom && dateTo) {
     return `${
-      moment(dateFrom).format(format)
+      moment.utc(dateFrom).format(format)
     }${ separator }${ moment(dateTo).format(format) }`;
   } else {
     return '';
