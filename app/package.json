@@ -136,6 +136,7 @@
     "istanbul": "^0.4.5",
     "localforage": "^1.7.1",
     "mocha": "^6.0.0",
+    "mock-local-storage": "^1.1.11",
     "pg": "^7.12.1",
     "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",
