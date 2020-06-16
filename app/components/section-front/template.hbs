@@ -23,7 +23,9 @@
   <div class="section-front__main-content" data-editable="mainContent">
     {{> component-list mainContent }}
   </div>
-  {{> google-ad-manager googleAdUnderStationsModule}}
+  {{#if googleAdUnderStationsModule }}
+    {{> google-ad-manager googleAdUnderStationsModule }}
+  {{/if}}
   {{#if includePodcastModule }}
     {{> podcast-list podcastList }}
   {{/if}}
