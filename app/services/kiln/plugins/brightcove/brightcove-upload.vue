@@ -74,7 +74,7 @@
       <ui-textbox
         multiLine
         floating-label
-        label="Additional Keywords (Separate with commas)"
+        label="Video Tags (separated by commas)"
         help="Use no fewer than 3 keywords per video including categories selected above."
         v-model="additionalKeywords"
       ></ui-textbox>
