@@ -121,6 +121,10 @@ module.exports.render = async function (ref, data, locals) {
       });
     }
 
+    if (data.excludeSubscriptions) {
+      queryService.addMustNot(query, { match: { } });
+    }
+
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
