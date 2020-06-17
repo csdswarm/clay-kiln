@@ -20,6 +20,11 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
@@ -59,7 +64,9 @@ const _get = require('lodash/get'),
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
 
   DEFAULT_STATION = {
@@ -92,7 +99,6 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: '',
-
     // in an ideal world we could store our hardcoded station in URPS, but due
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
@@ -102,20 +108,19 @@ const _get = require('lodash/get'),
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
-
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
   DAY,
+  DEFAULT_RADIOCOM_LOGO,
+  DEFAULT_STATION,
+  HOUR,
+  MINUTE,
+  PAGE_TYPES,
+  SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
   WEEK,
   YEAR,
   contentTypes,
-  time,
   msnFeed,
-  SERVER_SIDE,
-  PAGE_TYPES,
-  DEFAULT_RADIOCOM_LOGO,
-  DEFAULT_STATION
+  time
 };

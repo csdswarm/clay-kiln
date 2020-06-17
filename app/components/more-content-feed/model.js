@@ -2,6 +2,7 @@
 const _get = require('lodash/get'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   { sendError } = require('../../services/universal/cmpt-error'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   maxItems = 10,
   elasticFields = [
     'primaryHeadline',
@@ -34,9 +35,12 @@ const _get = require('lodash/get'),
     }
 
     Object.assign(data._computed, {
+      stationId: _get(locals, 'station.id'),
       lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
     });
 
+    // ON-1995: The data.station property is not filled when is done using the migration script and older components may no have the property set properly.
+    data._computed.applyStationTheme = _get(locals, 'station.id') !== DEFAULT_STATION.id;
     return data;
   };
 

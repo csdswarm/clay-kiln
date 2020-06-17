@@ -43,7 +43,7 @@
 {{/if}}
           {{#each _computed.content as |feedItem|}}
             <li>
-              <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
+              <a class="links__link {{#if ../_computed.applyStationTheme }}links__link--station-theme {{else}} links__link--{{ feedItem.sectionFront }}{{/if}}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
                  data-track-component-name="more-content-feed"
                  data-track-page-uri="{{ feedItem.pageUri }}"
@@ -109,7 +109,8 @@
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
-        {{#if author}}data-author="{{ author }}"{{/if}}>
+        {{#if author}}data-author="{{ author }}"{{/if}}
+        {{#if _computed.stationId}}data-station="{{ _computed.stationId }}"{{/if}}>
       <button class="more-content-feed__loadmore">
         <div class="loadmore__text">Load More</div>
       </button>

@@ -2,6 +2,50 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin station-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, .23px, 18px;
+}
+
+@define-mixin station-nav-font2 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, .23px, 17px;
+}
+
+@define-mixin station-nav-font3 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, -.4px, 28px;
+}
+
+@define-mixin station-nav-font4 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-nav-font5 {
+  @mixin font CircularStd-Black, 16px, $station-primaryFontColor, .6px, 19px;
+}
+
+@define-mixin station-listen-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
+@define-mixin station-listen-nav-font1-1 {
+  @mixin font CircularStd-BlackItalic, 15px, $station-secondaryFontColor, .24px, 18px;
+}
+
+@define-mixin station-listen-nav-font2 {
+  @mixin font ProximaNova-Regular, 12px, $station-secondaryFontColor, -.23px, 14px;
+}
+
+@define-mixin station-listen-nav-font3 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-listen-nav-font4 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.25px, 28px;
+}
+
+@define-mixin station-listen-nav-font5 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
 $logo-margin-right: em(40);
@@ -97,13 +141,15 @@ $caret-margin-right: em(25);
           }
         }
       }
-
-      .menu__image {
-        width: $station-logo-width-height;
-        height: $station-logo-width-height;
+      .menu__image-anchor {
         margin-right: $logo-margin-right;
         margin-bottom: em(15);
         margin-top: em(15);
+      }
+      .menu__image {
+        display: block;
+        width: $station-logo-width-height;
+        height: $station-logo-width-height;
         @mixin medium-small-screen {
           width: $station-logo-width-height-med-screen;
           height: $station-logo-width-height-med-screen;

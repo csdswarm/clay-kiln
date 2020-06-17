@@ -9,6 +9,8 @@ const db = require('../../services/server/db'),
   { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   getS3StationFeedImgUrl = require('../../services/server/get-s3-station-feed-img-url'),
+  queryService = require('../../services/server/query'),
+  log = require('../../services/universal/log').setup({ file: __filename }),
   elasticFields = [
     'date',
     'primaryHeadline',
@@ -89,7 +91,6 @@ const db = require('../../services/server/db'),
         ),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
-      data._computed.station = station.name;
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
         const feedImgUrl = _get(item, "node['OG Image'].src"),
           s3FeedImgUrl = feedImgUrl
@@ -110,6 +111,32 @@ const db = require('../../services/server/db'),
     return data;
   },
 
+
+  /**
+   * Determines whether or not a station is migrated, given the station slug
+   * @param {string} stationSlug
+   * @param {object} locals
+   * @returns {Promise<boolean>}
+   */
+  isStationMigrated = async function (stationSlug, locals) {
+    if (!stationSlug) {
+      return false;
+    }
+
+    const query = queryService.newQueryWithCount('published-stations', 1, locals);
+
+    queryService.addMust(query, { match: { stationSlug } });
+
+    try {
+      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: false });
+
+      return results.length > 0;
+    } catch (e) {
+      log('error', e);
+      return false;
+    }
+  },
+
   /**
    * @param {string} ref
    * @param {object} data
@@ -118,16 +145,20 @@ const db = require('../../services/server/db'),
    */
   render = async function (ref, data, locals) {
     if (data.populateFrom === 'station' && locals.params) {
-      return renderStation(data, locals);
+      data._computed.station = locals.station.name;
+      if (!data._computed.isMigrated) {
+        return renderStation(data, locals);// gets the articles from drupal and displays those instead
+      }
     }
 
-    const primarySectionFronts = await retrieveList(
-      'primary-section-fronts',
-      locals,
-      { shouldAddAmphoraTimings: true }
-    );
-
     if (data._computed.articles) {
+      const primarySectionFronts = await retrieveList(
+        'primary-section-fronts', {
+          locals,
+          shouldAddAmphoraTimings: true
+        }
+      );
+
       data._computed.articles = data._computed.articles.map(item => ({
         ...item,
         label: getSectionFrontName(item.sectionFront, primarySectionFronts)
@@ -148,7 +179,6 @@ module.exports = recirculationData({
   },
   render,
   shouldAddAmphoraTimings: true,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params,
   mapResultsToTemplate: (locals, result, item = {}) => {
     return Object.assign(item, {
       canonicalUrl: item.url || result.canonicalUrl,
@@ -158,5 +188,19 @@ module.exports = recirculationData({
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       sectionFront: item.overrideSectionFront || result.sectionFront
     });
+  },
+  skipRender: async (data, locals) => {
+    const isStation = data.populateFrom === 'station' && locals.params;
+
+    if (isStation) {
+      const slug = locals.station && locals.station.site_slug,
+        isMigrated = await isStationMigrated(slug);
+
+      data._computed.isMigrated = isMigrated;
+
+      return !isMigrated;
+    }
+
+    return false;
   }
 });

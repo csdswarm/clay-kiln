@@ -27,6 +27,9 @@ class MoreContentFeed {
       if (this.loadMore.getAttribute('data-section')) {
         this.sectionFront = this.loadMore.getAttribute('data-section') || '';
       }
+      if (this.loadMore.getAttribute('data-station')) {
+        this.stationId = this.loadMore.getAttribute('data-station') || '';
+      }
     }
   }
 
@@ -66,6 +69,9 @@ class MoreContentFeed {
     }
     if (this.sectionFront) {
       moreContentUrl += `&sectionFront=${this.sectionFront}`;
+    }
+    if (this.stationId) {
+      moreContentUrl += `&stationId=${this.stationId}`;
     }
 
     const links = await fetchDOM(moreContentUrl, { shouldDedupeContent: true }) ;
