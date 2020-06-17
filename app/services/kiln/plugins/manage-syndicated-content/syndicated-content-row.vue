@@ -16,7 +16,7 @@
       <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
       <div v-else-if="status === 'available'">
         <ui-button class="buttons-group__syndicate" buttonType="button" color="green" @click.stop="onSyndicate">Syndicate</ui-button>
-        <ui-button class="buttons-group__clone" buttonType="button" color="accent">Clone</ui-button>
+        <ui-button class="buttons-group__clone" buttonType="button" color="accent" :loading="cloneLoading" @click="clonePage(content.canonicalUrl)">Clone</ui-button>
       </div>
     </div>
   </div>
@@ -32,6 +32,8 @@
   import isThisYear from 'date-fns/is_this_year';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
   import { findSyndicatedStation } from '../../../universal/syndication-utils';
+  import { pagesRoute,refProp, uriToUrl, htmlExt, editExt } from '../new-page-override/clay-kiln-utils';
+  import axios from 'axios';
 
   const { UiButton } = window.kiln.utils.components,
     nationalStationName = DEFAULT_STATION.name,
@@ -64,6 +66,11 @@
 
   export default {
     props: ['content', 'stationFilter'],
+    data() {
+      return {
+        cloneLoading: false
+      }
+    },
     computed: {
       selectedStation() {
         return this.stationFilter;
@@ -118,6 +125,22 @@
       }
     },
     methods: {
+      async clonePage(canonicalUrl) {
+        this.cloneLoading = true;
+
+        const prefix = _.get(this.$store, 'state.site.prefix'),
+          { data: newPage } = await axios.post(
+            uriToUrl(`${prefix}/clone-content`),
+            {
+              canonicalUrl,
+              stationSlug: this.selectedStation.slug
+            },
+            { withCredentials: true }
+          ),
+          editNewPageUrl = uriToUrl(newPage[refProp]) + htmlExt + editExt;
+
+      window.location.href = editNewPageUrl;
+      },
       /**
        * generate a content url to link to
        * @param  {object} syndicatedStation
