@@ -54,8 +54,8 @@
           @input="updateSectionFront('secondary', ...arguments)"/>
       </template>
       <div class="syndication-modal__buttons">
-        <ui-button buttonType="button" @click="saveSyndication" color="green">Save</ui-button>
-        <ui-button buttonType="button" @click="closeModal">Close</ui-button>
+        <ui-button buttonType="button" @click.stop="saveSyndication" :loading="saveLoading" color="green">Save</ui-button>
+        <ui-button buttonType="button" @click.stop="closeModal">Close</ui-button>
       </div>
     </ui-modal>
   </div>
@@ -63,6 +63,7 @@
 
 <script>
   import _ from 'lodash';
+  import axios from 'axios';
   import { mapGetters } from 'vuex';
   import stationSelect from '../../shared-vue-components/station-select';
   import StationSelectInput from '../../shared-vue-components/station-select/input.vue';
@@ -72,6 +73,7 @@
   import { isUrl } from '../../../universal/utils';
 
   const { UiButton, UiIconButton, UiTextbox, UiModal, UiSelect } = window.kiln.utils.components,
+    { uriToUrl } = window.kiln.utils.urls,
     { locals } = window.kiln,
     INDEX = 'published-content',
     CONTENT_TYPES = [
@@ -101,6 +103,7 @@
         total: null,
         content: [],
         stationFilter: null,
+        saveLoading: false,
         selectedContentId: null,
         stationSectionFronts: null,
         selectedSectionFronts: {}
@@ -133,7 +136,12 @@
           host = isUrl(this.queryText) ? searchString.split('/')[0] : '',
           transformResult = (formattedResult, rawResult) => ({ content: formattedResult, total: _.get(rawResult, 'hits.total') });
 
-        queryService.addSort(query, { dateModified: { order: 'desc'} });
+        let result = {
+          content: [],
+          total: 0
+        };
+
+        queryService.addSort(query, { date: { order: 'desc'} });
         queryService.addOffset(query, this.offset);
         queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
 
@@ -173,15 +181,20 @@
 
         queryService.addMust(query, searchCondition);
 
-        const result = await queryService.searchByQuery(
-          query,
-          locals,
-          {
-            shouldDedupeContent: false,
-            includeIdInResult: true,
-            transformResult
-          }
-        );
+        try {
+          result = await queryService.searchByQuery(
+            query,
+            locals,
+            {
+              shouldDedupeContent: false,
+              includeIdInResult: true,
+              transformResult
+            }
+          );
+        } catch (e) {
+          queryService.logCatch(e, 'content-search');
+          console.error('Error querying Elastic', e);
+        }
 
         return result;
       },
@@ -201,15 +214,19 @@
           this.total = total;
         });
       },
-      filterList: _.debounce(function() {
-        this.cleanSearch();
-        this.performSearch();
-      }, 300),
       cleanSearch() {
         this.offset = 0;
         this.total = 0;
         this.content = [];
       },
+      filterList: _.debounce(function() {
+        this.cleanSearch();
+        this.performSearch();
+      }, 300),
+      reloadContent: _.debounce(function() {
+        this.cleanSearch();
+        this.performSearch();
+      }, 2000),
       loadSectionFronts() {
         const { slug, name, callsign } = this.stationFilter,
           label = `${name} | ${callsign}`,
@@ -221,15 +238,15 @@
         Promise.all([
           retrieveList(`${slug}-primary-section-fronts`),
           retrieveList(`${slug}-secondary-section-fronts`),
-        ]).then(([primarySectionFronts, secondarySectionFronts]) => {
+        ])
+        .then(([primarySectionFronts, secondarySectionFronts]) => {
           this.stationSectionFronts = {
             label,
             primaryOptions: transformSectionFronts(primarySectionFronts),
             secondaryOptions: transformSectionFronts(secondarySectionFronts)
           };
-        }).catch(() => {
-          this.stationSectionFronts = null;
-        });
+        })
+        .catch(() => this.stationSectionFronts = null);
       },
       updateSectionFront(property, value) {
         this.selectedSectionFronts = { ...this.selectedSectionFronts, [property]: value };
@@ -240,11 +257,38 @@
         this.$refs.syndicationModal.open();
       },
       closeModal() {
-        this.$refs.syndicationModal.close();
         this.selectedContentId = null;
+        this.$refs.syndicationModal.close();
+        this.saveLoading = false;
       },
-      saveSyndication() {
+      async saveSyndication() {
+        this.saveLoading = true;
+        const prefix = _.get(this.$store, 'state.site.prefix');
+
+        await axios.put(
+          uriToUrl(`${prefix}/rdc/create-syndication`),
+          {
+            uri: this.selectedContentId,
+            syndicationData: this.getSyndicationData()
+          },
+          { withCredentials: true }
+        );
+
+        this.reloadContent();
         this.closeModal();
+      },
+      getSyndicationData() {
+        const { slug: stationSlug, name: stationName, callsign } = this.stationFilter,
+          sectionFronts = this.selectedSectionFronts;
+
+        return {
+          stationSlug,
+          stationName,
+          callsign,
+          sectionFront: _.get(sectionFronts, 'primary.value'),
+          secondarySectionFront: _.get(sectionFronts, 'secondary.value'),
+          source: 'manual syndication'
+        };
       }
     },
     components: {

@@ -15,7 +15,12 @@
     <div class="page-list-item__manage buttons-group">
       <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
       <div v-else-if="status === 'available'">
-        <ui-button class="buttons-group__syndicate" buttonType="button" color="green" @click.stop="onSyndicate">Syndicate</ui-button>
+        <ui-button
+          class="buttons-group__syndicate"
+          buttonType="button" color="green"
+          @click.stop="onSyndicate"
+          :loading="syndicationLoading"
+        >Syndicate</ui-button>
         <ui-button class="buttons-group__clone" buttonType="button" color="accent">Clone</ui-button>
       </div>
     </div>
@@ -64,6 +69,11 @@
 
   export default {
     props: ['content', 'stationFilter'],
+    data() {
+      return {
+        syndicationLoading: false
+      };
+    },
     computed: {
       selectedStation() {
         return this.stationFilter;
@@ -78,6 +88,8 @@
           findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(content.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
+
+        this.syndicationLoading = false;
 
         /*
           if the station slug of a content is equal to current selected station
@@ -135,6 +147,7 @@
         return syndicatedArticleSlug ? `${host}${syndicatedArticleSlug}` : canonicalUrl;
       },
       onSyndicate() {
+        this.syndicationLoading = true;
         this.$emit('createSyndication', this.content._id);
       },
     },
