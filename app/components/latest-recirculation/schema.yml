@@ -110,6 +110,11 @@ excludeSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 excludeTags:
   _label: Exclude Tags
   _has:
@@ -173,6 +178,7 @@ _groups:
       - excludeSectionFronts
       - excludeSecondarySectionFronts
       - excludeTags
+      - excludeSubscriptions
       - items
     _placeholder:
       ifEmpty: 'populateFrom'

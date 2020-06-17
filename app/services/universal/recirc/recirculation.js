@@ -61,6 +61,7 @@ const
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
       sectionFronts: boolObjectToArray(data.excludeSectionFronts),
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+      subscriptions: data.excludeSubscriptions ? ['all'] : [],
       tags: (data.excludeTags || []).map(tag => tag.text)
     },
     curated: data.items || []

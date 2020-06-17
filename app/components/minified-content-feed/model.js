@@ -10,6 +10,7 @@ const
 
   excludedSecondarySectionFronts = ({ excludeSecondarySectionFronts }) => boolKeys(excludeSecondarySectionFronts || {}),
   excludedSectionFronts = ({ excludeSectionFronts }) => boolKeys(excludeSectionFronts || {}),
+  excludedSubscriptions = ({ excludeSubscriptions }) => excludeSubscriptions ? ['all'] : [],
   excludedTags = ({ excludeTags }) => (excludeTags || []).map(({ text }) => text),
   getSecondarySectionFront = (data, locals) => data.secondarySectionFrontManual || locals.secondarySectionFront,
   getSectionFront = (data, locals) => data.sectionFrontManual || locals.sectionFront,
@@ -88,6 +89,7 @@ module.exports = recirculationData({
       ...{
         secondarySectionFronts: excludedSecondarySectionFronts(data),
         sectionFronts: excludedSectionFronts(data),
+        subscriptions: excludedSubscriptions(data),
         tags: excludedTags(data)
       }
     },

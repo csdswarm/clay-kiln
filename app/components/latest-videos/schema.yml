@@ -2,6 +2,11 @@ _version: 5.0
 _description: |
   Latest videos module
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 items:
   _label: Latest Videos
   _has:
@@ -72,4 +77,5 @@ _groups:
       - primaryContentLabel
       - filterTags
       - filterSecondarySectionFronts
+      - excludeSubscriptions
 

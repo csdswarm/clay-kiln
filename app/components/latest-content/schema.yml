@@ -30,6 +30,11 @@ contentType:
       - article
       - gallery
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 sportsItems:
   _label: Sports Articles
   _has:
@@ -183,6 +188,7 @@ _groups:
       - contentType
       - filterTags
       - filterSecondarySectionFronts
+      - excludeSubscriptions
   musicItems:
     fields:
       - musicItems

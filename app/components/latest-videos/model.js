@@ -23,6 +23,7 @@ module.exports = recirculationData({
       sectionFronts: ''
     },
     excludes: {
+      subscriptions: data.excludeSubscriptions ? ['all'] : [],
       tags: excludedTags(data)
     },
     maxItems

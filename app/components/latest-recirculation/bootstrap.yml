@@ -9,4 +9,5 @@ _components:
     secondarySectionFront: ''
     excludeSectionFronts: ''
     excludeSecondarySectionFronts: ''
+    excludeSubscriptions: false
     excludeTags: ''
