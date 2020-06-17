@@ -5,30 +5,7 @@ const axios = require('../../../app/node_modules/axios'),
 
 console.log('\n NATIONAL CONTEST PAGE \n');
 
-createLatestRecircInstance();
 createNationalContestPage();
-
-async function createLatestRecircInstance () {
-  const data = {
-      "tag": "",
-      "items": [],
-      "populateBy": "all-content",
-      "contentType": {
-        "article": true,
-        "gallery": true,
-      },
-  };
-
-  console.log('Creating National Latest Recirculation instance.');
-
-  await axios.put(`http://${host}/_components/latest-recirculation/instances/national-contest`, data, { headers: { Authorization: 'token accesskey', 'Content-Type': 'application/json' } })
-    .then((response) => {
-      console.log('Successfully created National Latest Recirculation instance. \n', response.data);
-    })
-    .catch((error) => {
-      console.log('An error occured creating the National Latest Reciculation instance. \n ERROR: ', error);
-    });
-};
 
 async function createNationalContestPage () {
   const data = {

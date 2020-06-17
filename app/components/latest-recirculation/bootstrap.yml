@@ -10,3 +10,9 @@ _components:
     excludeSectionFronts: ''
     excludeSecondarySectionFronts: ''
     excludeTags: ''
+    instances:
+      national-contest:
+        items: []
+        tag: ''
+        populateBy: all-content
+        contentType: {article: true, gallery: true}
