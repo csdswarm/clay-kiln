@@ -13,7 +13,7 @@
       <span v-if="statusTime" class="status-time">{{ statusTime }}</span>
     </div>
     <div class="page-list-item__manage buttons-group">
-      <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
+      <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red" @click.stop="onUnpublish" :loading="unpublishLoading">Unpublish</ui-button>
       <div v-else-if="status === 'available'">
         <ui-button class="buttons-group__syndicate" buttonType="button" color="green" @click.stop="onSyndicate">Syndicate</ui-button>
         <ui-button class="buttons-group__clone" buttonType="button" color="accent">Clone</ui-button>
@@ -33,7 +33,8 @@
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
   import { findSyndicatedStation } from '../../../universal/syndication-utils';
 
-  const { UiButton } = window.kiln.utils.components,
+  const axios = require('axios'),
+    { UiButton } = window.kiln.utils.components,
     nationalStationName = DEFAULT_STATION.name,
     formatHM = (date) => ' ' + dateFormat(date, 'h:mm A');
 
@@ -63,6 +64,11 @@
   }
 
   export default {
+    data() {
+      return {
+        unpublishLoading: false
+      }
+    },
     props: ['content', 'stationFilter'],
     computed: {
       selectedStation() {
@@ -137,6 +143,16 @@
       onSyndicate() {
         this.$emit('createSyndication', this.content._id);
       },
+      /**
+       * unpublish syndicated station from content
+       */
+      async onUnpublish() {
+        this.unpublishLoading = true;
+        await axios.put('/rdc/unpublish-syndication', { uri: this.content._id, station: this.selectedStation });
+        // Reload content to refresh updated data
+        this.$emit('reloadContent', null);
+        this.unpublishLoading = false;
+      }
     },
     components: {
       UiButton

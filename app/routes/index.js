@@ -160,5 +160,6 @@ module.exports = router => {
   addEndpoints.imageInfo(router, checkAuth);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
+  addEndpoints.syndicationContent(router);
   addEndpoints.signOut(router);
 };

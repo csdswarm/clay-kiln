@@ -29,6 +29,7 @@
         :content="contentItem"
         :stationFilter="stationFilter"
         @createSyndication="openModal"
+        @reloadContent="reloadContent"
       ></syndicated-content-row>
       <div class="content-rows__load-more page-list-load-more" v-if="showLoadMore">
         <ui-button type="secondary" class="page-list-load-more-button" @click="performSearch">Load More</ui-button>
@@ -205,6 +206,10 @@
         this.cleanSearch();
         this.performSearch();
       }, 300),
+      reloadContent: _.debounce(function() {
+        this.cleanSearch();
+        this.performSearch();
+      }, 1000),
       cleanSearch() {
         this.offset = 0;
         this.total = 0;
