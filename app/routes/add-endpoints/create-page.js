@@ -67,14 +67,14 @@ module.exports = router => {
       
       QUERY = `SELECT 
       u.data FROM uris u 
-      WHERE u.url = '${url}'`,
+      WHERE u.url = ?`,
 
-      contentPageURL = await db.raw(QUERY).then(results => _get(results, 'rows[0].data'));
-      
+      contentPageURL = await db.raw(QUERY, [url]).then(results => _get(results, 'rows[0].data'));
+    
     let { data: pageBody } = await axios.get(utils.uriToUrl(`${contentPageURL}@published`, locals));
       
     if (!pageBody) {
-      res.status(400).send({ error: 'Page not found' });
+      res.status(404).send({ error: 'Page not found' });
       return;
     }
 
