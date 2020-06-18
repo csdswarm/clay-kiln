@@ -126,23 +126,39 @@ const utils = require('../universal/utils'),
     }
   },
   /**
-   * Gets a row in a postgres table filtering a particular column
+   * Gets the list of available url syndicated/unsyndicated
    *
-   * @param {string} table
-   * @param {string} fields
-   * @param {strin} key - unused, only here for api compatibility with client/db.js
    * @param {any} val
    *
    * @returns {Promise}
    */
-  getSelectedFields = async (table, fields, key, val) => {
+  getUrls = async (val) => {
     return db.raw(`
-      SELECT ${fields} FROM ${table}
-      WHERE ${key} = ?
+      SELECT url FROM uris
+      WHERE data = ?
     `, [val])
       .then(({ rows }) => {
         if (!rows.length) {
-          return Promise.reject(new Error(`No result found in ${ table } for ${ key }`));
+          return Promise.reject(new Error(`No result found in url for ${ val }`));
+        }
+        return rows;
+      });
+  },
+  /**
+   * Gets the row with the id of the canonical url
+   *
+   * @param {any} canonical
+   *
+   * @returns {Promise}
+   */
+  getCanonicalRedirect = async canonical => {
+    return db.raw(`
+      SELECT id FROM uris
+      WHERE url = ?
+    `, [canonical])
+      .then(({ rows }) => {
+        if (!rows.length) {
+          return Promise.reject(new Error(`No result found in uris for ${ canonical }`));
         }
         return rows;
       });
@@ -195,18 +211,16 @@ const utils = require('../universal/utils'),
   /**
    * Update a row in a postgres table for a particular column
    *
-   * @param {string} tableName
    * @param {any} key
-   * @param {string} whereClause
    * @param {any} keyToChange
    *
    * @returns {Promise}
    */
-  putSelectedFields = async (tableName, key, whereClause, keyToChange) => {
+  setUri = async (key, keyToChange) => {
     return db.raw(`
-      UPDATE ${tableName}
+      UPDATE uris
       SET data = ?
-      WHERE ${whereClause} = ?
+      WHERE url = ?
     `, [key, keyToChange]);
   },
   /**
@@ -234,6 +248,7 @@ module.exports = {
   ensureTableExists,
   DATA_STRUCTURES,
   getComponentData,
-  getSelectedFields,
-  putSelectedFields
+  getUrls,
+  getCanonicalRedirect,
+  setUri
 };
