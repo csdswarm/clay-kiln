@@ -625,6 +625,7 @@ async function save(uri, data, locals) {
 
 module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 module.exports.updateStationSyndicationType = updateStationSyndicationType;
+module.exports.addStationSyndicationSlugs = addStationSyndicationSlugs;
 
 module.exports.render = render;
 module.exports.save = save;

@@ -8,6 +8,6 @@ module.exports = {
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
-  syndicationContent: require('./syndication-content'),
+  syndicatedContent: require('./syndicated-content'),
   validSource: require('./valid-source')
 };
