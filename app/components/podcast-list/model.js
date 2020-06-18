@@ -2,8 +2,10 @@
 
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  stationUtils = require('../../services/client/station-utils'),
   utils = require('../../services/universal/podcast'),
   logger = require('../../services/universal/log'),
+  _get = require('lodash/get'),
   log = logger.setup({ file: __filename }),
   maxItems = 4,
   backFillThreshold = 3,
@@ -39,10 +41,12 @@ module.exports.render = async function (ref, data, locals) {
   const { backFillEnabled } = data;
 
   if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
-    data.items.forEach(item => {
-      if (item.podcast) {
-        item.podcast.imageUrl = item.podcast.imageUrl
-          ? utils.createImageUrl(item.podcast.imageUrl)
+    data.items.map(item => {
+      const podcast = _get(item, 'podcast');
+
+      if (podcast) {
+        podcast.imageUrl = podcast.imageUrl
+          ? utils.createImageUrl(podcast.imageUrl)
           : '';
       }
     });
@@ -68,8 +72,21 @@ module.exports.render = async function (ref, data, locals) {
 
       const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
         numItemsToBackFill = maxItems - curatedCount,
+        itemsToGetStationData = podcasts.slice(0,maxItems),
+        stationIds = itemsToGetStationData.map((podcast)=>{
+          return _get(podcast, 'attributes.station[0].id');
+        }).filter((id) => !!id),
+        stationData = await stationUtils.getStationsById(stationIds),
+        getStationSlugById = (id) =>{
+          const station = stationData.find((station) => station.id == id);
+
+          return station.site_slug;
+        },
         uniqueUrls = (podcast) => {
-          const url = utils.createUrl(podcast.attributes.site_slug);
+          const podcastSlug = _get(podcast, 'attributes.site_slug'),
+            stationId = _get(podcast, 'attributes.station[0].id', null),
+            stationSlug = getStationSlugById(stationId),
+            url = utils.createUrl(podcastSlug, stationSlug);
 
           return !containsUrl(data.items, url);
         },
@@ -77,7 +94,10 @@ module.exports.render = async function (ref, data, locals) {
           .filter(uniqueUrls)
           .slice(0, numItemsToBackFill)
           .map((podcast) => {
-            const url = utils.createUrl(podcast.attributes.site_slug);
+            const podcastSlug = _get(podcast,'attributes.site_slug'),
+              stationId = _get(podcast,'attributes.station[0].id'),
+              stationSlug = getStationSlugById(stationId),
+              url = utils.createUrl(podcastSlug,stationSlug);
 
             return {
               podcast: {

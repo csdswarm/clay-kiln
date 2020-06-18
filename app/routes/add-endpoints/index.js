@@ -9,5 +9,6 @@ module.exports = {
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
   stationLists: require('./station-lists'),
-  validSource: require('./valid-source')
+  validSource: require('./valid-source'),
+  stationUtils: require('./station-utils')
 };

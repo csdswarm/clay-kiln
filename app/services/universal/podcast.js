@@ -5,11 +5,28 @@ const urlParse = require('url-parse'),
 
 /**
  * returns a url for a podcast based on the site_slug
- * @param {string} site_slug
+ * @param {string} podcast_slug The podcast's site_slug
+ * @param {string} [station_slug] The site_slug of the station the podcast belongs to
  * @returns {string}
  */
-module.exports.createUrl = (site_slug) => {
-  return `https://www.radio.com/media/podcast/${site_slug}`;
+module.exports.createUrl = (podcast_slug,station_slug) => {
+  let url = '/';
+
+  if (station_slug) {
+    url += station_slug + '/';
+  }
+
+  url += 'podcast/';
+
+  if (podcast_slug) {
+    url += podcast_slug + '/';
+  }
+
+  return url;
+};
+
+module.exports.createUrlFromPodcastSlug = (podcast_slug) => {
+
 };
 
 /**

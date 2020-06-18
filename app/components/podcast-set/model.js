@@ -1,9 +1,11 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
-  radioApiService = require('../../services/server/radioApi'),
+  log = require('../../services/universal/log').setup({ file: __filename }),
   podcastService = require('../../services/universal/podcast'),
-  log = require('../../services/universal/log').setup({ file: __filename });
+  radioApiService = require('../../services/server/radioApi'),
+  stationUtils = require('../../services/client/station-utils'),
+  _get = require('lodash/get');
 
 module.exports = unityComponent({
   /**
@@ -28,16 +30,26 @@ module.exports = unityComponent({
     }
 
     return radioApiService.get(route, params, null, {}, locals)
-      .then((response) => {
+      .then(async (response) => {
         let podcasts = [];
 
         if (response.data) {
           podcasts = response.data;
-          for (let i = 0; i < podcasts.length; i++) {
-            const podcast = podcasts[i];
 
-            podcast.attributes.url = podcastService.createUrl(podcast.attributes.site_slug);
-          }
+          const stationIds = podcasts.map((podcast) => {
+              return _get(podcast, 'attributes.station[0].id');
+            }).filter(item => !!item),
+
+            stationsData = await stationUtils.getStationsById(stationIds);
+
+          podcasts.forEach((podcast) => {
+
+            const stationId = _get(podcast, 'attributes.station[0].id', null),
+              station = stationsData.find((station)=>station.id === stationId),
+              stationSlug = _get(station, 'site_slug', null);
+
+            podcast.attributes.url = podcastService.createUrl(podcast.attributes.site_slug, stationSlug);
+          });
         }
 
         data._computed.podcasts = podcasts;

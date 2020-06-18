@@ -162,4 +162,5 @@ module.exports = router => {
   addEndpoints.validSource(router);
   addEndpoints.stationLists(router);
   addEndpoints.signOut(router);
+  addEndpoints.stationUtils(router);
 };

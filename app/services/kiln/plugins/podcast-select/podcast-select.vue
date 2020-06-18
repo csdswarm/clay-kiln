@@ -30,9 +30,12 @@
     </div>
 </template>
 <script>
+	const stationUtils = require('../../../../services/client/station-utils');
     const utils = require('../../../../services/universal/podcast');
     const UiSelect = window.kiln.utils.components.UiSelect;
     const UiTextbox = window.kiln.utils.components.UiTextbox;
+    const _get = require('lodash/get');
+
     export default {
         props: ['name', 'data', 'schema', 'args'],
         data() {
@@ -43,8 +46,8 @@
                 podcastOptions: null
             };
         },
-        mounted () {
-            this.populatePodcasts(false)
+        async mounted () {
+            await this.populatePodcasts(false)
         },
         computed: {
             value() {
@@ -57,7 +60,7 @@
              *  It queries the api.radio.com for podcasts matching that API and sets them as selectable.
              *  @param {boolean} reselect - Whether this invocation should undo any current podcast selection
              */
-            populatePodcasts(reselect = true) {
+            async populatePodcasts(reselect = true) {
                 if (reselect) {
                     this.selectedPodcast = null;
                 }
@@ -73,12 +76,25 @@
                     .then(response => {
                         return response.json();
                     })
-                    .then(podcastResponse => {
-                        self.podcastOptions = podcastResponse.data.map((podcast) => {
+                    .then(async podcastResponse => {
+                        const stationIds = podcastResponse.data.map((podcast) => {
+                                return _get(podcast, 'attributes.station[0].id');
+                            }).filter((id) => !!id),
+                            stationData = await stationUtils.getStationsById(stationIds),
+                            getStationSlugById = (id) => {
+                                const station = stationData.find((station) => station.id == id);
+
+                                return station.site_slug;
+                            };
+                        self.podcastOptions = await podcastResponse.data.map(async (podcast) => {
+                            const podcastSlug = _get(podcast, 'attributes.site_slug'),
+                                stationId = _get(podcast, 'attributes.station[0].id', null),
+                                stationSlug = getStationSlugById(stationId);
+
                             return {
                                 label: podcast.attributes.title,
                                 title: podcast.attributes.title,
-                                url: utils.createUrl(podcast.attributes.site_slug),
+                                url: utils.createUrl(podcastSlug,stationSlug),
                                 imageUrl: utils.createImageUrl(podcast.attributes.image),
                                 description: podcast.attributes.description
                             }
