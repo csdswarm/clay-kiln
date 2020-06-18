@@ -39,7 +39,7 @@ module.exports = async function (req, res) {
         INNER JOIN components.article a ON article_id = a.id
     WHERE 
       COALESCE(p.meta->>'publishTime', p.meta->>'updateTime')::date > current_date - ${NUMBER_OF_DAYS_TO_RETRIEVE}
-      AND NOT a.data @> '{"noIndexNoFollow": true}' 
+      AND NOT (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"syndicationStatus" : "cloned"}')
       AND NOT p.meta @> '{"published": false}'
     ORDER BY 
       published DESC
