@@ -36,6 +36,7 @@
 
 <script>
   import _ from 'lodash';
+  import axios from 'axios';
   import isValidDate from 'date-fns/is_valid';
   import dateFormat from 'date-fns/format';
   import isToday from 'date-fns/is_today';
@@ -45,8 +46,7 @@
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
   import { findSyndicatedStation } from '../../../universal/syndication-utils';
 
-  const axios = require('axios'),
-    { UiButton } = window.kiln.utils.components,
+  const { UiButton } = window.kiln.utils.components,
     nationalStationName = DEFAULT_STATION.name,
     formatHM = (date) => ' ' + dateFormat(date, 'h:mm A');
 
