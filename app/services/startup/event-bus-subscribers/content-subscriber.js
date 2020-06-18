@@ -5,7 +5,9 @@ const db = require('../../../services/server/db'),
   { subscribe } = require('amphora-search'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
-  ANF_API = '/apple-news/articles';
+  ANF_API = '/apple-news/articles',
+  _differenceWith = require('lodash/differenceWith'),
+  _isEqual = require('lodash/isEqual');
 
 /**
  * @param {Object} stream - publish page event payload
@@ -135,6 +137,15 @@ async function handlePublishStationSyndication(page) {
 
   if (['article', 'gallery'].includes(getComponentName(mainRef))) {
     const contentData = await db.get(mainRef),
+      { canonicalUrl } = contentData,
+      protocol = canonicalUrl.split('/')[0],
+      canonicalKey = canonicalUrl.replace(`${protocol}//`, ''),
+      allSyndicatedUrls = await db.getSelectedFields('uris', 'url', 'data', page.uri.replace('@published', '')),
+      originalArticleId = await db.getSelectedFields('uris', 'id', 'url', canonicalKey),
+      redirectUri = originalArticleId.length && originalArticleId[0].id,
+      newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
+      outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, _isEqual),
+      removeCanonical = outDatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
       queue = (contentData.stationSyndication || []).map(station => {
         if (station.syndicatedArticleSlug) {
           const url = `${host}${station.syndicatedArticleSlug}`,
@@ -142,9 +153,13 @@ async function handlePublishStationSyndication(page) {
 
           return db.put(`${host}/_uris/${buffer.encode(url)}`, redirect);
         }
+      }),
+      updateDeprecatedUrls = (removeCanonical || []).map(({ url }) => {
+        return db.putSelectedFields('uris', redirectUri, 'url', url);
       });
 
     await Promise.all(queue);
+    await Promise.all(updateDeprecatedUrls);
   }
 }
 

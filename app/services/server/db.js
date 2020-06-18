@@ -126,6 +126,28 @@ const utils = require('../universal/utils'),
     }
   },
   /**
+   * Gets a row in a postgres table filtering a particular column
+   *
+   * @param {string} table
+   * @param {string} fields
+   * @param {strin} key - unused, only here for api compatibility with client/db.js
+   * @param {any} val
+   *
+   * @returns {Promise}
+   */
+  getSelectedFields = async (table, fields, key, val) => {
+    return db.raw(`
+      SELECT ${fields} FROM ${table}
+      WHERE ${key} = ?
+    `, [val])
+      .then(({ rows }) => {
+        if (!rows.length) {
+          return Promise.reject(new Error(`No result found in ${ table } for ${ key }`));
+        }
+        return rows;
+      });
+  },
+  /**
    * Insert a row in a postgres table
    * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
    *
@@ -171,6 +193,23 @@ const utils = require('../universal/utils'),
     }
   },
   /**
+   * Update a row in a postgres table for a particular column
+   *
+   * @param {string} tableName
+   * @param {any} key
+   * @param {string} whereClause
+   * @param {any} keyToChange
+   *
+   * @returns {Promise}
+   */
+  putSelectedFields = async (tableName, key, whereClause, keyToChange) => {
+    return db.raw(`
+      UPDATE ${tableName}
+      SET data = ?
+      WHERE ${whereClause} = ?
+    `, [key, keyToChange]);
+  },
+  /**
    * retrieves the data from the uri
    *
    * @param {string} uri
@@ -194,5 +233,7 @@ module.exports = {
   uriToUrl: utils.uriToUrl,
   ensureTableExists,
   DATA_STRUCTURES,
-  getComponentData
+  getComponentData,
+  getSelectedFields,
+  putSelectedFields
 };
