@@ -5,15 +5,15 @@ const db = require('amphora-storage-postgres'),
   log = require('../../services/universal/log').setup({ file: __filename }),
   clearRedisCache = () => redis.del('national-subscriptions'),
   createSubscription = async (req, res) => {
-    const { shortDescription, stationSlug, filter } = req.body;
+    const { shortDescription, fromStationSlug, stationSlug, filter } = req.body;
 
     try {
       const result = await db.raw(`
             INSERT INTO national_subscriptions
-              (short_desc, station_slug, filter, last_updated_utc)
-              VALUES (?, ?, ?, NOW())
+              (short_desc, from_station_slug, station_slug, filter, last_updated_utc)
+              VALUES (?, ?, ?, ?, NOW())
               RETURNING *;
-        `, [shortDescription, stationSlug, filter]);
+        `, [shortDescription, fromStationSlug, stationSlug, filter]);
 
       res.status(200).send(result.rows[0]);
       clearRedisCache();
@@ -40,15 +40,15 @@ const db = require('amphora-storage-postgres'),
   },
   updateSubscription = async (req, res) => {
     const id = req.params.id,
-      { shortDescription, stationSlug, filter } = req.body;
+      { shortDescription, fromStationSlug, stationSlug, filter } = req.body;
 
     try {
       const result = await db.raw(`
             UPDATE national_subscriptions
-              SET short_desc = ?, station_slug = ?, filter = ?, last_updated_utc = NOW()
+              SET short_desc = ?, from_station_slug = ?, station_slug = ?, filter = ?, last_updated_utc = NOW()
               WHERE id = ?
               RETURNING *
-        `, [shortDescription, stationSlug, filter, id]);
+        `, [shortDescription, fromStationSlug, stationSlug, filter, id]);
 
       res.status(200).send(result.rows[0]);
       clearRedisCache();

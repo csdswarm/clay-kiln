@@ -17,6 +17,9 @@
         <span v-if="item.useFilter">
           {{ $options.filters[item.useFilter](subscription[item.key]) }}
         </span>
+        <span v-else-if="item.key === 'from_station_slug' && subscription[item.key] === ''">
+          Radio.com (NATL-RC)
+        </span>
         <span v-else>{{ subscription[item.key] }}</span>
       </template>
     </td>
@@ -47,7 +50,7 @@ export default {
     }
   },
   filters: {
-    formatDate: utcDateStr => moment(utcDateStr).format('llll')
+    formatDate: utcDateStr => moment(utcDateStr).format('lll')
   },
   components: {
     UiIconButton,

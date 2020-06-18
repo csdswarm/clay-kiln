@@ -28,6 +28,16 @@
     </template>
     <ui-modal ref="subscriptionModal" title="New National Subscription">
         <form action="">
+          <ui-select
+            class="from-station-slug"
+            has-search
+            label="From Station"
+            placeholder="Radio.com (NATL-RC)"
+
+            :options="stations"
+
+            v-model="workingSubscription.from_station_slug"
+          ></ui-select>
           <ui-textbox
               error="The short description may not be more than 50 characters"
               help="Write a short description not more than 50 characters"
@@ -155,8 +165,8 @@
       dataType: Number
     },
     {
-      key: 'station_slug',
-      display: 'slug',
+      key: 'from_station_slug',
+      display: 'from station',
       isHeader: true,
       isDataProp: true,
       dataType: String
@@ -166,6 +176,13 @@
       display: 'description',
       isHeader: true,
       isDataProp: true,
+      dataType: String
+    },
+    {
+      key: 'station_slug',
+      display: 'to station',
+      isHeader: false,
+      isDataProp: false,
       dataType: String
     },
     {
@@ -205,6 +222,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
 
   class NationalSubscription {
     constructor (options = {
+      from_station_slug: { label: 'Radio.com (NATL-RC)', value: ''},
       station_slug: window.kiln.locals.station.site_slug,
       short_desc: '',
       filter: {
@@ -220,6 +238,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     }) {
       this.id = '#'
+      this.from_station_slug = options.from_station_slug
       this.last_updated_utc = 'N/A'
       this.station_slug = options.station_slug
       this.short_desc = options.short_desc
@@ -242,7 +261,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         secondarySectionFronts: [],
         stationName,
         isLoading: false,
-        modalMode: null
+        modalMode: null,
       }
     },
     methods: {
@@ -266,6 +285,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
+          fromStationSlug: this.workingSubscription.from_station_slug.value,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
@@ -284,6 +304,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
+          fromStationSlug: this.workingSubscription.from_station_slug.value || '',
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
@@ -427,6 +448,11 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
             allowCreate: false
           }
         }
+      },
+      stations () {
+        return Object.values(window.kiln.locals.stationsIHaveAccessTo).map(station => {
+          return { label: `${station.name} (${station.callsign})`, value: station.slug }
+        })
       }
     },
     components: {
