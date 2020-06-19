@@ -31,91 +31,88 @@
 </template>
 <script>
 	const stationUtils = require('../../../../services/client/station-utils');
-    const utils = require('../../../../services/universal/podcast');
-    const UiSelect = window.kiln.utils.components.UiSelect;
-    const UiTextbox = window.kiln.utils.components.UiTextbox;
-    const _get = require('lodash/get');
+	const utils = require('../../../../services/universal/podcast');
+	const UiSelect = window.kiln.utils.components.UiSelect;
+	const UiTextbox = window.kiln.utils.components.UiTextbox;
+	const _get = require('lodash/get'),
+      _memoize = require('lodash/memoize');
+    const getStationDataById = _memoize(async (id) => {
+        const [stationData] = await stationUtils.getStationsById([id]);
+        return stationData
+    });
 
-    export default {
-        props: ['name', 'data', 'schema', 'args'],
-        data() {
-            return {
-                cachedResults: {},
-                filter: '',
-                selectedPodcast: this.data,
-                podcastOptions: null
-            };
-        },
-        async mounted () {
-            await this.populatePodcasts(false)
-        },
-        computed: {
-            value() {
-                return this.selectedPodcast ?  this.selectedPodcast : { label: 'Select a podcast...'  }
-            },
-        },
-        methods: {
-            /**
-             *  This function is both called when the component is mounted and when the "Search for a podcast" filter is modified.
-             *  It queries the api.radio.com for podcasts matching that API and sets them as selectable.
-             *  @param {boolean} reselect - Whether this invocation should undo any current podcast selection
-             */
-            async populatePodcasts(reselect = true) {
-                if (reselect) {
-                    this.selectedPodcast = null;
-                }
-                const self = this;
-                if (self.cachedResults[self.filter]) {
-                    self.podcastOptions = self.cachedResults[self.filter];
-                }
-                const url = self.filter && self.filter.length
-                    ? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
-                    : 'https://api.radio.com/v1/podcasts';
+	export default {
+		props: ['name', 'data', 'schema', 'args'],
+		data() {
+			return {
+				cachedResults: {},
+				filter: '',
+				selectedPodcast: this.data,
+				podcastOptions: null
+			};
+		},
+		async mounted () {
+			await this.populatePodcasts(false)
+		},
+		computed: {
+			value() {
+				return this.selectedPodcast ?  this.selectedPodcast : { label: 'Select a podcast...'  }
+			},
+		},
+		methods: {
+			/**
+			 *  This function is both called when the component is mounted and when the "Search for a podcast" filter is modified.
+			 *  It queries the api.radio.com for podcasts matching that API and sets them as selectable.
+			 *  @param {boolean} reselect - Whether this invocation should undo any current podcast selection
+			 */
+			async populatePodcasts(reselect = true) {
+				if (reselect) {
+					this.selectedPodcast = null;
+				}
+				const self = this;
+				if (self.cachedResults[self.filter]) {
+					self.podcastOptions = self.cachedResults[self.filter];
+				}
+				const url = self.filter && self.filter.length
+					? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
+					: 'https://api.radio.com/v1/podcasts';
 
-                fetch(url)
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(async podcastResponse => {
-                        const stationIds = podcastResponse.data.map((podcast) => {
-                                return _get(podcast, 'attributes.station[0].id');
-                            }).filter((id) => !!id),
-                            stationData = await stationUtils.getStationsById(stationIds),
-                            getStationSlugById = (id) => {
-                                const station = stationData.find((station) => station.id == id);
+				fetch(url)
+					.then(response => {
+						return response.json();
+					})
+					.then(async podcastResponse => {
+						self.podcastOptions = await Promise.all(podcastResponse.data.map(async (podcast) => {
+							const podcastSlug = _get(podcast, 'attributes.site_slug'),
+							stationId = _get(podcast, 'attributes.station[0].id', null),
+                            station = await (stationId && getStationDataById(stationId)),
+                            stationSlug = _get(station,'site_slug');
 
-                                return station.site_slug;
-                            };
-                        self.podcastOptions = await podcastResponse.data.map(async (podcast) => {
-                            const podcastSlug = _get(podcast, 'attributes.site_slug'),
-                                stationId = _get(podcast, 'attributes.station[0].id', null),
-                                stationSlug = getStationSlugById(stationId);
+							return {
+								label: podcast.attributes.title,
+								title: podcast.attributes.title,
+								url: utils.createUrl(podcastSlug,stationSlug),
+								imageUrl: utils.createImageUrl(podcast.attributes.image),
+								description: podcast.attributes.description
+							}
+						}));
+						self.cachedResults[self.filter] = self.podcastOptions
+					})
+					.catch(e => {
+					})
+			},
 
-                            return {
-                                label: podcast.attributes.title,
-                                title: podcast.attributes.title,
-                                url: utils.createUrl(podcastSlug,stationSlug),
-                                imageUrl: utils.createImageUrl(podcast.attributes.image),
-                                description: podcast.attributes.description
-                            }
-                        });
-                        self.cachedResults[self.filter] = self.podcastOptions
-                    })
-                    .catch(e => {
-                    })
-            },
-
-            /**
-             *  This function is called when a podcast is selected from the dropdown. Sets it as currently selected.
-             */
-            updateSelectedPodcast(input) {
-                this.selectedPodcast = input;
-                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPodcast })
-            },
-        },
-        components: {
-            UiSelect,
-            UiTextbox
-        }
-    }
+			/**
+			 *  This function is called when a podcast is selected from the dropdown. Sets it as currently selected.
+			 */
+			updateSelectedPodcast(input) {
+				this.selectedPodcast = input;
+				this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPodcast })
+			},
+		},
+		components: {
+			UiSelect,
+			UiTextbox
+		}
+	}
 </script>
