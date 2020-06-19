@@ -146,6 +146,10 @@
         */
         return syndicatedArticleSlug ? `${host}${syndicatedArticleSlug}` : canonicalUrl;
       },
+      /**
+       * emit event for selecting primary and secondary section
+       * fronts before creating the syndication
+       */
       onSyndicate() {
         this.syndicationLoading = true;
         this.$emit('createSyndication', this.content._id);

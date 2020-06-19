@@ -265,8 +265,8 @@
         this.saveLoading = true;
         const prefix = _.get(this.$store, 'state.site.prefix');
 
-        await axios.put(
-          uriToUrl(`${prefix}/rdc/create-syndication`),
+        await axios.post(
+          uriToUrl(`${prefix}/rdc/syndicated-content/create`),
           {
             uri: this.selectedContentId,
             syndicationData: this.getSyndicationData()

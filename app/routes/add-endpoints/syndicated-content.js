@@ -15,7 +15,7 @@ const _get = require('lodash/get'),
 async function getPageURI(contentURI) {
   const query = `SELECT p.id
       FROM pages p
-      WHERE data->>'main' ~ '${contentURI}'`;
+      WHERE data#>>'{main,0}' = '${contentURI}'`;
 
   return await db.raw(query).then(results => _get(results, 'rows[0].id'));
 }
@@ -36,7 +36,7 @@ async function addSyndicationEntry(uri, syndicationEntry) {
 }
 
 module.exports = router => {
-  router.put('/rdc/create-syndication', wrapInTryCatch(async (req, res) => {
+  router.post('/rdc/syndicated-content/create', wrapInTryCatch(async (req, res) => {
     const { uri, syndicationData } = req.body,
       latestUri = uri.replace('@published', ''),
       pageURI = await getPageURI(uri);
@@ -44,7 +44,6 @@ module.exports = router => {
     await addSyndicationEntry(latestUri, syndicationData);
     await rest.put(uriToUrl(pageURI, res.locals), {}, true);
 
-    res.status(200);
     res.send('success');
   }));
 };
