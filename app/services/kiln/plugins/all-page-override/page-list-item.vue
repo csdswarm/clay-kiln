@@ -84,7 +84,8 @@
     props: ['page', 'multipleSitesSelected', 'isPopoverOpen'],
     computed: {
       url() {
-        return this.page.url || generatePageUrl(this.page, _.get(this.$store, 'state.allSites'));
+        const page = generatePageUrl(this.page, _.get(this.$store, 'state.allSites'))
+        return this.page.published ? (this.page.url || page) : page;
       },
       firstAuthor() {
         return this.page.authors.length ? _.head(this.page.authors) : 'No Byline';

@@ -25,15 +25,53 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
       // permissionCategory is the target as we think of it
       permissionCategory: 'content'
     }
+  }),
+  // the following are a short term solution until we can either
+  //   1. figure out a good interface with urps to accomplish the same goal, or
+  //   2. change our UX so we don't need permissions from various domains on
+  //      every page
+  //
+  // the problem is that we need to filter the page templates based off user
+  //   permissions for each station.  Right now the endpoint allows us to get
+  //   the domains by a single permission, where we need urps to take multiple
+  getDomainNamesICanCreateSectionFronts = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateSectionFronts',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'section-front'
+    }
+  }),
+  getDomainNamesICanCreateStaticPages = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateStaticPages',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'static-page'
+    }
+  }),
+  getDomainNamesICanCreateStationFronts = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateStationFronts',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'station-front'
+    }
   });
 
 /**
  * returns a function which takes req.session.auth as a parameter and returns
  *   the results of the urps call - which is cached in session.
  *
- * also, because refresh-permissions needs to know the mapping from urlPath to
- *   the call being made, the function returned has the metaData attached as
- *   a property.
+ * also, because refresh-permissions needs to know the mapping from
+ *   cachedPropName to the call being made, the function returned has the
+ *   metaData attached as a property.
  *
  * @param {object} metaData
  * @param {string} metaData.cachedPropName - the property name which will hold the cached results and assigned to auth
@@ -48,8 +86,8 @@ function makeCachedUrpsCall(metaData) {
     cachedCall = async (auth, opts = {}) => {
       const { isRefresh } = opts,
         currentTime = Date.now(),
-        { lastUpdatedByUrlPath = {} } = auth,
-        lastUpdated = lastUpdatedByUrlPath[urlPath];
+        { lastUpdatedByCachedPropName = {} } = auth,
+        lastUpdated = lastUpdatedByCachedPropName[cachedPropName];
 
       if (
         !auth[cachedPropName]
@@ -70,11 +108,11 @@ function makeCachedUrpsCall(metaData) {
           )
         ]);
 
-        lastUpdatedByUrlPath[urlPath] = currentTime;
+        lastUpdatedByCachedPropName[cachedPropName] = currentTime;
 
         Object.assign(auth, {
           [cachedPropName]: toResult(stations.concat(markets)),
-          lastUpdatedByUrlPath
+          lastUpdatedByCachedPropName
         });
       }
 
@@ -85,6 +123,9 @@ function makeCachedUrpsCall(metaData) {
 }
 
 module.exports = {
+  getDomainNamesICanCreateSectionFronts,
+  getDomainNamesICanCreateStaticPages,
+  getDomainNamesICanCreateStationFronts,
   getDomainNamesICanImportContent,
   getDomainNamesIHaveAccessTo
 };

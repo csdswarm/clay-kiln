@@ -1,24 +1,17 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save');
+const _get = require('lodash/get');
 
 module.exports.render = (ref, data, locals) => {
   if (data.localsKey && locals) {
     const value = _get(locals, data.localsKey);
 
-    if (value && data.defaultImageUrl.includes('${paramValue}')) {
-      data.defaultImageUrl = data.defaultImageUrl.replace('${paramValue}', value);
+    if (value && data.imageUrl.includes('${paramValue}')) {
+      data.imageUrl = data.imageUrl.replace('${paramValue}', value);
     } else {
-      data.defaultImageUrl = value;
+      data.imageUrl = value;
     }
   }
-
-  return data;
-};
-
-module.exports.save = (ref, data) => {
-  handleDefault('imageUrl', 'defaultImageUrl', data);
 
   return data;
 };

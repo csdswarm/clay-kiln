@@ -13,10 +13,42 @@ const
   _setWith = require('lodash/setWith'),
   _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
+  { contentTypes, SERVER_SIDE } = require('./constants'),
   { getComponentName, isComponent } = require('clayutils'),
-  { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+/**
+ * Adds a property getter to an object that will run the callback to return the value the first time the property is
+ * requested, but will save that value as the property afterwards, so no additional calls are needed.
+ *
+ * Also adds a property setter to the object that will override any call to the callback.
+ *
+ * Once either a getter or setter is used, the property will be modified to a simple value property
+ *
+ * @param {object} obj object to add property to
+ * @param {string} prop name of property to add lazy loading for
+ * @param {function} cb callback to return the property value. The property name will be passed as the argument.
+ * @returns {object} the original object with the new property added.
+ */
+function addLazyLoadProperty(obj, prop, cb) {
+  const defaultOptions = { configurable: true, enumerable: true },
+    valueOptions = { ...defaultOptions, writable: true };
+
+  Object.defineProperty(obj, prop, { ...defaultOptions,
+    get() {
+      const value = cb(prop);
+
+      Object.defineProperty(obj, prop, { ...valueOptions, value });
+      return value;
+    },
+    set(value) {
+      Object.defineProperty(obj, prop, { ...valueOptions, value });
+      return value;
+    }
+  });
+  return obj;
+}
 
 /**
  * returns a list of keys in the object that have a truthy value
@@ -263,6 +295,38 @@ function debugLog(...args) {
 }
 
 /**
+ * Appends a suffix to a value only if it is not empty
+ * @param {string} value
+ * @param {string} suffix
+ * @returns {string} the new string with a suffix, or empty string
+ */
+function postfix(value, suffix) {
+  return value ? `${value}${suffix}` : '';
+}
+
+/**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+  return list;
+}
+
+/**
  * prepends left to right
  *
  * meant to be used in a mapper function e.g.
@@ -284,7 +348,7 @@ function prepend(left) {
   return right => left + right;
 }
 
-/*
+/**
  * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
  *   begin with the prefix.
  *
@@ -377,29 +441,6 @@ function getDomainFromHostname(hostname) {
 }
 
 /**
- * can be used to get all _ref objects within an object.
- * Copied from amphora.references and modified for unity environment.
- * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
- * @param {object} obj
- * @param {Function|string} [filter=_identity]  Optional filter
- * @returns {array}
- */
-function listDeepObjects(obj, filter) {
-  let cursor, items,
-    list = [],
-    queue = [obj];
-
-  while (queue.length) {
-    cursor = queue.pop();
-    items = _filter(cursor, _isObject);
-    list = list.concat(_filter(items, filter || _identity));
-    queue = queue.concat(items);
-  }
-
-  return list;
-}
-
-/**
  * Url queries to elastic search need to be `http` since that is
  * how it is indexed as.
  * @param {string} url
@@ -431,7 +472,37 @@ function updateImmutable(object, path, updater) {
   return _updateWith(_clone(object), path, updater, _clone);
 }
 
+/**
+ * When on the server, pushes an time entry onto locals.amphoraRenderTimes
+ *
+ * @param {object} locals
+ * @param {object} timeEntry
+ * @param {object} [opts]
+ * @param {object} [opts.shouldAddAmphoraTimings]
+ * @param {object} [opts.prefix]
+ */
+function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
+  const {
+    prefix = '',
+    shouldAdd = true
+  } = opts;
+
+  if (shouldAdd && SERVER_SIDE && locals.amphoraRenderTimes) {
+    const { label } = timeEntry;
+
+    if (prefix) {
+      timeEntry = Object.assign({}, timeEntry, {
+        label: `${prefix} - ${label}`
+      });
+    }
+
+    locals.amphoraRenderTimes.push(timeEntry);
+  }
+}
+
 module.exports = {
+  addAmphoraRenderTime,
+  addLazyLoadProperty,
   boolKeys,
   cleanUrl,
   debugLog,
@@ -448,6 +519,7 @@ module.exports = {
   isPublishedVersion,
   isUrl,
   listDeepObjects,
+  postfix,
   prepend,
   prettyJSON,
   removeFirstLine,
