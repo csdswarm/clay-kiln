@@ -5,7 +5,13 @@ const _ = require('lodash'),
   urps = require('../../../universal/urps'),
   { DEFAULT_STATION } = require('../../../universal/constants'),
   { refreshPath } = require('../../../../routes/add-endpoints/refresh-permissions'),
-  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true';
+  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true',
+  unsafeMethods = new Set([
+    'DELETE',
+    'POST',
+    'PATCH',
+    'PUT'
+  ]);
 
 /**
  * 'trimmed' refers to the fact that we don't include all the station properties
@@ -13,6 +19,7 @@ const _ = require('lodash'),
  *
  * @typedef {object} TrimmedStation
  * @property {string} callsign
+ * @property {number} id
  * @property {string} name
  * @property {string} slug - (site_slug)
  */
@@ -26,6 +33,7 @@ function addRdcStation(stationsBySlug) {
   Object.assign(stationsBySlug, {
     [DEFAULT_STATION.site_slug]: {
       callsign: DEFAULT_STATION.callsign,
+      id: DEFAULT_STATION.id,
       name: DEFAULT_STATION.name,
       slug: DEFAULT_STATION.site_slug
     }
@@ -63,9 +71,10 @@ async function getTrimmedStationsViaUrps(req, locals, getStationDomainNames) {
     ),
     stationsBySlug = _.chain(stationsByDomainName)
       .mapKeys('site_slug')
-      .mapValues(({ callsign, name, site_slug }) => {
+      .mapValues(({ callsign, id, name, site_slug }) => {
         return {
           callsign,
+          id,
           name,
           slug: site_slug
         };
@@ -93,8 +102,9 @@ async function getAllTrimmedStations(locals) {
 
   stationsBySlug = _.mapValues(
     stationsBySlug,
-    ({ callsign, name, site_slug }) => ({
+    ({ callsign, id, name, site_slug }) => ({
       callsign,
+      id,
       name,
       slug: site_slug
     })
@@ -106,16 +116,24 @@ async function getAllTrimmedStations(locals) {
 }
 
 /**
+ * @param {object} req
  * @param {object} locals
  * @returns {boolean}
  */
-function shouldAddToLocals(locals) {
+function shouldAddToLocals(req, locals) {
   const provider = _.get(locals, 'user.provider', '');
 
-  return provider === 'cognito'
-    || (
-      provider === 'google'
-      && googleOverridesPermissions
+  return !isRefreshingPermissions(req)
+    && (
+      locals.edit
+      || unsafeMethods.has(req.method)
+    )
+    && (
+      provider === 'cognito'
+      || (
+        provider === 'google'
+        && googleOverridesPermissions
+      )
     );
 }
 
@@ -132,6 +150,5 @@ function isRefreshingPermissions(req) {
 module.exports = {
   getAllTrimmedStations,
   getTrimmedStationsViaUrps,
-  isRefreshingPermissions,
   shouldAddToLocals
 };

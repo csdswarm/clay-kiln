@@ -1,10 +1,6 @@
 'use strict';
 
-/**
- * NOTE: ./constants needs access to getStationDomainName so if this file ends
- *   up needing a value from ./constants then we'll have to restructure the code
- *   to avoid a circular dependency
- */
+const { DEFAULT_STATION } = require('./constants');
 
 // Unity App encompasses permissions which don't belong to a station such as
 //   whether you can update a global alert or the homepage
@@ -43,6 +39,10 @@ const unityAppDomainName = 'Unity App';
  * @returns {string}
  */
 function getStationDomainName(station) {
+  if (station.id === DEFAULT_STATION.id) {
+    return station.urpsDomainName;
+  }
+
   // site_slug might be an empty string from the default station, in which case
   //   we want to use it
   const slug = typeof station.site_slug === 'string'

@@ -1,4 +1,5 @@
 {{#unless @root.locals.edit}}
+
   <script type="text/javascript">
     (function() {
       const _sf_async_config = window._sf_async_config = (window._sf_async_config || {});
@@ -62,11 +63,21 @@
           case 'station-detail':
             defaultSections = ['radiocom'];
             break;
+          case 'station-front':
+            defaultSections = ['{{_computed.callsign}}', '{{_computed.callsign}}-{{_computed.genre}}', '{{_computed.market}}'];
+            break;
           case 'stations-directory':
             defaultSections = ['radiocom', 'RADI-FM'];
             break;
+          case 'gallery':
+          case 'article':
+          case 'author-page':
+          case 'static-page':
+          case 'topic-page':
+            defaultSections = ['{{_computed.name}}','{{_computed.callsign}}', '{{_computed.callsign}}-{{_computed.genre}}', '{{_computed.market}}'];
+            break;
           default:
-            defaultSections = ['National', 'editorial']
+            defaultSections = ['National', 'editorial'];
         }
 
         return defaultSections.concat(sections).filter(section => section).join();
@@ -123,8 +134,8 @@
           component = getComponentName(content._ref),
           station = content.station || {},
           authors = (content.authors || []).map(({text}) => text),
-          sectionFront = content.sectionFront && `national-${content.sectionFront}`,
-          dynamicSections = [
+        sectionFront = content.sectionFront && `national-${content.sectionFront}`,
+        dynamicSections = [
             sectionFront,
             station.market ? station.market.display_name : station.market,
             content.category,
@@ -132,7 +143,6 @@
             station.callsign ? updateCallsign(station.callsign) : station.callsign
           ].filter(section => section),
           sections = addDefaultSections(component, dynamicSections);
-
         pSUPERFLY.virtualPage({
           sections: sections,
           authors: authors.join(),

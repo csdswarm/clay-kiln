@@ -10,10 +10,13 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  { PAGE_TYPES } = require('./../universal/constants'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils');
+  { getComponentName } = require('clayutils'),
+  slugify = require('../../services/universal/slugify');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -168,6 +171,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else {
+    data.date = dateFormat(new Date()); // ISO 8601 date string
   }
 }
 
@@ -409,6 +414,15 @@ function upCaseRadioDotCom(data) {
 }
 
 /**
+ * Updates the stationSyndication property to be an array of objects from an array of strings
+ * @param {Object} data
+ */
+function updateStationSyndicationType(data) {
+  data.stationSyndication = (data.stationSyndication || [])
+    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign);
+}
+
+/**
  * Set's noIndexNoFollow for meta tag based on information in the component
  * @param {Object} data
  * @returns {Object}
@@ -484,12 +498,50 @@ function addTwitterHandle(data, locals) {
   }
 }
 
+/**
+ * Adds computed fields for rendering station syndication info.
+ * @param {Object} data
+ */
+function renderStationSyndication(data) {
+  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+    .map(station => station.callsign)
+    .sort()
+    .join(', ');
+}
+
+/**
+ * Adds slug to each item in station syndication field.
+ * @param {Object} data
+ */
+function addStationSyndicationSlugs(data) {
+  updateStationSyndicationType(data);
+
+  data.stationSyndication = data.stationSyndication
+    .map(station => {
+      // if the station is national, there must be a primary section front. otherwise, the slug must just be truthy
+      const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
+
+      if (shouldSetSlug) {
+        station.syndicatedArticleSlug = '/' + [
+          station.stationSlug,
+          slugify(station.sectionFront),
+          slugify(station.secondarySectionFront),
+          data.slug
+        ].filter(Boolean).join('/');
+      } else {
+        delete station.syndicatedArticleSlug;
+      }
+      return station;
+    });
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
+  renderStationSyndication(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -523,13 +575,22 @@ function assignStationInfo(uri, data, locals) {
 
     Object.assign(data, {
       stationSlug: station.site_slug,
-      stationName: station.name
+      stationName: station.name,
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
         stationLogoUrl: station.square_logo_small,
         stationURL: station.website
+      });
+    }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
       });
     }
   }
@@ -559,6 +620,7 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+  addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
@@ -573,6 +635,7 @@ async function save(uri, data, locals) {
 }
 
 module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
+module.exports.updateStationSyndicationType = updateStationSyndicationType;
 
 module.exports.render = render;
 module.exports.save = save;

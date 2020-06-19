@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "clay-radio.fullname" . }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
   labels:
     app.kubernetes.io/name: {{ include "clay-radio.name" . }}
     helm.sh/chart: {{ include "clay-radio.chart" . }}
