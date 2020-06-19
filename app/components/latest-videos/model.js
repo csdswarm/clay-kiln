@@ -1,6 +1,7 @@
 'use strict';
 
-const { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const { getStationSlug, recirculationData } = require('../../services/universal/recirc/recirculation'),
+
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -10,6 +11,7 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
     'contentType'
   ],
   maxItems = 6,
+
   excludedTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text);
 
 module.exports = recirculationData({
@@ -23,7 +25,10 @@ module.exports = recirculationData({
       sectionFronts: ''
     },
     excludes: {
-      subscriptions: data.excludeSubscriptions ? ['all'] : [],
+      subscriptions: { value: {
+        subscriptions: data.excludeSubscriptions ? ['national subscriptions'] : [],
+        stationSlug: getStationSlug(locals)
+      } },
       tags: excludedTags(data)
     },
     maxItems

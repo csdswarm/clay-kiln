@@ -1,9 +1,12 @@
 'use strict';
-const queryService = require('../../services/server/query'),
-  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+const
+  _get = require('lodash/get'),
   contentTypeService = require('../../services/universal/content-type'),
+  queryService = require('../../services/server/query'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-content',
+
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -11,8 +14,8 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType'
   ],
-  maxItems = 3,
-  { DEFAULT_STATION } = require('../../services/universal/constants');
+  elasticIndex = 'published-content',
+  maxItems = 3;
 
 /**
  * For each section's override items (0 through 3), look up the associated
@@ -102,7 +105,7 @@ module.exports.render = async function (ref, data, locals) {
     } else {
       queryService.addMust(query, { match: { stationSlug: station_slug } });
     }
-    
+
     // Filter out the following tags
     if (data.filterTags) {
       for (const tag of data.filterTags.map((tag) => tag.text)) {
@@ -113,7 +116,7 @@ module.exports.render = async function (ref, data, locals) {
     // Filter out the following secondary article type
     if (data.filterSecondarySectionFronts) {
       Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-        const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+        const [secondarySectionFrontFilter, filterOut] = secondarySectionFront;
 
         if (filterOut) {
           queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
@@ -122,7 +125,13 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     if (data.excludeSubscriptions) {
-      queryService.addMustNot(query, { match: { } });
+      const stationSlug = _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug'),
+        matchSources = [{ match_phrase: { 'stationSyndication.source': 'national subscriptions' } }],
+        anySource = { should: matchSources, minimum_should_match: 1 },
+        syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, { bool: anySource }],
+        excludeSubscriptions = { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
+
+      queryService.addMustNot(query, excludeSubscriptions);
     }
 
     // exclude the current page in results
