@@ -8,7 +8,7 @@ if [ "$1" != "" ]; then
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com:9200" && http="https";
   elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com:9200" && http="https";
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com" && http="https";
   elif [ "$1" == "preprod-clay.radio.com" ]; then
     es="https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com" && http="https";
   fi
