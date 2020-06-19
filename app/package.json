@@ -11,7 +11,8 @@
     "build": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --globs 'global/js/**/!(*.test).js' --reporter pretty && LOG=info ./node_modules/.bin/clay compile custom-tasks",
     "build-production": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --minify --globs 'global/js/**/!(*.test).js' --reporter pretty && LOG=info ./node_modules/.bin/clay compile custom-tasks",
     "watch": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --globs 'global/js/**/!(*.test).js' --reporter pretty --watch",
-    "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/", "eslint": "npx eslint ."
+    "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/",
+    "eslint": "npx eslint ."
   },
   "author": "",
   "license": "MIT",
