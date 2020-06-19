@@ -17,7 +17,7 @@ if [ "$1" != "" ]; then
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com" && http="https";
   elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else

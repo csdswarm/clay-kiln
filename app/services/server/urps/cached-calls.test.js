@@ -41,11 +41,11 @@ describe('cachedCalls', () => {
 
   it('invokes getFromUrps when lastUpdated has expired', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
-      const { cachedPropName, urlPath } = aCachedCall.metaData,
+      const { cachedPropName } = aCachedCall.metaData,
         auth = {
           [cachedPropName]: {},
-          lastUpdatedByUrlPath: {
-            [urlPath]: Date.now() - PERM_CHECK_INTERVAL - 1000
+          lastUpdatedByCachedPropName: {
+            [cachedPropName]: Date.now() - PERM_CHECK_INTERVAL - 1000
           }
         };
 
@@ -59,11 +59,11 @@ describe('cachedCalls', () => {
 
   it('does not invoke getFromUrps when lastUpdated is fresh', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
-      const { cachedPropName, urlPath } = aCachedCall.metaData,
+      const { cachedPropName } = aCachedCall.metaData,
         auth = {
           [cachedPropName]: {},
-          lastUpdatedByUrlPath: {
-            [urlPath]: Date.now()
+          lastUpdatedByCachedPropName: {
+            [cachedPropName]: Date.now()
           }
         };
 
@@ -77,11 +77,11 @@ describe('cachedCalls', () => {
 
   it('invokes getFromUrps when isRefresh is true', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
-      const { cachedPropName, urlPath } = aCachedCall.metaData,
+      const { cachedPropName } = aCachedCall.metaData,
         auth = {
           [cachedPropName]: {},
-          lastUpdatedByUrlPath: {
-            [urlPath]: Date.now()
+          lastUpdatedByCachedPropName: {
+            [cachedPropName]: Date.now()
           }
         };
 

@@ -103,14 +103,15 @@ function getSocialHtmlWithoutPreference(authorData) {
  */
 function createAuthorHtml(authorData, options) {
   const nameOrText = authorData.name || authorData.text,
-    link = textToEncodedSlug(nameOrText);
+    link = textToEncodedSlug(nameOrText),
+    linkAuthorPage = `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/authors/${link}`;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
-    `<a href="//${options.authorHost}/authors/${link}" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
+    `<a href="//${linkAuthorPage}" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${options.authorHost}/authors/${link}"/></a></span>`;
+    `<link itemprop="sameAs" href="//${linkAuthorPage}"/></a></span>`;
 }
 
 // For testing

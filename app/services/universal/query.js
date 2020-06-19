@@ -475,6 +475,19 @@ function addSearch(query, searchTerm, fields) {
 }
 
 /**
+ * for now (for backwards compatibility) this just escapes colons and forward
+ *   slashes.  The full list of query special characters is found here:
+ *
+ *   https://www.elastic.co/guide/en/elasticsearch/reference/6.2/query-dsl-query-string-query.html#_reserved_characters
+ *
+ * @param {string} searchTerm
+ * @returns {string}
+ */
+function sanitizeSearchTerm(searchTerm) {
+  return searchTerm.replace(/([\/|:])/g, '\\$1');
+}
+
+/**
  * wraps a key and value in an elastic search match object that searches for both the initial value as well as lowercase
  * @param {string} key
  * @param {string} value
@@ -516,20 +529,8 @@ function terms(key, values) {
   };
 }
 
-/**
- * for now (for backwards compatibility) this just escapes colons and forward
- *   slashes.  The full list of query special characters is found here:
- *
- *   https://www.elastic.co/guide/en/elasticsearch/reference/6.2/query-dsl-query-string-query.html#_reserved_characters
- *
- * @param {string} searchTerm
- * @returns {string}
- */
-function sanitizeSearchTerm(searchTerm) {
-  return searchTerm.replace(/([\/|:])/g, '\\$1');
-}
-
 module.exports = newQuery;
+
 Object.assign(module.exports, {
   addAggregation,
   addFilter,
@@ -548,8 +549,8 @@ Object.assign(module.exports, {
   matchSimple,
   moreLikeThis,
   newNestedQuery,
-  onlyWithTheseFields,
   onlyWithinThisSite,
+  onlyWithTheseFields,
   sanitizeSearchTerm,
   searchByQuery,
   terms,

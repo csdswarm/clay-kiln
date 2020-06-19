@@ -2,6 +2,7 @@
 
 module.exports = {
   alerts: require('./alerts'),
+  contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
@@ -9,6 +10,6 @@ module.exports = {
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
   stationLists: require('./station-lists'),
-  validSource: require('./valid-source'),
-  stationUtils: require('./station-utils')
+  stationUtils: require('./station-utils'),
+  validSource: require('./valid-source')
 };

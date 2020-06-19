@@ -1,15 +1,21 @@
 'use strict';
 
 const { join } = require('path'),
-  { lstatSync, readdirSync } = require('fs'),
+  { lstatSync, readdirSync, existsSync } = require('fs'),
   { isComponent, isPage } = require('clayutils'),
   _get = require('lodash/get'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   getSlugFrom = require('./get-slug-from'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
-  getDirectories = source =>
-    readdirSync(source).map(name => join(source, name)).filter(isDirectory),
+  getDirectories = source => {
+    if (existsSync(source)) {
+      return readdirSync(source).map(name => join(source, name)).filter(isDirectory);
+    } else {
+      console.log('Warning, directory not found');
+      return [];
+    }
+  },
   publicDirs = getDirectories('./public/').map(dir => dir.replace('public', '')),
   rdcSlug = DEFAULT_STATION.site_slug,
   /**

@@ -30,6 +30,9 @@ const _get = require('lodash/get'),
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    EVENTSLISTING: 'events-listing-page',
     STATIONFRONT: 'station-front'
   },
 
@@ -60,18 +63,21 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'contest',
+    'event',
+    'events-listing-page',
     'gallery',
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
-
-  defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
     id: 0,
-    name: defaultStationName,
+    name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
@@ -106,25 +112,26 @@ const _get = require('lodash/get'),
     //   cover national rdc content.
     urpsDomainName: 'National'
   },
-  
-  PODCASTS = 'podcasts',
 
+  PODCASTS = 'podcasts',
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  contentTypes,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
   MINUTE,
-  msnFeed,
   PAGE_TYPES,
   PODCASTS,
+  PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
-  time,
   WEEK,
-  YEAR
+  YEAR,
+  contentTypes,
+  msnFeed,
+  time
 };

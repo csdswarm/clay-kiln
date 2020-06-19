@@ -2,17 +2,19 @@
 
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
-    es="$1" && http="http";
+    es="$1:9200" && http="http";
   elif [ "$1" == "dev-clay.radio.com" ]; then
-    es="http://dev-es.radio-dev.com" && http="https";
+    es="http://dev-es.radio-dev.com:9200" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
-    es="http://es.radio-stg.com" && http="https";
-  elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="http://es.radio-stg.com:9200" && http="https";
+  elif [ "$1" == "preprod-clay.radio.com" ]; then
+    es='https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com:443' && env='preprod';
+	elif [ "$1" == "www.radio.com" ]; then
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com:443" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
-  set "clay.radio.com" && http="http" && es="$1";
+  set "clay.radio.com" && http="http" && es="$1:9200";
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
@@ -37,7 +39,7 @@ node ./page-update.js "$1" "/$page";
 curl -X PUT $http://$1/$page -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./page.json -o /dev/null -s
 curl -X PUT $http://$1/$page@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-# update css to change margin under homepage button from 150px to 50px 
+# update css to change margin under homepage button from 150px to 50px
 curl -X PUT $http://$1/_components/html-embed/instances/static-404 -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./static-404.json -o /dev/null -s
 curl -X PUT $http://$1/_components/html-embed/instances/static-404@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./static-404.json -o /dev/null -s
 

@@ -141,13 +141,15 @@ $caret-margin-right: em(25);
           }
         }
       }
-
-      .menu__image {
-        width: $station-logo-width-height;
-        height: $station-logo-width-height;
+      .menu__image-anchor {
         margin-right: $logo-margin-right;
         margin-bottom: em(15);
         margin-top: em(15);
+      }
+      .menu__image {
+        display: block;
+        width: $station-logo-width-height;
+        height: $station-logo-width-height;
         @mixin medium-small-screen {
           width: $station-logo-width-height-med-screen;
           height: $station-logo-width-height-med-screen;
