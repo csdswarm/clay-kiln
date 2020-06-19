@@ -1,9 +1,10 @@
 'use strict';
 
-const db = require('../server/db'),
+const db = require('../../services/server/db'),
   moment = require('moment'),
-  log = require('../universal/log').setup({ file: __filename }),
-  radioApiService = require('./radioApi'),
+  log = require('../../services/universal/log').setup({ file: __filename }),
+  radioApiService = require('../../services/server/radioApi'),
+  { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   {
     CLAY_SITE_PROTOCOL: protocol,
     CLAY_SITE_HOST: host
@@ -91,29 +92,26 @@ const db = require('../server/db'),
     if (!podcastsResults.length || moment(new Date()).isAfter(podcastsResults[0].updated, 'day')) {
       await storePodcastsFromAPItoDB();
     }
-  },
-  /**
-   * Add routes for podcasts
-   *
-   * @param {object} app
-   * @param {function} checkAuth
-   */
-  inject = (app, checkAuth) => {
-    /**
-     * Get the current podcasts
-     */
-    app.put('/_podcasts', checkAuth, async (req, res) => {
-      try {
-        await updatePodcasts();
-
-        res.status(200).send('podcasts in DB refreshed');
-      } catch (e) {
-        log('error', e.message);
-        res.status(500).send('There was an error getting current podcasts');
-      }
-    });
   };
 
-module.exports = {
-  inject
+
+/**
+ * adds the POST '/update-podcasts-sitemap' endpoint
+ *
+ * this authenticated endpoint updates podcasts stored in DB
+ *
+ * @param {object} router
+ * @param {function} checkAuth
+ */
+module.exports = (router, checkAuth) => {
+  router.post('/update-podcasts-sitemap', checkAuth, wrapInTryCatch(async (req, res) => {
+    try {
+      await updatePodcasts();
+
+      res.status(200).send('podcasts in DB refreshed');
+    } catch (e) {
+      log('error', e.message);
+      res.status(500).send('There was an error getting current podcasts');
+    }
+  }));
 };

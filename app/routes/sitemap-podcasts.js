@@ -7,15 +7,15 @@ const _get = require('lodash/get'),
     CLAY_SITE_PROTOCOL: protocol,
     CLAY_SITE_HOST: host
   } = process.env;
+  
 /**
  * Returns a standard site-map for all podcast show pages
  * @param {object} req
  * @param {object} res
  * @returns {Promise<object>}
  */
-
 module.exports = async function (req, res) {
-  await axios.put(`${protocol}://${host}/_podcasts`, {},
+  await axios.post(`${protocol}://${host}/update-podcasts-sitemap`, {},
     { headers: { Authorization: 'token accesskey' } });
 
   const schemaLocationInfo = req.query.schemaCheck
