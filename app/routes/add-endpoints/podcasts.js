@@ -39,7 +39,7 @@ const db = require('../../services/server/db'),
 
       podcastsFromAPI.forEach(podcast => {
         let url = `${protocol}://${host}/podcasts/${podcast.attributes.site_slug}`,
-          stations;
+          stations = [];
 
         if (podcast.attributes.station.length) {
           const [{ id: stationID }] = podcast.attributes.station;
