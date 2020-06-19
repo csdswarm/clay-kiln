@@ -25,10 +25,6 @@ module.exports.createUrl = (podcast_slug,station_slug) => {
   return url;
 };
 
-module.exports.createUrlFromPodcastSlug = (podcast_slug) => {
-
-};
-
 /**
  * returns a small image url for a podcast
  * @param {string} image

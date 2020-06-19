@@ -11,16 +11,6 @@ const _memoize = require('lodash/memoize'),
  */
 module.exports = router => {
   /**
-   * Get a list of all stations as an object, with the station ID as the key,
-   * and the station data as the value
-   */
-  router.get('/station-utils/stations-by-id', async (req, res) => {
-    const allStationsById = await getStationsById({ locals: res.locals });
-
-    res.status(200).send(allStationsById);
-  });
-
-  /**
    * Get a list of specific stations data given a comma-separated list of station IDs
    */
   router.get('/station-utils/stations-by-id/:stationIds', async (req, res) => {
