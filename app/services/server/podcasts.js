@@ -38,18 +38,19 @@ const db = require('../server/db'),
         podcastsSQLValues = [];
 
       podcastsFromAPI.forEach(podcast => {
-        let url = `${protocol}://${host}/podcasts/${podcast.attributes.site_slug}`;
+        let url = `${protocol}://${host}/podcasts/${podcast.attributes.site_slug}`,
+          stations;
 
         if (podcast.attributes.station.length) {
-          const [{ id: stationID }] = podcast.attributes.station,
-            stations = stationsFromAPI
-              .filter(station => station.id === stationID);
+          const [{ id: stationID }] = podcast.attributes.station;
+            
+          stations = stationsFromAPI
+            .filter(station => station.id === stationID);
+        }
+        if (stations.length) {
+          const [{ attributes: { site_slug: stationSiteSlug } }] = stations;
 
-          if (stations.length) {
-            const [{ attributes: { site_slug: stationSiteSlug } }] = stations;
-
-            url = `${protocol}://${host}/${stationSiteSlug}/podcasts/${podcast.attributes.site_slug}`;
-          }
+          url = `${protocol}://${host}/${stationSiteSlug}/podcasts/${podcast.attributes.site_slug}`;
         }
 
         const id = `${host}/_podcasts/${podcast.id}`,
