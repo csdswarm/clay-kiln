@@ -61,44 +61,6 @@ const routes = [
     },
     getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
   },
-  { // [default route handler] resolve the uri and page instance
-    testPath: () => true,
-    getParams: () => {},
-    getPageData: req => db
-      .getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
-      .then(data => db.get(`${data}@published`))
-  }
-];
-
-/**
- * Returns the pathname split into an array of parts.
- *
- * Example:
- * ```
- * const pathname = '/foo/bar/blah'
- * pathParts(pathname) // ['foo', 'bar', 'blah']
- * ```
- *
- * @param {string} pathname
- * @returns {Array<string>}
- */
-function parsePathParts(pathname) {
-  return pathname.match(/[^\/]+/g) || [];
-}
-/**
-  * Returns curated or dynamic page data
-  *
-  * @param {Object} req
-  * @param {string} dynamicPageKey
-  * @returns {Promise<Promise<Object>>}
-*/
-function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
-  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
-    .then(pageKey => db.get(`${ pageKey }@published`))
-    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
-}
-
-const routes = [
   // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
   // https://regex101.com/r/TFNbVH/1
   {
@@ -165,14 +127,42 @@ const routes = [
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
-  // [default route handler] resolve the uri and page instance
-  {
+  { // [default route handler] resolve the uri and page instance
     testPath: () => true,
-    getParams: () => null,
-    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    getParams: () => {},
+    getPageData: req => db
+      .getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(data => db.get(`${data}@published`))
   }
 ];
+
+/**
+ * Returns the pathname split into an array of parts.
+ *
+ * Example:
+ * ```
+ * const pathname = '/foo/bar/blah'
+ * pathParts(pathname) // ['foo', 'bar', 'blah']
+ * ```
+ *
+ * @param {string} pathname
+ * @returns {Array<string>}
+ */
+function parsePathParts(pathname) {
+  return pathname.match(/[^\/]+/g) || [];
+}
+/**
+  * Returns curated or dynamic page data
+  *
+  * @param {Object} req
+  * @param {string} dynamicPageKey
+  * @returns {Promise<Promise<Object>>}
+*/
+function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
+  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    .then(pageKey => db.get(`${ pageKey }@published`))
+    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
+}
 
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request

@@ -816,7 +816,6 @@ em, i {
 }
 @define-mixin events-lede-font5 {
   @mixin font CircularStd-Black, 14px, $black, -.55px, 17px;
->>>>>>> master
 }
 
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
