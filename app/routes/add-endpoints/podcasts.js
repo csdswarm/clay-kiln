@@ -2,7 +2,6 @@
 
 const db = require('../../services/server/db'),
   moment = require('moment'),
-  log = require('../../services/universal/log').setup({ file: __filename }),
   radioApiService = require('../../services/server/radioApi'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   {
@@ -105,13 +104,7 @@ const db = require('../../services/server/db'),
  */
 module.exports = (router, checkAuth) => {
   router.post('/update-podcasts-sitemap', checkAuth, wrapInTryCatch(async (req, res) => {
-    try {
-      await updatePodcasts();
-
-      res.status(200).send('podcasts in DB refreshed');
-    } catch (e) {
-      log('error', e.message);
-      res.status(500).send('There was an error getting current podcasts');
-    }
+    await updatePodcasts();
+    res.status(200).send('podcasts in DB refreshed');
   }));
 };
