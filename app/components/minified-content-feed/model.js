@@ -6,11 +6,13 @@ const
   transformCard = require('../../services/universal/transform/recirc-to-card'),
   { cleanUrl, boolKeys } = require('../../services/universal/utils'),
   { isComponent } = require('clayutils'),
-  { recirculationData } = require('../../services/universal/recirc/recirculation'),
+  { getStationSlug, recirculationData } = require('../../services/universal/recirc/recirculation'),
 
   excludedSecondarySectionFronts = ({ excludeSecondarySectionFronts }) => boolKeys(excludeSecondarySectionFronts || {}),
   excludedSectionFronts = ({ excludeSectionFronts }) => boolKeys(excludeSectionFronts || {}),
-  excludedSubscriptions = ({ excludeSubscriptions }) => excludeSubscriptions ? ['all'] : [],
+  excludedSubscriptions = ({ excludeSubscriptions, stationSlug }) => ({ value: {
+    subscriptions: excludeSubscriptions ? ['national subscriptions'] : [], stationSlug
+  } }),
   excludedTags = ({ excludeTags }) => (excludeTags || []).map(({ text }) => text),
   getSecondarySectionFront = (data, locals) => data.secondarySectionFrontManual || locals.secondarySectionFront,
   getSectionFront = (data, locals) => data.sectionFrontManual || locals.sectionFront,
@@ -89,7 +91,7 @@ module.exports = recirculationData({
       ...{
         secondarySectionFronts: excludedSecondarySectionFronts(data),
         sectionFronts: excludedSectionFronts(data),
-        subscriptions: excludedSubscriptions(data),
+        subscriptions: excludedSubscriptions({ ...data, stationSlug:getStationSlug(locals) }),
         tags: excludedTags(data)
       }
     },
@@ -103,7 +105,7 @@ module.exports = recirculationData({
         'component-name': 'minified-content-feed',
         'component-title': 'Minified Content Feed'
       },
-      fields: [ 'category' ]
+      fields: ['category']
     };
 
     data._computed.cards = transformCard('minified', data._computed.cards, options);
