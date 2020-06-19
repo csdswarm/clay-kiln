@@ -1,23 +1,23 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  { filters, subscribe } = require('amphora-search'),
+const
+  _get = require('lodash/get'),
   db = require('../../server/db'),
-  log = require('../../universal/log').setup({ file: __filename }),
-  redis = require('../../server/redis'),
   msnFeedUtils = require('../../universal/msn-feed-utils'),
-  primarySectionFrontsList = '/_lists/primary-section-fronts',
-  secondarySectionFrontsList = '/_lists/secondary-section-fronts',
-  /**
-   * determines whether an operation is a published article
-   *
-   * @param {object} op
-   * @returns {boolean}
-   */
-  isAPublishedArticle = op => {
-    return filters.isPublished(op)
-      && op.key.includes('/article/instances');
-  };
+  redis = require('../../server/redis'),
+  { deleteListItem, updateListItem } = require('../../server/lists'),
+  { filters, subscribe } = require('amphora-search'),
+  { postfix } = require('../../universal/utils'),
+
+  log = require('../../universal/log').setup({ file: __filename }),
+
+  onlySectionFronts = page => _get(page, 'data.main[0]', '').includes('/_components/section-front/instances/'),
+  onlyPublishedArticles = op => filters.isPublished(op) && op.key.includes('/article/instances'),
+  listName = (station, { primary }) => `${postfix(station, '-')}${primary ? 'primary' : 'secondary'}-section-fronts`,
+  publishSectionFront = stream => stream.filter(onlySectionFronts).each(handlePublishSectionFront),
+  unpublishSectionFront = stream => stream.filter(onlySectionFronts).each(handleUnpublishSectionFront),
+  updateTitleLock = (ref, data, titleLocked) => db.put(ref, JSON.stringify({ ...data, titleLocked }));
+
 
 /**
  * for now this just sets the redis key 'msn-feed:last-modified' to the current
@@ -32,7 +32,7 @@ function handleMsnFeed(stream) {
   } = msnFeedUtils;
 
   stream.each(innerStream => innerStream.toArray(async ops => {
-    const publishedArticleStr = _get(ops.find(isAPublishedArticle), 'value');
+    const publishedArticleStr = _get(ops.find(onlyPublishedArticles), 'value');
 
     if (!publishedArticleStr) {
       return;
@@ -56,31 +56,6 @@ function handleMsnFeed(stream) {
 }
 
 /**
- * @param {Object} stream - publish page event payload
- */
-function publishPage(stream) {
-  stream
-    .filter( filterNonSectionFront )
-    .each( handlePublishSectionFront );
-}
-
-/**
- * @param {Object} stream - unpublish page event payload
- */
-function unpublishPage(stream) {
-  stream
-    .each( handleUnpublishSectionFront );
-}
-
-/**
- * @param {Object} page - publish page event payload
- * @returns {boolean}
- */
-function filterNonSectionFront(page) {
-  return page.data && page.data.main && page.data.main[0].includes('/_components/section-front/instances/');
-}
-
-/**
  * Upon publish, add new section front title to primary or secondary
  * section front _lists instance if it does not already exist.
  * Note: Locks title field to prevent breaking article breadcrumbs
@@ -90,24 +65,17 @@ function filterNonSectionFront(page) {
 async function handlePublishSectionFront(page) {
   try {
     const host = page.uri.split('/')[0],
-      sectionFrontRef = page.data.main[0].replace('@published',''),
+      sectionFrontRef = _get(page, 'data.main[0]', '').replace('@published', ''),
       data = await db.get(sectionFrontRef),
-      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      { stationSlug, title, titleLocked } = data;
 
-    if ((data.title || data.stationSlug) && !data.titleLocked) {
-      const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
-        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
-        name = data.stationFront ? data.stationSlug : data.title,
-        value = name.toLowerCase();
+    if (title && !titleLocked) {
+      const
+        sectionFront = { name: title, value: title.toLowerCase() },
+        addedItem = await updateListItem(listName(stationSlug, data), sectionFront, 'name', { host });
 
-      if (!sectionFrontValues.includes(value)) {
-        sectionFronts.push({ name, value });
-
-        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
-        await db.put(sectionFrontRef, JSON.stringify({ ...data, titleLocked: true }));
-
-        // delete list from cache
-        redis.del(`list:${sectionFrontsList.replace('/_lists/', '')}`);
+      if (addedItem === sectionFront) {
+        await updateTitleLock(sectionFrontRef, data, true);
       }
     }
   } catch (e) {
@@ -124,23 +92,15 @@ async function handlePublishSectionFront(page) {
 async function handleUnpublishSectionFront(page) {
   try {
     const host = page.uri.split('/')[0],
-      pageData = await db.get(page.uri),
-      mainRef = pageData.main[0];
+      sectionFrontRef = _get(page, 'data.main[0]', ''),
+      data = await db.get(sectionFrontRef),
+      { stationSlug, title } = data;
 
-    if (mainRef.includes('/_components/section-front/instances/')) {
-      const data = await db.get(mainRef),
-        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList,
-        value = data.stationFront ? data.stationSlug : data.title;
+    if (title) {
+      const titleVal = title.toLowerCase();
 
-      if (value) {
-        const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
-          updatedSectionFronts = sectionFronts.filter(sectionFront => {
-            return sectionFront.value !== value.toLowerCase();
-          });
-
-        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
-        await db.put(mainRef, JSON.stringify({ ...data, titleLocked: false }));
-      }
+      await deleteListItem(listName(stationSlug, data), ({ value }) => value === titleVal, { host });
+      await updateTitleLock(sectionFrontRef, data, false);
     }
   } catch (e) {
     log('error', e);
@@ -151,7 +111,7 @@ async function handleUnpublishSectionFront(page) {
  * subscribe to event bus messages
  */
 module.exports = () => {
-  subscribe('publishPage').through(publishPage);
-  subscribe('unpublishPage').through(unpublishPage);
+  subscribe('publishPage').through(publishSectionFront);
+  subscribe('unpublishPage').through(unpublishSectionFront);
   subscribe('save').through(handleMsnFeed);
 };

@@ -1,0 +1,18 @@
+_pages:
+  events-listing:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+    pageHeader:
+      - /_components/page-header/instances/new
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/events-listing-page/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    layout: /_layouts/one-column-layout/instances/general

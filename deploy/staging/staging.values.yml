@@ -37,7 +37,7 @@ configmap:
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
     ENABLE_GZIP: "true"
     FACEBOOK_CALLBACK_URL: "https://radio.auth.us-east-1.amazoncognito.com/oauth2/token"
-    GOOGLE_AD_REFRESH_INTERVAL: "120000"
+    GOOGLE_AD_REFRESH_INTERVAL: "60000"
     GOOGLE_OVERRIDES_PERMISSIONS: "true"
     GOOGLE_PROFILE_URL: "https://www.googleapis.com/oauth2/v3/userinfo"
     IMPORT_CONTENT_URL: "https://hhv5vwmbg9.execute-api.us-east-1.amazonaws.com/stg/import-content"

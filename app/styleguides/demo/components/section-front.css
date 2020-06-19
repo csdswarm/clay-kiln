@@ -23,3 +23,13 @@
     }
   }
 }
+
+/* add space below placeholder in kiln */
+.component--section-front.editing {
+  .divider-container {
+    margin-bottom: em(20);
+  }
+  .google-ad-manager--billboard {
+    margin-bottom: em(20);
+  }
+}
