@@ -4,7 +4,7 @@ const _get = require('lodash/get'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
   { uriToUrl } = require('../../services/universal/utils'),
-  { addStationSyndicationSlugs } = require('../../services/universal/create-content'),
+  { addStationSyndicationSlugs, updateStationSyndicationType } = require('../../services/universal/create-content'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils');
 
 /**
@@ -29,6 +29,7 @@ async function getPageURI(contentURI) {
 async function addSyndicationEntry(uri, syndicationEntry) {
   const data = await db.get(uri);
 
+  updateStationSyndicationType(data);
   data.stationSyndication.push({ ...syndicationEntry });
   addStationSyndicationSlugs(data);
 
