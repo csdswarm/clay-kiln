@@ -1,17 +1,38 @@
 'use strict';
 
-const expect = require('chai').expect,
+const { autoLink, _internals } = require('.'),
   dirname = __dirname.split('/').pop(),
-  { autoLink } = require('.');
+  chai = require('chai'),
+  sinon = require('sinon'),
+  sinonChai = require('sinon-chai'),
+
+  { expect } = chai;
+
+
+chai.use(sinonChai);
 
 const getLocals = () => ({
   site: {
     host: 'somehost.com'
+  },
+  station: {
+    site_slug: ''
   }
 });
 
 describe(dirname, function () {
+  afterEach(sinon.restore);
   describe('autoLink', function () {
+
+    function setup_autoLink() {
+      sinon.stub(_internals, 'retrieveList');
+
+      return {
+        autoLink,
+        __: _internals
+      };
+    }
+
     it('creates one or more links based on property names in data', async () => {
       const data = { a: 'ay', b: 'bee' },
         props = ['a'];
@@ -22,6 +43,39 @@ describe(dirname, function () {
         .to.eql([
           { text: 'ay', url: '//somehost.com/ay', hidden: false }
         ]);
+    });
+
+    it('should create breadcrumb based on the syndicated station', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSyndication: [{
+            callsign: 'STATION-Y',
+            stationSlug: 'stationy',
+            stationName: 'Station Y',
+            primarySectionFront: 'primary',
+            secondarySectionFront: 'secondary'
+          }]
+        },
+        props = ['primarySectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'stationy',
+        callsign: 'STATION-Y',
+        name: 'Station Y'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Station Y', url: '//somehost.com/stationy', hidden: false },
+        { text: 'primary', url: '//somehost.com/stationy/primary', hidden: false },
+        { text: 'secondary', url: '//somehost.com/stationy/primary/secondary', hidden: false }
+      ]);
     });
 
     it('extends each link with the slug before it', async () => {

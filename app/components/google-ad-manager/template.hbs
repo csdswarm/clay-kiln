@@ -2,7 +2,7 @@
   as an item within more-content-feed's 'ul' --}}
 {{ set "tag" (if (compare adSize "sharethrough-tag") "li" else="div") }}
 
-<{{tag}}
+<{{default tag '!--'}}
   data-uri="{{ default _ref _self }}"
   data-placeholder="adSize"
   data-ad-position="{{ adPosition }}"
@@ -35,4 +35,4 @@
       {{/if}}
     {{/if}}
   {{/unless}}
-</{{tag}}>
+</{{default tag '--'}}>

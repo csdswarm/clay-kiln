@@ -10,8 +10,10 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  { PAGE_TYPES } = require('./../universal/constants'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
   { getComponentName } = require('clayutils'),
   slugify = require('../../services/universal/slugify');
@@ -169,6 +171,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else {
+    data.date = dateFormat(new Date()); // ISO 8601 date string
   }
 }
 
@@ -514,7 +518,10 @@ function addStationSyndicationSlugs(data) {
 
   data.stationSyndication = data.stationSyndication
     .map(station => {
-      if (station.stationSlug) {
+      // if the station is national, there must be a primary section front. otherwise, the slug must just be truthy
+      const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
+
+      if (shouldSetSlug) {
         station.syndicatedArticleSlug = '/' + [
           station.stationSlug,
           slugify(station.sectionFront),
@@ -569,13 +576,21 @@ function assignStationInfo(uri, data, locals) {
     Object.assign(data, {
       stationSlug: station.site_slug,
       stationName: station.name,
-      stationCallsign: station.callsign
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
         stationLogoUrl: station.square_logo_small,
         stationURL: station.website
+      });
+    }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
       });
     }
   }

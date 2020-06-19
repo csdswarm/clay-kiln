@@ -13,7 +13,7 @@ const
   _setWith = require('lodash/setWith'),
   _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
-  { contentTypes } = require('./constants'),
+  { contentTypes, SERVER_SIDE } = require('./constants'),
   { getComponentName, isComponent } = require('clayutils'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
@@ -305,6 +305,28 @@ function postfix(value, suffix) {
 }
 
 /**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+  return list;
+}
+
+/**
  * prepends left to right
  *
  * meant to be used in a mapper function e.g.
@@ -326,7 +348,7 @@ function prepend(left) {
   return right => left + right;
 }
 
-/*
+/**
  * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
  *   begin with the prefix.
  *
@@ -419,29 +441,6 @@ function getDomainFromHostname(hostname) {
 }
 
 /**
- * can be used to get all _ref objects within an object.
- * Copied from amphora.references and modified for unity environment.
- * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
- * @param {object} obj
- * @param {Function|string} [filter=_identity]  Optional filter
- * @returns {array}
- */
-function listDeepObjects(obj, filter) {
-  let cursor, items,
-    list = [],
-    queue = [obj];
-
-  while (queue.length) {
-    cursor = queue.pop();
-    items = _filter(cursor, _isObject);
-    list = list.concat(_filter(items, filter || _identity));
-    queue = queue.concat(items);
-  }
-
-  return list;
-}
-
-/**
  * Url queries to elastic search need to be `http` since that is
  * how it is indexed as.
  * @param {string} url
@@ -473,7 +472,36 @@ function updateImmutable(object, path, updater) {
   return _updateWith(_clone(object), path, updater, _clone);
 }
 
+/**
+ * When on the server, pushes an time entry onto locals.amphoraRenderTimes
+ *
+ * @param {object} locals
+ * @param {object} timeEntry
+ * @param {object} [opts]
+ * @param {object} [opts.shouldAddAmphoraTimings]
+ * @param {object} [opts.prefix]
+ */
+function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
+  const {
+    prefix = '',
+    shouldAdd = true
+  } = opts;
+
+  if (shouldAdd && SERVER_SIDE && locals.amphoraRenderTimes) {
+    const { label } = timeEntry;
+
+    if (prefix) {
+      timeEntry = Object.assign({}, timeEntry, {
+        label: `${prefix} - ${label}`
+      });
+    }
+
+    locals.amphoraRenderTimes.push(timeEntry);
+  }
+}
+
 module.exports = {
+  addAmphoraRenderTime,
   addLazyLoadProperty,
   boolKeys,
   cleanUrl,

@@ -142,6 +142,7 @@ module.exports = router => {
 
   addEndpoints.importContent(router);
   addEndpoints.sitemap(router);
+  addEndpoints.contestRules(router);
 
   /**
    * Sitemap for stations directories and station detail pages
@@ -160,6 +161,5 @@ module.exports = router => {
   addEndpoints.imageInfo(router, checkAuth);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
-  addEndpoints.stationLists(router);
   addEndpoints.signOut(router);
 };
