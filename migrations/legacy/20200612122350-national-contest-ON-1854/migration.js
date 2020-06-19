@@ -11,7 +11,7 @@ createNationalContestPage();
 async function createNationalContestPage () {
 
   const data = {
-    "head": [
+    head: [
       `${host}/_components/meta-title/instances/general`,
       `${host}/_components/meta-description/instances/general`,
       `${host}/_components/meta-image/instances/general`,
@@ -19,16 +19,16 @@ async function createNationalContestPage () {
       `${host}/_components/meta-tags/instances/general`,
       `${host}/_components/branch-io-head/instances/default`
     ],
-    "main": [
+    main: [
       `${host}/_components/contest/instances/new`
     ],
-    "layout": `${host}/_layouts/two-column-layout/instances/contest`,
-    "tertiary": [
+    layout: `${host}/_layouts/two-column-layout/instances/contest`,
+    tertiary: [
       `${host}/_components/google-ad-manager/instances/mediumRectangleTop`,
       `${host}/_components/latest-recirculation/instances/national-contest`,
       `${host}/_components/google-ad-manager/instances/halfPageBottom`
     ],
-    "pageHeader": [
+    pageHeader: [
       `${host}/_components/google-ad-manager/instances/billboardTop`
     ]
   };
