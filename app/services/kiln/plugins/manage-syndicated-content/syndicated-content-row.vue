@@ -169,7 +169,7 @@
        */
       async onUnpublish() {
         this.unpublishLoading = true;
-        await axios.put('/rdc/unpublish-syndication', { uri: this.content._id, station: this.selectedStation });
+        await axios.put('/rdc/syndicated-content/unpublish', { uri: this.content._id, station: this.selectedStation });
         // Reload content to refresh updated data
         this.$emit('reloadContent', null);
       }

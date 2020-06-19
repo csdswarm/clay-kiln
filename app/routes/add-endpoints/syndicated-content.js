@@ -61,15 +61,14 @@ module.exports = router => {
     res.send('success');
   }));
 
-  router.put('/rdc/unpublish-syndication', wrapInTryCatch(async (req, res) => {
+  router.post('/rdc/syndicated-content/unpublish', wrapInTryCatch(async (req, res) => {
     const { uri, station } = req.body,
       latestUri = uri.replace('@published', ''),
       pageURI = await getPageURI(uri);
 
     await removeSyndicationEntry(latestUri, station.callsign);
-    await rest.put(`${uriToUrl(pageURI)}@published`, {}, true);
+    await rest.put(uriToUrl(pageURI, res.locals), {}, true);
 
-    res.status(200);
     res.send('success');
   }));
 };
