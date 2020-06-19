@@ -9,6 +9,7 @@ const
   reversibleOneBasedIndex = require('./reversibleOneBasedIndex'),
   sanitizeURI = require('./sanitizeURI'),
   truncate = require('./truncate'),
+  toUpperCase = require('./toUpperCase'),
   {
     formatDateRange,
     isPublished24HrsAgo,
@@ -53,6 +54,7 @@ module.exports = {
   secondsToISO,
   timeAgoTimestamp,
   truncateText: truncate,
+  toUpperCase,
   userLocalDate,
   withoutResolution: getRenditionWithoutPixelDensity,
   yesNo
