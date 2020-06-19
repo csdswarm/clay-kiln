@@ -45,7 +45,7 @@ function formatDateTimeRange({ hash: {
   if (dateFrom && dateTo) {
     return `${
       moment.utc(dateFrom).format(format)
-    }${ separator }${ moment(dateTo).format(format) }`;
+    }${ separator }${ moment.utc(dateTo).format(format) }`;
   } else {
     return '';
   }
