@@ -73,7 +73,6 @@
   import { isUrl } from '../../../universal/utils';
 
   const { UiButton, UiIconButton, UiTextbox, UiModal, UiSelect } = window.kiln.utils.components,
-    { uriToUrl } = window.kiln.utils.urls,
     { locals } = window.kiln,
     INDEX = 'published-content',
     CONTENT_TYPES = [
@@ -134,7 +133,17 @@
           query = queryService.newQueryWithCount(INDEX, DEFAULT_QUERY_SIZE, locals),
           searchString = this.queryText.replace(/^https?:\/\//, ''),
           host = isUrl(this.queryText) ? searchString.split('/')[0] : '',
-          transformResult = (formattedResult, rawResult) => ({ content: formattedResult, total: _.get(rawResult, 'hits.total') });
+          transformResult = (formattedResult, rawResult) => ({ content: formattedResult, total: _.get(rawResult, 'hits.total') }),
+          matchContentTypes = () => {
+            const matchContentTypes = CONTENT_TYPES.map(contentType => ({ match: { contentType } }));
+
+            return {
+              bool: {
+                should: matchContentTypes,
+                minimum_should_match: 1
+              }
+            };
+          };
 
         let result = {
           content: [],
@@ -144,6 +153,7 @@
         queryService.addSort(query, { date: { order: 'desc'} });
         queryService.addOffset(query, this.offset);
         queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
+        queryService.addMust(query, matchContentTypes());
 
         const searchCondition = {
           bool: {
@@ -240,11 +250,13 @@
           retrieveList(`${slug}-secondary-section-fronts`),
         ])
         .then(([primarySectionFronts, secondarySectionFronts]) => {
-          this.stationSectionFronts = {
-            label,
-            primaryOptions: transformSectionFronts(primarySectionFronts),
-            secondaryOptions: transformSectionFronts(secondarySectionFronts)
-          };
+          if (primarySectionFronts.length || secondarySectionFronts.length) {
+            this.stationSectionFronts = {
+              label,
+              primaryOptions: transformSectionFronts(primarySectionFronts),
+              secondaryOptions: transformSectionFronts(secondarySectionFronts)
+            };
+          }
         })
         .catch(() => this.stationSectionFronts = null);
       },
@@ -263,10 +275,8 @@
       },
       async saveSyndication() {
         this.saveLoading = true;
-        const prefix = _.get(this.$store, 'state.site.prefix');
 
-        await axios.post(
-          uriToUrl(`${prefix}/rdc/syndicated-content/create`),
+        await axios.post('/rdc/syndicated-content/create',
           {
             uri: this.selectedContentId,
             syndicationData: this.getSyndicationData()
