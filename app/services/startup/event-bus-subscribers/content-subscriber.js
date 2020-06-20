@@ -1,14 +1,25 @@
 'use strict';
 
-const db = require('../../../services/server/db'),
+const  
+  _differenceWith = require('lodash/differenceWith'),
+  _get = require('lodash/get'),
+  _isEqual = require('lodash/isEqual'),
+  ANF_API = '/apple-news/articles',
   buffer = require('../../../services/server/buffer'),
-  { subscribe } = require('amphora-search'),
+  db = require('../../../services/server/db'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
-  ANF_API = '/apple-news/articles',
-  _get = require('lodash/get'),
-  _differenceWith = require('lodash/differenceWith'),
-  _isEqual = require('lodash/isEqual');
+  { subscribe } = require('amphora-search'),
+
+  __ = {
+    dbGet: db.get,
+    dbPut: db.put,
+    getCanonicalRedirect: db.getCanonicalRedirect,
+    getComponentName,
+    getUrls: db.getUrls,
+    handlePublishStationSyndication,
+    setUri: db.setUri
+  }
 
 /**
  * @param {Object} stream - publish page event payload
@@ -33,7 +44,7 @@ function unpublishPage(stream) {
  */
 function filterNonContentType(page) {
   return page.data && page.data.main &&
-    ['article', 'gallery'].includes(getComponentName(page.data.main[0]));
+    ['article', 'gallery'].includes(__.getComponentName(page.data.main[0]));
 }
 
 /**
@@ -43,12 +54,12 @@ function filterNonContentType(page) {
  * @param {page} page - publish page event payload
  **/
 async function handlePublishContentPg(page) {
-  handlePublishStationSyndication(page);
+  __.handlePublishStationSyndication(page);
 
   if (process.env.APPLE_NEWS_ENABLED === 'TRUE') {
     const articleRef = page.data.main[0].replace('@published', ''),
       appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`,
-      appleNewsData = await db.get(appleNewsKey, null, {});
+      appleNewsData = await __.dbGet(appleNewsKey, null, {});
 
     try {
       // eslint-disable-next-line one-var
@@ -75,7 +86,7 @@ async function handlePublishContentPg(page) {
         });
 
         if (id) {
-          await db.put(appleNewsKey, updatedAppleNewsData);
+          await __.dbPut(appleNewsKey, updatedAppleNewsData);
         } else {
           await db.post(appleNewsKey, updatedAppleNewsData);
         }
@@ -97,13 +108,13 @@ async function handlePublishContentPg(page) {
  */
 async function handleUnpublishContentPg(page) {
   try {
-    const pageData = await db.get(page.uri),
+    const pageData = await __.dbGet(page.uri),
       mainRef = pageData.main[0];
 
-    if (['article', 'gallery'].includes(getComponentName(mainRef)) &&
+    if (['article', 'gallery'].includes(__.getComponentName(mainRef)) &&
       process.env.APPLE_NEWS_ENABLED === 'TRUE') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
-        articleData = await db.get(appleNewsKey, null, {}),
+        articleData = await __.dbGet(appleNewsKey, null, {}),
         { id } = articleData;
 
       if (id) {
@@ -136,11 +147,11 @@ async function handlePublishStationSyndication(page) {
   const mainRef = page.data.main[0],
     host = page.uri.split('/')[0];
 
-  if (['article', 'gallery'].includes(getComponentName(mainRef))) {
-    const contentData = await db.get(mainRef),
+  if (['article', 'gallery'].includes(__.getComponentName(mainRef))) {
+    const contentData = await __.dbGet(mainRef),
       canonicalInstance = new URL(contentData.canonicalUrl),
-      allSyndicatedUrls = await db.getUrls(page.uri.replace('@published', '')),
-      originalArticleId = await db.getCanonicalRedirect(`${canonicalInstance.hostname}${canonicalInstance.pathname}`),
+      allSyndicatedUrls = await __.getUrls(page.uri.replace('@published', '')),
+      originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
       newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
       outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, _isEqual),
@@ -150,11 +161,11 @@ async function handlePublishStationSyndication(page) {
           const url = `${host}${station.syndicatedArticleSlug}`,
             redirect = page.uri.replace('@published', '');
 
-          return db.put(`${host}/_uris/${buffer.encode(url)}`, redirect);
+          return __.dbPut(`${host}/_uris/${buffer.encode(url)}`, redirect);
         }
       }),
       updateDeprecatedUrls = removeCanonical.map(({ url }) => {
-        return db.setUri(redirectUri, url);
+        return __.setUri(redirectUri, url);
       });
 
     await Promise.all(queue);
@@ -165,7 +176,10 @@ async function handlePublishStationSyndication(page) {
 /**
  * subscribe to event bus messages
  */
-module.exports = () => {
+function subscribeToBusMessages () {
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
-};
+}
+subscribeToBusMessages._internals = __;
+
+module.exports = subscribeToBusMessages;
