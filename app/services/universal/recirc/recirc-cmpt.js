@@ -84,7 +84,8 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields, 
       return data;
     })
     .catch( err => {
-      queryService.logCatch(err, ref);
+      if (!data.ignoreValidation)
+        queryService.logCatch(err, ref);
       // instead of throwing error, just return the existing data
       // (this is a temporary compromise to deal with the following use case:
       // when a URL slug changes, we don't want publish to break when querying with the url)

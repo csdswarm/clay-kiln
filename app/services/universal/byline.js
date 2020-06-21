@@ -36,7 +36,7 @@ function formatSimpleByline(authorsList) {
  */
 function complexByline(opts) {
   const bylines = _.get(opts.hash, 'bylines', []),
-    options = _.pick(opts.hash, ['showSocial', 'authorHost', 'linkClass', 'nameClass', 'hideLinks', 'simpleList']);
+    options = _.pick(opts.hash, ['showSocial', 'authorHost', 'linkClass', 'nameClass', 'hideLinks', 'simpleList', 'stationSlug']);
 
   let names;
 

@@ -9,9 +9,14 @@ let desktopNavItems,
   mobileNavItems,
   listenNavToggle,
   listenNavDrawer,
-  lastTarget;
+  listenNavComponent,
+  stationId,
+  stationListenNavInstance,
+  lastTarget,
+  isMobile = false;
 
-const { isMobileNavWidth } = require('../../services/client/mobile'),
+const { getComponentInstance } = require('clayutils'),
+  { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
   /**
@@ -19,7 +24,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM('/_components/station-listen-nav/instances/new.html'),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`, { bypassCache: true }),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -116,37 +121,102 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleListenDrawer = ({ type, currentTarget }) => {
-    resetNavs();
-
-    if (type === 'mouseleave') {
-      currentTarget.classList.remove(active);
-      listenNavDrawer.classList.remove(active);
-      navDrawersContainer.classList.remove(active);
-      lastTarget = currentTarget;
-    } else {
-      refreshListenNav();
-      currentTarget.classList.add(active);
-      listenNavDrawer.classList.add(active);
-      navDrawersContainer.classList.add(active);
+    if (!isMobile) {
+      resetNavs();
+      type === 'mouseleave'
+        ? closeListenDrawer(currentTarget)
+        : openListenDrawer(currentTarget);
     }
+  },
+  /**
+   * Toggle listen nav arrow direction & listen nav drawer on touch for mobile
+   *
+   * @param {Object} currentTarget -- currentTarget
+   * @return {void}
+   */
+  toggleListenDrawerInMobile = ({ currentTarget }) => {
+    isMobile = true;
+
+    if (!currentTarget.classList.contains(active)) {
+      return openListenDrawer(currentTarget);
+    }
+    closeListenDrawer(currentTarget);
+  },
+  /**
+   * Opens listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  openListenDrawer = (target) => {
+    refreshListenNav();
+
+    // remove active status from mobile menu drawer
+    mobileNavToggle.classList.remove(active);
+    mobileNavDrawer.classList.remove(active);
+
+    // set active status to listen nav drawer
+    target.classList.add(active);
+    listenNavDrawer.classList.add(active);
+    navDrawersContainer.classList.add(active);
+  },
+  /**
+   * Closes listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  closeListenDrawer = (target) => {
+    target.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+    navDrawersContainer.classList.remove(active);
+    lastTarget = target;
   },
   /**
    * Toggle mobile nav arrow direction & mobile nav on click of caret
    *
    * @param {Object} event -- contains currentTarget
+   * @return {void}
    */
   toggleMobileDrawer = ({ currentTarget }) => {
     // reset desktop navs & toggles
     desktopNavItems.forEach(item => {
       item.classList.remove(active);
     });
-    listenNavToggle.classList.remove(active);
 
-    // toggle mobile drawer
     lastTarget = currentTarget;
-    currentTarget.classList.toggle(active);
-    mobileNavDrawer.classList.toggle(active);
-    navDrawersContainer.classList.toggle(active);
+
+    if (!currentTarget.classList.contains(active)) {
+      // close all secondary dropdowns before opening nav drawer
+      for (const item of mobileNavItems) {
+        item.classList.remove(active);
+      }
+      return openMobileDrawer(currentTarget);
+    }
+    closeMobileDrawer(currentTarget);
+  },
+  /**
+   * Opens mobile menu nav arrow direction & drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  openMobileDrawer = (target) => {
+    // remove active status from listen nav drawer
+    listenNavToggle.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+
+    // set active status to menu nav drawer
+    target.classList.add(active);
+    mobileNavDrawer.classList.add(active);
+    navDrawersContainer.classList.add(active);
+  },
+  /**
+   * Closes mobile menu nav arrow direction & drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  closeMobileDrawer = (target) => {
+    target.classList.remove(active);
+    mobileNavDrawer.classList.remove(active);
+    navDrawersContainer.classList.remove(active);
   },
   /**
    * Toggle secondary nav items dropdown for primary nav items
@@ -154,7 +224,11 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    *
    * @param {Object} event -- contains currentTarget
    */
-  toggleMobileSecondaryLinks = ({ currentTarget }) => {
+  toggleMobileSecondaryLinks = ( event ) => {
+    event.preventDefault();
+
+    const { currentTarget } = event;
+
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
       for (const item of mobileNavItems) {
@@ -172,13 +246,16 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     // Toggle Listen Nav
     listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
     listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
+    listenNavToggle.addEventListener('touchstart', toggleListenDrawerInMobile, true);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      item.addEventListener('click', toggleMobileSecondaryLinks);
+      if (item.querySelectorAll('.item__label>.label__menu-toggle')) {
+        item.addEventListener('click', toggleMobileSecondaryLinks);
+      }
     });
 
     // Toggle Nav Desktop Drawers
@@ -194,14 +271,11 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 
     // Remove mobile & desktop navs on resize
     window.addEventListener('resize', function () {
-      const isMobile = isMobileNavWidth();
+      const isMobileWidth = isMobileNavWidth();
 
-      if (!isMobile) {
-        if (!listenNavDrawer.classList.contains(active)) {
-          navDrawersContainer.classList.remove(active);
-        }
-        mobileNavToggle.classList.remove(active);
-        mobileNavDrawer.classList.remove(active);
+      if (!isMobileWidth) {
+        isMobile = false;
+        resetNavs();
       } else {
         // reset all desktop drawers
         for (const drawer of desktopNavDrawers) {
@@ -225,6 +299,9 @@ document.addEventListener('station-nav-mount', function () {
   mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
+  listenNavComponent = document.querySelector('.component--station-listen-nav');
+  stationId = stationNav.dataset.stationId;
+  stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
 
   addEventListeners();
 });

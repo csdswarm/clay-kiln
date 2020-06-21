@@ -74,7 +74,7 @@
       {{! authors }}
       <div class="info--left-top">
         <div data-editable="bylinesAndStationLogo" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
-          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial stationSlug=stationSlug }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
               --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
@@ -252,7 +252,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Station(s)</h4>
-              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+              <p class="item-data">{{{ default _computed.stationSyndicationCallsigns empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Genre(s)</h4>

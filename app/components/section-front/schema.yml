@@ -1,4 +1,4 @@
-_version: 3.0
+_version: 4.0
 _confirmRemoval: true
 
 title:
@@ -23,22 +23,13 @@ titleLocked:
   _label: Is title locked?
   _has: checkbox
 
-stationSiteSlug:
-  _label: Site Slug
+stationSlug:
+  _label: Station Site Slug
   _publish:
     - sectionFront
     - ogTitle
     - pageListTitle
     - pageTitle
-  _has:
-    input: text
-    validate:
-      required:
-        field: revealStationControls
-        operator: truthy
-  _reveal:
-    field: revealStationControls
-    operator: truthy
 
 primary:
   _label: Is this a primary section front?
@@ -73,6 +64,15 @@ podcastList:
     include:
       - podcast-list
 
+
+dividerContainer:
+  _placeholder:
+    text: Add Divider Title
+    height: 30px
+  _componentList:
+    include:
+      - divider
+
 twoColumnComponent:
   _component:
     include:
@@ -92,21 +92,19 @@ canonicalUrl:
   _has:
     help: Canonical URL of an article. Set when the article publishes.
 
-# Component properties
-sectionLead:
-  _component:
+mainContent:
+  _placeholder:
+    text: Main Content
+    height: 100px
+    required: true
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
     include:
-    - section-lead
-
-googleAdUnderStationsModule:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
+    - google-ad-manager
+    - multi-column
+    - podcast-list
+    - stations-carousel
+    - two-column-component
 
 _groups:
   settings:
@@ -115,8 +113,6 @@ _groups:
       - primary
       - primarySectionFront
       - title
-      - stationSiteSlug
-      - includePodcastModule
 
 stationName:
   _publish: stationName

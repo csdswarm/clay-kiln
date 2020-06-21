@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+  url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
@@ -36,6 +37,27 @@ function getPrefixAndKey(path) {
 }
 
 const routes = [
+  // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
+  // https://regex101.com/r/TFNbVH/1
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return !!pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        [ , stationSlug, author ] = pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+
+      if (stationSlug) {
+        params.stationSlug = stationSlug;
+      }
+      if (author) {
+        params.author = author;
+      }
+    },
+    getPageData: req => curatedOrDynamicRouteHandler(req, 'author')
+  },
   { // stations directories
     testPath: req => req.path.includes('/stations'),
     getParams: (req, params) => {
@@ -68,6 +90,51 @@ const routes = [
     },
     getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
   },
+  // `/contest-rules` or `{stationSlug}/contest-rules`
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url),
+        basePath = 'contest-rules',
+        pathnameIndex = parsePathParts(pathname)
+          .indexOf(basePath);
+
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contest-rules/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
+  // `/contests` or `{stationSlug}/contests`
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url),
+        basePath = 'contests',
+        pathParts = parsePathParts(pathname),
+        pathnameIndex = pathParts
+          .indexOf(basePath),
+        // `/contests/{slug}` or `{stationSlug}/contests/{slug}`
+        isContestPage = /\/contests\/(.+)/.test(pathname);
+
+      if (isContestPage) {
+        return false;
+      }
+
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contests/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
   { // [default route handler] resolve the uri and page instance
     testPath: () => true,
     getParams: () => {},
@@ -76,6 +143,34 @@ const routes = [
       .then(data => db.get(`${data}@published`))
   }
 ];
+
+/**
+ * Returns the pathname split into an array of parts.
+ *
+ * Example:
+ * ```
+ * const pathname = '/foo/bar/blah'
+ * pathParts(pathname) // ['foo', 'bar', 'blah']
+ * ```
+ *
+ * @param {string} pathname
+ * @returns {Array<string>}
+ */
+function parsePathParts(pathname) {
+  return pathname.match(/[^\/]+/g) || [];
+}
+/**
+  * Returns curated or dynamic page data
+  *
+  * @param {Object} req
+  * @param {string} dynamicPageKey
+  * @returns {Promise<Promise<Object>>}
+*/
+function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
+  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    .then(pageKey => db.get(`${ pageKey }@published`))
+    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
+}
 
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
@@ -105,9 +200,18 @@ async function middleware(req, res, next) {
       ...sectionFrontValues,
       'topic',
       'authors'
-    ],
-    curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+    ];
 
+  if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
+    curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
+  }
+
+  // Define curated/dynamic routing logic
+  const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+
+  /* @TODO TECH DEBT: change topic and section fronts to use
+  *  curatedOrDynamicRouteHandler() like we did for author pages
+  */
   // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
     // Define param extraction logic.
@@ -149,7 +253,6 @@ async function middleware(req, res, next) {
       // Set locals
       fakeLocals(req, res, params);
       return composer.composePage(data, res.locals);
-      
     })
     .then(composed => res.json(composed))
     .catch(err => {

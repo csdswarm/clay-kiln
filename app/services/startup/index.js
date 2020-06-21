@@ -131,6 +131,8 @@ function setupApp(app) {
 
   addEndpoints.msnFeed(app);
   addEndpoints.s3StationFeedImgUrl(app);
+  addEndpoints.contentWithSyndicatedUrl(app);
+  addEndpoints.contentAndPageInfo(app);
 
   radium.inject(app);
 

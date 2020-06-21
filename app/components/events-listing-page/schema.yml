@@ -1,0 +1,26 @@
+_description: Events listing page
+
+pageDescription:
+  _publish: pageDescription
+  _has:
+    input: text
+    help: Plaintext description for search engines
+    validate:
+      required: true
+
+eventsLede:
+  _component:
+    include:
+      - events-lede
+
+# Component
+eventsList:
+  _component:
+    include:
+      - events-list
+
+# Groups
+_groups:
+  settings:
+    fields:
+      - pageDescription
