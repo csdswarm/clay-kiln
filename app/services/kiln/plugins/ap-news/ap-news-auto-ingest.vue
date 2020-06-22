@@ -15,7 +15,7 @@
             <ui-collapsible :title="subscription.data.entitlements[0].name + '...'">
               <ol class="entitlements-list">
                 <li v-for="(entitlement, eindex) in subscription.data.entitlements" :key="eindex">
-                  {{ getShortEntitlementName(entitlement.name) }}
+                  {{ entitlement.name }}
                 </li>
               </ol>
             </ui-collapsible>
@@ -53,24 +53,21 @@
                 has-search
                 label="Station"
                 placeholder="Radio.com (NATL-RC)"
-
                 :options="options.stations"
-
                 v-model="workingSubscription.data.stationSlug"
+                @input="onStationChange"
               ></ui-select>
-              <!-- entitlements -->
-              <ui-checkbox-group
-                class="entitlements-group"
-                label="Ap Top News Entitlements"
-                error="Choose at least 1 AP Top News Entitlement"
-                help="Choose the AP Top News Entitlement"
-
-                :options="options.entitlements"
-                :invalid="workingSubscription.data.entitlements.length < 1"
-                ref="cbg"
-
+              <ui-select
+                class="entitlements"
+                has-search
+                label="Entitlements"
+                multiple="true"
+                :keys="options.entitlementKeys"
+                :options="entitlements"
+                :invalid="isEntitlementsInvalid"
+                placeholder="Select at least ONE enetitlement"
                 v-model="workingSubscription.data.entitlements"
-              ></ui-checkbox-group>
+              ></ui-select>
             </div>
           </fieldset>
           <!-- mappings -->
@@ -84,7 +81,7 @@
                 placeholder="Select Primary Section Front to Include"
 
                 :options="primarySectionFronts.map(psf => psf.name)"
-                :invalid="workingSubscription.data.mappings[index].sectionFront === ''"
+                :invalid="isPrimarySectionfrontsInvalid"
 
                 v-model="workingSubscription.data.mappings[index].sectionFront"
               ></ui-select>
@@ -107,10 +104,10 @@
         <!-- <pre>{{ workingSubscription }}</pre> -->
         <div slot="footer">
           <template v-if="modalMode === 'new'">
-            <ui-button color="primary" @click="createApNewsSubscription" :disabled="false">Add</ui-button>
+            <ui-button color="primary" @click="createApNewsSubscription" :disabled="isWorkingSubscriptionValid">Add</ui-button>
           </template>
           <template v-else="">
-            <ui-button color="primary" @click="updateApNewsSubscription">Save</ui-button>
+            <ui-button color="primary" @click="updateApNewsSubscription" :disabled="isWorkingSubscriptionValid">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
         </div>
@@ -130,7 +127,7 @@
 
 <script>
   const axios = require('axios')
-  const { UiButton, UiTextbox, UiIconButton, UiConfirm, UiModal, UiRadioGroup, UiSelect, UiCheckboxGroup, UiCollapsible } = window.kiln.utils.components
+  const { UiButton, UiTextbox, UiIconButton, UiConfirm, UiModal, UiRadioGroup, UiSelect, UiCheckbox, UiCheckboxGroup, UiCollapsible } = window.kiln.utils.components
   const _get = require('lodash/get')
   const _set = require('lodash/set')
   const tableConfig = [
@@ -162,11 +159,11 @@
   ]
 
   class ApSubscription {
-    constructor (entitlements = []) {
+    constructor () {
       this.id = `${Math.random()}`, // NOTE: Will need to be removed for 1998
       this.data = {
         stationSlug: { label: 'Radio.com (NATL-RC)', value: ''},
-        entitlements,
+        entitlements: [],
         mappings: [{
           sectionFront: '',
           secondarySectionFront: ''
@@ -201,10 +198,14 @@
         this.$refs[ref].close()
       },
       getList (listName, dataKey) {
+        this.isLoading = true
+        console.log('[getList]', listName, dataKey)
         axios.get(`/_lists/${listName}`)
           .then(r => {
             this[dataKey] = [...r.data]
           })
+          .catch(this.handleError)
+          .finally(() => { this.isLoading = false })
       },
       showSnack (message, duration = 4000) {
         this.$store.dispatch('showSnackbar', {
@@ -302,6 +303,21 @@
           this.workingSubscription.data.entitlements.length < 1 ||
           this.workingSubscription.data.mappings[0].sectionFront === ''
         )
+      },
+      onEntitlementChange (e, entitlement) {
+        console.log('[onEntitlementChange]', e, entitlement)
+        if(e) {
+          this.workingSubscription.data.entitlements.push(entitlement)
+        } else {
+          this.workingSubscription.data.entitlements = this.workingSubscription.data.entitlements.filter(ent => ent.value !== entitlement.value)
+        }
+        this.workingSubscription.data.entitlements.forEach(ent => console.log(ent.name))
+      },
+      onStationChange (station) {
+        console.log('[onStationChange]', station.value)
+        const delim = station.value === '' ? '' : '-'
+        this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
+        this.getList(`${station.value}${delim}secondary-section-fronts`, 'secondarySectionFronts')
       }
     },
     computed: {
@@ -313,15 +329,28 @@
           stations: Object.values(window.kiln.locals.stationsIHaveAccessTo).map(station => {
             return { label: `${station.name} (${station.callsign})`, value: station.slug }
           }),
-          entitlements: this.entitlements.map(ent => {
-            return { label: this.getShortEntitlementName(ent.name), value: {id: ent.value, name: ent.name} }
-          })
+          entitlementKeys: {
+            class: 'class',
+            label: 'name',
+            image: 'image'
+          }
         }
+      },
+      isEntitlementsInvalid () {
+        return this.workingSubscription.data.entitlements.length < 1
+      },
+      isPrimarySectionfrontsInvalid () {
+        return this.workingSubscription.data.mappings.some((mapping) => mapping.sectionFront === '')
+      },
+      isWorkingSubscriptionValid () {
+        return (
+          this.isEntitlementsInvalid || this.isPrimarySectionfrontsInvalid
+        )
       }
     },
     components: {
       UiButton,
-      UiCheckboxGroup,
+      UiCheckbox,
       UiCollapsible,
       UiConfirm,
       UiIconButton,
