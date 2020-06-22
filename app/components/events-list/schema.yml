@@ -1,0 +1,56 @@
+_description: A listing of events
+
+# Properties
+curatedEvents:
+  _label: Add Event
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: url
+        _label: URL
+        _has:
+          input: content-search
+          type: url
+          validate:
+            required: true
+
+  _placeholder:
+    text: Add Event
+    height: 60px
+    required: true
+
+eventsLedeUrl:
+  _subscribe: eventsLedeUrl
+
+numberToDisplay:
+  _label: Number of events to display
+  _has:
+    input: text
+    type: number
+    step: 1
+    validate:
+      min: 1
+      max: 30
+    help: The number of events to show on initial page load before a user clicks the load more button (1-30)
+
+loadMoreAmount:
+  _label: Number of events to get on load more
+  _has:
+    input: text
+    type: number
+    step: 1
+    validate:
+      min: 1
+      max: 20
+    help: The number of events to get when the user clicks the load more button (1-20)
+
+_groups:
+  settings:
+    _placeholder:
+      text: Events List Settings
+      height: 60px
+    fields:
+      - curatedEvents
+      - numberToDisplay
+      - loadMoreAmount

@@ -4,15 +4,13 @@ A repo that contains a basic site and the necessary files to provision AWS resou
 
 ## Prerequisites:
 
-Before starting the installation process, it's recommended to have the software below:
-
 * [Docker desktop](https://www.docker.com/products/docker-desktop)
 * [Homebrew](https://brew.sh/)
+    * quick install: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 * [mkcert](https://github.com/FiloSottile/mkcert)
+    * quick install: `brew install mkcert && brew install nss`
 
 ## To Start
-
-Make sure you have docker installed and you're using Node.js version V10.16.3 and npm version 6.9.0.
 
 Edit your `/etc/hosts` file to include the following:
 
@@ -71,7 +69,7 @@ make gen-certs
 
 This generates the TLS/SSL certs needed to access the site locally over https.
 
-Also run 
+Also run
 
 ```bash
 make up-nginx
@@ -86,7 +84,7 @@ trustworthy, run the following command (it only needs to be run once on your mac
 mkcert -install
 ```
 
-Then run 
+Then run
 ```bash
 make install-dev
 ```
@@ -106,7 +104,7 @@ Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-in
 Setup profile - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration
 Use AWS credentials for your account and use the `default` profile. If you have multiple profiles update the below script accordingly.
 
-Add the following script to your local `~/.bashrc` file (UPDATE THE EMAIL ADDRESS TO BE YOURS): 
+Add the following script to your local `~/.bashrc` file (UPDATE THE EMAIL ADDRESS TO BE YOURS):
 ```bash
 if [ -f ~/.aws_token ]; then
     filemtime=$(stat -f%m ~/.aws_token)

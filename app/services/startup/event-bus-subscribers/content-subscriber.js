@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('../../../services/server/db'),
+  buffer = require('../../../services/server/buffer'),
   { subscribe } = require('amphora-search'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
@@ -39,6 +40,8 @@ function filterNonContentType(page) {
  * @param {page} page - publish page event payload
  **/
 async function handlePublishContentPg(page) {
+  handlePublishStationSyndication(page);
+
   if (process.env.APPLE_NEWS_ENABLED === 'TRUE') {
     const articleRef = page.data.main[0].replace('@published', ''),
       appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`,
@@ -81,7 +84,7 @@ async function handlePublishContentPg(page) {
       }
     }
   }
-};
+}
 
 /**
  * Upon unpublish, remove from apple news feed
@@ -119,7 +122,31 @@ async function handleUnpublishContentPg(page) {
   } catch (e) {
     log('error', `APPLE NEWS LOG -- Error hitting apple news api on unpub: ${ e.message } ${ e.stack }`);
   }
-};
+}
+
+/**
+ * Creates URIs for station syndications.
+ * @param {object} page
+ * @returns {Promise<void>}
+ */
+async function handlePublishStationSyndication(page) {
+  const mainRef = page.data.main[0],
+    host = page.uri.split('/')[0];
+
+  if (['article', 'gallery'].includes(getComponentName(mainRef))) {
+    const contentData = await db.get(mainRef),
+      queue = (contentData.stationSyndication || []).map(station => {
+        if (station.syndicatedArticleSlug) {
+          const url = `${host}${station.syndicatedArticleSlug}`,
+            redirect = page.uri.replace('@published', '');
+
+          return db.put(`${host}/_uris/${buffer.encode(url)}`, redirect);
+        }
+      });
+
+    await Promise.all(queue);
+  }
+}
 
 /**
  * subscribe to event bus messages

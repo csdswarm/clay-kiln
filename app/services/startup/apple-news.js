@@ -47,7 +47,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         };
       });
     }
-
     next();
   },
   /**
@@ -316,9 +315,22 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           body: formData
         }).then(({ status, statusText, body: article }) => {
           if ([ 200, 201 ].includes(status)) {
+            log('error', 'APPLE NEWS LOG -- ARTICLE POST CONTENT:', {
+              status,
+              text: statusText,
+              data: JSON.stringify(article),
+              enabled: process.env.APPLE_NEWS_ENABLED,
+              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
+            });
             res.status(status).send(article.data);
           } else {
-            log('error', `APPLE NEWS LOG -- ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) }`);
+            log('error', 'APPLE NEWS LOG -- ARTICLE POST ERROR:', {
+              status,
+              text: statusText,
+              data: JSON.stringify(article),
+              enabled: process.env.APPLE_NEWS_ENABLED,
+              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
+            });
             res.status(status).send(article);
           }
         }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));

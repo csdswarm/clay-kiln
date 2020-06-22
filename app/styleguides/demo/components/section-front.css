@@ -2,6 +2,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/content-type";
 
 .component--section-front {
   margin-top: em(30);
@@ -20,5 +21,15 @@
         @mixin font ProximaNova-RegularIt, 11px, red, -0.3px, 16px;
       }
     }
+  }
+}
+
+/* add space below placeholder in kiln */
+.component--section-front.editing {
+  .divider-container {
+    margin-bottom: em(20);
+  }
+  .google-ad-manager--billboard {
+    margin-bottom: em(20);
   }
 }

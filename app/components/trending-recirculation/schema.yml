@@ -34,8 +34,10 @@ _groups:
   trendingItems:
     _label: hello
     _placeholder:
-      ifEmpty: items.url and fill
+      ifEmpty: items.url
       height: 100px
       text: Trending Stories -- Anything less than 6 will be backfilled with the latest
     fields:
       - items
+
+_permission: update
