@@ -11,6 +11,10 @@
     }
   }
 
+  .player__video-close-btn {
+    display: none;
+  }
+
   .gallery__body & .video__preview,
   .article__body & .video__preview {
     width: 100%;
@@ -96,7 +100,7 @@
       left: -100%;
       transition: left 100ms ease-in;
       /* needed to override BC important */
-      display: block !important; 
+      display: block !important;
       .rdc-overlay__close {
         display: none;
       }
@@ -129,6 +133,14 @@
       &.web-player-exists{
         bottom: em(78);
       }
+    }
+    .player__video-close-btn {
+      display: block;
+      cursor: pointer;
+      position: absolute;
+      width: 12px;
+      right: 1em;
+      top: 1em;
     }
   }
 }
