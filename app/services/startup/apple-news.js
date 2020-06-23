@@ -342,7 +342,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
-      log('error', `APPLE NEWS LOG --`, {
+      log('error', 'APPLE NEWS LOG --', {
         data: articleData,
         enabled: process.env.APPLE_NEWS_ENABLED,
         preview: process.env.APPLE_NEWS_PREVIEW_ONLY,
