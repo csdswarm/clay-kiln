@@ -11,7 +11,7 @@ CREATE MATERIALIZED VIEW sitemap_authors AS
         components.article a,
         jsonb_array_elements(a.data -> 'authors') d
       WHERE NOT
-        (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"syndicationStatus" : "cloned"}')
+        (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"isCloned" : true}')
       UNION
       SELECT
         g.id,
@@ -20,7 +20,7 @@ CREATE MATERIALIZED VIEW sitemap_authors AS
         components.gallery g,
         jsonb_array_elements(g.data -> 'authors') d
       WHERE NOT
-        (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"syndicationStatus" : "cloned"}')
+        (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"isCloned" : true}')
     ),
     /*
       NOTE:

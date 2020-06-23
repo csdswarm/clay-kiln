@@ -8,9 +8,9 @@ DROP MATERIALIZED VIEW IF EXISTS sitemap_articles_and_galleries;
 --
 
 CREATE MATERIALIZED VIEW sitemap_articles_and_galleries AS WITH _components AS (
-  SELECT id FROM components.gallery g WHERE NOT (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"syndicationStatus" : "cloned"}')
+  SELECT id FROM components.gallery g WHERE NOT (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"isCloned" : true}')
   UNION
-  SELECT id FROM components.article a WHERE NOT (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"syndicationStatus" : "cloned"}')
+  SELECT id FROM components.article a WHERE NOT (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"isCloned" : true}')
 ),
 --
 -- The _page_data CTE joins the component ids found above with the page's main

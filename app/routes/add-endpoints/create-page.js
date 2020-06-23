@@ -6,7 +6,6 @@ const amphora = require('amphora'),
   stationUtils = require('../../services/server/station-utils'),
   db = require('../../services/server/db'),
   _get = require('lodash/get'),
-  axios = require('axios'),
   utils = require('../../services/universal/utils'),
   addStationSlug = (uri, stationSlug) => stationSlug && amphora.db.getMeta(uri)
     .then(meta => ({ ...meta, stationSlug }))
@@ -19,8 +18,22 @@ const amphora = require('amphora'),
     genreSyndication: null,
     stationSyndication: [],
     syndicatedUrl: null,
-    syndicationStatus: 'cloned'
-  });
+    isCloned: true
+  }),
+  // eslint-disable-next-line max-params
+  createPage = async (uri, body, res, stationSlug, locals) => {
+    if (stationSlug) {
+      const allStations = await stationUtils.getAllStations({ locals });
+
+      res.locals.newPageStation = allStations.bySlug[stationSlug];
+    }
+
+    return {
+      // we need to mutate locals before declaring the result
+      result: await amphora.pages.create(uri, body, res.locals),
+      res
+    };
+  };
     
 module.exports = router => {
   router.post('/_pages', (req, res) => {
@@ -40,67 +53,49 @@ module.exports = router => {
       res.status(400).send({ error: "'pageBody' is required" });
       return;
     }
-
-    // stationSlug is valid due to a check in
-    // app/services/server/permissions/has-permissions/create-page.js
-    if (stationSlug) {
-      const allStations = await stationUtils.getAllStations({ locals });
-
-      res.locals.newPageStation = allStations.bySlug[stationSlug];
-    }
-
-    // we need to mutate locals before declaring the result
-    // eslint-disable-next-line one-var
-    const result = await amphora.pages.create(pagesUri, pageBody, res.locals);
     
+    const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals);
+
     await addStationSlug(result._ref, stationSlug);
 
-    res.status(201);
-    res.send(result);
+    updatedResponse.status(201);
+    updatedResponse.send(result);
   }));
 
-  router.post('/clone-content', wrapInTryCatch(async (req, res) => {
+  router.post('/rdc/clone-content', wrapInTryCatch(async (req, res) => {
     const { canonicalUrl, stationSlug } = req.body,
       pagesUri = req.hostname + '/_pages/',
       { locals } = res,
       url = canonicalUrl.split('//')[1],
       
-      QUERY = `SELECT 
-      u.data FROM uris u 
-      WHERE u.url = ?`,
+      QUERY = `SELECT p.data
+      FROM uris u
+        JOIN pages p
+          ON u.data || '@published' = p.id
+      WHERE u.url = ?`;
 
-      contentPageURL = await db.raw(QUERY, [url]).then(results => _get(results, 'rows[0].data'));
-    
-    let { data: pageBody } = await axios.get(utils.uriToUrl(`${contentPageURL}@published`, locals));
+    let pageBody = await db.raw(QUERY, [url]).then(results => _get(results, 'rows[0].data'));
       
     if (!pageBody) {
       res.status(404).send({ error: 'Page not found' });
       return;
     }
-
-    const contentUri = pageBody.main[0],
-      layoutUri = utils.replaceVersion(pageBody.layout),
-      content = await db.get(contentUri),
-      updatedContent = updateSyndication(content);
     
-    await db.put(contentUri, updatedContent);
-
     pageBody = {
       ...pageBody,
-      layout: layoutUri
+      layout: utils.replaceVersion(pageBody.layout)
     };
-
-    if (stationSlug) {
-      const allStations = await stationUtils.getAllStations({ locals });
-
-      res.locals.newPageStation = allStations.bySlug[stationSlug];
-    }
     
-    const result = await amphora.pages.create(pagesUri, pageBody, res.locals);
+    const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals),
+      resultContentUri = result.main[0],
+      resultContent = await db.get(resultContentUri),
+      updatedContent = updateSyndication(resultContent);
+
+    await db.put(resultContentUri, updatedContent);
 
     await addStationSlug(result._ref, stationSlug);
     
-    res.status(201);
-    res.send(result);
+    updatedResponse.status(201);
+    updatedResponse.send(result);
   }));
 };

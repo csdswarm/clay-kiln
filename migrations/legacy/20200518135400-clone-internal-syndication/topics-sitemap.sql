@@ -13,7 +13,7 @@ CREATE MATERIALIZED VIEW sitemap_topics AS
                ON a.data #>> '{tags,_ref}' = t.id,
         jsonb_array_elements(t.data -> 'items') d
       WHERE NOT
-        (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"syndicationStatus" : "cloned"}')
+        (a.data @> '{"noIndexNoFollow": true}' OR a.data @> '{"isCloned" : true}')
       UNION
       SELECT
         g.id,
@@ -24,7 +24,7 @@ CREATE MATERIALIZED VIEW sitemap_topics AS
                ON g.data #>> '{tags,_ref}' = t.id,
         jsonb_array_elements(t.data -> 'items') d
       WHERE NOT
-        (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"syndicationStatus" : "cloned"}')
+        (g.data @> '{"noIndexNoFollow": true}' OR g.data @> '{"isCloned" : true}')
     ),
     /*
       NOTE:

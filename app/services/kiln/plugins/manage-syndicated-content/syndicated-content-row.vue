@@ -129,8 +129,7 @@
         this.cloneLoading = true;
 
         const prefix = _.get(this.$store, 'state.site.prefix'),
-          { data: newPage } = await axios.post(
-            uriToUrl(`${prefix}/clone-content`),
+          { data: newPage } = await axios.post(`/rdc/clone-content`,
             {
               canonicalUrl,
               stationSlug: this.selectedStation.slug
@@ -139,7 +138,7 @@
           ),
           editNewPageUrl = uriToUrl(newPage[refProp]) + htmlExt + editExt;
 
-      window.location.href = editNewPageUrl;
+        window.location.href = editNewPageUrl;
       },
       /**
        * generate a content url to link to
