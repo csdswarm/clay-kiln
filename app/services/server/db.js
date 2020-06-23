@@ -126,20 +126,20 @@ const utils = require('../universal/utils'),
     }
   },
   /**
-   * Gets the list of available url syndicated/unsyndicated
+   * Gets the list of available uri records
    *
    * @param {any} val
    *
    * @returns {Promise}
    */
-  getUrls = async (val) => {
+  getRecord = async (val) => {
     return db.raw(`
-      SELECT url FROM uris
+      SELECT * FROM uris
       WHERE data = ?
     `, [val])
       .then(({ rows }) => {
         if (!rows.length) {
-          return Promise.reject(new Error(`No result found in url for ${ val }`));
+          return Promise.reject(new Error(`No result found in uris for ${ val }`));
         }
         return rows;
       });
@@ -248,7 +248,7 @@ module.exports = {
   ensureTableExists,
   DATA_STRUCTURES,
   getComponentData,
-  getUrls,
+  getRecord,
   getCanonicalRedirect,
   setUri
 };

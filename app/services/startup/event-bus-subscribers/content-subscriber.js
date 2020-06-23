@@ -1,9 +1,8 @@
 'use strict';
 
-const  
+const
   _differenceWith = require('lodash/differenceWith'),
   _get = require('lodash/get'),
-  _isEqual = require('lodash/isEqual'),
   ANF_API = '/apple-news/articles',
   buffer = require('../../../services/server/buffer'),
   db = require('../../../services/server/db'),
@@ -16,10 +15,10 @@ const
     dbPut: db.put,
     getCanonicalRedirect: db.getCanonicalRedirect,
     getComponentName,
-    getUrls: db.getUrls,
+    getRecord: db.getRecord,
     handlePublishStationSyndication,
     setUri: db.setUri
-  }
+  };
 
 /**
  * @param {Object} stream - publish page event payload
@@ -150,11 +149,11 @@ async function handlePublishStationSyndication(page) {
   if (['article', 'gallery'].includes(__.getComponentName(mainRef))) {
     const contentData = await __.dbGet(mainRef),
       canonicalInstance = new URL(contentData.canonicalUrl),
-      allSyndicatedUrls = await __.getUrls(page.uri.replace('@published', '')),
+      allSyndicatedUrls = await __.getRecord(page.uri.replace('@published', '')),
       originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
       newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
-      outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, _isEqual),
+      outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, (prev, next) => prev.url === next.url),
       removeCanonical = outDatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
       queue = (contentData.stationSyndication || []).map(station => {
         if (station.syndicatedArticleSlug) {
@@ -176,7 +175,7 @@ async function handlePublishStationSyndication(page) {
 /**
  * subscribe to event bus messages
  */
-function subscribeToBusMessages () {
+function subscribeToBusMessages() {
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
 }
