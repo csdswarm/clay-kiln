@@ -9,15 +9,16 @@ const
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
   { subscribe } = require('amphora-search'),
+  uri = require('../../server/uri'),
 
   __ = {
     dbGet: db.get,
     dbPut: db.put,
-    getCanonicalRedirect: db.getCanonicalRedirect,
+    getCanonicalRedirect: uri.getCanonicalRedirect,
     getComponentName,
-    getRecord: db.getRecord,
+    getRecord: uri.getUri,
     handlePublishStationSyndication,
-    setUri: db.setUri
+    setUri: uri.setUri
   };
 
 /**
