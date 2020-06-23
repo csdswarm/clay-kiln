@@ -2,7 +2,7 @@
 
 const _truncate = require('lodash/truncate'),
   axios = require('axios'),
-  jwtDecode = require('jwt-decode'),
+  jwt = require('jsonwebtoken'),
   { prettyJSON } = require('../../universal/utils');
 
 // the urps team doesn't have their auth layer working yet so we need to
@@ -14,17 +14,19 @@ const urpsHasAuthLayer = process.env.URPS_HAS_AUTH_LAYER === 'true';
  *
  * @param {string} path - url path
  * @param {object} reqBody - the request body
- * @param {string} jwt
+ * @param {string} idToken
  * @returns {object} - the axios response object
  */
-module.exports = async (path, reqBody, jwt) => {
+module.exports = async (path, reqBody, idToken) => {
   const url = `${process.env.URPS_AUTHORIZATIONS_URL}${path}`;
 
   if (!urpsHasAuthLayer) {
-    reqBody = Object.assign({}, reqBody, { cognito_id: jwtDecode(jwt).sub });
+    reqBody = Object.assign({}, reqBody, {
+      cognito_id: jwt.decode(idToken).sub
+    });
   }
 
-  return axios.post(url, reqBody, { headers: { Authorization: jwt } })
+  return axios.post(url, reqBody, { headers: { Authorization: `Bearer ${idToken}` } })
     .catch(err => {
       const { response } = err;
       let errMsg = 'Error in urps request'
@@ -32,7 +34,7 @@ module.exports = async (path, reqBody, jwt) => {
         + `\nmessage: ${err.message}`
         + `\nurl: ${url}`
         + `\nreqBody: ${prettyJSON(reqBody)}`
-        + `\njwt: ${jwt}`;
+        + `\nidToken: ${idToken}`;
 
       if (response) {
         errMsg += `\nresponse status: ${response.status}`
