@@ -14,7 +14,6 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
-  addEndpoints = require('./add-endpoints'),
   additionalDataTypes = require('../services/server/add-data-types'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
