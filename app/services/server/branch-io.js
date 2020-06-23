@@ -26,6 +26,7 @@ const db = require('./db'),
         });
       },
       isPodcast = _get(locals, 'podcast'),
+      episode = _get(locals, 'episode'),
       isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
       timestamp = _get(locals, 'query.t');
 
@@ -65,6 +66,13 @@ const db = require('./db'),
       addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
       addTag('podcast_category', _get(locals, 'podcast.attributes.category[0].name'));
       addTag('podcast_logo', _get(locals, 'podcast.attributes.image'));
+    }
+
+    // podcast episode page
+    if (episode) {
+      addTag('podcast_type', episode.type);
+      addTag('episode_id', episode.id);
+      addTag('episode_title', _get(episode, 'attributes.title'));
     }
 
     // timestamp
