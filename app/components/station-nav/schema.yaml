@@ -1,6 +1,9 @@
 _description: |
   This is the station header under the main header. It displays the station logo, top level navigational links, navigational drawers, listen button and listen drawer.
+
 _confirmRemoval: true
+_permission:
+  update: station-navigation
 
 stationLogo:
   _label: Station Logo Image
