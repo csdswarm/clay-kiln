@@ -277,7 +277,11 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           accessoryText,
           isCandidateToBeFeatured,
           isHidden,
-          isSponsored }, articleANF ] = await Promise.all([
+          isSponsored,
+          tags: { _ref: tagsRef },
+          noIndexNoFollow
+        },
+        articleANF ] = await Promise.all([
           getCompInstanceData(articleRef),
           getCompInstanceData(`${ articleRef }.anf?config=true`)
         ]),
@@ -297,9 +301,16 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
               sections: sectionLink ? [ sectionLink ] : []
             }
           }
+        },
+        validAppleNews = async () => {
+          const { items: tagsItems } = await getCompInstanceData(tagsRef);
+
+          return sectionLink
+            && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
+            && !noIndexNoFollow;
         };
 
-      if (sectionLink) {
+      if (await validAppleNews()) {
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
@@ -335,7 +346,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           }
         }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
       } else {
-        log('info', `APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS ${ sectionFront } SECTIONFRONT OR FAILED TO GET SECTIONS FROM APPLE NEWS API`);
+        log('info', 'APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS NOT A VALID APPLE NEWS ARTICLE');
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
