@@ -1,11 +1,25 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }} article--{{sectionFront}}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+<article role="main"
+  data-track-type="article-detail"
+  data-uri="{{ default _ref _self }}"
+  class="component component--article{{ if @root.locals.edit ' editing' }} article--{{sectionFront}}"
+  itemscope
+  itemtype="http://schema.org/Article"
+  data-section-front="{{ sectionFront }}"
+  data-syndication="{{ syndicationStatus }}"
+  data-headline="{{ striptags headline }}"
+  data-authors="{{ join (map authors (getProp "text")) }}"
+  data-sources="{{ join (map sources (getProp "text")) }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}"
+  data-station-slug="{{ stationSlug }}">
+
   {{> breadcrumbs this }}
   <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
     <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
     <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="name" content="{{ toUpperCase @root.locals.site.name }}" />
       <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
       <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
         <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
@@ -62,7 +76,7 @@
       <div class="info--left-top">
         <div data-editable="bylinesAndStationLogo">
           <div class="info__by-authors{{#unless stationURL}} info__by-authors--no-station{{/unless}}">
-              {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+              {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial stationSlug=stationSlug}}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
               --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
@@ -161,7 +175,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Station(s)</h4>
-              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+              <p class="item-data">{{{ default _computed.stationSyndicationCallsigns empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Genre(s)</h4>

@@ -1,0 +1,14 @@
+_doc:
+  dynamic: "false"
+  properties:
+    dateModified:
+      type: "date"
+    pageUri:
+      type: "keyword"
+      store: true
+    site:
+      type: "keyword"
+    stationCallsign:
+      type: "keyword"
+    stationSlug:
+      type: "keyword"

@@ -2,7 +2,9 @@
 
 const _ = require('lodash'),
   utils = require('../universal/utils'),
-  protocol = process ? `${ _.get(process, 'env.CLAY_SITE_PROTOCOL', 'https') }:` : window.location.protocol;
+  protocol = process
+    ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:`
+    : window.location.protocol;
 
 /**
  * SearchOpts - options which modify the behavior of elasticsearch
@@ -181,10 +183,9 @@ function addMustNot(query, item) {
  */
 function addFilter(query, item) {
   const key = `${ getRoot(query) }.query.bool.filter`,
-    filter = _.get(query, key, undefined),
-    itemIsObject = _.isObject(item);
+    filter = _.get(query, key, undefined);
 
-  if (!itemIsObject) {
+  if (!_.isObject(item)) {
     throw new Error('Filter query required to be an object');
   }
 
@@ -463,7 +464,7 @@ function addSearch(query, searchTerm, fields) {
   const key = `${ getRoot(query) }.query`,
     value = {
       query_string: {
-        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        query: sanitizeSearchTerm(searchTerm),
         fields: _.isArray(fields) ? fields : [ fields ]
       }
     };
@@ -471,6 +472,19 @@ function addSearch(query, searchTerm, fields) {
   _.set(query, key, value);
 
   return query;
+}
+
+/**
+ * for now (for backwards compatibility) this just escapes colons and forward
+ *   slashes.  The full list of query special characters is found here:
+ *
+ *   https://www.elastic.co/guide/en/elasticsearch/reference/6.2/query-dsl-query-string-query.html#_reserved_characters
+ *
+ * @param {string} searchTerm
+ * @returns {string}
+ */
+function sanitizeSearchTerm(searchTerm) {
+  return searchTerm.replace(/([\/|:])/g, '\\$1');
 }
 
 /**
@@ -516,6 +530,7 @@ function terms(key, values) {
 }
 
 module.exports = newQuery;
+
 Object.assign(module.exports, {
   addAggregation,
   addFilter,
@@ -534,8 +549,9 @@ Object.assign(module.exports, {
   matchSimple,
   moreLikeThis,
   newNestedQuery,
-  onlyWithTheseFields,
   onlyWithinThisSite,
+  onlyWithTheseFields,
+  sanitizeSearchTerm,
   searchByQuery,
   terms,
   withinThisSiteAndCrossposts

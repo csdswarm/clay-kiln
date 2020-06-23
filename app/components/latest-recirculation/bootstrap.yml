@@ -14,3 +14,16 @@ _components:
     excludeSectionFronts: ''
     excludeSecondarySectionFronts: ''
     excludeTags: ''
+    instances:
+      new:
+        _version: 5
+        items: []
+        tag: ''
+        populateFrom: section-front
+        contentType: { article: true, gallery: true }
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        excludeSectionFronts: ''
+        excludeSecondarySectionFronts: ''
+        excludeTags: ''

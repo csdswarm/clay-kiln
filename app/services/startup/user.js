@@ -11,7 +11,6 @@ const { userFromCookie } = require('./radium');
  */
 module.exports = (req, res, next) => {
   res.locals.radiumUser = userFromCookie(req);
-
   next();
 };
 

@@ -1,4 +1,4 @@
-_version: 11.0
+_version: 12.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -363,6 +363,8 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+  _permission:
+    distribute: vertical-level-content
 corporateSyndication:
   _label: Syndicate to corporate website(s)
   _has:
@@ -371,14 +373,20 @@ corporateSyndication:
     search: true
     list: corporate_websites
     help: Select all corporate websites for syndication
+  _permission:
+    distribute: market-level-content
 stationSyndication:
   _label: Syndicate to station(s)
   _has:
     input: station-select
+  _permission:
+    distribute: market-level-content
 genreSyndication:
   _label: Syndicate to genre(s)
   _has:
     input: genre-select
+  _permission:
+    distribute: vertical-level-content
 
 _groups:
   publishedDate:
@@ -441,6 +449,7 @@ _groups:
       - toggleEditorCondensedSlidesView
   settings:
     fields:
+      - stationName
       - feeds
       - showSocial
       - hasSecondaryBylines
@@ -515,8 +524,6 @@ footer:
       - youtube
       - html-embed
       - omny
-    validate:
-      max: 2
 
 # Component properties
 contentPageSponsorLogo:
@@ -558,3 +565,10 @@ noIndexNoFollow:
 toggleEditorCondensedSlidesView:
   _label: Condensed Slide View On
   _has: checkbox
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy
