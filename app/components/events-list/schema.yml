@@ -50,6 +50,7 @@ _groups:
     _placeholder:
       text: Events List Settings
       height: 60px
+      ifEmpty: curatedEvents
     fields:
       - curatedEvents
       - numberToDisplay
