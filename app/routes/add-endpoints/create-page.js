@@ -29,9 +29,12 @@ const amphora = require('amphora'),
       res.locals.newPageStation = allStations.bySlug[stationSlug];
     }
 
+    const result = await amphora.pages.create(uri, body, res.locals);
+
+    await addStationSlug(result._ref, stationSlug);
+
     return {
-      // we need to mutate locals before declaring the result
-      result: await amphora.pages.create(uri, body, res.locals),
+      result,
       res
     };
   };
@@ -56,8 +59,6 @@ module.exports = router => {
     }
     
     const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals);
-
-    await addStationSlug(result._ref, stationSlug);
 
     updatedResponse.status(201);
     updatedResponse.send(result);
@@ -93,8 +94,6 @@ module.exports = router => {
       updatedContent = updateSyndication(resultContent);
 
     await db.put(resultContentUri, updatedContent);
-
-    await addStationSlug(result._ref, stationSlug);
     
     updatedResponse.status(201);
     updatedResponse.send(result);
