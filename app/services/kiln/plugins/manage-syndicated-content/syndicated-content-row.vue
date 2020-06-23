@@ -5,7 +5,7 @@
       :href="url"
       target="_blank"
     >
-      <span class="page-list-item-title-inner" :class="{ 'no-title': !page.pageTitle }">{{ title }}</span>
+      <span class="page-list-item-title-inner" :class="{ 'no-title': !content.pageTitle }">{{ title }}</span>
     </a>
     <div class="page-list-item__station">{{ station }}</div>
     <div class="page-list-item__status page-list-item-status">
@@ -15,7 +15,12 @@
     <div class="page-list-item__manage buttons-group">
       <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
       <div v-else-if="status === 'available'">
-        <ui-button class="buttons-group__syndicate" buttonType="button" color="green">Syndicate</ui-button>
+        <ui-button
+          class="buttons-group__syndicate"
+          buttonType="button" color="green"
+          @click.stop="onSyndicate"
+          :loading="syndicationLoading"
+        >Syndicate</ui-button>
         <ui-button class="buttons-group__clone" buttonType="button" color="accent">Clone</ui-button>
       </div>
     </div>
@@ -38,7 +43,7 @@
     formatHM = (date) => ' ' + dateFormat(date, 'h:mm A');
 
   /**
-   * format time for pages
+   * format time for content
    * @param  {Date} date
    * @return {string}
    */
@@ -63,21 +68,28 @@
   }
 
   export default {
-    props: ['page', 'stationFilter'],
+    props: ['content', 'stationFilter'],
+    data() {
+      return {
+        syndicationLoading: false
+      };
+    },
     computed: {
       selectedStation() {
         return this.stationFilter;
       },
       station() {
-        return this.page.stationName || nationalStationName;
+        return this.content.stationName || nationalStationName;
       },
-      pageStatus() {
-        let pageStatus = '';
-        const page = this.page,
+      contentStatus() {
+        let contentStatus = '';
+        const content = this.content,
           selectedStationSlug = this.selectedStation.slug,
           findSyndication = findSyndicatedStation(selectedStationSlug),
-          syndicatedStation = findSyndication(page.stationSyndication),
+          syndicatedStation = findSyndication(content.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
+
+        this.syndicationLoading = false;
 
         /*
           if the station slug of a content is equal to current selected station
@@ -86,54 +98,62 @@
           so we assign syndication status when National radio is not selected 
           (slug is different of empty string).
         */
-        if (page.stationSlug) {
-          pageStatus = page.stationSlug === selectedStationSlug ? '' : syndicationStatus;
+        if (content.stationSlug) {
+          contentStatus = content.stationSlug === selectedStationSlug ? '' : syndicationStatus;
         } else if (selectedStationSlug !== '') {
-          pageStatus = syndicationStatus;
+          contentStatus = syndicationStatus;
         }
 
         return {
-          status: pageStatus,
-          statusMessage: (pageStatus || 'original').toUpperCase(),
-          statusTime: formatStatusTime(page.dateModified),
-          url: pageStatus === 'published' ? this.generatePageUrl(syndicatedStation) : page.canonicalUrl
+          status: contentStatus,
+          statusMessage: (contentStatus || 'original').toUpperCase(),
+          statusTime: formatStatusTime(content.dateModified),
+          url: contentStatus === 'published' ? this.generateContentUrl(syndicatedStation) : content.canonicalUrl
         };
       },
       status() {
-        return this.pageStatus.status;
+        return this.contentStatus.status;
       },
       statusMessage() {
-        return this.pageStatus.statusMessage;
+        return this.contentStatus.statusMessage;
       },
       statusTime() {
-        return this.pageStatus.statusTime;
+        return this.contentStatus.statusTime;
       },
       url() {
-        return this.pageStatus.url;
+        return this.contentStatus.url;
       },
       title() {
-        return this.page.pageTitle
-          ? _.truncate(this.page.pageTitle, { length: 60 })
+        return this.content.pageTitle
+          ? _.truncate(this.content.pageTitle, { length: 60 })
           : 'No Title';
       }
     },
     methods: {
       /**
-       * generate a page url to link to
+       * generate a content url to link to
        * @param  {object} syndicatedStation
        * @return {string}
        */
-      generatePageUrl(syndicatedStation) {
-        const canonicalUrl = this.page.canonicalUrl,
+      generateContentUrl(syndicatedStation) {
+        const canonicalUrl = this.content.canonicalUrl,
           host = new URL(canonicalUrl).origin,
-          syndicatedArticleSlug = syndicatedStation && syndicatedStation.syndicatedArticleSlug || '' ;
+          syndicatedArticleSlug = _.get(syndicatedStation, 'syndicatedArticleSlug', '') ;
 
         /*
           in the cases where we don't have a syndicated article slug (like when
           we syndicate a content to National), we link to the originating URL
         */
         return syndicatedArticleSlug ? `${host}${syndicatedArticleSlug}` : canonicalUrl;
-      }
+      },
+      /**
+       * emit event for selecting primary and secondary section
+       * fronts before creating the syndication
+       */
+      onSyndicate() {
+        this.syndicationLoading = true;
+        this.$emit('createSyndication', this.content._id);
+      },
     },
     components: {
       UiButton
