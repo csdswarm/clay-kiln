@@ -18,6 +18,7 @@ const amphora = require('amphora'),
     genreSyndication: null,
     stationSyndication: [],
     syndicatedUrl: null,
+    syndicationStatus: 'original',
     isCloned: true
   }),
   // eslint-disable-next-line max-params
