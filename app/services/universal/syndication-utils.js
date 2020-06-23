@@ -18,9 +18,10 @@ const
  * the syndicationUrl, so hyperlinks stay on the current site.
  *
  * @param {string} stationSlug
+ * @param {boolean} isRdcContent
  * @returns {function}
  */
-function syndicationUrlPremap(stationSlug) {
+function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   const
     { findSyndicatedStation, getOrigin, inStation, noContent } = __,
     isInStation = inStation(stationSlug),
@@ -29,7 +30,7 @@ function syndicationUrlPremap(stationSlug) {
   return article => {
     const item = { ...article };
 
-    if (!isInStation(item)) {
+    if (!isRdcContent && !isInStation(item)) {
       if (noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
