@@ -1,0 +1,18 @@
+@import "_global/mixins";
+@import "_global/colors";
+@import "_global/fonts";
+
+.component--station-listen-nav {
+    .drawer__social {
+        > a {
+            display: inline-block;
+            text-decoration: none;
+        }
+        > a object {
+            @mixin inline-block;
+            height: em(18);
+            margin: 0 em(10);
+            pointer-events: none;
+        }
+    }
+}
