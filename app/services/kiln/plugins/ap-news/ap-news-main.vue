@@ -2,7 +2,7 @@
 <template>
   <div class="ap-news-manager">
     <ui-tabs class="ap-news-manager__tabs" fullwidth @tab-change="changeTab">
-      <ui-tab :key="tab.id" :title="tab.title" v-for="tab in tabs">
+      <ui-tab :key="tab.id" :id="tab.id" :title="tab.title" v-for="tab in tabs">
         <p>
           <em>{{ tab.title }}</em> content should be displayed...         
         </p>
@@ -20,16 +20,24 @@
 
 <script>
 const { UiTabs, UiTab } = window.kiln.utils.components;
+const { unityAppDomainName: unityApp } = require('../../../universal/urps');
 
 export default {
   name: "AP News",
-  data() {
-    return {
-      tabs: [
-        { id: 1, title: "Auto-Ingest" },
-        { id: 2, title: "Manual Article Import" },
-      ]
-    };
+  computed: {
+    tabs() {
+      const { user } = kiln.locals,
+        hasAccessAutoIngestPermission = user.can('access').the('ap-news-auto-ingest').for(unityApp).value,
+        tabs = [
+          { id: 'manual', title: "Manual Article Import" },
+        ];
+
+      if (hasAccessAutoIngestPermission) {
+        tabs.unshift({ id: 'auto-ingest', title: "Auto-Ingest" });
+      }
+
+      return tabs;
+    }
   },
   methods: {
     changeTab(tab){
