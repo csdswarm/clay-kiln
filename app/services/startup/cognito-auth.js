@@ -36,7 +36,7 @@ const axios = require('axios'),
             id_token: idToken
           } = response.data,
           { device_key: deviceKey } = jwt.decode(accessToken),
-          { sub: cognitoId, email } = jwt.decode(idToken);
+          { email } = jwt.decode(idToken);
 
         await cache.set(`cognito-auth--${email.toLowerCase()}`,
           JSON.stringify({
@@ -53,8 +53,8 @@ const axios = require('axios'),
         // this validate step is defined here
         // https://entercomdigitalservices.atlassian.net/wiki/spaces/AUDIOADMIN/pages/628753835/JWT%2BClient%2BAuthentication%2BStrategy
         await axios.post(
-          process.env.URPS_AUTHORIZATIONS_URL + `/users/${cognitoId}/validate`,
-          { email },
+          process.env.URPS_AUTHORIZATIONS_URL + '/users/validate',
+          {},
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
 
