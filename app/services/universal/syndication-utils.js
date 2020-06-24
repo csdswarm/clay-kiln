@@ -3,6 +3,7 @@
 const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
+  slugify = require('./slugify'),
 
   __ =  {
     findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
@@ -10,6 +11,23 @@ const
     inStation: station => ({ stationSlug = DEFAULT_STATION.site_slug }) => stationSlug === station.site_slug,
     noContent: value => !Array.isArray(value) || !value.length
   };
+
+/**
+ * Composes a syndicatedArticleSlug given the main article slug, the station and the section front(s)
+ * @param {string} slug
+ * @param {string} stationSlug
+ * @param {string?} sectionFront
+ * @param {string?} secondarySectionFront
+ * @returns {string}
+ */
+function generateSyndicationSlug(slug, { stationSlug, sectionFront, secondarySectionFront }) {
+  return '/' + [
+    stationSlug,
+    slugify(sectionFront),
+    slugify(secondarySectionFront),
+    slug
+  ].filter(Boolean).join('/');
+}
 
 /**
  * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
@@ -45,5 +63,6 @@ function syndicationUrlPremap({ station }) {
 
 module.exports = {
   _internals: __,
-  syndicationUrlPremap
+  syndicationUrlPremap,
+  generateSyndicationSlug
 };

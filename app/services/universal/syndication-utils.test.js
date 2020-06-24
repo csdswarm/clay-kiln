@@ -24,7 +24,7 @@ describe('universal', () => {
             syndicatedArticleSlug: `/${syndicatedItemStationSlug}/main/secondary/some-article`
           }]
         } = options,
-        { _internals: __, syndicationUrlPremap } = syndicationUtils,
+        { _internals: __, generateSyndicationSlug, syndicationUrlPremap } = syndicationUtils,
         locals = { station: { site_slug: localStationSlug } },
         testItem = {
           stationSlug: itemStationSlug,
@@ -35,8 +35,30 @@ describe('universal', () => {
       // sinon.spy(__) not working with sinon.restore() for some reason, so use sinon(__, propName) which does.
       Object.keys(__).forEach(prop => sinon.spy(__, prop));
 
-      return { __, syndicationUrlPremap, locals, testItem };
+      return { __, generateSyndicationSlug, syndicationUrlPremap, locals, testItem };
     }
+
+    describe('generateSyndicationSlug', () => {
+      const setup_generateSyndicationSlug = (options = {}) => setup_syndicationUtils(options);
+
+      it('generates a syndication URL', () => {
+        const { generateSyndicationSlug } = setup_generateSyndicationSlug(),
+          args = ['some-slug', { stationSlug: 'abc-radio', sectionFront: 'music', secondarySectionFront: 'two' }];
+
+        expect(generateSyndicationSlug(...args)).to.eql('/abc-radio/music/two/some-slug');
+      });
+
+      it('prevents double slashes when some args are missing or empty', () => {
+        const { generateSyndicationSlug } = setup_generateSyndicationSlug(),
+          slug = 'some-slug', stationSlug = 'radio-bob', sectionFront = 'music';
+
+        expect(generateSyndicationSlug(slug, { stationSlug, sectionFront })).to.eql('/radio-bob/music/some-slug');
+        expect(generateSyndicationSlug(slug, { stationSlug })).to.eql('/radio-bob/some-slug');
+        expect(generateSyndicationSlug(slug, { stationSlug: '', sectionFront })).to.eql('/music/some-slug');
+
+      });
+
+    });
 
     describe('syndicationUrlPremap', () => {
       const setup_syndicationUrlPremap = (options = {}) => setup_syndicationUtils(options);

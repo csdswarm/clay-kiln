@@ -1,21 +1,22 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  striptags = require('striptags'),
+  circulationService = require('./circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
-  sanitize = require('./sanitize'),
+  mediaplay = require('./media-play'),
   promises = require('./promises'),
   rest = require('./rest'),
-  circulationService = require('./circulation'),
-  mediaplay = require('./media-play'),
-  articleOrGallery = new Set(['article', 'gallery']),
-  urlExists = require('../../services/universal/url-exists'),
-  { DEFAULT_STATION } = require('../../services/universal/constants'),
-  { urlToElasticSearch } = require('../../services/universal/utils'),
+  sanitize = require('./sanitize'),
+  striptags = require('striptags'),
+  urlExists = require('./url-exists'),
+  { DEFAULT_STATION } = require('./constants'),
+  { generateSyndicationSlug } = require('./syndication-utils'),
   { getComponentName } = require('clayutils'),
-  slugify = require('../../services/universal/slugify');
+  { has, isFieldEmpty, replaceVersion, textToEncodedSlug, uriToUrl } = require('./utils'),
+  { urlToElasticSearch } = require('./utils'),
+
+  articleOrGallery = new Set(['article', 'gallery']);
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -519,12 +520,7 @@ function addStationSyndicationSlugs(data) {
       const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
 
       if (shouldSetSlug) {
-        station.syndicatedArticleSlug = '/' + [
-          station.stationSlug,
-          slugify(station.sectionFront),
-          slugify(station.secondarySectionFront),
-          data.slug
-        ].filter(Boolean).join('/');
+        station.syndicatedArticleSlug = generateSyndicationSlug(data.slug, station);
       } else {
         delete station.syndicatedArticleSlug;
       }
