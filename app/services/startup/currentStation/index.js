@@ -3,7 +3,15 @@
 const assignStationsToLocals = require('./assign-stations-to-locals'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   stationUtils = require('../../server/station-utils'),
-  { wrapInTryCatch } = require('../middleware-utils');
+  { wrapInTryCatch } = require('../middleware-utils'),
+  logger = require('../../universal/log'),
+
+  log = logger.setup({ file: __filename });
+
+
+stationUtils.getAllStations({ locals: { } })
+  .then(() => log('error', 'API Station Data Warmed (Info Log)'))
+  .catch(err => log('error', err));
 
 /**
  * obtain the current station details and store them for all components to access in locals
