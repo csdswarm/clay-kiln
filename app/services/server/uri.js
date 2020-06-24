@@ -27,32 +27,24 @@ const db = require('./db'),
   /**
    * Gets the list of available uri records
    *
-   * @param {string} table
    * @param {any} val
    *
    * @returns {Promise}
    */
-  getRecord = async (table, val) => {
-    try {
-      return db.raw(`
-      SELECT * FROM ${table}
-      WHERE data = ?
-      `, [val]);
-    } catch (e) {
-      log('error', `There was a problem findind records for ${table}`, e);
-      return false;
-    }
-  },
 
-  /**
-   * Helper function to query the uri table
-   * @param {any} val
-   */
   
   getUri = async val => {
-    const { rows } = await getRecord('uris', val);
+    try {
+      const { rows } = await db.raw(`
+      SELECT * FROM uris
+      WHERE data = ?
+      `, [val]);
 
-    return rows;
+      return rows;
+    } catch (e) {
+      log('error', `There was a problem findind uri records for ${val}`, e);
+      return false;
+    }
   },
 
   /**
@@ -78,6 +70,5 @@ const db = require('./db'),
 module.exports = {
   getCanonicalRedirect,
   getUri,
-  getRecord,
   setUri
 };

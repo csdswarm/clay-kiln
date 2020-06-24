@@ -59,7 +59,7 @@ describe('content-subscriber', () => {
       sinon.spy(__, 'getComponentName');
       sinon.stub(__, 'dbGet').resolves(contentData);
       sinon.stub(__, 'getCanonicalRedirect').resolves(originalArticleId);
-      sinon.stub(__, 'getRecord').resolves(allSyndicatedUrls);
+      sinon.stub(__, 'getUri').resolves(allSyndicatedUrls);
       sinon.stub(__, 'dbPut').resolves();
       sinon.stub(__, 'setUri').resolves();
 
@@ -96,7 +96,7 @@ describe('content-subscriber', () => {
 
       await handlePublishStationSyndication(page);
       expect(__.dbGet).to.have.been.calledWith(mainComponent);
-      expect(__.getRecord).to.have.been.calledWith(uri);
+      expect(__.getUri).to.have.been.calledWith(uri);
       expect(__.getCanonicalRedirect).to.have.been.calledOnce;
       expect(__.dbPut.getCalls().length).is.eql(7);
     });

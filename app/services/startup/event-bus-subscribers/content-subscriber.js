@@ -16,7 +16,7 @@ const
     dbPut: db.put,
     getCanonicalRedirect: uri.getCanonicalRedirect,
     getComponentName,
-    getRecord: uri.getUri,
+    getUri: uri.getUri,
     handlePublishStationSyndication,
     setUri: uri.setUri
   };
@@ -150,7 +150,7 @@ async function handlePublishStationSyndication(page) {
   if (['article', 'gallery'].includes(__.getComponentName(mainRef))) {
     const contentData = await __.dbGet(mainRef),
       canonicalInstance = new URL(contentData.canonicalUrl),
-      allSyndicatedUrls = await __.getRecord(page.uri.replace('@published', '')),
+      allSyndicatedUrls = await __.getUri(page.uri.replace('@published', '')),
       originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
       newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
