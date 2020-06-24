@@ -25,7 +25,6 @@ describe('universal', () => {
           }]
         } = options,
         { _internals: __, generateSyndicationSlug, syndicationUrlPremap } = syndicationUtils,
-        locals = { station: { site_slug: localStationSlug } },
         testItem = {
           stationSlug: itemStationSlug,
           canonicalUrl: `https://domain.com/${itemStationSlug}/my-primary-front/some-article`,
@@ -35,7 +34,7 @@ describe('universal', () => {
       // sinon.spy(__) not working with sinon.restore() for some reason, so use sinon(__, propName) which does.
       Object.keys(__).forEach(prop => sinon.spy(__, prop));
 
-      return { __, generateSyndicationSlug, syndicationUrlPremap, locals, testItem };
+      return { __, generateSyndicationSlug, syndicationUrlPremap, localStationSlug, testItem };
     }
 
     describe('generateSyndicationSlug', () => {
@@ -64,22 +63,22 @@ describe('universal', () => {
       const setup_syndicationUrlPremap = (options = {}) => setup_syndicationUtils(options);
 
       it('generates a mapping function that checks against the main station', () => {
-        const { __, syndicationUrlPremap, locals } = setup_syndicationUrlPremap(),
-          result = syndicationUrlPremap(locals);
+        const { __, syndicationUrlPremap, localStationSlug } = setup_syndicationUrlPremap(),
+          result = syndicationUrlPremap(localStationSlug);
 
         expect(typeof result).to.equal('function');
-        expect(__.inStation).to.have.been.calledWith(locals.station);
-        expect(__.findSyndicatedStation).to.have.been.calledWith(locals.station);
+        expect(__.inStation).to.have.been.calledWith(localStationSlug);
+        expect(__.findSyndicatedStation).to.have.been.calledWith(localStationSlug);
       });
 
       describe('syndicationUrlPremap_mapper', ()=> {
         function setup_syndicationUrlPremap_mapper(options = {}) {
           const assets = setup_syndicationUrlPremap(options),
-            mapper = assets.syndicationUrlPremap(assets.locals);
-          
+            mapper = assets.syndicationUrlPremap(assets.localStationSlug);
+
           return { ...assets, mapper };
         }
-        
+
         it('makes no changes if the article is in the same station', () => {
           const { mapper, testItem } = setup_syndicationUrlPremap_mapper({
               localStationSlug: 'station-a',

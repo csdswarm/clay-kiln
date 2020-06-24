@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
   sanitize = require('./sanitize'),
   striptags = require('striptags'),
   urlExists = require('./url-exists'),
-  { DEFAULT_STATION } = require('./constants'),
+  { DEFAULT_STATION, PAGE_TYPES } = require('./constants'),
   { generateSyndicationSlug } = require('./syndication-utils'),
   { getComponentName } = require('clayutils'),
   { has, isFieldEmpty, replaceVersion, textToEncodedSlug, uriToUrl } = require('./utils'),
@@ -171,6 +171,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else {
+    data.date = dateFormat(new Date()); // ISO 8601 date string
   }
 }
 
@@ -569,13 +571,21 @@ function assignStationInfo(uri, data, locals) {
     Object.assign(data, {
       stationSlug: station.site_slug,
       stationName: station.name,
-      stationCallsign: station.callsign
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
         stationLogoUrl: station.square_logo_small,
         stationURL: station.website
+      });
+    }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
       });
     }
   }
