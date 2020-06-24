@@ -2,7 +2,6 @@
 
 const db = require('./db'),
   log = require('../universal/log').setup({ file: __filename }),
-
   /**
    * Gets the row with the id of the canonical url
    *
@@ -22,17 +21,12 @@ const db = require('./db'),
       log('error', `There was a problem finding a record for ${canonical}`, e);
     }
   },
-
-  
   /**
    * Gets the list of available uri records
    *
    * @param {any} val
-   *
    * @returns {Promise}
    */
-
-  
   getUri = async val => {
     try {
       const { rows } = await db.raw(`
@@ -46,13 +40,11 @@ const db = require('./db'),
       return false;
     }
   },
-
   /**
    * Update a row in a postgres table for a particular column
    *
    * @param {any} key
    * @param {any} keyToChange
-   *
    * @returns {Promise}
    */
   setUri = async (key, keyToChange) => {
@@ -66,7 +58,7 @@ const db = require('./db'),
       log('error', `There was a problem updating ${key}`, e);
     }
   };
-
+  
 module.exports = {
   getCanonicalRedirect,
   getUri,
