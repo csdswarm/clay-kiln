@@ -21,6 +21,11 @@ const amphora = require('amphora'),
     syndicationStatus: 'original',
     isCloned: true
   }),
+  removeSectionFronts = (content) => ({
+    ...content,
+    sectionFront: '',
+    secondarySectionFront: ''
+  }),
   // eslint-disable-next-line max-params
   createPage = async (uri, body, res, stationSlug, locals) => {
     if (stationSlug) {
@@ -91,7 +96,8 @@ module.exports = router => {
     const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals),
       resultContentUri = result.main[0],
       resultContent = await db.get(resultContentUri),
-      updatedContent = updateSyndication(resultContent);
+      unsyndicatedContent = updateSyndication(resultContent),
+      updatedContent = removeSectionFronts(unsyndicatedContent);
 
     await db.put(resultContentUri, updatedContent);
     
