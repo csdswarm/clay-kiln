@@ -2,55 +2,43 @@
 <template>
   <div class="ap-news-manager">
     <ui-tabs class="ap-news-manager__tabs" fullwidth @tab-change="changeTab">
-      <ui-tab :key="tab.id" :id="tab.id" :title="tab.title" v-for="tab in tabs">
-        <p>
-          <em>{{ tab.title }}</em> content should be displayed...         
-        </p>
-         <!-- 
-           /*
-            * @TODO: Handle content for upcoming tickets
-            * ON-1979 AP News | create/add AUTO-INGEST tab and 
-            * ON-1980 AP News | create/add Manual Import tab to AP News
-            */ 
-          -->
+       <ui-tab id="auto" title="Auto Ingest">
+        Auto Goes Here!.
+      </ui-tab>
+      <ui-tab selected id="manual" title="Manual Import">
+        <ap-news-manual :entitlements="entitlements"></ap-news-manual>
       </ui-tab>
     </ui-tabs>
   </div>
 </template>
 
 <script>
+const axios = require('axios');
 const { UiTabs, UiTab } = window.kiln.utils.components;
-const { unityAppDomainName: unityApp } = require('../../../universal/urps');
+const ApNewsManualImport = require('./ap-news-manual-import.vue');
 
 export default {
   name: "AP News",
-  computed: {
-    tabs() {
-      const { user } = kiln.locals,
-        hasAccessAutoIngestPermission = user.can('access').the('ap-news-auto-ingest').for(unityApp).value,
-        tabs = [
-          { id: 'manual', title: "Manual Article Import" },
-        ];
-
-      if (hasAccessAutoIngestPermission) {
-        tabs.unshift({ id: 'auto-ingest', title: "Auto-Ingest" });
-      }
-
-      return tabs;
-    }
+  data() {
+    return {
+      entitlements: [],
+    };
   },
-  methods: {
-    changeTab(tab){
-      /*
-      * @TODO: Handle logic for upcoming tickets
-      * ON-1979 AP News | create/add AUTO-INGEST tab and 
-      * ON-1980 AP News | create/add Manual Import tab to AP News
-      */
+  async created() {
+    const AP_LIST = '/_lists/ap-media-entitlements';
+    try {
+      const response = await axios.get(
+        AP_LIST
+      );
+      this.entitlements = response.data;
+    } catch (error) {
+      console.log('An error ocurred while fetching ap-media-entitlements', error);
     }
   },
   components: {
     UiTabs,
     UiTab,
+    'ap-news-manual': ApNewsManualImport,
   },
 };
 </script>
