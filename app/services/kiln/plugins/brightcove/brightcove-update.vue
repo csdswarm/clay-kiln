@@ -275,7 +275,7 @@
             this.shortDescription = this.updatedVideo.description;
             this.longDescription = this.updatedVideo.long_description;
             this.station = this.updatedVideo.custom_fields.station;
-            this.video_updated_by = this.updatedVideo.custom_fields.video_updated_by || window.kiln.locals.user.username;
+            this.video_updated_by = window.kiln.locals.user.username;
             this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
             this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
             this.secondaryCategory = this.derivedSecondaryCategory;
@@ -299,7 +299,7 @@
         this.shortDescription = this.updatedVideo.description;
         this.longDescription = this.updatedVideo.long_description;
         this.station = this.updatedVideo.custom_fields.station;
-        this.video_updated_by = this.updatedVideo.custom_fields.video_updated_by || window.kiln.locals.user.username;
+        this.video_updated_by = window.kiln.locals.user.username;
         this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
         this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
         this.secondaryCategory = this.derivedSecondaryCategory;
