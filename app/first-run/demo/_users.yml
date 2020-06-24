@@ -151,6 +151,14 @@ _users:
     username: kyle.mccann@entercom.com
     provider: google
     auth: admin
+    -
+    username: moffkr91@gmail.com
+    provider: google
+    auth: admin
+  -
+    username: moffkr91@gmail.com
+    provider: cognito
+    auth: admin
   -
     username: lauren.hoffman@entercom.com
     provider: google
@@ -319,4 +327,3 @@ _users:
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
-

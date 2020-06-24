@@ -30,16 +30,16 @@ const _get = require('lodash/get'),
     ],
     rdcSlug: DEFAULT_STATION.site_slug,
     /**
-   * a helper method which assigns uninitialized station slug properties in the
-   *   to the slug which was found.
-   *
-   * this method mutates results
-   *
-   * @param {string} foundStationSlug
-   * @param {object} stationSlugObj
-   * @param {string} stationSlugObj.forCommonUse
-   * @param {string} stationSlugObj.forPermissions
-   */
+     * a helper method which assigns uninitialized station slug properties in the
+     *   to the slug which was found.
+     *
+     * this method mutates results
+     *
+     * @param {string} foundStationSlug
+     * @param {object} stationSlugObj
+     * @param {string} stationSlugObj.forCommonUse
+     * @param {string} stationSlugObj.forPermissions
+     */
     initBothSlugsTo(foundStationSlug, stationSlugObj) {
     // only set the properties which haven't been already
       if (typeof stationSlugObj.forCommonUse !== 'string') {
@@ -50,23 +50,23 @@ const _get = require('lodash/get'),
       }
     },
     /**
-   * Logs the error if something happened besides the result not being found
-   *
-   * @param {string} uri
-   * @param {Error} err
-   */
+     * Logs the error if something happened besides the result not being found
+     *
+     * @param {string} uri
+     * @param {Error} err
+     */
     logUnexpectedDbError(uri, err) {
       if (err.name !== 'NotFoundError') {
         __.log('error', 'Error getting the data from uri: ' + uri, err);
       }
     },
     /**
-   * fetches the main component from the page associated with the uri, and
-   *   returns its 'stationSlug' property or the rdc slug
-   *
-   * @param {string} uri - note this is a clay _uri i.e. an id of the 'uris' table
-   * @returns {string}
-   */
+     * fetches the main component from the page associated with the uri, and
+     *   returns its 'stationSlug' property or the rdc slug
+     *
+     * @param {string} uri - note this is a clay _uri i.e. an id of the 'uris' table
+     * @returns {string}
+     */
     async getStationSlugFromUri(uri) {
       try {
         const pageUri = await db.get(uri),
@@ -83,14 +83,14 @@ const _get = require('lodash/get'),
       return __.rdcSlug;
     },
     /**
-   * fetches the main component's data in the page and returns the 'stationSlug'
-   *   property or the rdc slug.  If the page wasn't found or it didn't contain
-   *   main content 'null' is returned to indicate a station couldn't
-   *   be determined.
-   *
-   * @param {string} uri - the page uri
-   * @returns {string}
-   */
+     * fetches the main component's data in the page and returns the 'stationSlug'
+     *   property or the rdc slug.  If the page wasn't found or it didn't contain
+     *   main content 'null' is returned to indicate a station couldn't
+     *   be determined.
+     *
+     * @param {string} uri - the page uri
+     * @returns {string}
+     */
     async getStationSlugFromPage(uri) {
       let mainComponentUri;
 
@@ -105,13 +105,13 @@ const _get = require('lodash/get'),
         : null;
     },
     /**
-   * fetches the component data and returns the 'stationSlug' property or the
-   *   rdc slug.  If the component isn't found or an error occurrs fetching the
-   *   component we return 'null' to indicate a station couldn't be determined.
-   *
-   * @param {string} uri
-   * @returns {string|null}
-   */
+     * fetches the component data and returns the 'stationSlug' property or the
+     *   rdc slug.  If the component isn't found or an error occurrs fetching the
+     *   component we return 'null' to indicate a station couldn't be determined.
+     *
+     * @param {string} uri
+     * @returns {string|null}
+     */
     async getStationSlugFromComponent(uri) {
       try {
         return _get(await db.get(uri), 'stationSlug', __.rdcSlug);
@@ -121,22 +121,22 @@ const _get = require('lodash/get'),
       }
     },
     /**
-   * returns the potential slug of the site via the first element of the path
-   *
-   * @param {object} req
-   * @return {string}
-   */
+     * returns the potential slug of the site via the first element of the path
+     *
+     * @param {object} req
+     * @return {string}
+     */
     getPotentialStationSlugFromReq(req) {
       return req.path.split('/')[1];
     },
     /**
-   * returns whether the request
-   *   1. is not a reserved route
-   *   2. matches a route defined in demo/index.js
-   *
-   * @param {string} pathToTest - the pathname of the original url
-   * @returns {boolean}
-   */
+     * returns whether the request
+     *   1. is not a reserved route
+     *   2. matches a route defined in demo/index.js
+     *
+     * @param {string} pathToTest - the pathname of the original url
+     * @returns {boolean}
+     */
     isRdcRoute(pathToTest) {
       return __.clayReservedRoutes.every(reservedRoute => !pathToTest.startsWith(reservedRoute))
       && __.rdcRoutes.some(routeRe => routeRe.test(pathToTest));

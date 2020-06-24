@@ -237,8 +237,9 @@ _groups:
       - secondarySectionFrontManual
       - tagManual
       - contentType
-      - filterTags
-      - filterSecondarySectionFronts
+      - excludeSectionFronts
+      - excludeSecondarySectionFronts
+      - excludeTags
       - excludeSubscriptions
       - curatedContentHeader
       - items

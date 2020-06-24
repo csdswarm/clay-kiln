@@ -30,11 +30,6 @@ items:
         input: text
         validate:
           max: 80
-    -
-      prop: urlIsValid
-      _has:
-        validate:
-          required: true
 
 sectionFront:
   _label: Section Front

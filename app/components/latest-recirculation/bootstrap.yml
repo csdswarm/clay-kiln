@@ -4,6 +4,10 @@ _components:
     tag: ''
     populateFrom: section-front
     contentType: { article: true, gallery: true }
+    rssFeed: ''
+    customTitle: ''
+    hyperLinkTitle: false
+    hyperLinkUrl: ''
     sectionFront: ''
     sectionFrontManual: ''
     secondarySectionFront: ''
@@ -11,3 +15,16 @@ _components:
     excludeSecondarySectionFronts: ''
     excludeSubscriptions: false
     excludeTags: ''
+    instances:
+      new:
+        _version: 5
+        items: []
+        tag: ''
+        populateFrom: section-front
+        contentType: { article: true, gallery: true }
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        excludeSectionFronts: ''
+        excludeSecondarySectionFronts: ''
+        excludeTags: ''

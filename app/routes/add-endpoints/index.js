@@ -2,6 +2,7 @@
 
 module.exports = {
   alerts: require('./alerts'),
+  contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),

@@ -20,6 +20,7 @@ const db = require('../../services/server/db'),
     'contentType',
     'sectionFront'
   ],
+  fetchStationFeeds = require('../../services/server/fetch-station-feeds'),
   /**
    * Determine if latest-recirculation is within a multi-column
    *
@@ -42,7 +43,6 @@ const db = require('../../services/server/db'),
    * able to be changed
    *
    * @param {object} locals
-   *
    * @returns {array} items
    */
   getItemsFromTrendingRecirculation = async (locals) => {
@@ -54,7 +54,7 @@ const db = require('../../services/server/db'),
 
       return trendingRecircData.items;
     } catch (e) {
-      if (e.message === `Key not found in database [${trendingRecircRef}]`) {
+      if (e.name === 'NotFoundError') {
         return [];
       } else {
         throw e;
@@ -107,10 +107,38 @@ const db = require('../../services/server/db'),
         };
       }));
     }
-
     return data;
   },
+  /**
+   * This pulls articles from the station_feed provided by the Frequency API.
+   *
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  renderRssFeed = async (data, locals) => {
+    const feed = await fetchStationFeeds(data, locals),
+      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
+    data._computed.station = locals.station.name;
+    data._computed.articles = await Promise.all(nodes.map(async (item) => {
+      const feedImgUrl = _get(item, "node['OG Image'].src"),
+        s3FeedImgUrl = feedImgUrl
+          ? await getS3StationFeedImgUrl(feedImgUrl, locals, {
+            shouldAddAmphoraTimings: true,
+            amphoraTimingLabelPrefix: 'render station'
+          })
+          : DEFAULT_RADIOCOM_LOGO;
+
+      return {
+        feedImgUrl: s3FeedImgUrl,
+        externalUrl: item.node.URL,
+        primaryHeadline: item.node.field_engagement_title || item.node.title
+      };
+    })
+    );
+    return data;
+  },
 
   /**
    * Determines whether or not a station is migrated, given the station slug
@@ -144,11 +172,17 @@ const db = require('../../services/server/db'),
    * @returns {Promise}
    */
   render = async function (ref, data, locals) {
+    data._computed.isMultiColumn = isMultiColumn(data);
+
     if (data.populateFrom === 'station' && locals.params) {
       data._computed.station = locals.station.name;
       if (!data._computed.isMigrated) {
         return renderStation(data, locals);// gets the articles from drupal and displays those instead
       }
+    }
+
+    if (data.populateFrom === 'rss-feed' && data.rssFeed) {
+      return renderRssFeed(data, locals);
     }
 
     if (data._computed.articles) {
@@ -164,9 +198,11 @@ const db = require('../../services/server/db'),
         label: getSectionFrontName(item.sectionFront, primarySectionFronts)
       }));
     }
-    data._computed.isMultiColumn = isMultiColumn(data);
-
-    return Promise.resolve(data);
+    // Reset value of customTitle to avoid an override inside the template when the rss option is not selected.
+    if (data.populateFrom !== 'rss-feed') {
+      data.customTitle = '';
+    }
+    return data;
   };
 
 module.exports = recirculationData({
@@ -190,7 +226,7 @@ module.exports = recirculationData({
     });
   },
   skipRender: async (data, locals) => {
-    const isStation = data.populateFrom === 'station' && locals.params;
+    const isStation = (data.populateFrom === 'station' && locals.params) || (data.populateFrom === 'rss-feed' && data.rssFeed !== '');
 
     if (isStation) {
       const slug = locals.station && locals.station.site_slug,
