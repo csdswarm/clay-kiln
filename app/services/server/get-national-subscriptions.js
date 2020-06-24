@@ -32,17 +32,22 @@ const redisKey = 'national-subscriptions',
    * returns all rows from public.national_subscriptions sorted by
    *   last_updated_utc descending
    *
+   * @param {bool} shouldOrder
    * @returns {NationalSubscription[]}
    */
-  getNationalSubscriptions = async () => {
+  getNationalSubscriptions = async ({ shouldOrder = true } = {}) => {
     let subscriptions = await redis.get(redisKey);
 
     if (!subscriptions) {
+      const orderClause = shouldOrder
+        ? 'order by last_updated_utc asc'
+        : '';
+
       subscriptions = (
         await db.raw(`
           select *
           from national_subscriptions
-          order by last_updated_utc asc
+          ${orderClause}
         `)
       ).rows;
 

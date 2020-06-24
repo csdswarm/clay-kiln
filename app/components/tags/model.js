@@ -1,5 +1,7 @@
 'use strict';
+
 const _find = require('lodash/find'),
+  _map = require('lodash/map'),
   { textToEncodedSlug } = require('../../services/universal/utils');
 
 /**
@@ -30,6 +32,7 @@ function clean(items) {
 module.exports.save = function (uri, data) {
   data.items = clean(data.items); // first, make sure everything is lowercase and has trimmed whitespace
   data.featureRubric = getRubric(data.items); // also grab the feature rubric
+  data.textTags = _map(data.items, 'text');
   return data;
 };
 module.exports.clean = clean;
