@@ -1,0 +1,32 @@
+_components:
+  latest-content-column:
+    items: []
+    populate-from: section-front
+    contentType: { article: true, gallery: true }
+    rssFeed: ''
+    customTitle: ''
+    hyperLinkTitle: false
+    hyperLinkUrl: ''
+    sectionFront: ''
+    sectionFrontManual: ''
+    secondarySectionFront: ''
+    tag: ''
+    filterTags: ''
+    filterPrimarySectionFronts: {}
+    filterSecondarySectionFronts: {}
+    instances:
+      new:
+        items: []
+        populate-from: section-front
+        contentType: { article: true, gallery: true }
+        rssFeed: ''
+        customTitle: ''
+        hyperLinkTitle: false
+        hyperLinkUrl: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        tag: ''
+        filterTags: ''
+        filterPrimarySectionFronts: {}
+        filterSecondarySectionFronts: {}
