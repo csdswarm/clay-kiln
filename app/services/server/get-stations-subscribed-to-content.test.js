@@ -217,7 +217,7 @@ function getMockContent() {
   return {
     default: {
       contentType: 'article',
-      tags: ['match', 'exclude'],
+      textTags: ['match', 'exclude'],
       sectionFront: 'match',
       secondarySectionFront: 'match'
     },
@@ -227,12 +227,12 @@ function getMockContent() {
     },
     sectionFrontAndTag: {
       contentType: 'article',
-      tags: ['match'],
+      textTags: ['match'],
       sectionFront: 'match'
     },
     onlyTag: {
       contentType: 'article',
-      tags: ['match'],
+      textTags: ['match'],
       sectionFront: 'dont-match_content'
     }
   };
