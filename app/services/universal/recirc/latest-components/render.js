@@ -95,9 +95,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
    * @param {object} data
    * @returns {boolean}
    */
-  isLatestContent = (data) => {
-    return data._computed.parents.some(ref => getComponentName(ref) === 'latest-content');
-  },
+  isLatestContentColumn = ({ componentVariation }) => componentVariation === 'latest-content-column',
   /**
    * @param {string} ref
    * @param {object} data
@@ -115,7 +113,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
     }
 
     if (data.populateFrom === 'rss-feed' && data.rssFeed) {
-      return renderRssFeed(data, locals, isLatestContent ? 3 : 5);
+      return renderRssFeed(data, locals, isLatestContentColumn(data) ? 3 : 5);
     }
 
     if (data._computed.articles) {
