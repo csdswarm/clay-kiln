@@ -29,6 +29,12 @@ describe('server', () => {
 
         return { ...setup, result };
       }
+
+      it('marks content as unpublishable if it is not newscontent', async () => {
+        const { result } = await setup_importArticle({ apMeta: { signals: [] } });
+
+        expect(result).to.have.property('isApContentPublishable').that.eqls(false);
+      });
     });
   });
 })
