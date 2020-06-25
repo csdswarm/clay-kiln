@@ -11,3 +11,7 @@ _components:
     musicItems: []
     sportsItems: []
     newsItems: []
+    enhancedComponent: false
+    firstColumn: []
+    secondColumn: []
+    thirdColumn: []
