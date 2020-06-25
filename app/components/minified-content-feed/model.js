@@ -11,7 +11,7 @@ const
   excludedSecondarySectionFronts = ({ excludeSecondarySectionFronts }) => boolKeys(excludeSecondarySectionFronts || {}),
   excludedSectionFronts = ({ excludeSectionFronts }) => boolKeys(excludeSectionFronts || {}),
   excludedSubscriptions = ({ excludeSubscriptions, stationSlug }) => ({ value: {
-    subscriptions: excludeSubscriptions ? ['national subscriptions'] : [], stationSlug
+    subscriptions: excludeSubscriptions ? ['national subscription'] : [], stationSlug
   } }),
   excludedTags = ({ excludeTags }) => (excludeTags || []).map(({ text }) => text),
   getSecondarySectionFront = (data, locals) => data.secondarySectionFrontManual || locals.secondarySectionFront,

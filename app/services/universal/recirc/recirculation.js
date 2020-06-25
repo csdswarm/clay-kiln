@@ -62,7 +62,7 @@ const
       sectionFronts: boolObjectToArray(data.excludeSectionFronts),
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
       subscriptions: { value: {
-        subscriptions: data.excludeSubscriptions ? ['national subscriptions'] : [],
+        subscriptions: data.excludeSubscriptions ? ['national subscription'] : [],
         stationSlug: getStationSlug(locals)
       } },
       tags: (data.excludeTags || []).map(tag => tag.text)
