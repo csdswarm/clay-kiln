@@ -181,6 +181,7 @@ module.exports = recirculationData({
   shouldAddAmphoraTimings: true,
   mapResultsToTemplate: (locals, result, item = {}) => {
     return Object.assign(item, {
+      uri: result._id,
       canonicalUrl: item.url || result.canonicalUrl,
       date: item.overrideDate || result.date,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
