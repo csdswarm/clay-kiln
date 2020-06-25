@@ -1,31 +1,32 @@
 'use strict';
 
-const __ = {
-
-};
+const __ = {};
 
 /**
  * Checks to see if the AP Content is publishable
+ * @param {string[]} editorialtypes
  * @param {string[]} signals
  * @param {string} pubstatus
- * @returns {*}
+ * @returns {boolean}
  */
-function checkApPublishable({ signals, pubstatus }) {
-  return signals.includes('newscontent') && pubstatus === 'usable';
+function checkApPublishable({ editorialtypes, pubstatus, signals }) {
+  return signals.includes('newscontent') && pubstatus === 'usable' && !editorialtypes.includes('Kill');
 }
 
 /**
  * Handles the logic needed to import or update an artice from the AP media api
- * @param {object} apMeta - The data returned from AP Media for a single article
+ * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
  * @param {object} locals
  * @returns {Promise<void>}
  */
 async function importArticle(apMeta) {
-  return { isApContentPublishable: checkApPublishable(apMeta) };
+  const isApContentPublishable = checkApPublishable(apMeta);
+
+  return { isApContentPublishable };
 }
 
-module.exports  = {
+module.exports = {
   _internals: __,
   importArticle
 };

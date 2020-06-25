@@ -27,6 +27,7 @@ describe('server', () => {
           DEFAULT_AP_META =  {
             signals: ['newscontent'],
             pubstatus: 'usable',
+            editorialtypes: ['Lead']
           },
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
           result = await importArticle(apMeta);
@@ -44,6 +45,13 @@ describe('server', () => {
       
       it('marks content as unpublishable if its pubstatus is not usable', async () => {
         const { result } = await setup_importArticle({ apMeta: { pubstatus: '' } });
+
+        expect(result.isApContentPublishable)
+          .to.eql(false);
+      });
+
+      it('marks content as unpublishable if its editorialtypes contains the word Kill', async () => {
+        const { result } = await setup_importArticle({ apMeta: { editorialtypes: ['Kill'] } });
 
         expect(result.isApContentPublishable)
           .to.eql(false);
