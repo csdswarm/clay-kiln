@@ -2,6 +2,27 @@ _version: 5.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
+useCustomTitle:
+  _label: Override column title
+  _has:
+    input: checkbox
+    options:
+      - override-column-title
+
+columnTitle:
+  _label: Custom Title
+  _has:
+    input: text
+    help: Override the default component title
+    validate:
+      max: 20
+      required: 
+        field: useCustomTitle
+        operator: truthy
+  _reveal:
+    field: useCustomTitle
+    operator: truthy
+
 contentType:
   _label: Content type
   _has:
@@ -145,16 +166,6 @@ rssFeed:
     values:
       - rss-feed
 
-customTitle:
-  _label: Custom Title
-  _has:
-    input: text
-    help: Override the default component title
-  _reveal:
-    field: populateFrom
-    operator: ===
-    values:
-      - rss-feed
 
 hyperLinkTitle:
   _label: Should the title link to an external source ?
@@ -273,10 +284,11 @@ filterSecondarySectionFronts:
 _groups:
   settings:
     fields:
+      - useCustomTitle
+      - columnTitle
       - contentType
       - populateFrom
       - rssFeed
-      - customTitle
       - hyperLinkTitle
       - hyperLinkUrl
       - sectionFrontManual
@@ -285,4 +297,7 @@ _groups:
       - filterTags
       - filterPrimarySectionFronts
       - filterSecondarySectionFronts
+      - items
+  items:
+    fields:
       - items
