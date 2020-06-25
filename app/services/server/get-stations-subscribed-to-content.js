@@ -115,15 +115,9 @@ function makeIsSubscribed(data) {
   return subscriptionFiltersPerStation => {
 
     return subscriptionFiltersPerStation.some(filter => {
-      // return !isExcluded(data, tags, filter)
-      //   && filter.contentType.includes(data.contentType)
-      //   && matchesOn[filter.populateFrom](data, tags, filter);
-
-      const c1 = !isExcluded(data, tags, filter),
-        c2 = c1 && filter.contentType.includes(data.contentType),
-        c3 = c2 && matchesOn[filter.populateFrom](data, tags, filter);
-
-      return c1 && c2 && c3;
+      return !isExcluded(data, tags, filter)
+        && filter.contentType.includes(data.contentType)
+        && matchesOn[filter.populateFrom](data, tags, filter);
     });
   };
 }
