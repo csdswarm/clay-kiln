@@ -7,10 +7,11 @@ const __ = {
 /**
  * Checks to see if the AP Content is publishable
  * @param {string[]} signals
+ * @param {string} pubstatus
  * @returns {*}
  */
-function checkApPublishable({ signals }) {
-  return signals.includes('newscontent');
+function checkApPublishable({ signals, pubstatus }) {
+  return signals.includes('newscontent') && pubstatus === 'usable';
 }
 
 /**
