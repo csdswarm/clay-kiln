@@ -1,6 +1,7 @@
 'use strict';
 
-const expect = require('chai').expect,
+const _noop = require('lodash/noop'),
+  expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   uri = 'clay.radio.com/_components/article/instances/cjzbandlv000f3klg5krzbyyx',
@@ -21,7 +22,8 @@ const expect = require('chai').expect,
             seoHeadline: ''
           });
       }
-    }
+    },
+    './apply-national-subscriptions': _noop
   }),
   mockData = {
     data: {
