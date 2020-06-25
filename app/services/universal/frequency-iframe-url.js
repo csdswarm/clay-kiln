@@ -1,21 +1,48 @@
 'use strict';
 
-const url = require('url');
+const url = require('url'),
+  /** Determine the Frequency drupal url
+ *
+ * @param  {String} pathname shows/show-schedule
+ * @param  {String} hostname radio.com
+ * @param  {String} callsign winsam
+ * @return {String} Url https://winsam.prd-radio-drupal.com/shows/show-schedule
+ */
+  sanitizeUrl = (pathname, hostname, callsign) => {
+    let host;
+    
+    switch (hostname) {
+      case 'dev-clay-radio.com':
+        host = hostname.replace('clay.radio.com', 'radio-drupal.com');
+        break;
+      case 'stg-clay-radio.com':
+        host = hostname.replace('clay.radio.com', 'radio-drupal.com');
+        break;
+      default:
+        host = hostname.replace('clay.radio.com', 'prd-radio-drupal.com');
+        break;
+    }
+    
+    const [,,...rest] = pathname.split('/');
+
+    return `https://${callsign}.${host}/${rest}`.replace(/,/gi,'/');
+  };
 
 /**
- * Determines frequency url from the url
+ * Determines frequency url from the Unity URL
+ * i.e. https://radio.com/1010wins/shows/show-schedule
  * and return the proper frequency url
- * i.e https://1010wins.radio.com/shows/show-schedule
+ * i.e. https://winsam.prd-radio-drupal.com/shows/show-schedule
  *
  * @param  {String} urlString
+ * @param  {String} callsign
  * @return {String}
  */
 
-function frequencyIframeUrl(urlString) {
-  const { pathname } = url.parse(urlString),
-    [,stationSlug,...rest] = pathname.split('/'),
-    frequencyUrl = `https://${stationSlug}.radio.com/${rest}`.replace(',','/');
-  
+function frequencyIframeUrl(urlString, callsign) {
+  const { pathname, hostname } = url.parse(urlString),
+    frequencyUrl = sanitizeUrl(pathname, hostname, callsign.toLowerCase());
+    
   return frequencyUrl;
 }
 

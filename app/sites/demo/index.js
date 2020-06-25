@@ -70,6 +70,7 @@ module.exports.routes = [
   { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
   { path: '/contests/:slug' },
   { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
+  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
