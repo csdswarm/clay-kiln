@@ -1,10 +1,8 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  { getComponentName } = require('clayutils'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   { addAmphoraRenderTime } = require('../../services/universal/utils'),
-  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   elasticFields = [
     'date',
     'primaryHeadline',
@@ -14,7 +12,8 @@ const db = require('../../services/server/db'),
     'contentType',
     'sectionFront'
   ],
-  { renderRssFeed, renderStation, skipRender } = require('../../services/universal/recirc/latest-components'),
+  { render, skipRender } = require('../../services/universal/recirc/latest-components/index'),
+  { getComponentName } = require('clayutils'),
   /**
    * Determine if latest-recirculation is within a multi-column
    *
@@ -59,46 +58,6 @@ const db = require('../../services/server/db'),
         ms: new Date() - start
       });
     }
-  },
-
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  render = async function (ref, data, locals) {
-    data._computed.isMultiColumn = isMultiColumn(data);
-
-    if (data.populateFrom === 'station' && locals.params) {
-      data._computed.station = locals.station.name;
-      if (!data._computed.isMigrated) {
-        return renderStation(data, locals);// gets the articles from drupal and displays those instead
-      }
-    }
-
-    if (data.populateFrom === 'rss-feed' && data.rssFeed) {
-      return renderRssFeed(data, locals);
-    }
-
-    if (data._computed.articles) {
-      const primarySectionFronts = await retrieveList(
-        'primary-section-fronts', {
-          locals,
-          shouldAddAmphoraTimings: true
-        }
-      );
-
-      data._computed.articles = data._computed.articles.map(item => ({
-        ...item,
-        label: getSectionFrontName(item.sectionFront, primarySectionFronts)
-      }));
-    }
-    // Reset value of customTitle to avoid an override inside the template when the rss option is not selected.
-    if (data.populateFrom !== 'rss-feed') {
-      data.customTitle = '';
-    }
-    return data;
   };
 
 module.exports = recirculationData({

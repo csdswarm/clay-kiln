@@ -1,53 +1,11 @@
-
 'use strict';
-
-const fetchStationFeeds = require('../../server/fetch-station-feeds'),
-  getS3StationFeedImgUrl = require('../../server/get-s3-station-feed-img-url'),
+const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
+  { getComponentName } = require('clayutils'),
+  fetchStationFeeds = require('../../../server/fetch-station-feeds'),
+  getS3StationFeedImgUrl = require('../../../server/get-s3-station-feed-img-url'),
   _get = require('lodash/get'),
-  { DEFAULT_RADIOCOM_LOGO } = require('../../universal/constants'),
-  radioApiService = require('../../server/radioApi'),
-  queryService = require('../../server/query'),
-  log = require('../log').setup({ file: __filename }),
-
-  /**
-   * Determines whether or not a station is migrated, given the station slug
-   * @param {string} stationSlug
-   * @param {object} locals
-   * @returns {Promise<boolean>}
-   */
-  isStationMigrated = async function (stationSlug, locals) {
-    if (!stationSlug) {
-      return false;
-    }
-
-    const query = queryService.newQueryWithCount('published-stations', 1, locals);
-
-    queryService.addMust(query, { match: { stationSlug } });
-
-    try {
-      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: false });
-
-      return results.length > 0;
-    } catch (e) {
-      log('error', e);
-      return false;
-    }
-  },
-
-  skipRender = async (data, locals) => {
-    const isStation = (data.populateFrom === 'station' && locals.params) || (data.populateFrom === 'rss-feed' && data.rssFeed !== '');
-
-    if (isStation) {
-      const slug = locals.station && locals.station.site_slug,
-        isMigrated = await isStationMigrated(slug);
-
-      data._computed.isMigrated = isMigrated;
-
-      return !isMigrated;
-    }
-
-    return false;
-  },
+  { DEFAULT_RADIOCOM_LOGO } = require('../../../universal/constants'),
+  radioApiService = require('../../../server/radioApi'),
   /**
    * This pulls articles from the station_feed provided by the Frequency API.
    *
@@ -121,10 +79,63 @@ const fetchStationFeeds = require('../../server/fetch-station-feeds'),
       }));
     }
     return data;
+  },
+  /**
+   * Determine if latest-recirculation is within a multi-column
+   *
+   * @param {object} data
+   * @returns {boolean}
+   */
+  isMultiColumn = (data) => {
+    return data._computed.parents.some(ref => getComponentName(ref) === 'multi-column');
+  },
+  /**
+   * Determine if render-rss is within a latest-content
+   *
+   * @param {object} data
+   * @returns {boolean}
+   */
+  isLatestContent = (data) => {
+    return data._computed.parents.some(ref => getComponentName(ref) === 'latest-content');
+  },
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  render = async function (ref, data, locals) {
+    data._computed.isMultiColumn = isMultiColumn(data);
+
+    if (data.populateFrom === 'station' && locals.params) {
+      data._computed.station = locals.station.name;
+      if (!data._computed.isMigrated) {
+        return renderStation(data, locals);// gets the articles from drupal and displays those instead
+      }
+    }
+
+    if (data.populateFrom === 'rss-feed' && data.rssFeed) {
+      return renderRssFeed(data, locals, isLatestContent ? 3 : 5);
+    }
+
+    if (data._computed.articles) {
+      const primarySectionFronts = await retrieveList(
+        'primary-section-fronts', {
+          locals,
+          shouldAddAmphoraTimings: true
+        }
+      );
+
+      data._computed.articles = data._computed.articles.map(item => ({
+        ...item,
+        label: getSectionFrontName(item.sectionFront, primarySectionFronts)
+      }));
+    }
+    // Reset value of customTitle to avoid an override inside the template when the rss option is not selected.
+    if (data.populateFrom !== 'rss-feed') {
+      data.customTitle = '';
+    }
+    return data;
   };
 
-module.exports = {
-  renderRssFeed,
-  renderStation,
-  skipRender
-};
+module.exports = render;
