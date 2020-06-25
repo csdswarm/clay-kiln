@@ -28,4 +28,6 @@ module.exports['1.0'] = async function (uri, data) {
 
 module.exports['2.0'] = (uri, data) => {
   data.imageUrl = data.imageUrl || '';
+
+  return data;
 };
