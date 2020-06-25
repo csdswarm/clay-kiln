@@ -9,9 +9,7 @@ const _reject = require('lodash/reject'),
  * @param {Object} locals
  */
 async function applyNationalSubscriptions(data, locals) {
-  const shouldApplyNationalSubscriptions = locals.station;
-
-  if (['article', 'gallery'].includes(data.contentType) && shouldApplyNationalSubscriptions) {
+  if (['article', 'gallery'].includes(data.contentType)) {
     const stationsSubscribed = await getStationsSubscribed(data, locals),
       syndicatedStations = _reject(
         data.stationSyndication,
@@ -48,4 +46,4 @@ async function getStationsSubscribed(data, locals) {
   });
 }
 
-module.exports.applyNationalSubscriptions = applyNationalSubscriptions;
+module.exports = applyNationalSubscriptions;
