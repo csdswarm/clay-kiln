@@ -89,6 +89,13 @@ module.exports = router => {
     res.send(result.rows[0].data);
   }));
 
+  router.get('/:name/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
+    const viewName = 'sitemap_' + _snakeCase(req.params.name);
+
+    res.set('Content-Type', 'application/xml');
+    res.send('<h1>test</h1>');
+  }));
+
   router.get('/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
     const result = await db.raw(query.sitemapIndex);
 
