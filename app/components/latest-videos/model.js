@@ -26,7 +26,7 @@ module.exports = recirculationData({
     },
     excludes: {
       subscriptions: { value: {
-        subscriptions: data.excludeSubscriptions ? ['national subscriptions'] : [],
+        subscriptions: data.excludeSubscriptions ? ['national subscription'] : [],
         stationSlug: getStationSlug(locals)
       } },
       tags: excludedTags(data)

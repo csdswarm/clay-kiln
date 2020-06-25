@@ -126,7 +126,7 @@ module.exports.render = async function (ref, data, locals) {
 
     if (data.excludeSubscriptions) {
       const stationSlug = _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug'),
-        matchSources = [{ match_phrase: { 'stationSyndication.source': 'national subscriptions' } }],
+        matchSources = [{ match_phrase: { 'stationSyndication.source': 'national subscription' } }],
         anySource = { should: matchSources, minimum_should_match: 1 },
         syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, { bool: anySource }],
         excludeSubscriptions = { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
