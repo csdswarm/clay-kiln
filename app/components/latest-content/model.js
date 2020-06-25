@@ -1,9 +1,9 @@
 'use strict';
 const
-  _get = require('lodash/get'),
   contentTypeService = require('../../services/universal/content-type'),
   queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+  { getStationSlug, makeSubscriptionsQuery } = require('../../services/universal/recirc/recirculation'),
   { DEFAULT_STATION } = require('../../services/universal/constants'),
   { isComponent } = require('clayutils'),
 
@@ -123,13 +123,12 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     if (data.excludeSubscriptions) {
-      const stationSlug = _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug'),
-        matchSources = [{ match_phrase: { 'stationSyndication.source': 'national subscription' } }],
-        anySource = { should: matchSources, minimum_should_match: 1 },
-        syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, { bool: anySource }],
-        excludeSubscriptions = { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
+      const stationSlug = getStationSlug(locals);
 
-      queryService.addMustNot(query, excludeSubscriptions);
+      queryService.addMustNot(query, makeSubscriptionsQuery({
+        stationSlug,
+        subscriptions: ['national subscription']
+      }));
     }
 
     // exclude the current page in results

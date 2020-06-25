@@ -571,6 +571,7 @@ const
 
 module.exports = {
   getStationSlug,
+  makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
   sectionOrTagCondition
 };
