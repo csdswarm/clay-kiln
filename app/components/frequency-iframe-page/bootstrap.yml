@@ -1,0 +1,6 @@
+_components:
+  frequency-iframe-page:
+    allowed: true
+    instances:
+      default:
+        allowed: true
