@@ -30,10 +30,8 @@ contentType:
       - article
       - gallery
   _reveal:
-    field: enhancedComponent
-    operator: ===
-    values:
-      - false
+    field: hasCustomColumns
+    operator: falsy
 
 sportsItems:
   _label: Sports Articles
@@ -172,10 +170,8 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
   _reveal:
-    field: enhancedComponent
-    operator: ===
-    values:
-      - false
+    field: hasCustomColumns
+    operator: falsy
 
 filterSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -185,17 +181,16 @@ filterSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
   _reveal:
-    field: enhancedComponent
-    operator: ===
-    values:
-      - false
+    field: hasCustomColumns
+    operator: falsy
+
 
 _groups:
   settings:
     fields:
       - componentTitle
       - componentTitleVisible
-      - enhancedComponent
+      - hasCustomColumns
       - contentType
       - filterTags
       - filterSecondarySectionFronts
@@ -209,7 +204,7 @@ _groups:
     fields:
       - sportsItems
 
-enhancedComponent:
+hasCustomColumns:
   _label: Allow Custom Columns
   _has:
     input: checkbox
@@ -219,7 +214,6 @@ firstColumn:
   _placeholder:
     height: 168px
   _componentList:
-    fuzzy: true
     renderOrder: 1
     include:
       - latest-content-column
@@ -231,7 +225,6 @@ secondColumn:
   _placeholder:
     height: 168px
   _componentList:
-    fuzzy: true
     renderOrder: 2
     include:
       - latest-content-column
@@ -243,7 +236,6 @@ thirdColumn:
   _placeholder:
     height: 168px
   _componentList:
-    fuzzy: true
     renderOrder: 3
     include:
       - latest-content-column

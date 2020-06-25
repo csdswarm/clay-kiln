@@ -151,7 +151,7 @@ _users:
     username: kyle.mccann@entercom.com
     provider: google
     auth: admin
-    -
+  -
     username: moffkr91@gmail.com
     provider: google
     auth: admin
