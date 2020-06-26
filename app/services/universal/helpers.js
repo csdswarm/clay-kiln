@@ -6,9 +6,11 @@ const
   calloutType = require('./callout'),
   dynamicImage = require('./dynamic-image'),
   ellipsisSubstring = require('./ellipsisSubstring'),
+  renderTemplateString = require('./renderTemplateString'),
   reversibleOneBasedIndex = require('./reversibleOneBasedIndex'),
   sanitizeURI = require('./sanitizeURI'),
   truncate = require('./truncate'),
+  toUpperCase = require('./toUpperCase'),
   {
     formatDateRange,
     formatDateTimeRange,
@@ -43,6 +45,7 @@ module.exports = {
   imgSize,
   imgSource,
   isPublished24HrsAgo,
+  renderTemplateString,
   rendition: getRendition,
   renditionAspectRatio: getRenditionAspectRatio,
   renditionDynamic: getDynamicRendition,
@@ -55,6 +58,7 @@ module.exports = {
   secondsToISO,
   timeAgoTimestamp,
   truncateText: truncate,
+  toUpperCase,
   userLocalDate,
   withoutResolution: getRenditionWithoutPixelDensity,
   yesNo

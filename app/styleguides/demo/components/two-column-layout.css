@@ -108,6 +108,19 @@
       visibility: visible;
     }
   }
+  &[data-main-component="event"] {
+    .content__sidebar {
+      visibility: visible;
+      margin-top: 0;
+    }
+  }
+}
+.layout--two-column[data-main-component="event"] {
+  .layout__content {
+    .content__sidebar {
+      visibility: visible;
+    }
+  }
 }
 
 @mixin default-screen {

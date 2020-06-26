@@ -4,11 +4,12 @@
 
 .contest-rules {
     &__link {
-      text-decoration: none;
+        text-decoration: none;
+        color: inherit;
 
-      &:hover .contest-rules__contest-headline {
-        text-decoration: underline;
-      }
+        &:hover .contest-rules__contest-headline {
+            text-decoration: underline;
+        }
     }
 
     transition: 125ms ease;
@@ -24,12 +25,12 @@
         display: block;
         margin-bottom: em(10, 22);
         @mixin large-screen {
-          @mixin more-content-feed-font6;
-          margin-bottom: em(10, 18);
+            @mixin more-content-feed-font6;
+            margin-bottom: em(10, 18);
         }
         @mixin medium-small-screen {
-          @mixin more-content-feed-font2;
-          margin-bottom: em(10, 22);
+            @mixin more-content-feed-font2;
+            margin-bottom: em(10, 22);
         }
     }
 

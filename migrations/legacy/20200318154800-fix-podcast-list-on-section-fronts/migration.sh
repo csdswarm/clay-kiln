@@ -1,6 +1,6 @@
 #! /bin/bash
 
-expectedDir="20191008103300-add-branch-io"
+expectedDir="20191008103300-add-google-news-feed"
 scriptdir="$(dirname "$0")"
 pwd="$(pwd "$0")"
 if [[ "$pwd" != *"$expectedDir" ]]
@@ -17,7 +17,7 @@ if [ "$1" != "" ]; then
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com:9200" && http="https";
   elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
@@ -25,15 +25,6 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\nCreating branch io component...\n\n"
-cat ./_components.yml | clay import -k demo -y -p $1
-
-printf "\nUpdating stations-detail page...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_pages/station > ./stationPage.json
+printf "\nFixing podcastLists locally...\n\n"
 
 node migration.js $1
-
-curl -X PUT $http://$1/_pages/station -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./stationPage.json -o /dev/null -s
-curl -X PUT $http://$1/_pages/station@published -H 'Authorization: token accesskey' -o /dev/null -s
-
-rm ./stationPage.json

@@ -143,7 +143,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         const { status, statusText, video } = await getVideoObject(videoID);
 
         if (video && video.id) {
-          res.send({ video: await transformVideoResults([video])[0], jobID: ingestResponse.id });
+          const transformResults = await transformVideoResults([video]);
+
+          res.send({ video: transformResults[0], jobID: ingestResponse.id });
         } else {
           res.status(status).send(statusText);
         }
@@ -238,7 +240,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
       if (video && video.id) {
         if (!req.query.full_object) {
-          res.send(await transformVideoResults([video])[0]);
+          const transformResults = await transformVideoResults([video]);
+
+          res.send(transformResults[0]);
         } else {
           res.send(video);
         }

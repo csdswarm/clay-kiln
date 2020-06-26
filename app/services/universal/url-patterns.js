@@ -1,6 +1,7 @@
 'use strict';
 
 const exists = require('lodash/identity'),
+  // URL patterns below need to be handled by the site's index.js
   article = opts => {
     // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
     return [
@@ -12,7 +13,15 @@ const exists = require('lodash/identity'),
     ].filter(exists)
       .join('/');
   },
-  author = opts => `${opts.prefix}/${opts.contentType}/${opts.authorSlug}`,
+  author = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.contentType,
+      opts.authorSlug
+    ].filter(exists)
+      .join('/');
+  },
   // e.g. http://vulture.com/music/x.html - modified re: ON-333
   contestSlugPattern = opts => {
     // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
@@ -47,11 +56,25 @@ const exists = require('lodash/identity'),
     ].filter(exists)
       .join('/');
   },
-  stationFront = opts => {
-    // e.g. http://radio.com/weei
+  event = opts => {
+    // e.g. http://radio.com/events/mix-105-rock-n-jock
     return [
       opts.prefix,
-      opts.stationSlug
+      opts.stationSlug,
+      'events',
+      opts.slug
+    ].filter(exists)
+      .join('/');
+  },
+  eventsListing = opts => {
+    /* e.g.
+      http://radio.com/events
+      http://radio.com/kroq/events
+    */
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'events'
     ].filter(exists)
       .join('/');
   },
@@ -64,6 +87,14 @@ const exists = require('lodash/identity'),
       opts.slug
     ].filter(exists)
       .join('/');
+  },
+  stationFront = opts => {
+    // e.g. http://radio.com/weei
+    return [
+      opts.prefix,
+      opts.stationSlug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -73,6 +104,8 @@ module.exports = {
   date,
   gallery,
   sectionFront,
+  event,
+  eventsListing,
   contest,
   stationFront
 };

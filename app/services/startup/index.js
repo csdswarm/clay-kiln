@@ -126,6 +126,9 @@ function setupApp(app) {
 
   addInterceptor.cacheControl(app);
 
+  addEndpoints.contentWithSyndicatedUrl(app);
+  addEndpoints.contentAndPageInfo(app);
+  addEndpoints.fetchStationFeed(app);
   addEndpoints.msnFeed(app);
   addEndpoints.s3StationFeedImgUrl(app);
 

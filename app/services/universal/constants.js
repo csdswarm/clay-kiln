@@ -20,12 +20,19 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     CONTEST: 'contest',
+    EVENT: 'event',
+    EVENTSLISTING: 'events-listing-page',
     STATIONFRONT: 'station-front'
   },
 
@@ -57,11 +64,15 @@ const _get = require('lodash/get'),
     'article',
     'author-page',
     'contest',
+    'event',
+    'events-listing-page',
     'gallery',
     'homepage',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
 
   DEFAULT_STATION = {
@@ -106,22 +117,19 @@ const _get = require('lodash/get'),
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
   DAY,
+  DEFAULT_RADIOCOM_LOGO,
+  DEFAULT_STATION,
   HOUR,
   MINUTE,
   PAGE_TYPES,
   PRIVACY_POLICY,
   SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
   WEEK,
   YEAR,
   contentTypes,
-  time,
   msnFeed,
-  SERVER_SIDE,
-  PAGE_TYPES,
-  DEFAULT_RADIOCOM_LOGO
+  time
 };

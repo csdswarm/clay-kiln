@@ -16,7 +16,9 @@
     {{#if showHeader}}
         <div class="contest-rules--default-view">
             <h2 class="contest-rules__contest-headline">
-                {{ headline }}
+                <a href="{{ contestSlug }}" class="contest-rules__link">
+                    {{ headline }}
+                </a>
             </h2>
             <div class="contest-rules__date-range">
                 <p class="paragraph">
@@ -42,9 +44,11 @@
         </div>
         <div class="contest-rules__description-container">
             <h2 class="contest-rules__contest-headline">
-              {{ headline }}
+              <a href="{{ contestSlug }}" class="contest-rules__link">
+                {{ headline }}
+              </a>
             </h2>
-            <p class="paragraph">{{ description }}</p>
+            <p class="paragraph">{{{ description }}}</p>
         </div>
     </div>
 {{/inline}}
@@ -58,11 +62,5 @@
 {{/inline}}
 
 <div class="component component--contest-rules contest-rules">
-    {{#if @root.locals.edit}}
-        {{> mainContent}}
-    {{else}}
-        <a href="{{ contestSlug }}" class="contest-rules__link">
-            {{> mainContent}}
-        </a>
-    {{/if}}
+    {{> mainContent}}
 </div>

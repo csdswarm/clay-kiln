@@ -2,7 +2,6 @@
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
-
 ## Prerequisites:
 
 * [Docker desktop](https://www.docker.com/products/docker-desktop)

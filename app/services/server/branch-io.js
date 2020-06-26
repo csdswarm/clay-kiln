@@ -6,10 +6,10 @@
  * @property {string} content
  */
 
-const db = require('./db'),
+const
   _get = require('lodash/get'),
-  redis = require('./redis'),
-  { addAmphoraRenderTime } = require('../universal/utils'),
+  { retrieveList } = require('./lists'),
+
   /**
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
@@ -71,7 +71,7 @@ const db = require('./db'),
       addTag('station_logo', _get(locals, 'station.square_logo_small'));
       addTag('page', 'station-detail');
     } else {
-      // article, gallery, section front, contest pages
+      // article, gallery, section front, contest, event pages
       if (isStation) { // under a station
         addTag('market', _get(locals, 'station.market.display_name'));
         addTag('category', _get(locals, 'station.category'));
@@ -80,7 +80,7 @@ const db = require('./db'),
         addTag('station_logo', _get(locals, 'station.square_logo_small'));
       }
       // both national & station pages
-      addTag('station_name', _get(locals, 'station.name'));
+      addTag('station_name', _get(locals, 'station.name', 'Radio.com'));
     }
 
     // timestamp
@@ -102,74 +102,9 @@ const db = require('./db'),
    */
   getSectionFrontEntry = async (locals, slug, isPrimary, argObj) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(locals, listName, argObj);
+      data = await retrieveList(listName, { locals, ...argObj });
 
     return data.find(entry => entry.value === slug);
-  },
-  /**
-   * Retrieves a list from cache or db
-   * @param {Object} locals
-   * @param {string} name
-   * @param {Object} argObj
-   * @param {boolean} argObj.shouldAddAmphoraTimings
-   * @param {string} [argObj.amphoraTimingLabelPrefix]
-   * @returns {Promise<Array<Object>>}
-   */
-  retrieveList = async (locals, name, argObj) => {
-    const key = `list:${name}`,
-      beforeRedis = new Date();
-
-    let cached;
-
-    try {
-      cached = await redis.get(key);
-    } finally {
-      addAmphoraRenderTime(
-        locals,
-        {
-          data: { key },
-          label: 'get from redis',
-          ms: new Date() - beforeRedis
-        },
-        {
-          prefix: argObj.amphoraTimingLabelPrefix,
-          shouldAdd: argObj.shouldAddAmphoraTimings
-        }
-      );
-    }
-
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    const uri = `${locals.site.host}/_lists/${name}`,
-      beforePostgres = new Date();
-
-    // we shouldn't declare this variable above the short circuit as it has no
-    //   context up there
-    // eslint-disable-next-line one-var
-    let data;
-
-    try {
-      data = await db.get(uri);
-    } finally {
-      addAmphoraRenderTime(
-        locals,
-        {
-          data: { uri },
-          label: 'get from postgres',
-          ms: new Date() - beforePostgres
-        },
-        {
-          prefix: argObj.amphoraTimingLabelPrefix,
-          shouldAdd: argObj.shouldAddAmphoraTimings
-        }
-      );
-    }
-
-    redis.set(key, JSON.stringify(data), 'EX', 3600); // 1 hour
-
-    return data;
   };
 
 module.exports.getBranchMetaTags = getBranchMetaTags;

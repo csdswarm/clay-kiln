@@ -1,6 +1,9 @@
 'use strict';
 
 const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  __ = {
+    retrieveList
+  },
   _isPlainObject = require('lodash/isPlainObject');
 
 /**
@@ -136,7 +139,7 @@ async function retrieveSectionFrontLists(props, locals) {
 
   await Promise.all(Object.keys(lists).map(listProp => {
     if (props.includes(listProp)) {
-      return retrieveList(lists[listProp], locals)
+      return __.retrieveList(lists[listProp], { locals })
         .then(list => lists[listProp] = list);
     }
   }));
@@ -145,6 +148,7 @@ async function retrieveSectionFrontLists(props, locals) {
 }
 
 module.exports = {
+  _internals: __,
   /**
    * Automatically creates links based on data in the provided list of
    * properties on the data context
@@ -157,12 +161,39 @@ module.exports = {
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop] || prop.text && prop.slug,
+    const existingProp = (prop, dataObj) => dataObj[prop] || prop.text && prop.slug,
       lists = await retrieveSectionFrontLists(props, locals);
+    let breadcrumbItems = props
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists)),
+      breadcrumbProps = props;
 
-    data.breadcrumbs = props
-      .filter(onlyExistingItems)
-      .map(useDisplayName(data, lists))
+    if (data.stationSlug && data.stationName) {
+      breadcrumbProps = [
+        { slug: data.stationSlug, text: data.stationName },
+        ...props
+      ];
+      breadcrumbItems = breadcrumbProps
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists));
+    }
+    if (locals.station.site_slug && data.stationSyndication) {
+      const syndication = data.stationSyndication.find(
+        station => station.callsign === locals.station.callsign
+      );
+
+      if (syndication) {
+        breadcrumbProps = [
+          { slug: syndication.stationSlug, text: syndication.stationName },
+          ...props
+        ];
+        breadcrumbItems = breadcrumbProps
+          .filter(prop => existingProp(prop, syndication))
+          .map(useDisplayName(syndication, lists));
+      }
+    }
+
+    data.breadcrumbs = breadcrumbItems
       .map(toLinkSegments())
       .map(toFullLinks(locals));
 

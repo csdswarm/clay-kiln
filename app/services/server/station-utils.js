@@ -61,11 +61,7 @@ const _get = require('lodash/get'),
    * @param {object} locals
    */
   updateAllStations = async locals => {
-    const [ stationsResp, marketsResp ] = await Promise.all([
-        radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
-        radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
-      ]),
-      apiEnvironment = getApiEnvironment(locals);
+    const apiEnvironment = getApiEnvironment(locals);
 
     // Short circuit if we already have this data
     if (!_isEmpty(_state.allStations.asArray[apiEnvironment]) && _state.redisExpiresAt && (new Date() < _state.redisExpiresAt)) {
@@ -73,6 +69,11 @@ const _get = require('lodash/get'),
     }
 
     resetAllStations();
+
+    const [ stationsResp, marketsResp ] = await Promise.all([
+      radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
+      radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
+    ]);
 
     // Set the expires at timer based on return
     _state.redisExpiresAt = stationsResp.redis_expires_at;

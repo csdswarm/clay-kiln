@@ -1,6 +1,14 @@
 _components:
   two-column-component:
+    col1: []
+    col2: []
     instances:
       new:
         col1: []
         col2: []
+      station-front:
+        col1:
+          - _ref: /_components/more-content-feed/instances/station-basic-music
+        col2:
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
