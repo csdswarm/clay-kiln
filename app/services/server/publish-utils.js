@@ -96,12 +96,12 @@ function guaranteePrimaryHeadline(mainComponent) {
  * @returns {string}
  */
 function getPublishDate(latest, published) {
-  if (_.isObject(latest) && latest.date) {
-    // if we're given a date, use it
-    return latest.date;
-  } else if (_.isObject(published) && published.date) {
+  if (_.isObject(published) && published.date && !(latest.articleDate || latest.galleryDate) && !latest.dateUpdated) {
     // if there is only a date on the published version, use it
     return published.date;
+  } else if (_.isObject(latest) && latest.date) {
+    // if we're given a date, use it
+    return latest.date;
   } else {
     return new Date().toISOString();
   }
@@ -113,6 +113,7 @@ function getPublishDate(latest, published) {
  * @param {object} locals
  */
 function guaranteeLocalDate(component, publishedComponent, locals) {
+  console.debug('DEBUG::::::::::::::::', JSON.stringify(component, null, 2));
   // if date is defined in the component, remember it.
   if (!locals.date) {
     locals.date = getPublishDate(component, publishedComponent);
