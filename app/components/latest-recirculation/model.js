@@ -159,10 +159,14 @@ const db = require('../../services/server/db'),
         }
       );
 
-      data._computed.articles = data._computed.articles.map(item => ({
-        ...item,
-        label: getSectionFrontName(item.sectionFront, primarySectionFronts)
-      }));
+      data._computed.articles = data._computed.articles.map(item => {
+        const label = getSectionFrontName(item.label || item.sectionFront, primarySectionFronts);
+
+        return {
+          ...item,
+          label
+        };
+      });
     }
     data._computed.isMultiColumn = isMultiColumn(data);
 
@@ -184,7 +188,7 @@ module.exports = recirculationData({
       canonicalUrl: item.url || result.canonicalUrl,
       date: item.overrideDate || result.date,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideDate || result.label,
+      label: result.syndicatedLabel || result.label,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       sectionFront: item.overrideSectionFront || result.sectionFront
     });
