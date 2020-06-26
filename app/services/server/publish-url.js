@@ -165,7 +165,7 @@ function getEventsListingUrl(pageData, locals, mainComponentRefs) {
         return urlPatterns.eventsListing(urlOptions);
       }
     });
-}
+};
 
 /**
  * Return the url for a podcast front based on its station site slug
@@ -178,7 +178,7 @@ function getPodcastFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.PODCASTFRONT) {
-        return pubUtils.podcastFrontSlugPattern(urlOptions);
+        return urlPatterns.podcastFront(urlOptions);
       }
     });
 }

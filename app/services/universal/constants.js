@@ -120,20 +120,20 @@ const _get = require('lodash/get'),
   PODCASTS = 'podcasts';
 
 module.exports = {
+  contentTypes,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
   MINUTE,
+  msnFeed,
   PAGE_TYPES,
   PODCASTS,
   PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
+  time,
   WEEK,
-  YEAR,
-  contentTypes,
-  msnFeed,
-  time
+  YEAR
 };
