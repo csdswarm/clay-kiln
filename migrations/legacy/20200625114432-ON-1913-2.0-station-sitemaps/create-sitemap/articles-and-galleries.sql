@@ -1,16 +1,31 @@
-DROP MATERIALIZED VIEW IF EXISTS sitemap_articles_and_galleries;
+DROP MATERIALIZED VIEW IF EXISTS sitemap_station_articles_and_galleries;
 
---
--- The _components CTE holds all the component ids of the components we
---   care about
---
--- We don't want to include component instances where 'noIndexNoFollow' is true
---
-
-CREATE MATERIALIZED VIEW sitemap_articles_and_galleries AS WITH _components AS (
-  SELECT id FROM components.gallery g WHERE g.data ->> 'noIndexNoFollow' != 'true'
+CREATE MATERIALIZED VIEW sitemap_station_articles_and_galleries AS WITH _published_station_slugs AS (
+  select sf.data->>'stationSlug' as station_slug
+  from components."station-front" sf
+    join pages p
+  	  on sf.id = p.data->'main'->>0
+    join uris u
+      on p.id = u.data || '@published'
+  where sf.data->>'stationSlug' is not null
+    and sf.data->>'stationSlug' != ''
+),
+_components AS (
+  SELECT id,
+	data->>'stationSlug' as station_slug
+  FROM components.gallery g
+  WHERE NOT (
+	g.data @> '{"noIndexNoFollow": true}'
+	OR g.data @> '{"isCloned" : true}'
+  )
   UNION
-  SELECT id FROM components.article a WHERE a.data ->> 'noIndexNoFollow' != 'true'
+  SELECT id,
+	data->>'stationSlug' as station_slug
+  FROM components.article a
+  WHERE NOT (
+	a.data @> '{"noIndexNoFollow": true}'
+	OR a.data @> '{"isCloned" : true}'
+  )
 ),
 --
 -- The _page_data CTE joins the component ids found above with the page's main
@@ -28,11 +43,13 @@ _page_data AS (
   SELECT
     ((ROW_NUMBER() OVER(order by p.meta ->> 'url') - 1) / 50000)::integer AS page,
     replace(p.meta ->> 'url', 'http://', 'https://') AS loc,
-    (p.meta ->> 'publishTime') AS lastmod
+    (p.meta ->> 'publishTime') AS lastmod,
+	_c.station_slug
   FROM
     public.pages p,
     jsonb_array_elements_text(p.data -> 'main') component(id)
     JOIN _components _c ON component.id = _c.id
+	JOIN _published_station_slugs pss ON _c.station_slug = pss.station_slug
   WHERE
     p.meta @> '{"published": true}'
 ),
@@ -43,6 +60,7 @@ _page_data AS (
 _urls AS (
   SELECT
     page + 1 as page,
+	station_slug,
     xmlelement(name url, xmlelement(name loc, loc), xmlelement(name lastmod, lastmod)) AS xml_data
   FROM
     _page_data
@@ -66,8 +84,10 @@ SELECT
 FROM
   _urls
 GROUP BY
+  station_slug,
   page
 ORDER BY
   page;
 
-CREATE UNIQUE INDEX idx_mv_sitemap_articles_and_galleries ON sitemap_articles_and_galleries(id);
+CREATE UNIQUE INDEX idx_mv_sitemap_station_articles_and_galleries ON 
+  sitemap_station_articles_and_galleries(id);

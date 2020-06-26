@@ -1,2 +1,2 @@
 #! /bin/bash
-#node migration.js $1
+node migration.js $1

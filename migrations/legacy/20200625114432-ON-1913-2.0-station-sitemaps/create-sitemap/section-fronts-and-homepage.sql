@@ -1,13 +1,23 @@
-DROP MATERIALIZED VIEW IF EXISTS sitemap_section_fronts_and_homepage;
+DROP MATERIALIZED VIEW IF EXISTS sitemap_station_section_fronts_and_homepage;
 
---
--- The _components CTE holds all the component ids of the components we
---   care about
---
-CREATE MATERIALIZED VIEW sitemap_section_fronts_and_homepage AS WITH _components AS (
-  SELECT id FROM components.homepage
-  UNION
-  SELECT id FROM components."section-front"
+CREATE MATERIALIZED VIEW sitemap_station_section_fronts_and_homepage AS WITH _published_station_slugs AS (
+  select sf.data->>'stationSlug' as station_slug
+  from components."station-front" sf
+    join pages p
+  	  on sf.id = p.data->'main'->>0
+    join uris u
+      on p.id = u.data || '@published'
+  where sf.data->>'stationSlug' is not null
+    and sf.data->>'stationSlug' != ''
+),
+_components AS (
+  SELECT id, data->>'stationSlug' as station_slug
+  FROM components."section-front"
+  
+  UNION 
+  
+  SELECT id, data->>'stationSlug' as station_slug
+  FROM components."station-front"
 ),
 --
 -- The _page_data CTE joins the component ids found above with the page's main
@@ -17,41 +27,42 @@ CREATE MATERIALIZED VIEW sitemap_section_fronts_and_homepage AS WITH _components
 -- We then use the pages to
 --   : only grab those which are published
 --   : grab the published url and time it was published
+--   : identify which 'sitemap page' each row belongs to, where pages are sized
+--     to 50,000 rows.  (I can't think of a better name for this.  Unfortunately
+--     'page' is overloaded here)
 --
 _page_data AS (
   SELECT
+    ((ROW_NUMBER() OVER(order by p.meta ->> 'url') - 1) / 50000)::integer AS page,
     replace(p.meta ->> 'url', 'http://', 'https://') AS loc,
-    (p.meta ->> 'publishTime') AS lastmod
+    (p.meta ->> 'publishTime') AS lastmod,
+	  _c.station_slug
   FROM
     public.pages p,
     jsonb_array_elements_text(p.data -> 'main') component(id)
-    JOIN _components _c ON component.id = _c.id
+      JOIN _components _c ON component.id = _c.id
+	      JOIN _published_station_slugs pss ON _c.station_slug = pss.station_slug
   WHERE
     p.meta @> '{"published": true}'
 ),
 --
--- The _urls CTE turns 'loc' and 'lastmod' into a <url> element
+-- The _urls CTE just molds _page_data into the page numbers and xml
+--   <url> strings
 --
 _urls AS (
   SELECT
+    page + 1 as page,
+	station_slug,
     xmlelement(name url, xmlelement(name loc, loc), xmlelement(name lastmod, lastmod)) AS xml_data
   FROM
     _page_data
 )
---
+
 -- And finally we wrap all _urls into each sitemap and leave the current
 --   timestamp (in W3C datetime format)
---
--- Note 'id' is hardcoded to 1 because in the other sitemap tables the id is the
---   sitemap page.  This table will never have 50,000 records and thus doesn't
---   need pages.  To keep the code simple though we want the tables to all have
---   the same column names... and the reason we don't want all the sitemap data
---   to be held in a single materialized view is that makes maintaining it more
---   difficult (i.e. it's harder for multiple devs to update it at the
---   same time)
---
-SELECT
-  1 as id,
+
+ SELECT
+  page as id,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
   -- postgres does not have a direct way to add encoding
   xmlroot(
@@ -63,10 +74,11 @@ SELECT
     version '1.0" encoding="UTF-8'
   )::text AS data
 FROM
-  _urls;
+  _urls
+GROUP BY
+  page
+ORDER BY
+  page;
 
---
--- this allows us to 'refresh materialized view concurrently' without hardcoding
---   which tables have unique constraints or querying for it in advance.
---
-CREATE UNIQUE INDEX idx_mv_sitemap_section_fronts_and_homepage ON sitemap_section_fronts_and_homepage(id);
+CREATE UNIQUE INDEX idx_mv_sitemap_station_section_fronts_and_homepage ON 
+  sitemap_station_section_fronts_and_homepage(id);
