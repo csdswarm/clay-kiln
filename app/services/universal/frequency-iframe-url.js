@@ -13,13 +13,13 @@ const url = require('url'),
     
     switch (hostname) {
       case 'dev-clay-radio.com':
-        host = hostname.replace('clay.radio.com', 'radio-drupal.com');
+        host = 'dev-radio-drupal.com';
         break;
       case 'stg-clay-radio.com':
-        host = hostname.replace('clay.radio.com', 'radio-drupal.com');
+        host = 'stg-radio-drupal.com';
         break;
       default:
-        host = hostname.replace('clay.radio.com', 'prd-radio-drupal.com');
+        host = 'prd-radio-drupal.com';
         break;
     }
     

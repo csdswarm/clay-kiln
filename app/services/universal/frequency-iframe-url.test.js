@@ -4,7 +4,7 @@ const
   sinonChai = require('sinon-chai'),
   frequencyIframeUrl = require('./frequency-iframe-url'),
   urlString = 'https://clay-radio.com/1010wins/shows/show-schedule',
-  expectedUrl = 'https://winsam.clay-radio.com/shows/show-schedule',
+  expectedUrl = 'https://winsam.prd-radio-drupal.com/shows/show-schedule',
   callsign = 'winsam',
   { expect } = chai;
 
