@@ -95,10 +95,12 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-    queryService.addMust(query, { match: { stationSlug: station_slug } });
+    
 
     if (station_slug === DEFAULT_STATION.site_slug) {
       queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    } else {
+      queryService.addMust(query, { match: { stationSlug: station_slug } });
     }
     
     // Filter out the following tags
