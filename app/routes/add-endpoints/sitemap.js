@@ -8,6 +8,8 @@ const _snakeCase = require('lodash/snakeCase'),
   sitemapViews = new Set([
     'sitemap_articles_and_galleries',
     'sitemap_section_fronts_and_homepage',
+    'sitemap_station_articles_and_galleries',
+    'sitemap_station_section_fronts_and_homepage',
     'sitemap_authors',
     'sitemap_topics',
     'sitemap_videos'
@@ -87,13 +89,6 @@ module.exports = router => {
 
     res.set('Content-Type', 'application/xml');
     res.send(result.rows[0].data);
-  }));
-
-  router.get('/:name/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
-    const viewName = 'sitemap_' + _snakeCase(req.params.name);
-
-    res.set('Content-Type', 'application/xml');
-    res.send('<h1>test</h1>');
   }));
 
   router.get('/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
