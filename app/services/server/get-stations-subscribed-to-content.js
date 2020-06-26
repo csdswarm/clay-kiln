@@ -48,17 +48,6 @@ const getStationsSubscribedToContent = async (data, locals) => {
 };
 
 /**
- * Case insensitive array.includes
- *
- * @param {string[]} arr
- * @param {string} str
- * @returns {bool}
- */
-function insensitiveIncludes(arr, str = '') {
-  return arr.some(el => el.toLowerCase() === str.toLowerCase());
-}
-
-/**
  * returns whether the content is excluded per the filter
  *
  * @param {object} data - the content data
@@ -67,9 +56,9 @@ function insensitiveIncludes(arr, str = '') {
  * @returns {bool}
  */
 function isExcluded(data, tags, filter) {
-  return insensitiveIncludes(filter.excludeSectionFronts, data.sectionFront)
-  || insensitiveIncludes(filter.excludeSecondarySectionFronts, data.secondarySectionFront)
-  || includesAny(tags, filter.excludeTags);
+  return filter.excludeSectionFronts.includes(data.sectionFront)
+    || filter.excludeSecondarySectionFronts.includes(data.secondarySectionFront)
+    || includesAny(tags, filter.excludeTags);
 }
 
 /**
@@ -81,10 +70,10 @@ function isExcluded(data, tags, filter) {
  */
 function matchesSectionFront(data, filter) {
   const matchesPrimary = filter.sectionFront
-      ? filter.sectionFront.toLowerCase() === (data.sectionFront || '').toLowerCase()
+      ? filter.sectionFront === data.sectionFront
       : true,
     matchesSecondary = filter.secondarySectionFront
-      ? filter.secondarySectionFront.toLowerCase() === (data.secondarySectionFront || '').toLowerCase()
+      ? filter.secondarySectionFront === data.secondarySectionFront
       : true;
 
   return matchesPrimary && matchesSecondary;
@@ -98,15 +87,15 @@ function matchesSectionFront(data, filter) {
  */
 function buildMatchesOn() {
   return {
-    allContent: () => true,
-    sectionFront: (data, tags, filter) => matchesSectionFront(data, filter),
+    'all-content': () => true,
+    'section-front': (data, tags, filter) => matchesSectionFront(data, filter),
     tag: (data, tags, filter) => includesAny(tags, filter.tags),
 
-    sectionFrontAndTag: (data, tags, filter) =>
+    'section-front-and-tag': (data, tags, filter) =>
       matchesSectionFront(data, filter)
       && includesAny(tags, filter.tags),
 
-    sectionFrontOrTag: (data, tags, filter) =>
+    'section-front-or-tag': (data, tags, filter) =>
       matchesSectionFront(data, filter)
       || includesAny(tags, filter.tags)
   };

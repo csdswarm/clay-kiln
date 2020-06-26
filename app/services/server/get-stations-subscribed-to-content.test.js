@@ -103,7 +103,7 @@ function getBaseMockFilters() {
       contentType: ['exclude']
     }],
     allContent: [{
-      populateFrom: 'allContent'
+      populateFrom: 'all-content'
     }],
     tags: [{
       populateFrom: 'tag',
@@ -112,20 +112,20 @@ function getBaseMockFilters() {
     sectionFronts: {
       primary: [{
         sectionFront: 'match',
-        populateFrom: 'sectionFront'
+        populateFrom: 'section-front'
       }],
       secondary: [{
         secondarySectionFront: 'match',
-        populateFrom: 'sectionFront'
+        populateFrom: 'section-front'
       }]
     },
     sectionFrontAndTag: [{
-      populateFrom: 'sectionFrontAndTag',
+      populateFrom: 'section-front-and-tag',
       tags: ['match'],
       sectionFront: 'match'
     }],
     sectionFrontOrTag: [{
-      populateFrom: 'sectionFrontOrTag',
+      populateFrom: 'section-front-or-tag',
       tags: ['match'],
       sectionFront: 'dont-match_sub'
     }]
