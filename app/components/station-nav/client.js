@@ -24,7 +24,7 @@ const { getComponentInstance } = require('clayutils'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`, { bypassCache: true }),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);

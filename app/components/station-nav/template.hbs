@@ -85,9 +85,11 @@
               <li class="drawer__item item item--{{ kebabCase text }}">
                 <div class="item__label label">
                   {{#ifAll drawer secondaryLinks.length }}
-                  <button>
-                    <span>{{ text }}</span>
-                  </button>
+                  <a href="{{ url }}">
+                    <button>
+                      <span>{{ text }}</span>
+                    </button>
+                  </a>
                   <div class="label__menu-toggle">
                     <button class="menu-toggle--closed">
                       {{{ read 'components/station-nav/media/chevron_down.svg' }}}

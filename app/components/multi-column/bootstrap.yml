@@ -5,3 +5,10 @@ _components:
     col3: []
     mediumRectangleTop:
       _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+    instances:
+      new:
+        col1: []
+        col2: []
+        col3: []
+        mediumRectangleTop:
+          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
