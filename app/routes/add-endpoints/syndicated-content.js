@@ -36,6 +36,20 @@ async function addSyndicationEntry(uri, syndicationEntry) {
   await db.put(uri, data);
 }
 
+/**
+ * remove entry from station syndication list
+ * @param  {string} uri
+ * @param  {string} callsign
+ */
+async function removeSyndicationEntry(uri, callsign) {
+  const data = await db.get(uri),
+    stationSyndication = data.stationSyndication.filter(syndicated => syndicated.callsign !== callsign );
+
+  data.stationSyndication = stationSyndication;
+
+  await db.put(uri, data);
+}
+
 module.exports = router => {
   router.post('/rdc/syndicated-content/create', wrapInTryCatch(async (req, res) => {
     const { uri, syndicationData } = req.body,
@@ -43,6 +57,17 @@ module.exports = router => {
       pageURI = await getPageURI(uri);
 
     await addSyndicationEntry(latestUri, syndicationData);
+    await rest.put(uriToUrl(pageURI, res.locals), {}, true);
+
+    res.send('success');
+  }));
+
+  router.post('/rdc/syndicated-content/unpublish', wrapInTryCatch(async (req, res) => {
+    const { uri, station } = req.body,
+      latestUri = uri.replace('@published', ''),
+      pageURI = await getPageURI(uri);
+
+    await removeSyndicationEntry(latestUri, station.callsign);
     await rest.put(uriToUrl(pageURI, res.locals), {}, true);
 
     res.send('success');

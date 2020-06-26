@@ -13,7 +13,14 @@
       <span v-if="statusTime" class="status-time">{{ statusTime }}</span>
     </div>
     <div class="page-list-item__manage buttons-group">
-      <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
+      <ui-button v-if="status === 'published'" 
+        class="buttons-group__unpublish" 
+        buttonType="button" 
+        color="red" 
+        @click.stop="onUnpublish" 
+        :loading="unpublishLoading">
+        Unpublish
+      </ui-button>
       <div v-else-if="status === 'available'">
         <ui-button
           class="buttons-group__syndicate"
@@ -29,6 +36,7 @@
 
 <script>
   import _ from 'lodash';
+  import axios from 'axios';
   import isValidDate from 'date-fns/is_valid';
   import dateFormat from 'date-fns/format';
   import isToday from 'date-fns/is_today';
@@ -71,7 +79,8 @@
     props: ['content', 'stationFilter'],
     data() {
       return {
-        syndicationLoading: false
+        syndicationLoading: false,
+        unpublishLoading: false
       };
     },
     computed: {
@@ -90,6 +99,7 @@
           syndicationStatus = syndicatedStation ? 'published' : 'available';
 
         this.syndicationLoading = false;
+        this.unpublishLoading = false;
 
         /*
           if the station slug of a content is equal to current selected station
@@ -154,6 +164,15 @@
         this.syndicationLoading = true;
         this.$emit('createSyndication', this.content._id);
       },
+      /**
+       * unpublish syndicated station from content
+       */
+      async onUnpublish() {
+        this.unpublishLoading = true;
+        await axios.post('/rdc/syndicated-content/unpublish', { uri: this.content._id, station: this.selectedStation });
+        // Reload content to refresh updated data
+        this.$emit('reloadContent', null);
+      }
     },
     components: {
       UiButton
