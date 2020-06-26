@@ -405,13 +405,15 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
+
+  const googleAdEl = document.querySelector('.component--google-ad-manager'),
+    doubleclickBannerTag = googleAdEl.getAttribute('data-doubleclick-banner-tag'),
     currentStation = getCurrentStation(),
     /**
      * NOTE: This is a workaround to access process.env.NODE_ENV
      * because it is not available in client.js.
      */
-    env = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : '',
+    env = googleAdEl.getAttribute('data-environment'),
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
     hasNmcTags = !!firstNmcTag,
