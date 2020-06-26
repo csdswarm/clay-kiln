@@ -537,6 +537,8 @@ const
           },
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
+        item.uri = result._id;
+
         return mapResultsToTemplate(locals, result, item);
       }));
 
