@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -55,7 +55,7 @@ const
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
       }, populateFilter(data.populateFrom)),
-      ...{ stationSlug: getStationSlug(data, locals) }
+      ...{ stationSlug: getStationSlug(locals) }
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -182,6 +182,27 @@ const
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
+    },
+    videos: {
+      filterCondition: 'must',
+      unique: true,
+      createObj: value => ({
+        bool: {
+          should: [
+            {
+              nested: {
+                path: 'lead',
+                query: {
+                  regexp: {
+                    'lead._ref': value
+                  }
+                }
+              }
+            }
+          ],
+          minimum_should_match: 1
+        }
+      })
     }
   },
   /**
@@ -263,11 +284,8 @@ const
       // This is from load more on an author page
       author = locals.author;
     } else if (locals && locals.params && locals.params.author) {
-      // This is from an author page
+      // This is from a curated & dynamic author page
       author = locals.params.author;
-    } else if (locals && locals.params && locals.params.dynamicAuthor) {
-      // This is from an dynamic author page
-      author = locals.params.dynamicAuthor;
     }
 
     // Used for load-more queries
@@ -277,14 +295,14 @@ const
   },
   /**
    * Pull stationSlug from local params if dynamic station page
+   * or locals station object
    *
-   * @param {object} data
    * @param {object} locals
    *
    * @return {string} stationSlug
    */
-  getStationSlug = (data, locals) => {
-    return _get(locals, 'params.stationSlug');
+  getStationSlug = locals => {
+    return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
@@ -381,7 +399,7 @@ const
  * @param {Object} [locals]
  * @returns {array} elasticResults
  */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
     let results = {
       content: [],
       totalHits: 0
@@ -422,11 +440,22 @@ const
       query.body.query.bool.minimum_should_match = 1;
     }
 
+    const start = new Date();
+
     try {
       results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          label: 'recirculation.js -> searchByQuery',
+          ms: new Date() - start
+        },
+        { shouldAdd: shouldAddAmphoraTimings }
+      );
     }
 
     return results;
@@ -451,6 +480,7 @@ const
     mapResultsToTemplate = defaultTemplate,
     render = returnData,
     save = returnData,
+    shouldAddAmphoraTimings = false,
     skipRender = () => false } = {}) => unityComponent({
     async render(uri, data, locals) {
       const curatedIds = (data.items || []).map(anItem => anItem.uri),
@@ -459,7 +489,7 @@ const
 
       locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
-      if (skipRender(data, locals)) {
+      if (await skipRender(data, locals)) {
         return render(uri, data, locals);
       }
 
@@ -469,20 +499,20 @@ const
             await mapDataToFilters(uri, data, locals)
           ),
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: _merge(filters, stationFilter),
+              filters,
               excludes,
               elasticFields: esFields,
               pagination,
-              maxItems: itemsNeeded
+              maxItems: itemsNeeded,
+              shouldAddAmphoraTimings
             },
             locals);
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(locals))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
@@ -516,5 +546,6 @@ const
   });
 
 module.exports = {
-  recirculationData
+  recirculationData,
+  sectionOrTagCondition
 };

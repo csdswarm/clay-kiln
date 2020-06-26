@@ -5,10 +5,11 @@ const rest = require('../universal/rest'),
    * Retrieve a list through the /_lists endpoint
    *
    * @param {string} name - The name of the list
+   * @param {boolean} [omitCookies] - Omit sending cookies
    * @returns {Promise<any[]>}
    */
-  retrieveList = (name) => {
-    return rest.get(`${ window.location.origin }/_lists/${ name }`);
+  retrieveList = (name, omitCookies) => {
+    return rest.get(`${ window.location.origin }/_lists/${ name }`, omitCookies ? { credentials: 'omit' } : undefined);
   },
   /**
    * Gets the display name for a section front slug. Returns the slug if not found.

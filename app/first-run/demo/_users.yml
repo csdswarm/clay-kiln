@@ -72,6 +72,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: daniella.mordehai@entercom.com
+    provider: google
+    auth: admin
+  -
     username: ferney.pena@gorillalogic.com
     provider: cognito
     auth: admin
@@ -144,6 +148,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: kurtis.moffett@entercom.com
+    provider: cognito
+    auth: admin
+  -
     username: kyle.mccann@entercom.com
     provider: google
     auth: admin
@@ -202,10 +210,6 @@ _users:
   -
     username: michael.cerio@entercom.com
     provider: google
-    auth: admin
-  -
-    username: kurtis.moffett@entercom.com
-    provider: cognito
     auth: admin
   -
     username: moffkr91@gmail.com

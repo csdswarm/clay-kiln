@@ -1,6 +1,6 @@
 'use strict';
 
-const { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const { recirculationData, sectionOrTagCondition } = require('../../services/universal/recirc/recirculation'),
   { toPlainText } = require('../../services/universal/sanitize'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
@@ -45,10 +45,11 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: (uri, data) => ({
+  mapDataToFilters: (uri, data, locals) => ({
     maxItems: getMaxItems(data),
     filters: {
-      includeSyndicated: false
+      includeSyndicated: false,
+      sectionFronts: sectionOrTagCondition(data.populateFrom, locals.sectionFront)
     }
   }),
 

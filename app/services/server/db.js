@@ -4,7 +4,9 @@ const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
-  DATA_STRUCTURES = ['alert', 'apple_news', 'station_themes', 'valid_source'],
+  DATA_STRUCTURES = [
+    'alert', 'apple_news', 'station_themes', 'valid_source'
+  ],
   /**
    * Check Postgres to see if the table exists
    *
@@ -26,15 +28,16 @@ const utils = require('../universal/utils'),
    * Create table in Postgres if it doesn't exist
    *
    * @param {string} tableName
+   * @param {string} dataType
    * @returns {Promise}
    */
-  createTable = async (tableName) => {
+  createTable = async (tableName, dataType = 'jsonb') => {
     if (!await checkTableExists(tableName)) {
       try {
         await db.raw(`
           CREATE TABLE ${tableName} (
             id text PRIMARY KEY,
-            data jsonb
+            data ${dataType}
           )
         `);
       } catch (e) {
@@ -121,7 +124,6 @@ const utils = require('../universal/utils'),
           if (!rows.length) {
             return defaultValue || Promise.reject(new Error(`No result found in ${ tableName } for ${ key }`));
           }
-
           return rows[0].data;
         });
     }
@@ -193,6 +195,8 @@ module.exports = {
   put,
   raw: db.raw,
   uriToUrl: utils.uriToUrl,
+  checkTableExists,
+  createTable,
   ensureTableExists,
   DATA_STRUCTURES,
   getComponentData
