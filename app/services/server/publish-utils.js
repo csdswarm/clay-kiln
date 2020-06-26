@@ -113,7 +113,6 @@ function getPublishDate(latest, published) {
  * @param {object} locals
  */
 function guaranteeLocalDate(component, publishedComponent, locals) {
-  console.debug('DEBUG::::::::::::::::', JSON.stringify(component, null, 2));
   // if date is defined in the component, remember it.
   if (!locals.date) {
     locals.date = getPublishDate(component, publishedComponent);
