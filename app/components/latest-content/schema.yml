@@ -219,7 +219,9 @@ firstColumn:
       - latest-content-column
     validate:
       max: 1
-      required: true
+      required:
+        field: hasCustomColumns
+        operator: truthy
 
 secondColumn:
   _placeholder:
@@ -230,7 +232,9 @@ secondColumn:
       - latest-content-column
     validate:
       max: 1
-      required: true
+      required:
+        field: hasCustomColumns
+        operator: truthy
 
 thirdColumn:
   _placeholder:
@@ -241,5 +245,7 @@ thirdColumn:
       - latest-content-column
     validate:
       max: 1
-      required: true
+      required:
+        field: hasCustomColumns
+        operator: truthy
       
