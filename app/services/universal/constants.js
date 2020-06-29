@@ -28,11 +28,13 @@ const _get = require('lodash/get'),
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front',
+    CONTENT_COLLECTION: 'topic-page-header',
     CONTEST: 'contest',
     EVENT: 'event',
     EVENTSLISTING: 'events-listing-page',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front',
+    STATIC_PAGES: 'static-page',
     STATIONFRONT: 'station-front'
   },
 
