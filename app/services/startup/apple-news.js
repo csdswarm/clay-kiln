@@ -47,7 +47,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         };
       });
     }
-
     next();
   },
   /**
@@ -278,7 +277,11 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           accessoryText,
           isCandidateToBeFeatured,
           isHidden,
-          isSponsored }, articleANF ] = await Promise.all([
+          isSponsored,
+          tags: { _ref: tagsRef },
+          noIndexNoFollow
+        },
+        articleANF ] = await Promise.all([
           getCompInstanceData(articleRef),
           getCompInstanceData(`${ articleRef }.anf?config=true`)
         ]),
@@ -298,9 +301,16 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
               sections: sectionLink ? [ sectionLink ] : []
             }
           }
+        },
+        validAppleNews = async () => {
+          const { items: tagsItems } = await getCompInstanceData(tagsRef);
+
+          return sectionLink
+            && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
+            && !noIndexNoFollow;
         };
 
-      if (sectionLink) {
+      if (await validAppleNews()) {
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
@@ -316,14 +326,27 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           body: formData
         }).then(({ status, statusText, body: article }) => {
           if ([ 200, 201 ].includes(status)) {
+            log('error', 'APPLE NEWS LOG -- ARTICLE POST CONTENT:', {
+              status,
+              text: statusText,
+              data: JSON.stringify(article),
+              enabled: process.env.APPLE_NEWS_ENABLED,
+              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
+            });
             res.status(status).send(article.data);
           } else {
-            log('error', `APPLE NEWS LOG -- ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) }`);
+            log('error', 'APPLE NEWS LOG -- ARTICLE POST ERROR:', {
+              status,
+              text: statusText,
+              data: JSON.stringify(article),
+              enabled: process.env.APPLE_NEWS_ENABLED,
+              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
+            });
             res.status(status).send(article);
           }
         }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
       } else {
-        log('info', `APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS ${ sectionFront } SECTIONFRONT OR FAILED TO GET SECTIONS FROM APPLE NEWS API`);
+        log('info', 'APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS NOT A VALID APPLE NEWS ARTICLE');
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {

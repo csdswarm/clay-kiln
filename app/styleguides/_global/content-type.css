@@ -1,0 +1,7 @@
+/*
+  This isn't BEM because .station-note an element added to an existing kiln
+  drawer via js, not an element we have control over in a template.hbs
+*/
+form.publish-location-form > .station-note {
+  margin-top: 8px;
+}

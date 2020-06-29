@@ -21,6 +21,7 @@ const radioApi = require('../server/radioApi'),
  * @param {integer} videoId
  */
 async function getVideoDetails(videoId) {
+  // Video details should always get new data
   return await radioApi.get(url, {
     route: `videos/${videoId}`,
     api: 'cms',
@@ -38,19 +39,18 @@ async function getVideoViews(videoId) {
     return null;
   }
 
-  // might look confusing here, but send a param of ttl = 5 min so that the brightcove api response is cached
-  // but this initial call to the proxy should not be cached.
+  // This component uses local caching stored on the component, so send ttl 0 to bypass redis cache
   const analyticsData = await radioApi.get(url, {
     api: 'analytics',
-    ttl: radioApi.TTL.MIN * 5,
-    params: {
-      dimensions: 'video',
-      where: `video==${videoId}`
-    }
+    route: videoId,
+    ttl
   }, null, { ttl });
 
-  if (analyticsData && analyticsData.items && analyticsData.items.length === 1) {
-    return analyticsData.items[0].video_view;
+  if (analyticsData && analyticsData.alltime_video_views) {
+    return {
+      views: analyticsData.alltime_video_views,
+      redisExpiresAt: analyticsData.redis_expires_at
+    };
   } else {
     return null;
   }

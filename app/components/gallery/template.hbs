@@ -1,4 +1,18 @@
-<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}" itemscope itemtype="http://schema.org/CollectionPage"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+<section role="main"
+  data-track-type="gallery-detail"
+  data-uri="{{ default _ref _self }}"
+  class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}"
+  itemscope
+  itemtype="http://schema.org/CollectionPage"
+  data-section-front="{{ sectionFront }}"
+  data-syndication="{{ syndicationStatus }}"
+  data-headline="{{ striptags headline }}"
+  data-authors="{{ join (map authors (getProp "text")) }}"
+  data-sources="{{ join (map sources (getProp "text")) }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}"
+  data-station-slug="{{ stationSlug }}">
+
   {{> breadcrumbs this }}
   <header class="gallery__header">
     {{! gallery microdata }}
@@ -60,7 +74,7 @@
       {{! authors }}
       <div class="info--left-top">
         <div data-editable="bylinesAndStationLogo" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
-          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial stationSlug=stationSlug }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
               --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
@@ -225,7 +239,15 @@
           <h3 class="subtitle circ-edit">Syndication</h3>
           <ul class="items">
             <li class="item">
-              <h4 class="item-title">Featured</h4>
+              <h4 class="item-title">Feature - Sports</h4>
+              <p class="item-data">{{ yesNo featuredSports }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Feature - News</h4>
+              <p class="item-data">{{ yesNo featuredNews }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Feature - Music</h4>
               <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
@@ -238,7 +260,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Station(s)</h4>
-              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+              <p class="item-data">{{{ default _computed.stationSyndicationCallsigns empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Genre(s)</h4>

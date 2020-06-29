@@ -11,15 +11,20 @@ const _get = require('lodash/get'),
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     locals.loadedIds.push(uri);
-    await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
+    await autoLink(data, [
+      'sectionFront',
+      'secondarySectionFront'
+    ], locals);
     return createContent.render(uri, data, locals);
   },
-  save: (uri, data, locals) => {
+  save: async (uri, data, locals) => {
     data.dateModified = (new Date()).toISOString();
 
     defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
     data.msnTitleLength = _get(data.msnTitle, 'length', 0);
 
-    return createContent.save(uri, data, locals);
+    await createContent.save(uri, data, locals);
+
+    return data;
   }
 });

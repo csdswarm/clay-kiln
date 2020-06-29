@@ -4,15 +4,16 @@ _description: |
 
 imageUrl:
   _label: Image Url
-  _display: settings
   _subscribe:
     - pageMetaImage
     - feedImgUrl
   _has:
-    -
-      fn: text
-      type: url
-    - label
-    -
-      fn: description
-      value: URL of an image to show in the feeds. Usually the first image in an article.
+    input: text
+    type: url
+    help: URL of an image to show in the feeds. Usually the first image in an article.
+
+_groups:
+  settings:
+    _label: Meta Image
+    fields:
+      - imageUrl

@@ -1,0 +1,42 @@
+{{#*inline "contestRulesList"}}
+  {{#each _computed.contestRules as |ruleData| }}
+    {{> contest-rules ruleData }}
+  {{/each}}
+{{/inline}}
+
+{{#*inline "contestRulesLegal"}}
+  {{#*inline "stationRules"}}
+    <a href="{{_computed.generalContestRulesPath}}">General Contest Rules</a>
+  {{/inline}}
+
+  {{#*inline "nationalPrivacyPolicy"}}
+    <a href="{{_computed.privacyPolicyPath}}">
+      Privacy Policy
+    </a>
+  {{/inline}}
+
+  {{#*inline "stationName"}}
+    {{@root.locals.station.name}}
+  {{/inline}}
+
+  <p class="contest-rules-page__legal">
+    Unless otherwise indicated below, {{> stationName}}’s general contest rules apply to {{> stationName}} contests.
+    For the specific terms and conditions applicable to a particular {{> stationName}} contest, please see below.
+    You can also view {{> stationName}}'s {{> stationRules}} or review Entercom's {{> nationalPrivacyPolicy}}.
+  </p>
+{{/inline}}
+
+<article role="main"
+  data-uri="{{ default _ref _self }}"
+  class="contest-rules-page component--static-page"
+  itemscope
+  itemtype="http://schema.org/Article">
+
+  <section class="contest-rules-page__body">
+    {{#if _computed.showPrivacyPolicy}}
+      {{> contestRulesLegal}}
+    {{/if}}
+    {{> contestRulesList }}
+  </section>
+
+</article>

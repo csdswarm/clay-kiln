@@ -2,17 +2,19 @@
 
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
-    es="$1" && http="http";
+    es="$1:9200" && http="http";
   elif [ "$1" == "dev-clay.radio.com" ]; then
-    es="http://dev-es.radio-dev.com" && http="https";
+    es="http://dev-es.radio-dev.com:9200" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
-    es="http://es.radio-stg.com" && http="https";
-  elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="http://es.radio-stg.com:9200" && http="https";
+  elif [ "$1" == "preprod-clay.radio.com" ]; then
+    es='https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com:443' && env='preprod';
+	elif [ "$1" == "www.radio.com" ]; then
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com:443" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
-  set "clay.radio.com" && http="http" && es="$1";
+  set "clay.radio.com" && http="http" && es="$1:9200";
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
@@ -94,7 +96,7 @@ cat ./lists.yml | clay import -k demo -y $1
 rm ./lists.yml
 
 printf "\n\nCreating new index...\n\n"
-curl -X PUT "$es:9200/published-content_v1" -H 'Content-Type: application/json' -d'
+curl -X PUT "$es/published-content_v1" -H 'Content-Type: application/json' -d'
 {
   "settings" : {
     "analysis": {
@@ -209,7 +211,7 @@ curl -X PUT "$es:9200/published-content_v1" -H 'Content-Type: application/json' 
 ';
 
 printf "\r\n\r\nCopying old index data to new index...\n\n"
-curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d'
+curl -X POST "$es/_reindex" -H 'Content-Type: application/json' -d'
 {
   "source": {
     "index": "published-articles_v1"
@@ -220,7 +222,7 @@ curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d'
 }';
 
 printf "\n\nRemoving old alias and adding new...\n\n"
-curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d'
+curl -X POST "$es/_aliases" -H 'Content-Type: application/json' -d'
 {
     "actions" : [
         { "remove" : { "index" : "published-articles_v1", "alias" : "published-articles" } },
