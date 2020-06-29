@@ -115,13 +115,16 @@ const _get = require('lodash/get'),
   },
   PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
-  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large,
+
+  LOAD_MORE_LIMIT = 10;
 
 module.exports = {
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
+  LOAD_MORE_LIMIT,
   MINUTE,
   PAGE_TYPES,
   PRIVACY_POLICY,
