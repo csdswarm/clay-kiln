@@ -110,7 +110,8 @@ const _get = require('lodash/get'),
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
-    urpsDomainName: 'National'
+    urpsDomainName: 'National',
+    national_doubleclick_bannertag: 'NTL.RADIO'
   },
   PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 

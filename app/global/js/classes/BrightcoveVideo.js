@@ -7,7 +7,8 @@ const { defer } = require('../../../services/universal/promises'),
   Video = require('./Video'),
   clientCommunicationBridge = require('../../../services/client/ClientCommunicationBridge')(),
   scriptLoadedPromises = [],
-  loadedPlayers = [];
+  loadedPlayers = [],
+  { DEFAULT_STATION } = require('../../../services/universal/constants');
 
 class BrightcoveVideo extends Video {
   /**
@@ -81,6 +82,7 @@ class BrightcoveVideo extends Video {
     });
     // add overlay
     this.addOverlay();
+    this.addStationIma3ServeUrl();
   }
   /**
    * @override
@@ -242,6 +244,22 @@ class BrightcoveVideo extends Video {
           overlayCloseBtn.addEventListener('click', myPlayer.onRdcClose);
         }
       });
+    });
+  }
+
+  addStationIma3ServeUrl() {
+    videojs.getPlayer(this.id).ready( function () {
+      const myPlayer = this,
+        { stationDbcBannertag } = myPlayer.el().dataset;
+      let serverUrl = myPlayer.ima3.settings.serverUrl;
+
+      if (stationDbcBannertag) {
+        serverUrl = serverUrl.replace(
+          DEFAULT_STATION.national_doubleclick_bannertag,
+          stationDbcBannertag
+        );
+        myPlayer.ima3.settings.serverUrl = serverUrl;
+      }
     });
   }
 }
