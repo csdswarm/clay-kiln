@@ -152,7 +152,8 @@
         AD_SUPPORTED,
         FREE,
         ERROR,
-        NEWS_LIFESTYLE
+        NEWS_LIFESTYLE,
+        video_updated_by : window.kiln.locals.user.username
       };
     },
     computed: {
@@ -274,6 +275,7 @@
             this.shortDescription = this.updatedVideo.description;
             this.longDescription = this.updatedVideo.long_description;
             this.station = this.updatedVideo.custom_fields.station;
+            this.video_updated_by = window.kiln.locals.user.username;
             this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
             this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
             this.secondaryCategory = this.derivedSecondaryCategory;
@@ -297,6 +299,7 @@
         this.shortDescription = this.updatedVideo.description;
         this.longDescription = this.updatedVideo.long_description;
         this.station = this.updatedVideo.custom_fields.station;
+        this.video_updated_by = window.kiln.locals.user.username;
         this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
         this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
         this.secondaryCategory = this.derivedSecondaryCategory;
@@ -324,14 +327,14 @@
       async updateVideo(event) {
         event.preventDefault();
         const { updatedVideo: video, videoName, shortDescription, longDescription, station,
-          highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
+          highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported, video_updated_by } = this;
 
         this.loading = true;
         try {
           const { status, statusText, data: updateResponse } = await getFetchResponse('POST', '/brightcove/update',
             {
               video, videoName, shortDescription, longDescription, station,
-              highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported
+              highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported, video_updated_by
             }, {'Content-Type': 'application/json'} );
 
           this.loading = false;

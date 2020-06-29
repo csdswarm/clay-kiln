@@ -84,6 +84,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       shortDescription: description,
       longDescription: long_description,
       station,
+      author,
       highLevelCategory: high_level_category,
       tags,
       adSupported: economics
@@ -97,7 +98,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         long_description,
         custom_fields: {
           station,
-          high_level_category
+          high_level_category,
+          author
         },
         tags,
         economics
@@ -199,7 +201,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       station,
       highLevelCategory: high_level_category,
       tags,
-      adSupported: economics
+      adSupported: economics,
+      video_updated_by
     } = req.body;
 
     try {
@@ -210,12 +213,13 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         long_description,
         custom_fields: {
           station,
-          high_level_category
+          high_level_category,
+          video_updated_by
         },
         tags,
         economics
       });
-
+      
       if (status === 200 && updateResponse.id) {
         res.send(updateResponse);
       } else {

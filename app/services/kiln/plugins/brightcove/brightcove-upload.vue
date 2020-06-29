@@ -149,6 +149,7 @@
         longDescription: '',
         stationOptions: window.kiln.locals.allStationsCallsigns,
         station: window.kiln.locals.station.callsign,
+        author: window.kiln.locals.user.username,
         highLevelCategoryOptions,
         highLevelCategory: '',
         secondaryCategoryOptions: [],
@@ -252,6 +253,7 @@
         this.shortDescription = '';
         this.longDescription = '';
         this.station = window.kiln.locals.station.callsign;
+        this.author = window.kiln.locals.user.username;
         this.highLevelCategory = '';
         this.secondaryCategory = '';
         this.tertiaryCategory = '';
@@ -289,10 +291,10 @@
       async createBrightcoveVideoObj() {
         try {
           const { videoName, shortDescription, longDescription,
-            station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
+            station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported, author } = this,
             { status, statusText, data } = await getFetchResponse('POST', '/brightcove/create', {
               videoName, shortDescription, longDescription, station, highLevelCategory,
-              secondaryCategory, tertiaryCategory, tags, adSupported
+              secondaryCategory, tertiaryCategory, tags, adSupported, author
             }, { 'Content-Type': 'application/json' } ),
             { signed_url, api_request_url, videoID } = data;
 
