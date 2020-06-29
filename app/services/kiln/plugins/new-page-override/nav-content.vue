@@ -172,7 +172,10 @@ export default {
       this.$store.dispatch('startProgress', 'save');
 
       const prefix = _.get(this.$store, 'state.site.prefix'),
-        { data: pageBody } = await axios.get(uriToUrl(`${prefix}${pagesRoute}${id}`)),
+        pageTemplate = (id === 'contest' && this.selectedStation.id === 0) 
+          ? 'national-contest'
+          :id,
+        { data: pageBody } = await axios.get(uriToUrl(`${prefix}${pagesRoute}${pageTemplate}`)),
         { data: newPage } = await axios.post(
           uriToUrl(`${prefix}/create-page`),
           {
