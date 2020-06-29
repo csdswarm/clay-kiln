@@ -1,0 +1,295 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin newsletter-sign-up-font-1 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -0.32px, 19px;
+}
+@define-mixin newsletter-sign-up-font-2 {
+  @mixin font CircularStd-Regular, 11px, $boulder, inherit, 13px;
+}
+@define-mixin newsletter-sign-up-font-3 {
+  @mixin font CircularStd-Regular, 14px, $white, -0.55px, 17px;
+}
+@define-mixin newsletter-sign-up-font-4 {
+  @mixin font CircularStd-Book, 14px, $boulder, inherit, 17px;
+}
+@define-mixin newsletter-sign-up-font-4-1 {
+  @mixin font CircularStd-Book, 11px, $boulder, inherit, 13px;
+}
+@define-mixin newsletter-sign-up-font-5 {
+  @mixin font CircularStd-Book, 14px, $mineShaft, inherit, 17px;
+}
+@define-mixin newsletter-sign-up-font-6 {
+  @mixin font CircularStd-Book, 11px, $crimson, inherit, 13px;
+}
+@define-mixin newsletter-sign-up-font-7 {
+  @mixin font CircularStd-Black, 22px, theme(primaryColor, $parisM), -0.36px, 30px;
+}
+@define-mixin newsletter-sign-up-font-8 {
+  @mixin font ProximaNova-Light, 16px, $black, -0.26px, 25px;
+}
+
+@define-mixin input-message-small-and-vertical $width: 98% {
+  top: -2.272727em;
+  width: $width;
+  left: calc(98% - $width);
+  &:before {
+    top: em(39, 11);
+    right: calc(5% - em(4, 11));
+  }
+  &:after {
+    top: calc(100% - em(1));
+    transform: rotate(180deg);
+    right: 5%;
+  }
+}
+
+body > .newsletter-sign-up {
+  margin: 1em;
+}
+
+.newsletter-sign-up {
+  margin-bottom: em(20);
+  &__title {
+    @mixin newsletter-sign-up-font-1;
+    position: relative;
+    z-index: 1;
+    margin-bottom: em(21, 20);
+    &:after {
+      content: '';
+      border-top: em(1) solid theme(primaryColor, $parisM);
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      z-index: -1;
+    }
+  }
+  &__title-text {
+    background: $white;
+    padding-right: em(8, 20);
+  }
+
+  &__form {
+    display: flex;
+    margin-bottom: em(15);
+  }
+  &__form-group {
+    flex: 0 0 25%;
+    padding-right: em(10);
+    &:last-of-type {
+      padding-right: 0;
+    }
+    &--email {
+      flex: 0 0 40%;
+    }
+    &--zip {
+      flex: 0 0 15%;
+    }
+    &--birthday {
+      flex: 0 0 25%;
+    }
+    &--submit {
+      flex: 0 0 20%;
+    }
+  }
+  &__form-input-label {
+    position: relative;
+    height: 50px;
+    display: block;
+    &:after {
+      @mixin newsletter-sign-up-font-4;
+      position: absolute;
+      content: attr(data-input-label);
+      top: em(7,14);
+      left: em(10, 14);
+      transition: top 75ms ease;
+    }
+    &:focus-within {
+      &:after {
+        @mixin newsletter-sign-up-font-4-1;
+        top: em(7,14);
+      }
+    }
+    &--empty {
+      &:after {
+        top: calc(50% - em(7, 11));
+      }
+    }
+  }
+  &__form-input {
+    @mixin newsletter-sign-up-font-5;
+    position: relative;
+    border: em(1, 14) solid $dustyGray;
+    width: 100%;
+    height: 100%;
+    padding: em(7, 14) em(10, 14) 0 em(10, 14);
+    outline: none;
+    &--submit {
+      @mixin newsletter-sign-up-font-3;
+      background: theme(primaryColor, $parisM);
+      border: none;
+      outline: none;
+      padding: 0;
+      text-transform: uppercase;
+      opacity: 0.75;
+      cursor: not-allowed;
+      &[data-valid="true"] {
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+  }
+  &__form-input-msg {
+    @mixin newsletter-sign-up-font-6;
+    display: none;
+    position: absolute;
+    background: $white;
+    border: 1px solid $crimson;
+    padding: em(4, 11);
+    width: calc(100% + em(10, 11));
+    left: em(-5, 11);
+    color: $crimson;
+    top: calc(100% + em(3, 11));
+    text-align: center;
+    box-shadow: 0 em(-1, 11) em(6, 11) 0 $silverChalice;
+    text-align: center;
+    z-index: 1;
+    &[data-valid="false"] {
+      display: block;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      top: em(-39, 11);
+      right: calc(10% - em(4,11));
+      background: url('/media/components/newsletter-sign-up/msg-icon-error.svg') no-repeat;
+      width: em(22, 11);
+      height: em(22, 11);
+      z-index: 1;
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      top: em(-9, 11);
+      right: 10%;
+      background: url('/media/components/newsletter-sign-up/msg-pointer.svg') no-repeat;
+      width: em(12, 11);
+      height: em(10, 11);
+      z-index: 1;
+    }
+  }
+
+  &__sign-up-terms {
+    @mixin newsletter-sign-up-font-2;
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+
+  &--success {
+    position: relative;
+    .newsletter-sign-up__title {
+      z-index: 0;
+    }
+    .newsletter-sign-up__success-msg {
+      display: flex;
+    }
+  }
+  &__success-msg {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: $white;
+    border: 1px solid theme(primaryColor, $parisM);
+    text-align: center;
+    padding: em(24);
+    #success-icon-group {
+      fill: theme(primaryColor, $parisM);
+    }
+  }
+  &__success-msg-icon {
+    margin-botton: em(4);
+  }
+  &__success-msg-title {
+    @mixin newsletter-sign-up-font-7;
+    margin-botton: em(4, 22);
+  }
+  &__success-msg-text {
+    @mixin newsletter-sign-up-font-8;
+  }
+}
+
+
+
+.newsletter-sign-up--layout-horizontal {
+  max-width: em(widthOnGrid(10, 9));
+  @mixin large-screen {
+    .newsletter-sign-up__form {
+      flex-wrap: wrap;
+    }
+    .newsletter-sign-up__form-group {
+      &--email {
+        flex: 0 0 60%;
+        margin-bottom: em(15);
+      }
+      &--zip {
+        flex: 0 0 40%;
+        padding-right: 0;
+        margin-bottom: em(15);
+      }
+      &--birthday {
+        flex: 0 0 60%;
+      }
+      &--submit {
+        flex: 0 0 40%;
+      }
+    }
+    .newsletter-sign-up__form-input-msg {
+      width: 50%;
+      left: 52%;
+    }
+  }
+  @mixin medium-small-screen {
+    .newsletter-sign-up__form {
+      flex-wrap: wrap;
+    }
+    .newsletter-sign-up__form-group {
+      flex: 0 0 100%;
+      padding-right: 0;
+      margin-bottom: em(15);
+      &--submit {
+        margin-bottom: 0;
+      }
+    }
+    .newsletter-sign-up__form-input-msg {
+      @mixin input-message-small-and-vertical 85%;
+    }
+  }
+}
+
+.newsletter-sign-up.newsletter-sign-up--layout-vertical {
+  max-width: em(widthOnGrid(4, 3));
+  .newsletter-sign-up__form {
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+  .newsletter-sign-up__form-group {
+    margin-bottom: em(15);
+    padding-right: 0;
+    flex: 0 0 100%;
+  }
+  .newsletter-sign-up__form-input-msg {
+    @mixin input-message-small-and-vertical 95%;
+  }
+}

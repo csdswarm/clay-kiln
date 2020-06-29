@@ -1,0 +1,45 @@
+_description: |
+  newsletter sign up
+
+# component properties
+title:
+  _has:
+    input: text
+    help: i.e “Get [Station Newsletter Title] Delivered to your Inbox” | Get The Daily J Delivered to your Inbox
+layoutType:
+  _has:
+    input: radio
+    validate:
+      required: true
+    options:
+      -
+        name: Horizontal
+        value: horizontal
+      -
+        name: Vertical
+        value: vertical
+successTitle:
+  _has:
+    input: text
+    validate:
+      required: true
+    help: The title displayed in the successful subscription screen
+successMsg:
+  _has:
+    input: text
+    help: The message below the title, displayed in the successful subscription screen
+postUpSiteID:
+  _has:
+    input: text
+    help: PostUp ID
+
+# groups
+_groups:
+  settings:
+    _label: Settings
+    fields:
+      - layoutType
+      - title
+      - successTitle
+      - successMsg
+      - postUpSiteID
