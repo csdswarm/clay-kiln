@@ -55,7 +55,7 @@ $caret-margin-right: em(25);
 @define-mixin triangle {
   width: 0;
   height: 0;
-  border-bottom: em(12) solid $station-tertiaryColor;
+  border-bottom: em(12) solid $station-secondaryColor;
   border-left: em(9) solid transparent;
   border-right: em(9) solid transparent;
   margin-top: em(-12);
