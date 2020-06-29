@@ -356,7 +356,7 @@ $caret-margin-right: em(25);
               height: em(30);
               align-items: center;
               &:hover {
-                background: $parisM;
+                background: $station-primaryColor;
               }
               a {
                 @mixin anchor-reset;
