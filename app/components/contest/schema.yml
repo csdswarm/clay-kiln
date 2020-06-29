@@ -304,10 +304,11 @@ rulesBodyText:
   _placeholder:
     height: 200px
     text: New Contest Rules Body Text
-    required: true
   _has:
     input: inline
     type: multi-line
+    validate:
+      required: true
     buttons:
       - bold
       - italic
