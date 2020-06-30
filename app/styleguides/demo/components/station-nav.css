@@ -469,7 +469,7 @@ $caret-margin-right: em(25);
           h3 {
             @mixin station-listen-nav-font1;
             text-transform: uppercase;
-            margin-bottom: em(5, 15);
+            margin-bottom: em(15, 15);
           }
           img {
             width: em(60);
