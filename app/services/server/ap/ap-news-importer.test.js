@@ -21,18 +21,36 @@ describe('server', () => {
     }
 
     describe('importArticle', () => {
-      async function setup_importArticle(options) {
+      async function setup_importArticle(options = {}) {
         const setup = setup_apNewsImporter(),
-          { importArticle } = setup,
+          { __, importArticle } = setup,
           DEFAULT_AP_META =  {
             signals: ['newscontent'],
             pubstatus: 'usable',
-            editorialtypes: ['Lead']
+            editorialtypes: ['Lead'],
+            altids: {
+              itemid: 'abdcefg',
+              etag: 'abcdefg_1234'
+            }
           },
+          HOST = 'some.radio.com',
+          ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
+          EXISTING_ARTICLE_ID = `${HOST}/_components/article/instances/ck64dqppgzzzzabcd01234567@published`,
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
+          searchByQueryStub = sinon.stub(__, 'searchByQuery')
+            .resolves([])
+            .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
+            .resolves([{ _id: EXISTING_ARTICLE_ID }]),
+
           result = await importArticle(apMeta);
 
-        return { ...setup, result };
+        return {
+          ...setup,
+          ELASTIC_AP_ID_PATH,
+          EXISTING_ARTICLE_ID,
+          result,
+          searchByQueryStub
+        };
       }
 
       it('marks content as unpublishable if it is not newscontent', async () => {
@@ -56,6 +74,23 @@ describe('server', () => {
         expect(result.isApContentPublishable)
           .to.eql(false);
       });
+
+      it('finds the existing article if this has been imported already', async () => {
+        const
+          itemid = 'some-existing-id',
+          {
+            ELASTIC_AP_ID_PATH,
+            EXISTING_ARTICLE_ID,
+            result,
+            searchByQueryStub
+          } = await setup_importArticle({ apMeta: { altids: { itemid } } });
+
+        expect(result).to.have.property('existingArticle');
+        expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
+        expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
+        expect(result.existingArticle._id).to.eql(EXISTING_ARTICLE_ID);
+      });
+
     });
   });
 })
