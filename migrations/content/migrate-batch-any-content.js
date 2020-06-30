@@ -72,7 +72,8 @@ async function run() {
             console.error('Failed to import:', url, e);
             return null;
           });
-      });
+      })
+      .catch(e => console.error(_.get(e, 'stack', e)));
   }
 
   const fileContent = await readFileAsync(`${__dirname}/${inputFile}`, 'utf8'),
