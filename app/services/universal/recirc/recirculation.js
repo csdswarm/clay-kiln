@@ -399,7 +399,7 @@ const
  * @param {Object} [locals]
  * @returns {array} elasticResults
  */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
     let results = {
       content: [],
       totalHits: 0
@@ -428,6 +428,9 @@ const
       }
       if (key === 'stationSlug' && !filters.includeSyndicated) {
         value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
+      }
+      if (key === 'stationSlug' && isRdcContent) {
+        value = DEFAULT_STATION.site_slug;
       }
       addCondition(query, key, value);
     });
@@ -494,7 +497,7 @@ const
       }
 
       try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
+        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS, isRdcContent = false } = _merge(
             defaultMapDataToFilters(uri, data, locals),
             await mapDataToFilters(uri, data, locals)
           ),
@@ -506,13 +509,14 @@ const
               elasticFields: esFields,
               pagination,
               maxItems: itemsNeeded,
-              shouldAddAmphoraTimings
+              shouldAddAmphoraTimings,
+              isRdcContent
             },
             locals);
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,

@@ -6,7 +6,7 @@ const db = require('../../services/server/db'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   radioApiService = require('../../services/server/radioApi'),
   { addAmphoraRenderTime } = require('../../services/universal/utils'),
-  { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
+  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   getS3StationFeedImgUrl = require('../../services/server/get-s3-station-feed-img-url'),
   queryService = require('../../services/server/query'),
@@ -106,6 +106,8 @@ const db = require('../../services/server/db'),
           primaryHeadline: item.node.field_engagement_title || item.node.title
         };
       }));
+    } else {
+      data._computed.station = DEFAULT_STATION.name;
     }
     return data;
   },
@@ -210,7 +212,8 @@ module.exports = recirculationData({
   mapDataToFilters: async (uri, data, locals) => {
     return {
       curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
-      maxItems: getMaxItems(data)
+      maxItems: getMaxItems(data),
+      isRdcContent: !(locals.station.id && locals.station.website)
     };
   },
   render,
@@ -234,7 +237,7 @@ module.exports = recirculationData({
 
       data._computed.isMigrated = isMigrated;
 
-      return !isMigrated;
+      return !isMigrated && locals.station.website;
     }
 
     return false;
