@@ -41,7 +41,8 @@ let refreshCount = 0,
   numGalleryInline = 1,
   numStationsDirectoryInline = 1,
   adIndices = {},
-  adsMounted = false;
+  adsMounted = false,
+  prevLocation = window.location.href;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -82,6 +83,25 @@ document.addEventListener('google-ad-manager-dismount', () => {
     googletag.destroySlots();
   });
 });
+// Refreshes ads when navigating to other pages in SPA
+window.onload = function () {
+  const
+    bodyList = document.querySelector('body'),
+    observer = new MutationObserver( mutations => {
+      mutations.forEach( () => {
+        if (prevLocation !== window.location.href) {
+          prevLocation = window.location.href;
+          refreshAllSlots();
+        }
+      });
+    }),
+    config = {
+      childList: true,
+      subtree: true
+    };
+
+  observer.observe(bodyList, config);
+};
 
 // Create listeners inside of the context of having googletag.pubads()
 googletag.cmd.push(() => {
@@ -212,6 +232,15 @@ function lazyLoadAd(changes, observer) {
     }
   });
 }
+/**
+ * Refreshes all slots when navigating between pages
+ */
+const  refreshAllSlots = () => {
+  googletag.cmd.push(() => {
+    googletag.pubads().refresh();
+  });
+};
+
 
 /**
  * adds a listener to the x div to enable it to close the current ad
@@ -696,3 +725,5 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     updateSkinStyles(false);
   };
 };
+
+
