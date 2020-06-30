@@ -8,10 +8,11 @@
         > a {
             display: inline-block;
             text-decoration: none;
+            height: em(15);
         }
         > a svg {
             @mixin inline-block;
-            height: em(18);
+            height: 100%;
             margin-right: em(10);
             pointer-events: none;
         }
