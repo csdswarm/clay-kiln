@@ -177,12 +177,15 @@ module.exports = {
         .filter(prop => existingProp(prop, data))
         .map(useDisplayName(data, lists));
     }
+
     if (locals.station.site_slug && data.stationSyndication) {
       const syndication = data.stationSyndication.find(
         station => station.callsign === locals.station.callsign
       );
 
-      if (syndication) {
+      // ON-2026: SectionFront must be taken into account since is been used to complete the breadcrumbs
+      // when a content is imported only the callsign is been set in the process.
+      if (syndication && syndication.sectionFront) {
         breadcrumbProps = [
           { slug: syndication.stationSlug, text: syndication.stationName },
           ...props
