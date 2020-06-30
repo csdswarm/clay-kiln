@@ -1,8 +1,10 @@
 'use strict';
 const
   _set = require('lodash/set'),
+  logger = require('../../universal/log'),
   { searchByQuery } = require('../query'),
 
+  log = logger.setup({ file: __filename }),
   QUERY_TEMPLATE = {
     index: 'published-content',
     type: '_doc',
@@ -14,6 +16,7 @@ const
   },
 
   __ = {
+    log,
     searchByQuery
   };
 
@@ -34,11 +37,18 @@ function checkApPublishable({ editorialtypes, pubstatus, signals }) {
  * @param {string} itemid
  * @returns {object|undefined}
  */
-async function findExistingArticle({ itemid }) {
-  const query = _set({ ...QUERY_TEMPLATE }, 'body.query.term[\'ap.itemid\']', itemid),
-    [existing] = await __.searchByQuery(query, null, { includeIdInResult: true });
-  
-  return existing;
+async function findExistingArticle({ itemid } = {}) {
+  const
+    { log, searchByQuery } = __,
+    query = _set({ ...QUERY_TEMPLATE }, 'body.query.term[\'ap.itemid\']', itemid);
+
+  try {
+    const [existing] = await searchByQuery(query, null, { includeIdInResult: true });
+
+    return existing;
+  } catch (error) {
+    log('error', 'Problem getting existing data from elastic', error);
+  }
 }
 
 

@@ -37,17 +37,27 @@ describe('server', () => {
           ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
           EXISTING_ARTICLE_ID = `${HOST}/_components/article/instances/ck64dqppgzzzzabcd01234567@published`,
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
-          searchByQueryStub = sinon.stub(__, 'searchByQuery')
-            .resolves([])
-            .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
-            .resolves([{ _id: EXISTING_ARTICLE_ID }]),
+          logStub = sinon.stub(),
+          searchByQueryStub = sinon.stub();
 
-          result = await importArticle(apMeta);
+        searchByQueryStub.resolves([]);
+        searchByQueryStub
+          .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
+          .resolves([{ _id: EXISTING_ARTICLE_ID }]);
+        searchByQueryStub
+          .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
+          .rejects('Error');
+
+        __.log = logStub;
+        __.searchByQuery = searchByQueryStub;
+
+        const result = await importArticle(apMeta);
 
         return {
           ...setup,
           ELASTIC_AP_ID_PATH,
           EXISTING_ARTICLE_ID,
+          logStub,
           result,
           searchByQueryStub
         };
@@ -89,6 +99,16 @@ describe('server', () => {
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
         expect(result.existingArticle._id).to.eql(EXISTING_ARTICLE_ID);
+      });
+
+      it('traps errors when checking for elastic content', async () => {
+        const
+          noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined ),
+          { logStub, result, searchByQueryStub } = await setup_importArticle({ apMeta: { altids: { undefined } } });
+
+        expect(searchByQueryStub).to.have.been.calledWith(noItemId);
+        expect(logStub).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
+        expect(typeof result.existingArticle).to.eql('undefined');
       });
 
     });
