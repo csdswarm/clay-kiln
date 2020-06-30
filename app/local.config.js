@@ -28,6 +28,7 @@ module.exports = {
     env: {
       NODE_ENV: 'local'
     },
-    max_memory_restart: '256M'
+    max_memory_restart: '1G',
+    node_args: '--max-http-header-size=100000'
   }]
 };

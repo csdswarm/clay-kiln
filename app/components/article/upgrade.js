@@ -2,6 +2,7 @@
 
 const _get = require('lodash/get'),
   addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
+  updateStationSyndication = require('../../services/server/component-upgrades/update-stationsyndication-type'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content'),
   defaultTextWithOverride = {
@@ -194,6 +195,16 @@ module.exports['11.0'] = async (uri, data) => {
   data.feeds.msn = true;
 
   await componentizeFeedImg(uri, data);
+
+  return data;
+};
+
+module.exports['12.0'] = updateStationSyndication;
+
+module.exports['13.0'] = (uri, data) => {
+  data.featured = data.featured || false;
+  data.featuredSports = false;
+  data.featuredNews = false;
 
   return data;
 };

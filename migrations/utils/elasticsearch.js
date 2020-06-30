@@ -165,14 +165,22 @@ const createNewElasticsearchIndex = async (httpEs, newIndex, body) => {
  * @param {object} httpEs
  * @param {string} latestIndex
  * @param {string} newIndex
+ * @param {string} [script]
  */
-const reindex = async (httpEs, latestIndex, newIndex) => {
+const reindex = async (httpEs, latestIndex, newIndex, script) => {
   console.log('Reindexing based on new index\n');
 
   const body = {
     source: { index: latestIndex },
     dest: { index: newIndex }
   };
+
+  if (script) {
+    body.script = {
+      source: script,
+      lang: 'painless'
+    };
+  }
 
   try {
     await httpEs.post({
@@ -290,15 +298,16 @@ const assertFnsIsValid = fns => {
  * @param {object} parsedHost
  * @param {string} alias
  * @param {object} fns
+ * @param {string} [reindexScript]
  * @returns {undefined|string} - if updated, the new index
  */
-const updateIndex = async (parsedHost, alias, fns = {}) => {
+const updateIndex = async (parsedHost, alias, fns = {}, reindexScript) => {
   assertFnsIsValid(fns);
 
   _defaults(fns, {
     updateMappings: _identity,
     updateSettings: _identity
-  })
+  });
 
   const httpEs = makeHttpEs(parsedHost),
     indexConventionRe = new RegExp(`^${alias}_v(\\d+)$`),
@@ -314,9 +323,9 @@ const updateIndex = async (parsedHost, alias, fns = {}) => {
   await createNewElasticsearchIndex(httpEs, newIndex, {
     mappings: fns.updateMappings(mappings),
     settings: fns.updateSettings(settings)
-  })
-  await reindex(httpEs, currentIndex, newIndex);
-  await updateAlias(httpEs, latestIndex, newIndex, alias)
+  });
+  await reindex(httpEs, currentIndex, newIndex, reindexScript);
+  await updateAlias(httpEs, latestIndex, newIndex, alias);
   return newIndex;
 };
 

@@ -1,0 +1,6 @@
+_components:
+  station-nav:
+    primaryLinks: []
+    featuredLinks: []
+    listenNav:
+      _ref: /_components/station-listen-nav/instances/new
