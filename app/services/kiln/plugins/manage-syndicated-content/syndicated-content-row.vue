@@ -69,12 +69,10 @@
 
   export default {
     props: ['content', 'stationFilter'],
-    data() {
-      return {
-        syndicationLoading: false
-      };
-    },
     computed: {
+      syndicationLoading() {
+        return this.content.syndicationLoading || false;
+      },
       selectedStation() {
         return this.stationFilter;
       },
@@ -88,8 +86,6 @@
           findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(content.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
-
-        this.syndicationLoading = false;
 
         /*
           if the station slug of a content is equal to current selected station
@@ -151,7 +147,6 @@
        * fronts before creating the syndication
        */
       onSyndicate() {
-        this.syndicationLoading = true;
         this.$emit('createSyndication', this.content._id);
       },
     },

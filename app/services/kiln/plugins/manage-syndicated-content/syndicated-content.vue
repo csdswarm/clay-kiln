@@ -263,7 +263,15 @@
       updateSectionFront(property, value) {
         this.selectedSectionFronts = { ...this.selectedSectionFronts, [property]: value };
       },
+      resetSyndicationLoading(loading = false) {
+        const selectedItem = this.selectedContentId && this.content.find(item => item._id === this.selectedContentId);
+
+        if (selectedItem) {
+          this.$set(selectedItem, 'syndicationLoading', loading);
+        }
+      },
       openModal(contentId) {
+        this.resetSyndicationLoading();
         this.selectedContentId = contentId;
         this.selectedSectionFronts = {};
         this.$refs.syndicationModal.open();
@@ -275,6 +283,7 @@
       },
       async saveSyndication() {
         this.saveLoading = true;
+        this.resetSyndicationLoading(true);
 
         await axios.post('/rdc/syndicated-content/create',
           {
