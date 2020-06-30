@@ -11,14 +11,14 @@ const amphora = require('amphora'),
     .then(meta => ({ ...meta, stationSlug }))
     .then(updatedMeta => amphora.db.putMeta(uri, updatedMeta))
     .then(data => elastic.put('pages', uri, data)),
-  updateSyndication = (content) => ({
+  updateSyndication = (content, ogCanonicalUrl) => ({
     ...content,
     corporateSyndication: null,
     editorialFeeds: null,
     genreSyndication: null,
     stationSyndication: [],
-    syndicatedUrl: null,
-    syndicationStatus: 'original',
+    syndicatedUrl: ogCanonicalUrl,
+    syndicationStatus: 'syndicated',
     isCloned: true
   }),
   removeSectionFronts = (content) => ({
@@ -96,7 +96,7 @@ module.exports = router => {
     const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals),
       resultContentUri = result.main[0],
       resultContent = await db.get(resultContentUri),
-      unsyndicatedContent = updateSyndication(resultContent),
+      unsyndicatedContent = updateSyndication(resultContent, canonicalUrl),
       updatedContent = removeSectionFronts(unsyndicatedContent);
 
     await db.put(resultContentUri, updatedContent);
