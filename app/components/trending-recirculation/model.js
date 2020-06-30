@@ -29,7 +29,8 @@ module.exports = recirculationData({
     filters: {
       contentTypes: ['article', 'gallery']
     },
-    maxItems: MAX_ITEMS
+    maxItems: MAX_ITEMS,
+    isRdcContent: true
   }),
   render: (ref, data) => {
     data._computed.articles = addParamsAndHttps(data._computed.articles);
