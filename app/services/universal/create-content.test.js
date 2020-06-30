@@ -95,9 +95,6 @@ const expect = require('chai').expect,
         },
         category: ''
       },
-      lytics: {
-        uid: '1234'
-      },
       user: {
         auth: 'admin',
         name: 'joe schmoe',
