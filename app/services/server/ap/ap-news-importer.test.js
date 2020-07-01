@@ -24,12 +24,12 @@ describe('server', () => {
       async function setup_importArticle(options = {}) {
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
-          DEFAULT_AP_META =  {
+          DEFAULT_AP_META = {
             signals: ['newscontent'],
             pubstatus: 'usable',
             editorialtypes: ['Lead'],
             altids: {
-              itemid: 'abdcefg',
+              itemid: 'abcdefg',
               etag: 'abcdefg_1234'
             }
           },
@@ -43,7 +43,10 @@ describe('server', () => {
         searchByQueryStub.resolves([]);
         searchByQueryStub
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
-          .resolves([{ _id: EXISTING_ARTICLE_ID }]);
+          .resolves([{ _id: EXISTING_ARTICLE_ID, ap: { itemid: 'some-existing-id' } }]);
+        searchByQueryStub
+          .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'abcdefg'))
+          .resolves([{ _id: EXISTING_ARTICLE_ID, ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' } }]);
         searchByQueryStub
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
@@ -70,7 +73,7 @@ describe('server', () => {
           .to.have.property('isApContentPublishable')
           .that.eqls(false);
       });
-      
+
       it('marks content as unpublishable if its pubstatus is not usable', async () => {
         const { result } = await setup_importArticle({ apMeta: { pubstatus: '' } });
 
@@ -103,7 +106,7 @@ describe('server', () => {
 
       it('traps errors when checking for elastic content', async () => {
         const
-          noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined ),
+          noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined),
           { logStub, result, searchByQueryStub } = await setup_importArticle({ apMeta: { altids: { undefined } } });
 
         expect(searchByQueryStub).to.have.been.calledWith(noItemId);
@@ -111,6 +114,12 @@ describe('server', () => {
         expect(typeof result.existingArticle).to.eql('undefined');
       });
 
+      it('checks to see if anything has been modified by AP', async () => {
+        const { result } = await setup_importArticle();
+
+        expect(result).to.have.property('isModifiedByAP');
+        expect(result.isModifiedByAP).to.eql(true);
+      });
     });
   });
 })

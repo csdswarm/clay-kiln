@@ -1,5 +1,6 @@
 'use strict';
 const
+  _get = require('lodash/get'),
   _set = require('lodash/set'),
   logger = require('../../universal/log'),
   { searchByQuery } = require('../query'),
@@ -61,11 +62,13 @@ async function findExistingArticle({ itemid } = {}) {
  */
 async function importArticle(apMeta) {
   const isApContentPublishable = checkApPublishable(apMeta),
-    existingArticle = await findExistingArticle(apMeta.altids);
+    existingArticle = await findExistingArticle(apMeta.altids),
+    isModifiedByAP = apMeta.altids.etag !== _get(existingArticle, 'ap.etag');
 
   return {
     existingArticle,
-    isApContentPublishable
+    isApContentPublishable,
+    isModifiedByAP
   };
 }
 
