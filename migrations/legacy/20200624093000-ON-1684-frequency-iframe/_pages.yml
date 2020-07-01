@@ -1,10 +1,10 @@
 _pages:
-  frequency-iframe:
+  frequency-iframe-page:
     _dynamic: true
     head:
       - /_components/dynamic-meta-url/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
-      - /_components/frequency-iframe/instances/default
+      - /_components/frequency-iframe-page/instances/default
     layout: /_layouts/one-column-layout/instances/frequency-iframe
