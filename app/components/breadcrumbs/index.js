@@ -176,6 +176,12 @@ module.exports = {
       breadcrumbItems = breadcrumbProps
         .filter(prop => existingProp(prop, data))
         .map(useDisplayName(data, lists));
+
+      // ON-2103: Validates when content was imported directly into a station and then syndicated to another
+      // the data.StationSlug contains the imported stationSlug and should not consider to use its primary section front and secondary section front
+      if (data.stationSlug !== locals.station.site_slug) {
+        breadcrumbItems.splice(1);
+      }
     }
 
     if (locals.station.site_slug && data.stationSyndication) {
@@ -193,8 +199,6 @@ module.exports = {
         breadcrumbItems = breadcrumbProps
           .filter(prop => existingProp(prop, syndication))
           .map(useDisplayName(syndication, lists));
-      } else if (data.stationSlug !== locals.station.site_slug) {
-        breadcrumbItems.pop();
       }
     }
 
