@@ -1,27 +1,23 @@
 DROP MATERIALIZED VIEW IF EXISTS sitemap_station_articles_and_galleries;
 
 CREATE MATERIALIZED VIEW sitemap_station_articles_and_galleries AS WITH _published_station_slugs AS (
-  select sf.data->>'stationSlug' as station_slug
-  from components."station-front" sf
-    join pages p
-  	  on sf.id = p.data->'main'->>0
-    join uris u
-      on p.id = u.data || '@published'
-  where sf.data->>'stationSlug' is not null
-    and sf.data->>'stationSlug' != ''
+  SELECT sf.data->>'stationSlug' AS station_slug
+  FROM components."station-front" sf
+    JOIN pages p ON sf.id = p.data->'main'->>0
+      JOIN uris u ON p.id = u.data || '@published'
+  WHERE sf.data->>'stationSlug' IS NOT NULL
+  AND sf.data->>'stationSlug' != ''
 ),
 _components AS (
-  SELECT id,
-	data->>'stationSlug' as station_slug
-  FROM components.gallery g
+  SELECT id, data->>'stationSlug' as station_slug FROM components.gallery g
   WHERE NOT (
 	g.data @> '{"noIndexNoFollow": true}'
 	OR g.data @> '{"isCloned" : true}'
   )
+
   UNION
-  SELECT id,
-	data->>'stationSlug' as station_slug
-  FROM components.article a
+
+  SELECT id, data->>'stationSlug' as station_slug FROM components.article a
   WHERE NOT (
 	a.data @> '{"noIndexNoFollow": true}'
 	OR a.data @> '{"isCloned" : true}'
@@ -59,7 +55,7 @@ _page_data AS (
 --
 _urls AS (
   SELECT
-    page + 1 as page,
+    page + 1 AS page,
 	station_slug,
     xmlelement(name url, xmlelement(name loc, loc), xmlelement(name lastmod, lastmod)) AS xml_data
   FROM
@@ -70,7 +66,8 @@ _urls AS (
 --   timestamp (in W3C datetime format)
 --
 SELECT
-  page as id,
+  station_slug AS id,
+  page as page,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
   -- postgres does not have a direct way to add encoding
   xmlroot(
@@ -84,8 +81,8 @@ SELECT
 FROM
   _urls
 GROUP BY
-  station_slug,
-  page
+  page,
+  station_slug
 ORDER BY
   page;
 
