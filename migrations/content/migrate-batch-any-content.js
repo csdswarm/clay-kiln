@@ -5,7 +5,7 @@
  * Usage: node migrate-batch-any-content in.txt preprod-clay.radio.com www.radio.com > portUpdatedLogs.txt
 */
 const { v1: { readFileAsync } } = require('../utils/read-file'),
-  { bluebird, _ } = require('../utils/base'),
+  { bluebird, _, axios } = require('../utils/base'),
   { v1: parseHost } = require('../utils/parse-host'),
   clayExport = require('../utils/clay-export').v1,
   clayImport = require('../utils/clay-import').v1,
@@ -35,6 +35,10 @@ async function run() {
     process.exit(1);
   }
 
+  const headers = { 
+    Authorization: 'token accesskey',
+    'Content-Type': 'application/json'
+  };
   const replaceHostDeep = object => {
     const newObject = _.clone(object);
 
@@ -49,6 +53,26 @@ async function run() {
     return newObject;
   };
 
+  const getURLFromPageData = pageData => {
+    const pageDataObjValues = _.values(pageData._pages)[0],
+      pickedURLObj = _.pick(pageDataObjValues, 'url');
+    
+    return _.get(pickedURLObj, 'url');
+  };
+
+  const transformCustomUrlToUrl = async (id, pageData) => {
+    // check if any customUrls -> change to url
+    const newID = id.replace(fromEnv, toEnv).replace('@published',''),
+    { data } = await axios.get(`${toEnvHttp}://${newID}`);
+
+    if (data.customUrl) {
+      delete data.customUrl;
+      data.url = getURLFromPageData(pageData);
+      await axios.put(`${toEnvHttp}://${newID}`, data, { headers });
+      await axios.put(`${toEnvHttp}://${newID}@published`, {}, { headers });
+    }
+  };
+
   const importURL = async (url, numTried = 0, maxTries = 3) => {
     return clayExport({ componentUrl: url })
       .then(exportedPage => replaceHostDeep(exportedPage.data))
@@ -58,7 +82,7 @@ async function run() {
           hostUrl: `${toEnvHttp}://${toEnv}`,
           publish: true
         })
-          .then(importResult => importResult)
+          .then(async () => transformCustomUrlToUrl(url, pageData))
           .catch(async e => {
             const updatedNumTried = numTried + 1;
             const limiter = 100;
