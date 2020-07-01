@@ -28,9 +28,9 @@ const _snakeCase = require('lodash/snakeCase'),
     let result = xmlIndexHeader;
 
     for (const { last_updated, sitemap_id } of rows) {
-      (req.params.stationSlug)
-      ? result += `<sitemap><loc>${protocolAndHost}/${req.params.stationSlug}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`
-      : result += `<sitemap><loc>${protocolAndHost}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
+      req.params.stationSlug
+        ? result += `<sitemap><loc>${protocolAndHost}/${req.params.stationSlug}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`
+        : result += `<sitemap><loc>${protocolAndHost}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
     }
 
     result += '</sitemapindex>';
