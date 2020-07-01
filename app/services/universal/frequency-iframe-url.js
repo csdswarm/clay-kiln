@@ -4,22 +4,21 @@ const url = require('url'),
   /** Determine the Frequency drupal url
  *
  * @param  {String} pathname shows/show-schedule
- * @param  {String} hostname radio.com
  * @param  {String} callsign winsam
  * @return {String} Url https://winsam.prd-radio-drupal.com/shows/show-schedule
  */
-  sanitizeUrl = (pathname, hostname, callsign) => {
+  sanitizeUrl = (pathname, callsign) => {
     let host;
     
-    switch (hostname) {
-      case 'dev-clay-radio.com':
-        host = 'dev-radio-drupal.com';
+    switch (process.env.NODE_ENV) {
+      case 'production':
+        host = 'prd-radio-drupal.com';
         break;
-      case 'stg-clay-radio.com':
+      case 'staging':
         host = 'stg-radio-drupal.com';
         break;
       default:
-        host = 'prd-radio-drupal.com';
+        host = 'dev-radio-drupal.com';
         break;
     }
     
@@ -40,8 +39,8 @@ const url = require('url'),
  */
 
 function frequencyIframeUrl(urlString, callsign) {
-  const { pathname, hostname } = url.parse(urlString),
-    frequencyUrl = sanitizeUrl(pathname, hostname, callsign.toLowerCase());
+  const { pathname } = url.parse(urlString),
+    frequencyUrl = sanitizeUrl(pathname, callsign.toLowerCase());
     
   return frequencyUrl;
 }

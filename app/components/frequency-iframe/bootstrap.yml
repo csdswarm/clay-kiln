@@ -1,5 +1,5 @@
 _components:
-  frequency-iframe-page:
+  frequency-iframe:
     allowed: true
     instances:
       default:
