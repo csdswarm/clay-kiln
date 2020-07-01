@@ -168,9 +168,9 @@ module.exports = {
         .map(useDisplayName(data, lists)),
       breadcrumbProps = props;
 
-    if (data.stationSlug && data.stationName) {
+    if (locals.station.site_slug && locals.station.name) {
       breadcrumbProps = [
-        { slug: data.stationSlug, text: data.stationName },
+        { slug: locals.station.site_slug, text: locals.station.name },
         ...props
       ];
       breadcrumbItems = breadcrumbProps
@@ -193,6 +193,8 @@ module.exports = {
         breadcrumbItems = breadcrumbProps
           .filter(prop => existingProp(prop, syndication))
           .map(useDisplayName(syndication, lists));
+      } else if (data.stationSlug !== locals.station.site_slug) {
+        breadcrumbItems.pop();
       }
     }
 
