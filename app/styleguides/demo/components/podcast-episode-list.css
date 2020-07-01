@@ -53,8 +53,9 @@
       flex: 0 0 widthOnGrid(3, 3, small-screen);
     }
   }
-  &__title {
+  &__title-link {
     @mixin podcast-episode-list-font1;
+    text-decoration: none;
   }
   &__description {
     @mixin podcast-episode-list-font2;
