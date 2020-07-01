@@ -19,7 +19,7 @@ async function run() {
       db.query(sectionFrontsAndHomepage)
     ]));
 
-    console.log("successfully created the postgres 2.0 sitemap views");
+    console.log("successfully created the postgres station sitemap views");
   } catch (err) {
     console.error(err);
   }

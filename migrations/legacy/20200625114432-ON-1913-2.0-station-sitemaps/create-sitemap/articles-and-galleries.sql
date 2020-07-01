@@ -66,8 +66,9 @@ _urls AS (
 --   timestamp (in W3C datetime format)
 --
 SELECT
-  station_slug AS id,
-  page as page,
+  -- station_slug AS id,
+  station_slug||'-'||page AS id,
+  page,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
   -- postgres does not have a direct way to add encoding
   xmlroot(

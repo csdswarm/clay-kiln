@@ -107,7 +107,7 @@ module.exports = router => {
       result = await db.raw(`
       SELECT data
       FROM ${viewName}
-      WHERE id = '${req.params.stationSlug}'
+      WHERE id = '${req.params.stationSlug}-${req.params.id}'
       AND page = ${req.params.id}
     `);
 
@@ -123,13 +123,13 @@ module.exports = router => {
     const result = await db.raw(`
       SELECT 'sitemap-section-fronts-and-homepage-' || page as sitemap_id, last_updated
       FROM sitemap_station_section_fronts_and_homepage
-      WHERE id = '${req.params.stationSlug}'
+      WHERE id ~ '${req.params.stationSlug}'
   
       UNION
 
       SELECT 'sitemap-articles-and-galleries-' || page as sitemap_id, last_updated
       FROM sitemap_station_articles_and_galleries
-      WHERE id = '${req.params.stationSlug}';
+      WHERE id ~ '${req.params.stationSlug}';
     `);
 
     if (!result.rows.length) {
