@@ -67,7 +67,6 @@ _urls AS (
 --
 SELECT
   station_slug||'-'||page AS id,
-  page,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
   xmlroot(
     xmlelement(

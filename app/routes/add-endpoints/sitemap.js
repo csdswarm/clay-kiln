@@ -108,7 +108,6 @@ module.exports = router => {
       SELECT data
       FROM ${viewName}
       WHERE id = '${req.params.stationSlug}-${req.params.id}'
-      AND page = ${req.params.id}
     `);
 
     if (!result.rows.length) {
@@ -121,13 +120,13 @@ module.exports = router => {
 
   router.get('/:stationSlug/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
     const result = await db.raw(`
-      SELECT 'sitemap-section-fronts-and-homepage-' || page as sitemap_id, last_updated
+      SELECT 'sitemap-section-fronts-and-homepage' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
       FROM sitemap_station_section_fronts_and_homepage
       WHERE id ~ '${req.params.stationSlug}'
   
       UNION
 
-      SELECT 'sitemap-articles-and-galleries-' || page as sitemap_id, last_updated
+      SELECT 'sitemap-articles-and-galleries' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
       FROM sitemap_station_articles_and_galleries
       WHERE id ~ '${req.params.stationSlug}';
     `);
