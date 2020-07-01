@@ -66,17 +66,16 @@ _urls AS (
 --   timestamp (in W3C datetime format)
 --
 SELECT
-  -- station_slug AS id,
   station_slug||'-'||page AS id,
   page,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
-  -- postgres does not have a direct way to add encoding
   xmlroot(
     xmlelement(
       name urlset,
       xmlattributes('http://www.sitemaps.org/schemas/sitemap/0.9' AS xmlns),
       xmlagg(xml_data)
     ),
+-- postgres does not have a direct way to add encoding
     version '1.0" encoding="UTF-8'
   )::text AS data
 FROM
