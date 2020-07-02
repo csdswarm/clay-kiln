@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 'use strict';
 const
   chai = require('chai'),
@@ -34,11 +33,18 @@ describe('server', () => {
             }
           },
           HOST = 'some.radio.com',
+          LOCALS = { site: { host: HOST } },
           ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
           EXISTING_ARTICLE_ID = `${HOST}/_components/article/instances/ck64dqppgzzzzabcd01234567@published`,
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
+          locals = { ...LOCALS, ...options.locals },
+          stationMappings = options.stationMappings || {},
+          createPageStub = sinon.stub(),
+          dbGetStub = sinon.stub(),
           logStub = sinon.stub(),
           searchByQueryStub = sinon.stub();
+
+        dbGetStub.resolves({});
 
         searchByQueryStub.resolves([]);
         searchByQueryStub
@@ -51,18 +57,24 @@ describe('server', () => {
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
 
+        __.createPage = createPageStub;
+        __.dbGet = dbGetStub;
         __.log = logStub;
         __.searchByQuery = searchByQueryStub;
 
-        const result = await importArticle(apMeta);
+        const result = await importArticle(apMeta, stationMappings, locals);
 
         return {
           ...setup,
           ELASTIC_AP_ID_PATH,
           EXISTING_ARTICLE_ID,
+          createPageStub,
+          dbGetStub,
+          locals,
           logStub,
           result,
-          searchByQueryStub
+          searchByQueryStub,
+          stationMappings
         };
       }
 
@@ -98,20 +110,44 @@ describe('server', () => {
             searchByQueryStub
           } = await setup_importArticle({ apMeta: { altids: { itemid } } });
 
-        expect(result).to.have.property('existingArticle');
+        expect(result).to.have.property('preExistingArticle');
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
-        expect(result.existingArticle._id).to.eql(EXISTING_ARTICLE_ID);
+        expect(result.preExistingArticle._id).to.eql(EXISTING_ARTICLE_ID);
       });
 
-      it('traps errors when checking for elastic content', async () => {
+      it('creates a new article if one does not already exist', async () => {
+        const {
+            createPageStub,
+            dbGetStub,
+            result,
+            locals,
+            stationMappings
+          } = await setup_importArticle({
+            stationMappings: {
+              'test-staton': {},
+              'second-station': {}
+            },
+            apMeta: {
+              altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+            }
+          }),
+          [stationSlug] = Object.keys(stationMappings);
+
+        expect(result.preExistingArticle).to.be.undefined;
+        expect(result).to.have.property('article');
+        expect(createPageStub).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
+        expect(dbGetStub).to.have.been.calledOnceWith('_pages/new-two-col');
+      });
+
+      it('traps errors when checking for existing elastic content', async () => {
         const
           noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined),
           { logStub, result, searchByQueryStub } = await setup_importArticle({ apMeta: { altids: { undefined } } });
 
         expect(searchByQueryStub).to.have.been.calledWith(noItemId);
         expect(logStub).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
-        expect(typeof result.existingArticle).to.eql('undefined');
+        expect(result.preExistingArticle).to.be.undefined;
       });
 
       it('checks to see if anything has been modified by AP', async () => {

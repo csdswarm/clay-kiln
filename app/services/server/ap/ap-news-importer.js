@@ -3,6 +3,8 @@ const
   _get = require('lodash/get'),
   _set = require('lodash/set'),
   logger = require('../../universal/log'),
+  { createPage } = require('../page-utils'),
+  { get: dbGet } = require('../db'),
   { searchByQuery } = require('../query'),
 
   log = logger.setup({ file: __filename }),
@@ -17,6 +19,8 @@ const
   },
 
   __ = {
+    createPage,
+    dbGet,
     log,
     searchByQuery
   };
@@ -52,6 +56,15 @@ async function findExistingArticle({ itemid } = {}) {
   }
 }
 
+/**
+ * Creates a new page and sets the station to the first station slug found
+ * @param {object} stationMappings
+ * @param {object} locals
+ * @returns {Promise<Object>}
+ */
+async function createNewArticle(stationMappings, locals) {
+  return __.createPage(await __.dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+}
 
 /**
  * Handles the logic needed to import or update an artice from the AP media api
@@ -60,13 +73,15 @@ async function findExistingArticle({ itemid } = {}) {
  * @param {object} locals
  * @returns {Promise<void>}
  */
-async function importArticle(apMeta) {
+async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
-    existingArticle = await findExistingArticle(apMeta.altids),
-    isModifiedByAP = apMeta.altids.etag !== _get(existingArticle, 'ap.etag');
+    preExistingArticle = await findExistingArticle(apMeta.altids),
+    article = preExistingArticle || await createNewArticle(stationMappings, locals),
+    isModifiedByAP = apMeta.altids.etag !== _get(article, 'ap.etag');
 
   return {
-    existingArticle,
+    article,
+    preExistingArticle,
     isApContentPublishable,
     isModifiedByAP
   };
