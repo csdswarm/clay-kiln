@@ -162,4 +162,5 @@ module.exports = router => {
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
   addEndpoints.signOut(router);
+  addEndpoints.getStationsSubscribedToContent(router);
 };

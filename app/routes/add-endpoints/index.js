@@ -3,6 +3,7 @@
 module.exports = {
   alerts: require('./alerts'),
   createPage: require('./create-page'),
+  getStationsSubscribedToContent: require('./get-stations-subscribed-to-content'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
   nationalSubscriptions: require('./national-subscription'),
