@@ -79,6 +79,7 @@ function userPermissionRouter() {
       await urps.updateAuthData(session, locals);
 
       if (!session.auth.token) {
+        session.returnTo = req.originalUrl;
         res.redirect('/_auth/logout');
         return;
       }
