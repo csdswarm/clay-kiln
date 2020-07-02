@@ -26,13 +26,67 @@
         <div v-if="selectedPodcast" class="podcast-preview">
             <img class="podcast-preview__image" :src="selectedPodcast.imageUrl" />
             <a class="podcast-preview__link" :href="selectedPodcast.url">{{ selectedPodcast.title }}</a>
+            <div v-if="showCategoryLabel" class="podcast-preview__category-label podcast-category-label">
+              <h4 class="podcast-category-label__label">Category label</h4>
+              <div class="podcast-category-label__value">{{ categoryLabelValue }}</div>
+
+              <ui-checkbox
+                v-model="shouldOverrideCategoryLabel"
+                class="podcast-category-label__should-override"
+                color="accent"
+                label="Override the default category label?"
+              />
+
+              <ui-textbox
+                v-if="shouldOverrideCategoryLabel"
+                class="podcast-category-label__custom-text"
+                floating-label
+                label="Custom category label"
+                :invalid="isCategoryLabelInvalid"
+                v-model="customCategoryLabel"
+                @keydown-enter="closeFormOnEnter"
+              />
+
+              <div v-if="shouldOverrideCategoryLabel && isCategoryLabelInvalid"
+                class="podcast-category-label__error-message"
+              >{{ CategoryLabelErrorMessage }}
+              </div>
+            </div>
+            <div v-if="showDescription" class="podcast-preview__description podcast-description">
+              <h4 class="podcast-description__label">Description</h4>
+              <div class="podcast-description__value">{{ descriptionValue }}</div>
+
+              <ui-checkbox
+                v-model="shouldOverrideDescription"
+                class="podcast-description__should-override"
+                color="accent"
+                label="Override the default description?"
+              />
+
+              <ui-textbox
+                v-if="shouldOverrideDescription"
+                class="podcast-description__custom-text"
+                floating-label
+                label="Custom description"
+                :invalid="isDescriptionInvalid"
+                v-model="customDescription"
+                @keydown-enter="closeFormOnEnter"
+              />
+
+              <div v-if="shouldOverrideDescription && isDescriptionInvalid"
+                class="podcast-description__error-message"
+              >{{ descriptionErrorMessage }}
+              </div>
+            </div>
         </div>
     </div>
 </template>
 <script>
+    const _get = require("lodash/get");
+    const radioApi = require('../../../client/radioApi');
     const utils = require('../../../../services/universal/podcast');
-    const UiSelect = window.kiln.utils.components.UiSelect;
-    const UiTextbox = window.kiln.utils.components.UiTextbox;
+    const { UiSelect, UiTextbox, UiCheckbox } = window.kiln.utils.components;
+
     export default {
         props: ['name', 'data', 'schema', 'args'],
         data() {
@@ -40,7 +94,9 @@
                 cachedResults: {},
                 filter: '',
                 selectedPodcast: this.data,
-                podcastOptions: null
+                podcastOptions: null,
+                showDescription: this.args.showDescription,
+                showCategoryLabel: this.args.showCategoryLabel
             };
         },
         mounted () {
@@ -50,6 +106,60 @@
             value() {
                 return this.selectedPodcast ?  this.selectedPodcast : { label: 'Select a podcast...'  }
             },
+            shouldOverrideDescription: {
+              get() {
+                return this.selectedPodcast.shouldOverrideDescription;
+              },
+              set(value) {
+                this.selectedPodcast.shouldOverrideDescription = value;
+              }
+            },
+            customDescription: {
+              get() {
+                return _get(this, "selectedPodcast.customDescription", '');
+              },
+              set(value) {
+                this.selectedPodcast.customDescription = value;
+              }
+            },
+            descriptionValue() {
+              return this.shouldOverrideDescription
+                ? this.customDescription
+                : this.selectedPodcast.description;
+            },
+            isDescriptionInvalid() {
+              return _get(this.customDescription, "length") < 3;
+            },
+            descriptionErrorMessage() {
+              return this.isDescriptionInvalid ? "A value is required" : "";
+            },
+            shouldOverrideCategoryLabel: {
+              get() {
+                return this.selectedPodcast.shouldOverrideCategoryLabel;
+              },
+              set(value) {
+                this.selectedPodcast.shouldOverrideCategoryLabel = value;
+              }
+            },
+            customCategoryLabel: {
+              get() {
+                return _get(this, "selectedPodcast.customCategoryLabel", '');
+              },
+              set(value) {
+                this.selectedPodcast.customCategoryLabel = value;
+              }
+            },
+            categoryLabelValue() {
+              return this.shouldOverrideCategoryLabel
+                ? this.customCategoryLabel
+                : this.selectedPodcast.category.name;
+            },
+            isCategoryLabelInvalid() {
+              return _get(this.customCategoryLabel, "length") < 3;
+            },
+            CategoryLabelErrorMessage() {
+              return this.isCategoryInvalid ? "A value is required" : "";
+            }
         },
         methods: {
             /**
@@ -69,18 +179,21 @@
                     ? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
                     : 'https://api.radio.com/v1/podcasts';
 
-                fetch(url)
-                    .then(response => {
-                        return response.json();
-                    })
+                radioApi.get(url)
                     .then(podcastResponse => {
-                        self.podcastOptions = podcastResponse.data.map((podcast) => {
+                        self.podcastOptions = podcastResponse.data.map(({attributes, id}) => {
                             return {
-                                label: podcast.attributes.title,
-                                title: podcast.attributes.title,
-                                url: utils.createUrl(podcast.attributes.title),
-                                imageUrl: utils.createImageUrl(podcast.attributes.image),
-                                description: podcast.attributes.description
+                                id,
+                                label: attributes.title,
+                                title: attributes.title,
+                                url: utils.createUrl(attributes.title),
+                                imageUrl: utils.createImageUrl(attributes.image),
+                                description: attributes.description,
+                                shouldOverrideDescription: attributes.shouldOverrideDescription || false,
+                                customDescription: attributes.customDescription || '',
+                                shouldOverrideCategoryLabel: attributes.shouldOverrideCategoryLabel || false,
+                                customCategoryLabel: attributes.customCategoryLabel || '',
+                                category: _get(attributes, 'category[0]')
                             }
                         });
                         self.cachedResults[self.filter] = self.podcastOptions
@@ -98,8 +211,9 @@
             },
         },
         components: {
+            UiTextbox,
             UiSelect,
-            UiTextbox
+            UiCheckbox
         }
     }
 </script>

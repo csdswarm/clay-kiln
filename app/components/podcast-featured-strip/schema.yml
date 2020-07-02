@@ -1,0 +1,59 @@
+_description: |
+  Featured podcast strip
+
+items:
+  _label: Featured podcasts
+  _placeholder:
+    height: 200px;
+    text: Featured podcast strip
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      min: 4
+      max: 4
+    props:
+    -
+      prop: podcast
+      _label: URL
+      _has:
+        input: podcast-select
+        showDescription: true
+        showCategoryLabel: true
+        validate:
+          required: true
+
+title:
+  _label: Component's title
+  _has:
+    input: text
+    validate:
+      required: true
+
+showTitle:
+  _label: Should the component's title be visible
+  _has:
+    input: checkbox
+
+overrideDescription:
+  _label: Should override the component's description
+  _has:
+    input: checkbox
+
+overrideCategoryLabel:
+  _label: Should override the component's category label
+  _has:
+    input: checkbox
+
+showBottomBorder:
+  _label: Should the component's bottom border be visible
+  _has:
+    input: checkbox
+
+_groups:
+  settings:
+    fields:
+      - title
+      - showTitle
+      - showBottomBorder
+      - items
