@@ -6,5 +6,5 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
-      - /_components/frequency-iframe-page/instances/default
+      - /_components/frequency-iframe/instances/default
     layout: /_layouts/one-column-layout/instances/frequency-iframe

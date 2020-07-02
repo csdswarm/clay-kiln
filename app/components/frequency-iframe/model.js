@@ -1,19 +1,19 @@
 'use strict';
 
 const { isMigrated } = require('../../services/universal/stations'),
-  { sendError } = require('../../services/universal/cmpt-error'),
   url = require('url');
 
 module.exports.render = async (ref, data, locals) => {
   const frequencyUrl = url.parse(locals.url),
-    [,stationSlug] = frequencyUrl.path.split('/');
-  
-  if (stationSlug) {
+    [,stationSlug] = frequencyUrl.path.split('/'),
+    filters = ['_pages', '_components'];
+    
+  if (stationSlug && !filters.includes(stationSlug)) {
     const isStationMigrated = await isMigrated(stationSlug, locals);
 
-    if (isStationMigrated) {
-      return data;
+    if (!isStationMigrated) {
+      throw new Error(`Station ${stationSlug}, has not been migrated yet`);
     }
-    return sendError(`Station ${stationSlug}, has not been migrated yet`, 404);
   }
+  return data;
 };
