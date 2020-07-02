@@ -12,6 +12,5 @@ _pages:
       - /_components/podcast-show-page/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
-      # @TODO ON-1398 ON-1378 Trending Podcasts
-      # - /_components/podcast-trending/instances/default
+      - /_components/podcast-trending/instances/default
     layout: /_layouts/two-column-layout/instances/podcast-show

@@ -3,8 +3,12 @@ _components:
     stationSlug: ''
     episodeList:
       _ref: /_components/podcast-episode-list/instances/default
+    podcastLead:
+          _ref: /_components/podcast-lead/instances/default
     instances:
       default:
         stationSlug: ''
         episodeList:
           _ref: /_components/podcast-episode-list/instances/default
+        podcastLead:
+          _ref: /_components/podcast-lead/instances/default

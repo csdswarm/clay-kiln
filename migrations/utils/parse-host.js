@@ -11,10 +11,11 @@ const HTTPS = { http: 'https' };
  */
 function getHostInfo(host) {
   const hostInfo = {
-    [DEFAULT_HOST]: { ...HTTP, es: { ...HTTP, hostname: DEFAULT_HOST } },
-    'dev-clay.radio.com': { ...HTTPS, es: { ...HTTP, hostname: 'dev-es.radio-dev.com' } },
-    'stg-clay.radio.com': { ...HTTPS, es: { ...HTTP, hostname: 'es.radio-stg.com' } },
-    'www.radio.com': { ...HTTPS, es: { ...HTTP, hostname: 'es.radio-prd.com' } },
+    [DEFAULT_HOST]: { ...HTTP, es: { ...HTTP, hostname: DEFAULT_HOST, port: 9200 } },
+    'dev-clay.radio.com': { ...HTTPS, es: { ...HTTP, hostname: 'dev-es.radio-dev.com', port: 9200 } },
+    'stg-clay.radio.com': { ...HTTPS, es: { ...HTTP, hostname: 'es.radio-stg.com', port: 9200 } },
+    'preprod-clay.radio.com': { ...HTTPS, es: { ...HTTPS, hostname: 'vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com', port: 443 } },
+    'www.radio.com': { ...HTTPS, es: { ...HTTPS, hostname: 'vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com', port: 443 } },
   };
   return hostInfo[host];
 }
@@ -24,7 +25,7 @@ function getHostInfo(host) {
  * @param {string} host
  * @returns {Object}
  */
-function parseHost(host) {
+function parseHost_v1(host) {
   let data, url, message = '';
 
   if (!host) {
@@ -44,6 +45,17 @@ function parseHost(host) {
   return { ...data, url, message };
 }
 
-const v1 = parseHost ;
+/**
+ * the same as parseHost_v1 but with a 'host' property
+ *
+ * @param {string} host,
+ * @returns {object}
+ */
+function parseHost_v2(host) {
+  return Object.assign({ host }, parseHost_v1(host));
+}
 
-module.exports = { v1 };
+module.exports = {
+  v1: parseHost_v1,
+  v2: parseHost_v2,
+};

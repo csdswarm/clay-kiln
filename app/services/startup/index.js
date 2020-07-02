@@ -23,11 +23,15 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
   addEndpoints = require('./add-endpoints'),
   addToLocals = require('./add-to-locals'),
-  addInterceptor = require('./add-interceptor');
+  addInterceptor = require('./add-interceptor'),
+  express = require('express'),
+  responseTime = require('response-time'),
+  SLOW_REQUEST_TIME = 2000;
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -43,6 +47,27 @@ function createSessionStore() {
   return redisStore;
 }
 
+/**
+ * Log response time for each HTTP Request using the response-time middleware.
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {integer} time
+ */
+const logRequestTime = (req, res, time) => {
+  const msg = `SLOW ${req.method} REQUEST`,
+    timeTaken = time.toFixed(3);
+
+  if (timeTaken > SLOW_REQUEST_TIME) {
+    log('error', msg, {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      timeTaken: `${timeTaken}ms`
+    });
+  }
+};
+
 function setupApp(app) {
   var sessionStore;
   // Enable GZIP
@@ -50,6 +75,8 @@ function setupApp(app) {
   if (process.env.ENABLE_GZIP) {
     app.use(compression());
   }
+
+  app.use(responseTime(logRequestTime));
 
   // set app settings
   app.set('trust proxy', 1);
@@ -76,6 +103,10 @@ function setupApp(app) {
     extended: true
   }));
 
+  // Set the static path here so all middleware gets skipped
+  // TODO: ON-1788: Reorder Middleware and shortcut for paths that do not need the logic
+  app.use(express.static('public'));
+
   app.use(cookieParser());
 
   apiStg.inject(app);
@@ -89,6 +120,9 @@ function setupApp(app) {
   app.use(locals);
 
   addToLocals.loadedIds(app);
+
+  addToLocals.podcast(app);
+  
   addInterceptor.loadedIds(app);
 
   app.use(currentStation);
@@ -96,8 +130,13 @@ function setupApp(app) {
   addInterceptor.cacheControl(app);
 
   addEndpoints.msnFeed(app);
+  addEndpoints.s3StationFeedImgUrl(app);
+  addEndpoints.contentWithSyndicatedUrl(app);
+  addEndpoints.contentAndPageInfo(app);
 
   radium.inject(app);
+
+  cognitoAuth.inject(app);
 
   app.use(canonicalJSON);
 

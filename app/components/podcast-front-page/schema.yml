@@ -8,7 +8,7 @@ hero:
     height: 540px
   _componentList:
     include:
-      # - podcast-hero-carousel @TODO undo comment when merging to envs with ON-1563
+      - podcast-hero-carousel
     validate:
       max: 1
 

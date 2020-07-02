@@ -5,3 +5,7 @@ episodeList:
   _component:
     include:
       - podcast-episode-list
+podcastLead:
+  _component:
+    include:
+      - podcast-lead

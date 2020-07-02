@@ -4,22 +4,29 @@
 @import '_global/spa';
 @import "_global/colors";
 @import "_global/alert-banner";
-@import '_global/layout';
+@import "_global/layouts";
 
 .layout--one-column {
   height: 100vh;
   .layout__page-header,
-  .layout__bottom {
+  .layout__bottom,
+  .layout__bottomAd {
     z-index: 2;
     position: relative
   }
-  .layout__content {
-    background: $white;
+  .layout__content,
+  .layout__bottomSection {
     z-index: 3;
     position: relative;
     .full-width {
       width: 100vw;
       margin-left: calc((100% - 100vw)/2);
     }
+  }
+  .layout__content {
+    background: $white;
+  }
+  .layout__content {
+    background: $white;
   }
 }

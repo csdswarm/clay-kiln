@@ -2,6 +2,28 @@
 @import "_global/colors";
 @import "_global/mixins";
 
+@define-mixin podcast-list-font1 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26px, 20px;
+}
+@define-mixin podcast-list-font2 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin podcast-list-font3 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin podcast-list-font4 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+@define-mixin podcast-list-font5 {
+  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
+}
+@define-mixin podcast-list-font6 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin podcast-list-font7 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
+}
+
 .component--podcast-list {
   max-width: em(widthOnGrid(12, 11));
   display: flex;

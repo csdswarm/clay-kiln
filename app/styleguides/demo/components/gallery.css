@@ -2,11 +2,11 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
-@import "_global/article-gallery";
+@import "_global/content-page";
 @import "_global/component-settings";
 
 /* This file should only include gallery-specific styles.
-   Any styling that is shared by articles should be included in the global article-gallery stylesheet. */
+   Any styling that is shared by other content page types should be included in the global content-page stylesheet. */
 
 .component--gallery {
   .content__bulk-image-upload {

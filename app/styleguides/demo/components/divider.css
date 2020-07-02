@@ -1,13 +1,83 @@
+@import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 
+
+@define-mixin titleColor $sectionFront, $color: $purple {
+  &.divider--$sectionFront {
+    .divider_title {
+      color: $color;
+      &:before {
+        border-top-color: $color
+      }
+    }
+  }
+}
+
 .divider {
-  border-bottom: 1px solid #000000;
-  width: 100%;
+  min-height: 25px;
+  margin-bottom: em(30);
+
+  .divider_title {
+    @mixin more-content-feed-font1;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: $parisM;
+    &:before {
+      border-top: em(1, 20) solid $parisM;
+      content: "";
+      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      z-index: -1;
+    }
+
+    > span {
+      background: $white;
+      padding: 0 em(15, 20);
+      display: inline-block;
+
+
+      @mixin medium-screen{
+        max-width: 300px;
+      }
+
+      &.hidden-wrapped {/* When editing, hide the current title, so the inline editor appears in the right spot  */
+        display: none;
+      }
+    }
+  }
+
+  @mixin titleColor music, $sunsetOrange;
+  @mixin titleColor news, $lightningYellow;
+  @mixin titleColor sports, $azureRadience;
+  @mixin titleColor podcasts, $robinsEggBlue;
+  @mixin titleColor station-front, theme(primaryColor, $parisM);
+
 }
 
 .two-column-component__column--2 {
   .divider {
-    border-bottom: 6px solid $parisPurple;
-    margin-bottom: em(30);
+    @mixin titleColor music, $sunsetOrange;
+    @mixin titleColor news, $lightningYellow;
+    @mixin titleColor sports, $azureRadience;
+    @mixin titleColor podcasts, $robinsEggBlue;
+    @mixin titleColor station-front, theme(primaryColor, $parisM);
+
+    .divider_title{
+      &:before{
+        border-top-width: em(6, 20)
+      }
+
+      span {
+        display: none;
+      }
+    }
   }
 }

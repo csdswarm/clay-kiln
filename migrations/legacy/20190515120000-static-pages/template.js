@@ -431,7 +431,7 @@ function writeOutFinalResult() {
 
 // Start here. names pretty much describe what's happening
 addNewStaticPageTemplate()
-// .then(addNewContestRulesPage) // Per Priscilla, no longer handling contest-rules in this issue - CSD
+  // .then(addNewContestRulesPage) // Per Priscilla, no longer handling contest-rules in this issue - CSD
   .then(addNewLegalPage)
   .then(updateSubscriptionPage)
   .then(writeOutFinalResult)
