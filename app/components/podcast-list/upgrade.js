@@ -1,6 +1,5 @@
 'use strict';
-const _get = require('lodash/get'),
-  podcastUtils = require('../../services/universal/podcast'),
+const podcastUtils = require('../../services/universal/podcast'),
   radioApiService = require('../../services/server/radioApi'),
   stationUtils = require('../../services/server/station-utils');
 
