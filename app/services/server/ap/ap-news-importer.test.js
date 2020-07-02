@@ -23,6 +23,15 @@ describe('server', () => {
       async function setup_importArticle(options = {}) {
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
+          DEFAULT_ARTICLE_DATA = {
+            slug: '',
+            sectionFront: '',
+            secondarySectionFront: '',
+            stationSyndication: []
+          },
+          NEW_PAGE_DATA = {
+            main: [{ ...DEFAULT_ARTICLE_DATA }]
+          },
           DEFAULT_AP_META = {
             signals: ['newscontent'],
             pubstatus: 'usable',
@@ -41,24 +50,33 @@ describe('server', () => {
           stationMappings = options.stationMappings || {},
           createPageStub = sinon.stub(),
           dbGetStub = sinon.stub(),
+          bySlugStub = sinon.stub(),
           logStub = sinon.stub(),
           searchByQueryStub = sinon.stub();
 
+        createPageStub.resolves({ ...NEW_PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
+
         dbGetStub.resolves({});
+        dbGetStub
+          .withArgs('_pages/new-two-col')
+          .resolves(NEW_PAGE_DATA);
+
+        bySlugStub.resolves(options.stationsBySlug || {});
 
         searchByQueryStub.resolves([]);
         searchByQueryStub
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
-          .resolves([{ _id: EXISTING_ARTICLE_ID, ap: { itemid: 'some-existing-id' } }]);
+          .resolves([{ _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'some-existing-id' } }]);
         searchByQueryStub
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'abcdefg'))
-          .resolves([{ _id: EXISTING_ARTICLE_ID, ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' } }]);
+          .resolves([{ _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' } }]);
         searchByQueryStub
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
 
         __.createPage = createPageStub;
         __.dbGet = dbGetStub;
+        __.getAllStations = { bySlug: bySlugStub };
         __.log = logStub;
         __.searchByQuery = searchByQueryStub;
 
@@ -124,8 +142,12 @@ describe('server', () => {
             locals,
             stationMappings
           } = await setup_importArticle({
+            stationsBySlug: {
+              'test-station': {},
+              'second-station': {}
+            },
             stationMappings: {
-              'test-staton': {},
+              'test-station': {},
               'second-station': {}
             },
             apMeta: {
@@ -155,6 +177,31 @@ describe('server', () => {
 
         expect(result).to.have.property('isModifiedByAP');
         expect(result.isModifiedByAP).to.eql(true);
+      });
+
+      it('gets any new stations to map to', async () => {
+        const { result } = await setup_importArticle({
+          stationsBySlug: {
+            stationA: {
+              callsign: 'STA',
+              name: 'Station A'
+            }
+          },
+          apMeta: {
+            altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+          },
+          stationMappings: {
+            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' }
+          }
+        });
+
+        expect(result).to.have.property('newStations').that.eqls([{
+          callsign: 'STA',
+          sectionFront: 'music',
+          secondarySectionFront: 'urban',
+          stationName: 'Station A',
+          stationSlug: 'stationA'
+        }]);
       });
     });
   });

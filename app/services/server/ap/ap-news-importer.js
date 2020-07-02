@@ -5,6 +5,7 @@ const
   logger = require('../../universal/log'),
   { createPage } = require('../page-utils'),
   { get: dbGet } = require('../db'),
+  { getAllStations } = require('../station-utils'),
   { searchByQuery } = require('../query'),
 
   log = logger.setup({ file: __filename }),
@@ -21,6 +22,7 @@ const
   __ = {
     createPage,
     dbGet,
+    getAllStations,
     log,
     searchByQuery
   };
@@ -63,7 +65,36 @@ async function findExistingArticle({ itemid } = {}) {
  * @returns {Promise<Object>}
  */
 async function createNewArticle(stationMappings, locals) {
-  return __.createPage(await __.dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+  const newPage = await __.createPage(await __.dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+
+  return _get(newPage, 'main.0');
+}
+
+async function getNewStations(article, stationMappings, locals) {
+  const
+    { getAllStations } = __,
+    {
+      sectionFront,
+      stationSlug,
+      stationSyndication
+    } = article,
+    syndicated = stationSyndication.map(({ stationSlug }) => stationSlug),
+    stationEntries = Object.entries(stationMappings),
+    stationsBySlug = await getAllStations.bySlug({ locals }),
+    newStations = sectionFront
+      ? stationEntries.filter(([key]) => key !== stationSlug && !syndicated.includes(key))
+      : stationEntries;
+
+  return newStations.map(([stationSlug, data]) => {
+    const { callsign, name } = stationsBySlug[stationSlug];
+
+    return {
+      ...data,
+      callsign,
+      stationName: name,
+      stationSlug
+    };
+  });
 }
 
 /**
@@ -77,13 +108,15 @@ async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
     preExistingArticle = await findExistingArticle(apMeta.altids),
     article = preExistingArticle || await createNewArticle(stationMappings, locals),
-    isModifiedByAP = apMeta.altids.etag !== _get(article, 'ap.etag');
+    isModifiedByAP = apMeta.altids.etag !== _get(article, 'ap.etag'),
+    newStations = await getNewStations(article, stationMappings);
 
   return {
     article,
-    preExistingArticle,
     isApContentPublishable,
-    isModifiedByAP
+    isModifiedByAP,
+    newStations,
+    preExistingArticle
   };
 }
 
