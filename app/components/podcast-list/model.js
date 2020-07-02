@@ -2,6 +2,7 @@
 
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  getStations = require('../../services/universal/getStations'),
   utils = require('../../services/universal/podcast'),
   logger = require('../../services/universal/log'),
   log = logger.setup({ file: __filename }),
@@ -40,9 +41,11 @@ module.exports.render = async function (ref, data, locals) {
 
   if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     data.items.forEach(item => {
-      if (item.podcast) {
-        item.podcast.imageUrl = item.podcast.imageUrl
-          ? utils.createImageUrl(item.podcast.imageUrl)
+      const podcast = _get(item, 'podcast');
+
+      if (podcast) {
+        podcast.imageUrl = podcast.imageUrl
+          ? utils.createImageUrl(podcast.imageUrl)
           : '';
       }
     });
@@ -68,8 +71,13 @@ module.exports.render = async function (ref, data, locals) {
 
       const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
         numItemsToBackFill = maxItems - curatedCount,
+        itemsToGetStationData = podcasts.slice(0,maxItems),
+        stationIds = itemsToGetStationData.map((podcast)=>{
+          return _get(podcast, 'attributes.station[0].id');
+        }).filter((id) => !!id),
+        { data: stationsById } = await getStations.getStationsById(stationIds),
         uniqueUrls = (podcast) => {
-          const url = utils.createUrl(podcast.attributes.title);
+          const url = utils.createUrl(podcast, stationsById);
 
           return !containsUrl(data.items, url);
         },
@@ -77,7 +85,7 @@ module.exports.render = async function (ref, data, locals) {
           .filter(uniqueUrls)
           .slice(0, numItemsToBackFill)
           .map((podcast) => {
-            const url = utils.createUrl(podcast.attributes.title);
+            const url = utils.createUrl(podcast,stationsById);
 
             return {
               podcast: {

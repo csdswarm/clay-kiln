@@ -17,3 +17,20 @@ module.exports['2.0'] = function (uri, data) {
 
   return data;
 };
+
+
+module.exports['3.0'] = async (uri, data, locals) => {
+  const { items } = data,
+    allStationData = await stationUtils.getAllStations.byId({ locals });
+
+  await Promise.all(items.map(async (item) => {
+    const { title } = item.podcast,
+      params = {
+        q: title
+      },
+      { data: [podcast] } = await radioApiService.get('podcasts', params, null, {}, locals);
+
+    item.podcast.url = podcastUtils.createUrl(podcast, allStationData);
+  }));
+  return data;
+};
