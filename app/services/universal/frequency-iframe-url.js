@@ -5,9 +5,10 @@ const url = require('url'),
  *
  * @param  {String} pathname shows/show-schedule
  * @param  {String} callsign winsam
- * @return {String} Url https://winsam.prd-radio-drupal.com/shows/show-schedule
+ * @return {String} Url https://winsam.prd-radio-drupal.com/shows/show-schedule?theme=radiocom
  */
   sanitizeUrl = (pathname, callsign) => {
+    const queryString = '?theme=radiocom';
     let host;
     
     switch (process.env.NODE_ENV) {
@@ -24,14 +25,14 @@ const url = require('url'),
     
     const [,,...rest] = pathname.split('/');
 
-    return `https://${callsign}.${host}/${rest}`.replace(/,/gi,'/');
+    return `https://${callsign}.${host}/${rest}${queryString}`.replace(/,/gi,'/');
   };
 
 /**
  * Determines frequency url from the Unity URL
  * i.e. https://radio.com/1010wins/shows/show-schedule
  * and return the proper frequency url
- * i.e. https://winsam.prd-radio-drupal.com/shows/show-schedule
+ * i.e. https://winsam.prd-radio-drupal.com/shows/show-schedule?theme=radiocom
  *
  * @param  {String} urlString
  * @param  {String} callsign
