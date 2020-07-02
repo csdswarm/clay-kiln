@@ -1,82 +1,126 @@
-{{#*inline "shareSubscribe"}}
-  {{#if shares }}
-    <div class="podcast-lead__share">
-      <div class="podcast-lead__share-title">Share</div>
-      <div class="podcast-lead__share-content">
-        {{> shareIcons shares }}
-      </div>
-    </div>
-  {{/if}}
-  {{#if subscriptions }}
-    <div class="podcast-lead__subscribe">
-      <div class="podcast-lead__subscribe-title">Subscribe</div>
-      <div class="podcast-lead__subscribe-content">
-        {{#if subscriptions.apple}}
-          <a class="podcast-lead__subscribe-link-apple" href="{{ subscriptions.apple }}">
-            {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
-          </a>
-        {{/if}}
-        {{#if subscriptions.google}}
-          <a class="podcast-lead__subscribe-link-google" href="{{ subscriptions.google }}">
-            {{{ read 'components/podcast-lead/media/google_podcasts_badge_svg.svg' }}}
-          </a>
-        {{/if}}
-        {{#if subscriptions.rss}}
-          <a class="podcast-lead__subscribe-link-rss" href="{{ subscriptions.rss }}">
-            {{{ read 'components/podcast-lead/media/RSS.svg' }}}
-          </a>
-        {{/if}}
-      </div>
-    </div>
-  {{/if}}
-{{/inline}}
-
-{{#*inline "shareIcons"}}
-  {{#each this as |socialMedia|}}
-    <a class="podcast-lead__share-icon podcast-lead__share-icon--{{ socialMedia.name }}" href="{{ socialMedia.link }}">
-      {{{ read (concat 'components/podcast-lead/media/' socialMedia.name  '.svg') }}}
-    </a>
-  {{/each}}
-{{/inline}}
-
-{{#*inline "titleDescription"}}
-  <h1 class="podcast-lead__title">{{ title }}</h1>
-  {{#if description}}
-    <p class="podcast-lead__description">{{ description }}</p>
-  {{/if}}
-{{/inline}}
-
-{{#*inline "category"}}
-  {{#if category}}
-    <p class="podcast-lead__category">Category: <span class="podcast-lead__category-name">{{ category.0.name }}</span></p>
-  {{/if}}
-{{/inline}}
-
 {{#*inline "podcastImage"}}
-  {{#if image }}
-    <img class="podcast-lead__image" src="{{ image }}" alt="{{ title }}">
-  {{else}}
-    <img class="podcast-lead__image" src="{{ defaultImg }}?crop=1:1,offset-y0" alt="{{ title }}">
-  {{/if}}
+{{#if imageURL }}
+<img class="podcast-lead__image" src="{{ imageURL }}" alt="{{ title }}">
+{{else}}
+<img class="podcast-lead__image" src="{{ defaultImg }}?crop=1:1,offset-y0" alt="{{ title }}">
+{{/if}}
 {{/inline}}
 
-<div class="component component--podcast-lead podcast-lead" data-uri="{{ default _ref _self }}">
-  <div class="podcast-lead__info-container-outside-top">
-    {{> titleDescription _computed.podcast.attributes }}
-  </div>
-  <div class="podcast-lead__image-container">
-    {{> podcastImage _computed.podcast.attributes defaultImg=_computed.DEFAULT_RADIOCOM_LOGO }}
-  </div>
-  <div class="podcast-lead__info-container">
-    <div class="podcast-lead__info-container-top">
-      {{> titleDescription _computed.podcast.attributes }}
-      {{> category _computed.podcast.attributes}}
+{{#*inline "socialSubscribe"}}
+<div class="podcast-lead__social{{#if isMedium}}--md{{/if}}">
+  {{#ifAny shares.facebook shares.twitter shares.email}}
+  <div class="podcast-lead__share">
+    <div class="podcast-lead__share-label">Share</div>
+    <div class="podcast-lead__share-actions">
+      {{#if shares.facebook}}
+      <a class="podcast-lead__subscribe-link" href={{shares.facebook.link}}>
+        {{{ read 'components/share/media/facebook.svg' }}}
+      </a>
+      {{/if}}
+      {{#if shares.twitter}}
+      <a class="podcast-lead__subscribe-link" href={{shares.twitter.link}}>
+        {{{ read 'components/share/media/twitter.svg' }}}
+      </a>
+      {{/if}}
+      {{#if shares.email}}
+      <a class="podcast-lead__subscribe-link" href={{shares.email.link}}>
+        {{{ read 'components/share/media/email.svg' }}}
+      </a>
+      {{/if}}
     </div>
-    <div class="podcast-lead__info-container-bottom">
-      {{> shareSubscribe _computed }}
+  </div>
+  {{/ifAny}}
+  {{#ifAny subscriptions.apple subscriptions.rss}}
+  <div class="podcast-lead__subscribe">
+    <div class="podcast-lead__share-label">Subscribe</div>
+    <div class="podcast-lead__share-action podcast-lead__share-actions--subscriptions">
+      {{#if subscriptions.apple}}
+      <a class="podcast-lead__subscribe-link" href={{subscriptions.apple}}>
+        {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
+      </a>
+      {{/if}}
+      {{#if subscriptions.rss}}
+      <a class="podcast-lead__subscribe-link" href={{subscriptions.rss}}>
+        {{{ read 'components/podcast-lead/media/RSS.svg' }}}
+      </a>
+      {{/if}}
     </div>
   </div>
-  <div class="podcast-lead__info-container-outside-bottom">
-    {{> shareSubscribe _computed }}
-  </div>
+  {{/ifAny}}
 </div>
+{{/inline}}
+
+<section class="component podcast-lead component--podcast-lead podcast-lead--{{ sectionFront }}"
+  data-uri="{{ default _ref _self }}" data-track-type="podcast-lead">
+  <div class="podcast-lead__head--sm">
+    <div class="podcast-lead__heading--sm">
+      {{ _computed.title }}
+    </div>
+    {{#unless _computed.episode}}
+    <p class="podcast-lead__station-description--sm">{{ _computed.description }}</p>
+    {{/unless}}
+    {{#if _computed.episode}}
+    <div class="podcast-lead__subheading--sm">
+      <span>{{_computed.published_date_formatted}}</span>
+      <span class="podcast-lead__meta-icon">
+        {{{ read 'components/podcast-lead/media/ic_time.svg' }}}
+      </span>
+      <span>{{_computed.duration_seconds_formatted}}</span>
+      {{#if _computed.episode.audio_url}}
+      <a target="_blank" href={{_computed.episode.audio_url}}>Download</a>
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+  <div class="podcast-lead__main  {{#if _computed.episode}}podcast-lead__main--episode{{/if}}">
+    <div class="podcast-lead__image-podcast">
+      {{> podcastImage _computed defaultImg=_computed.DEFAULT_RADIOCOM_LOGO}}
+      <div data-play-episode="{{_computed.episode.id}}" data-play-podcast="{{_computed.podcast.id}}" class="image__play-btn {{_computed.episode.playingClass}}"></div>
+    </div>
+    <div class="podcast-lead__main main__content">
+      <div class="podcast-lead__heading">
+        {{ _computed.title }}
+      </div>
+      {{#unless _computed.episode}}
+      <p class="podcast-lead__station-description">{{ _computed.description }}</p>
+      {{/unless}}
+      {{#if _computed.episode}}
+      <div class="podcast-lead__subheading">
+        {{#if _computed.published_date_formatted}}
+        <span>{{_computed.published_date_formatted}}</span>
+        <span class="podcast-lead__meta-icon">
+          {{{ read 'components/podcast-lead/media/ic_time.svg' }}}
+        </span>
+        {{/if}}
+
+        {{#if _computed.duration_seconds_formatted}}
+        <span>{{_computed.duration_seconds_formatted}}</span>
+        {{/if}}
+
+        {{#if _computed.episode.audio_url}}
+        <a target="_blank" href={{_computed.episode.audio_url}}>Download</a>
+        {{/if}}
+      </div>
+      {{/if}}
+      {{#if _computed.episodeListURL}}
+      <a class="podcast-lead__see-all" target="_blank" href={{_computed.episodeListURL}}>
+        See all episodes <span>{{{ read 'components/podcast-lead/media/caret-right.svg' }}}</span>
+      </a>
+      {{/if}}
+      {{#if _computed.category}}
+      <div class="podcast-lead__category">CATEGORY: {{_computed.category}}</div>
+      {{/if}}
+      {{#ifAny _computed.shares _computed.subscriptions}}
+      {{> socialSubscribe _computed}}
+      {{/ifAny}}
+    </div>
+  </div>
+  {{#ifAny _computed.shares _computed.subscriptions}}
+  {{> socialSubscribe _computed isMedium=true}}
+  {{/ifAny}}
+  {{#if _computed.episode}}
+  <div class="podcast-lead__station-description--episode">
+    {{_computed.description}}
+  </div>
+  {{/if}}
+</section>

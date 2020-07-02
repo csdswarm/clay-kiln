@@ -29,6 +29,11 @@ module.exports = unityComponent({
       return data;
     }
 
+    const podcast = await getPodcastShow(locals);
+
+    // Setting data to be referenced on podcast lead
+    locals.podcast = _get(podcast, 'data[0]');
+
     data.stationSlug = _get(locals, 'params.stationSlug');
     await addBreadcrumbs(data, locals);
     data._computed.podcastSiteSlug = locals.params.dynamicSlug;

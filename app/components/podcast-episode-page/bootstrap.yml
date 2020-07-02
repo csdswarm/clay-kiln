@@ -1,7 +1,8 @@
 _components:
   podcast-episode-page:
-    allowed: true
+    podcastEpisodeLead:
+      _ref: /_components/podcast-lead/instances/default
     instances:
       default:
-        allowed: true
-
+        podcastEpisodeLead:
+          _ref: /_components/podcast-lead/instances/default

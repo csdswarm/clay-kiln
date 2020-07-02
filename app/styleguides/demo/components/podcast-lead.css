@@ -1,177 +1,288 @@
-@import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/mixins";
 
-$shareSubscribeSize: em(32);
-$shareSubscribeSizeHalf: em(16);
+@define-mixin podcast-lead-subheading-font {
+  @mixin font CircularStd-Medium, 12px, $boulder, -.58px, 18px;
+}
 
-/* will remove on integration */
-body > .podcast-lead {
-  padding: 1em;
+@define-mixin podcast-lead-heading-font {
+  @mixin font CircularStd-Black, 35px, $22gray, -.58px, 42px;
+}
+
+@define-mixin podcast-lead-heading-sm-font {
+  @mixin font CircularStd-Black, 24px, $black, -.58px, 29px;
+}
+
+@define-mixin podcast-lead-heading-link-font {
+  @mixin font CircularStd-Medium, 12px, $parisM, -.58px, 18px;
+}
+
+@define-mixin podcast-lead-see-all-font {
+  @mixin font CircularStd-Black, 15px, $robinsEgg, -.24px, 18.98px;
+}
+
+@define-mixin podcast-lead-station-description-font {
+  @mixin font ProximaNova-Light, 18px, $black, -.24px, 25px;
+}
+
+@define-mixin podcast-lead-category-font {
+  @mixin font CircularStd-Medium, 11px, $boulder, -.24px, 14px;
+}
+
+@define-mixin podcast-lead-share-label-font {
+  @mixin font CircularStd-Medium, 11px, $boulder, -.24px, 14px;
 }
 
 .podcast-lead {
-  display: flex;
-  flex-wrap: wrap;
   margin-bottom: em(20);
-  &__image-container {
-    margin-right: em(20);
+
+  &__head--sm {
+    display: none;
+    flex-direction: column;
+    margin-bottom: em(13);
+  }
+
+  &__image {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: $white;
+    border: em(1) solid $mercury;
+
     @mixin default-screen {
       flex: 0 0 widthOnGrid(4, 3);
+      max-width: widthOnGrid(4, 3);
     }
+
     @mixin large-screen {
       flex: 0 0 widthOnGrid(3, 2);
+      max-width: widthOnGrid(3, 2);
     }
+
     @mixin medium-screen {
       flex: 0 0 widthOnGrid(2, 1, medium-screen);
+      max-width: widthOnGrid(2, 1, medium-screen);
     }
+
     @mixin medium-small-screen {
       flex: 0 0 widthOnGrid(2, 1, medium-small-screen);
+      max-width: widthOnGrid(2, 1, medium-small-screen);
     }
+
     @mixin small-screen {
       flex: 0 0 widthOnGrid(2, 1, small-screen);
+      max-width: widthOnGrid(2, 1, small-screen);
     }
+
   }
-  &__image {
-    width: 100%;
-  }
-  &__info-container {
+  
+  &__main {
     display: flex;
-    flex-direction: column;
-    @mixin default-screen {
-      flex: 0 0 widthOnGrid(6, 5);
-      justify-content: space-between;
-    }
-    @mixin large-screen {
-      flex: 0 0 widthOnGrid(5, 4);
-    }
-    @mixin medium-screen {
-      flex: 0 0 calc(100% - em(widthOnGrid(2, 2, medium-screen)));
-    }
-    @mixin medium-small-screen {
-      flex: 0 0 widthOnGrid(2, 1, medium-small-screen);
-    }
-    @mixin small-screen {
-      flex: 0 0 widthOnGrid(2, 1, small-screen);
-    }
-  }
-  &__info-container-top {
-    .podcast-lead__title, .podcast-lead__description {
-      @mixin medium-small-screen {
-        display: none;
+
+    .podcast-lead__image-podcast {
+      position: relative;
+
+      .image__play-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: 0 em(10) em(10) 0;
+        width: em(48);
+        height: em(48);
+        &.show__play {
+          @mixin show__play
+        }
+        &.show__pause {
+          @mixin show__pause
+        }
+        &.show__stop {
+          @mixin show__stop
+        }
+        &:hover {
+          opacity: 0.7;
+        }
       }
     }
-  }
-  &__title {
-    @mixin podcast-lead-font1;
-    margin-bottom: em(20, 35);
-    @mixin medium-small-screen {
-      @mixin podcast-lead-font5;
-    }
-  }
-  &__description {
-    @mixin podcast-lead-font2;
-    margin-bottom: em(20, 18);
-  }
-  &__category {
-    @mixin podcast-lead-font3;
-    text-transform: uppercase;
-  }
-  &__category-name {
-    text-transform: none;
-  }
-  &__info-container-bottom {
-    display: none;
-    @mixin default-screen {
+    
+
+    .main__content {
       display: flex;
+      margin-left: em(20);
+      flex-wrap: wrap;
+      align-content: baseline;
+      position: relative;
+      @mixin medium-small-screen {
+        margin-left: em(10);
+      }
     }
+  }
+  
+  &__heading, &__heading--sm {
+    @mixin podcast-lead-heading-font;
+    flex-basis: 100%;
     @mixin medium-small-screen {
-      display: flex;
+      @mixin podcast-lead-heading-sm-font;
     }
-    .podcast-lead__share {
-      @mixin medium-small-screen {
-        display: flex;
+  }
+  
+  &__subheading, &__subheading--sm {
+    @mixin podcast-lead-subheading-font;
+    text-align: left;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: em(20,12);
+    
+    span {
+      margin-right: em(12,12);
+      &.podcast-lead__meta-icon {
+        margin: 0;
+        margin-right: .5em;
       }
     }
-    .podcast-lead__subscribe {
-      @mixin medium-small-screen {
-        display: none;
-      }
+
+    a {
+      @mixin podcast-lead-heading-link-font;
+      width: em(76,12);
+      text-align: left;
     }
   }
-  &__share {
-    display: flex;
-    flex-direction: column;
-    margin-right: em(20);
-  }
-  &__share-title {
-    @mixin podcast-lead-font4;
-    margin-bottom: em(10, 11);
-  }
-  &__share-content {
-    display: flex;
-    align-items: center;
-    border: 1px solid $alto;
-  }
-  &__share-icon {
-    width: $shareSubscribeSize;
-    height: $shareSubscribeSize;
-    border-left: 1px solid $alto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  
+  &__see-all {
+    @mixin podcast-lead-see-all-font;
+    text-align: left;
+    flex-basis: 100%;
+    max-height: em(19,15);
+    text-decoration: none;
+    margin-bottom: em(20,18);
     svg {
-      width: $shareSubscribeSizeHalf;
-      height: $shareSubscribeSizeHalf;
+      height: 50%;
     }
-    &:first-child {
-      border-left: none;
+  }
+  
+  &__station-description, &__station-description--episode, &__station-description--sm {
+    @mixin podcast-lead-station-description-font;
+    max-width: em(780,18);
+    text-align: left;
+    flex-basis: 100%;
+    @mixin nav-mobile-breakpoint {
+      display: none;
+    }
+    &--episode {
+      display: flex;
+      margin-top: em(15,18);
+    }
+    &--sm {
+      margin-bottom: em(13,18);
+    }
+  }
+  
+  &__category {
+    @mixin podcast-lead-category-font;
+    max-width: em(238,11);
+    text-align: left;
+    flex-basis: 100%;
+  }
+  
+  &__social, &__social--md {
+    display: flex;
+    flex-basis: 100%;
+    margin-top: em(20);
+
+    @mixin default-screen {
+      position: absolute;
+      bottom: 0;
+    }
+
+    @mixin large-screen {
+      display: none;
+    }
+
+    @mixin medium-screen {
+      display: none;
+    }
+
+    @mixin medium-small-screen {
+      display: flex;
+      position: relative;
+    }
+
+    @mixin small-screen {
+      display: flex;
+      position: relative;
+    }
+
+    &--md {
+      @mixin default-screen {
+        display: none;
+      }
+  
+      @mixin large-screen {
+        display: flex;
+        position: relative;
+      }
+  
+      @mixin medium-screen {
+        display: flex;
+        position: relative;
+      }
+  
+      @mixin medium-small-screen {
+        display: none;
+      }
+  
+      @mixin small-screen {
+        display: none;
+      }
+    }
+  }
+  
+  &__share-label {
+    @mixin podcast-lead-share-label-font;
+    width: em(71,11);
+    text-align: left;
+    margin-bottom: em(11, 11);
+  }
+  
+  &__share-actions {
+    display: flex;
+    margin-right: em(20);
+    &--subscriptions {
+      .podcast-lead__subscribe-link {
+        width: auto;
+        svg {
+          height: 100%;
+          width: auto;
+        }
+      }
     }
   }
 
   &__subscribe {
-    display: flex;
-    flex-direction: column;
-  }
-  &__subscribe-title {
-    @mixin podcast-lead-font4;
-    margin-bottom: em(10, 11);
-  }
-  &__subscribe-content {
-    display: flex;
-    align-items: center;
-    svg {
-      height: $shareSubscribeSize;
-      margin-right: em(4);
-    }
-  }
-  &__info-container-outside-top {
-    display: none;
-    @mixin medium-small-screen {
-      display: block;
-      flex: 0 0 100%;
-    }
-  }
-  &__info-container-outside-bottom {
-    flex: 0 0 100%;
-    display: flex;
-    margin-top: em(20);
-    @mixin default-screen {
-      display: none;
-    }
-    .podcast-lead__share {
-      @mixin medium-small-screen {
-        display: none;
+    &-link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: em(1) solid $alto;
+      height: em(32);
+      width: em(32);
+      svg {
+        height: em(16);
+        width: em(16);
       }
     }
   }
-  &__subscribe-link-apple {
-    flex-basis: 132px;
+  
+  @mixin medium-small-screen {
+    &__head, &__station-description {
+      &--sm {
+        display: flex;
+      }
+    }
+    &__heading, &__subheading {
+      display: none;
+    } 
   }
-  &__subscribe-link-google {
-    flex-basis: 128px;
-  }
-  &__subscribe-link-rss {
-    flex-basis: 32px;
-  }
+
 }
+
