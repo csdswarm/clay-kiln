@@ -32,12 +32,9 @@ module.exports['3.0'] = async (uri, data, locals) => {
       params = {
         q: title
       },
-      { data: [podcast] } = await radioApiService.get('podcasts', params, null, {}, locals),
-      podcastSlug = _get(podcast, 'attributes.site_slug'),
-      stationId = _get(podcast, 'attributes.station[0].id', null),
-      stationSlug = _get(allStationData, [stationId, 'site_slug'], null);
+      { data: [podcast] } = await radioApiService.get('podcasts', params, null, {}, locals);
 
-    item.podcast.url = podcastUtils.createUrl(podcastSlug, stationSlug);
+    item.podcast.url = podcastUtils.createUrl(podcast, allStationData);
   }));
   return data;
 };

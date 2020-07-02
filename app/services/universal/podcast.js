@@ -1,28 +1,30 @@
 'use strict';
 
-const urlParse = require('url-parse'),
+const _get = require('lodash/get'),
+  urlParse = require('url-parse'),
   querystring = require('query-string');
+
+
+const getStationSlugById = (id, allStationsById) => {
+  return _get(allStationsById, [id, 'site_slug']);
+};
 
 /**
  * returns a url for a podcast based on the site_slug
- * @param {string} podcast_slug The podcast's site_slug
- * @param {string} [station_slug] The site_slug of the station the podcast belongs to
+ * @param {string} podcast The podcast data (typically from Radio.com API)
+ * @param {object} allStationsById An object of multiple stations data, where the key is a station's ID, and the value is that station's data - this is so that the createUrl function can remain a pure function
  * @returns {string}
  */
-module.exports.createUrl = (podcast_slug,station_slug) => {
-  let url = '/';
+module.exports.createUrl = (podcast,allStationsById) => {
+  const podcast_slug = _get(podcast,'attributes.site_slug'),
+    stationId = _get(podcast,'attributes.station[0].id'),
+    station_slug = getStationSlugById(stationId,allStationsById);
 
-  if (station_slug) {
-    url += station_slug + '/';
-  }
-
-  url += 'podcast/';
-
-  if (podcast_slug) {
-    url += podcast_slug + '/';
-  }
-
-  return url;
+  return '/' + [
+    station_slug,
+    'podcast',
+    podcast_slug
+  ].filter(segment => segment).join('/');
 };
 
 /**

@@ -30,16 +30,11 @@
     </div>
 </template>
 <script>
-	const stationUtils = require('../../../../services/client/station-utils');
+	const getStations = require('../../../../services/universal/getStations');
 	const utils = require('../../../../services/universal/podcast');
 	const UiSelect = window.kiln.utils.components.UiSelect;
 	const UiTextbox = window.kiln.utils.components.UiTextbox;
-	const _get = require('lodash/get'),
-      _memoize = require('lodash/memoize');
-    const getStationDataById = _memoize(async (id) => {
-        const [stationData] = await stationUtils.getStationsById([id]);
-        return stationData
-    });
+	const _get = require('lodash/get');
 
 	export default {
 		props: ['name', 'data', 'schema', 'args'],
@@ -82,16 +77,17 @@
 						return response.json();
 					})
 					.then(async podcastResponse => {
-						self.podcastOptions = await Promise.all(podcastResponse.data.map(async (podcast) => {
-							const podcastSlug = _get(podcast, 'attributes.site_slug'),
-							stationId = _get(podcast, 'attributes.station[0].id', null),
-                            station = await (stationId && getStationDataById(stationId)),
-                            stationSlug = _get(station,'site_slug');
 
+                        const stationIds = podcastResponse.data.map((podcast) => {
+                                return _get(podcast, 'attributes.station[0].id');
+                            }).filter((id) => id),
+                            { data: stationsById } = await getStations.getStationsById(stationIds);
+
+						self.podcastOptions = await Promise.all(podcastResponse.data.map(async (podcast) => {
 							return {
 								label: podcast.attributes.title,
 								title: podcast.attributes.title,
-								url: utils.createUrl(podcastSlug,stationSlug),
+								url: utils.createUrl(podcast,stationsById),
 								imageUrl: utils.createImageUrl(podcast.attributes.image),
 								description: podcast.attributes.description
 							}
