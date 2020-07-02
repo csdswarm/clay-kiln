@@ -168,28 +168,30 @@ module.exports = {
         .map(useDisplayName(data, lists)),
       breadcrumbProps = props;
 
-    if (locals.station.site_slug && locals.station.name) {
+    const { station = {} } = locals;
+
+    if (station.site_slug && station.name) {
       breadcrumbProps = [
-        { slug: locals.station.site_slug, text: locals.station.name },
+        { slug: station.site_slug, text: station.name },
         ...props
       ];
       breadcrumbItems = breadcrumbProps
         .filter(prop => existingProp(prop, data))
         .map(useDisplayName(data, lists));
 
-      // ON-2103: Validates when content was imported directly into a station and then syndicated to another
-      // the data.StationSlug contains the imported stationSlug and should not consider to use its primary section front and secondary section front
-      if (data.stationSlug !== locals.station.site_slug) {
+      // When content is imported/created directly in a station and then syndicated to another without setting the section fronts
+      // the primary and secondary sections front should be removing from the breadcrumbs to avoid using the original ones.
+      if (data.stationSlug !== station.site_slug) {
         breadcrumbItems.splice(1);
       }
     }
 
-    if (locals.station.site_slug && data.stationSyndication) {
+    if (station.site_slug && data.stationSyndication) {
       const syndication = data.stationSyndication.find(
-        station => station.callsign === locals.station.callsign
+        item => item.callsign === station.callsign
       );
 
-      // ON-2026: SectionFront must be taken into account since is been used to complete the breadcrumbs
+      // SectionFront must be taken into account since is been used to complete the breadcrumbs
       // when a content is imported only the callsign is been set in the process.
       if (syndication && syndication.sectionFront) {
         breadcrumbProps = [
