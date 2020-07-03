@@ -78,17 +78,7 @@ $caret-margin-right: em(25);
   text-decoration: none
 }
 
-/*  Allows handling the sticky bar with the current implementation */
-.sticky-station-nav-bar {
-  position: fixed !important;
-  top: 0 !important;
-  z-index: 9999 !important;
-  width: 100%;
-}
 
-.reset-radiocom-top-nav {
-  position: unset !important;
-}
 
 .component--station-nav {
   display: block;
@@ -546,4 +536,15 @@ $caret-margin-right: em(25);
       }
     }
   }
+
+  .station-nav__fixed-container.sticky-station-nav-bar {
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+  }
+}
+
+/*  Reset behavior of radioCom top nav bar */
+.reset-radiocom-top-nav {
+  position: unset !important;
 }
