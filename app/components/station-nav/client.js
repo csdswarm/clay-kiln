@@ -13,7 +13,10 @@ let desktopNavItems,
   stationId,
   stationListenNavInstance,
   lastTarget,
-  isMobile = false;
+  isMobile = false,
+  topNavBar,
+  stationNavBar,
+  thresholdNavBar;
 
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
@@ -239,6 +242,17 @@ const { getComponentInstance } = require('clayutils'),
   },
 
   /**
+   * Toggle Sticky Station Nav Bar
+   */
+  toggleStickyNavBar = () => {
+    if (window.pageYOffset >= thresholdNavBar) {
+      stationNavBar.classList.add('sticky-station-nav-bar');
+    } else {
+      stationNavBar.classList.remove('sticky-station-nav-bar');
+    }
+  },
+
+  /**
    * Add event listeners to nav elements to toggle drawers & carets.
    *
    */
@@ -283,6 +297,9 @@ const { getComponentInstance } = require('clayutils'),
         }
       }
     });
+
+    window.onscroll = function () {toggleStickyNavBar();};
+
   };
 
 // mount listener for vue (optional)
@@ -302,6 +319,12 @@ document.addEventListener('station-nav-mount', function () {
   listenNavComponent = document.querySelector('.component--station-listen-nav');
   stationId = stationNav.dataset.stationId;
   stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
+
+  // Handles sticky nav bars.
+  stationNavBar = document.querySelector('.station-nav__fixed-container');
+  topNavBar = document.querySelector('.radiocom-nav');
+  topNavBar.classList.add('reset-radiocom-top-nav');
+  thresholdNavBar = stationNavBar.offsetTop;
 
   addEventListeners();
 });

@@ -78,6 +78,18 @@ $caret-margin-right: em(25);
   text-decoration: none
 }
 
+/*  Allows handling the sticky bar with the current implementation */
+.sticky-station-nav-bar {
+  position: fixed !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  width: 100%;
+}
+
+.reset-radiocom-top-nav {
+  position: unset !important;
+}
+
 .component--station-nav {
   display: block;
   height: em(130);
@@ -91,12 +103,10 @@ $caret-margin-right: em(25);
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: fixed;
+    position: relative;
     width: 100%;
     z-index: 100;
-    @mixin medium-screen {
-      position: relative;
-    }
+    
     .station-nav__menu {
       background: $station-primaryColor;
       display: flex;
