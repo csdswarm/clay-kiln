@@ -55,10 +55,17 @@ export default class MetaManager {
     // meta-tags component needs to be added to every page
     const metaTagsData = queryPayload.findComponent(spaPayload.head, 'meta-tags')
     if (metaTagsData) {
+      this.removeDOMTagOccurences('name', 'branch:deeplink:editorial_tags')
       if (metaTagsData.metaTags) {
         metaTagsData.metaTags.forEach(tag => {
           if (tag.name) {
-            this.updateMetaTag('name', tag.name, tag.content, true)
+            switch (tag.name) {
+              case 'branch:deeplink:editorial_tags':
+                this.createMetaTag('name', tag.name, tag.content)
+                break
+              default:
+                this.updateMetaTag('name', tag.name, tag.content, true)
+            }
           } else if (tag.property) {
             this.updateMetaTag('property', tag.property, tag.content, true)
           }
@@ -271,6 +278,20 @@ export default class MetaManager {
       linkTag.setAttribute('href', href)
     } else if (createIfNotExist) {
       this.createLinkTag(href)
+    }
+  }
+
+  /**
+   *
+   * Select <meta> tags and delete them from the DOM.
+   *
+   * @param {string} attributeType - Attribute to select by ("name" or "property").
+   * @param {string} attributeKey - Value of attribute to select for.
+   */
+  removeDOMTagOccurences (attributeType, attributeKey) {
+    const tags = document.head.querySelectorAll(`meta[${attributeType}='${attributeKey}']`)
+    if (tags.length) {
+      tags.forEach(tag => tag.parentNode.removeChild(tag))
     }
   }
 }
