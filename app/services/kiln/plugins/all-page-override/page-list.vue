@@ -34,9 +34,10 @@
 <script>
   import _ from 'lodash';
   import axios from 'axios';
-  import { mapGetters } from 'vuex'
-  import stationSelect from '../../shared-vue-components/station-select'
-  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
+  import { DEFAULT_STATION } from '../../../universal/constants';
+  import { mapGetters } from 'vuex';
+  import stationSelect from '../../shared-vue-components/station-select';
+  import StationSelectInput from '../../shared-vue-components/station-select/input.vue';
   import statusSelector from './status-selector.vue';
   import pageListItem from './page-list-item.vue';
   const { searchRoute } = window.kiln.utils.references;
@@ -110,19 +111,30 @@
     }
 
     if (stationFilter) {
-      if (stationFilter.slug) {
-        query.body.query.bool.must.push({
-          term: {
-            stationSlug: stationFilter.slug
-          }
-        });
-      } else {
-        query.body.query.bool.must_not.push({
-          exists: {
-            field: 'stationSlug'
+      const stationMatch = {
+        bool: {
+          should: [{
+            term: {
+              stationSlug: stationFilter.slug
+            }
+          }],
+          minimum_should_match: 1
+        },
+      };
+
+      // for RDC pages we search for results that have no stationSlug
+      if (stationFilter.slug === DEFAULT_STATION.site_slug) {
+        stationMatch.bool.should.push({
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSlug'
+              }
+            }
           }
         });
       }
+      query.body.query.bool.must.push(stationMatch);
     } else {
       const stationAccess = {
         bool: {
