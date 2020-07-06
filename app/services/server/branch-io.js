@@ -71,7 +71,7 @@ const
       addTag('station_logo', _get(locals, 'station.square_logo_small'));
       addTag('page', 'station-detail');
     } else {
-      // article, gallery, section front pages
+      // article, gallery, section front, contest, event pages
       if (isStation) { // under a station
         addTag('market', _get(locals, 'station.market.display_name'));
         addTag('category', _get(locals, 'station.category'));
@@ -80,7 +80,7 @@ const
         addTag('station_logo', _get(locals, 'station.square_logo_small'));
       }
       // both national & station pages
-      addTag('station_name', _get(locals, 'station.name'));
+      addTag('station_name', _get(locals, 'station.name', 'Radio.com'));
     }
 
     // timestamp
@@ -102,7 +102,7 @@ const
    */
   getSectionFrontEntry = async (locals, slug, isPrimary, argObj) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(listName, Object.assign({ locals }, argObj));
+      data = await retrieveList(listName, { locals, ...argObj });
 
     return data.find(entry => entry.value === slug);
   };

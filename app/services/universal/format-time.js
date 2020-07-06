@@ -19,7 +19,33 @@ function formatDateRange(dateFrom = '', dateTo = '', format = 'MMMM D, YYYY') {
   if (dateTo && dateFrom) {
     return `${moment(new Date(dateFrom).setHours(24)).format('MMMM D')}-${moment(new Date(dateTo).setHours(24)).format(format)}`;
   } else if (!dateTo && dateFrom) {
-    return `${moment(new Date(dateFrom).setHours(24)).format(format)}`;
+    return `${moment(new Date(dateFrom).setHours(24).format(format))}`;
+  } else {
+    return '';
+  }
+}
+
+/**
+ * Format date range with hours
+ * with separator as optional argument
+ *
+ * @param {Date} dateFrom
+ * @param {Date} dateTo
+ * @param {String} [parseFormat]
+ * @param {String} [format]
+ * @param {String} [separator]
+ * @returns {String}
+ *
+ */
+function formatDateTimeRange({ hash: {
+  dateFrom, dateTo,
+  format = 'MMMM D, YYYY [at] h:mma',
+  separator = ' through ' } }) {
+
+  if (dateFrom && dateTo) {
+    return `${
+      moment.utc(dateFrom).format(format)
+    }${ separator }${ moment.utc(dateTo).format(format) }`;
   } else {
     return '';
   }
@@ -60,6 +86,7 @@ function timeAgoTimestamp(date) {
 }
 
 module.exports.formatDateRange = formatDateRange;
+module.exports.formatDateTimeRange = formatDateTimeRange;
 module.exports.secondsToISO = secondsToISO;
 module.exports.isPublished24HrsAgo = isPublished24HrsAgo;
 module.exports.timeAgoTimestamp = timeAgoTimestamp;

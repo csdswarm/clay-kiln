@@ -42,7 +42,7 @@ configmap:
     REDIS_SESSION_HOST: "redis://redis:6379"
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
-    URPS_AUTHORIZATIONS_URL: "https://admin-api-dev.radio-sbx.com/urps"
+    URPS_AUTHORIZATIONS_URL: "https://admin-api-stg.radio-sbx.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
 

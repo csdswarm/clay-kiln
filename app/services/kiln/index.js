@@ -1,6 +1,8 @@
 'use strict';
 
-const { secureAllSchemas } = require('./permissions');
+const
+  { addStationCheckToSelect } = require('./station-lists'),
+  { secureAllSchemas } = require('./permissions');
 
 // exported as "kiln-plugins"
 module.exports = () => {
@@ -13,20 +15,20 @@ module.exports = () => {
   require('./plugins/content-import')();
   require('./plugins/content-search')();
   require('./plugins/content-syndication')();
+  require('./plugins/default-text-with-override')();
   require('./plugins/instagram')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
   require('./plugins/restrict-users')();
   require('./plugins/select-list')();
+  require('./plugins/sign-out-override')();
   require('./plugins/stations')();
   require('./plugins/stores')();
   require('./plugins/subscriptions')();
-  require('./plugins/select-list')();
-  require('./plugins/sign-out-override')();
-  require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
   require('./plugins/editorial-feeds')();
   require('./validators')();
   secureAllSchemas();
+  addStationCheckToSelect();
 };

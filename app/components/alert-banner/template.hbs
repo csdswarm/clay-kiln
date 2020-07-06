@@ -1,7 +1,7 @@
 <div data-uri="{{ default _ref _self }}" class="component component--alert-banner">
-    {{#ifAll @root.locals.messages @root.locals.messages.length }}
+    {{#if _computed.messages.length }}
         <div class="alert-banner">
-            {{#each @root.locals.messages}}
+            {{#each _computed.messages}}
                 <div id="alertBanner_{{ id }}" class="alert-banner__message{{#if breaking}} alert-banner__message--breaking{{/if}}">
                     <div class="alert-banner__heading">
                         <div class="alert-banner__indicator">
@@ -23,5 +23,5 @@
                 </div>
             {{/each}}
         </div>
-    {{/ifAll}}
+    {{/if}}
 </div>
