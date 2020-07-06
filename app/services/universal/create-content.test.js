@@ -21,6 +21,11 @@ const expect = require('chai').expect,
             seoHeadline: ''
           });
       }
+    },
+    './editorial-feed-syndication': {
+      addStationsByEditorialGroup: () => {
+        mockData.data.stationSyndication = [];
+      }
     }
   }),
   mockData = {
