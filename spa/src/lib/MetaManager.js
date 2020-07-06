@@ -13,6 +13,7 @@
 import QueryPayload from './QueryPayload'
 
 const queryPayload = new QueryPayload()
+const BRANCH_EDITORIAL_TAGS = 'branch:deeplink:editorial_tags'
 
 export default class MetaManager {
   /**
@@ -55,16 +56,14 @@ export default class MetaManager {
     // meta-tags component needs to be added to every page
     const metaTagsData = queryPayload.findComponent(spaPayload.head, 'meta-tags')
     if (metaTagsData) {
-      this.removeDOMTagOccurences('name', 'branch:deeplink:editorial_tags')
+      this.removeDOMTagOccurences('name', BRANCH_EDITORIAL_TAGS)
       if (metaTagsData.metaTags) {
         metaTagsData.metaTags.forEach(tag => {
           if (tag.name) {
-            switch (tag.name) {
-              case 'branch:deeplink:editorial_tags':
-                this.createMetaTag('name', tag.name, tag.content)
-                break
-              default:
-                this.updateMetaTag('name', tag.name, tag.content, true)
+            if (tag.name === BRANCH_EDITORIAL_TAGS) {
+              this.createMetaTag('name', tag.name, tag.content)
+            } else {
+              this.updateMetaTag('name', tag.name, tag.content, true)
             }
           } else if (tag.property) {
             this.updateMetaTag('property', tag.property, tag.content, true)
