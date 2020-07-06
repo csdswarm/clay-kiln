@@ -118,8 +118,8 @@ module.exports = unityComponent({
         link: `http://www.facebook.com/sharer/sharer.php${getUtmTracking({
           u: locals.url,
           quote: episodeData ? `${episodeData.title} - ${episodeData.description}` : undefined,
-          utm_source: 'facebook.com',
-          }
+          utm_source: 'facebook.com'
+        }
         )}`
       },
       twitter: {
