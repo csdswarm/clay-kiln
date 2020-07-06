@@ -122,7 +122,7 @@
         },
       };
 
-      // for RDC pages we search for results that have no stationSlug
+      // for RDC pages we also search for results that have no stationSlug
       if (stationFilter.slug === DEFAULT_STATION.site_slug) {
         stationMatch.bool.should.push({
           bool: {
