@@ -109,7 +109,7 @@ pipeline {
             }
           }
           steps {
-            sh 'npm run --silent lint:spa:js'
+            sh 'cd spa && npm ci && cd ../ && npm run --silent lint:spa:js'
           }
         }
 
@@ -122,7 +122,7 @@ pipeline {
             }
           }
           steps {
-            sh 'npm run --silent lint:app:js'
+            sh 'cd app && npm ci && cd ../ && npm run --silent lint:app:js'
           }
         }
 
