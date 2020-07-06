@@ -109,7 +109,7 @@ pipeline {
             }
           }
           steps {
-            sh 'cd spa && npm install && npm run lint -- --no-fix'
+            sh 'npm run --silent lint:spa:js'
           }
         }
 
@@ -122,7 +122,7 @@ pipeline {
             }
           }
           steps {
-            sh 'cd /usr/src/app && npm run eslint'
+            sh 'npm run --silent lint:app:js'
           }
         }
 

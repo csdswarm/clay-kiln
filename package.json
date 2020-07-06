@@ -9,7 +9,8 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-    "lint:app:js": "boo"
+    "lint:app:js": "npm run eslint --prefix app",
+    "lint:spa:js": "npm run lint --prefix spa -- --no-fix"
   },
   "repository": {
     "type": "git",
@@ -21,11 +22,14 @@
   "lint-staged": {
     "app/**/*.js": [
       "npm run --silent lint:app:js"
+    ],
+    "spa/**/*.{js,vue}": [
+      "npm run --silent lint:spa:js"
     ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npx lint-staged"
+      "pre-commit": "lint-staged"
     }
   }
 }
