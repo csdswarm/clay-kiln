@@ -1,15 +1,10 @@
 'use strict';
 
 const amphora = require('amphora'),
-  { elastic } = require('amphora-search'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   stationUtils = require('../../services/server/station-utils'),
-  addStationSlug = (uri, stationSlug) => stationSlug && amphora.db.getMeta(uri)
-    .then(meta => ({ ...meta, stationSlug }))
-    .then(updatedMeta => amphora.db.putMeta(uri, updatedMeta))
-    .then(data => elastic.put('pages', uri, data));
+  { updateMetaData } = require('../../services/server/update-metadata');
     
-
 module.exports = router => {
   router.post('/_pages', (req, res) => {
     res.status(404);
@@ -41,7 +36,7 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const result = await amphora.pages.create(pagesUri, pageBody, res.locals);
     
-    await addStationSlug(result._ref, stationSlug);
+    await updateMetaData(result._ref, { stationSlug });
 
     res.status(201);
     res.send(result);
