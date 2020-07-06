@@ -70,6 +70,15 @@ async function createNewArticle(stationMappings, locals) {
   return _get(newPage, 'main.0');
 }
 
+/**
+ * Determines which stationMappings have been added to the article since the last time
+ * If the article was just created, then all station mappings will be incuded and
+ * merged with correct station info
+ * @param {object} article
+ * @param {object[]} stationMappings
+ * @param {object} locals
+ * @returns {Promise<unknown[]>}
+ */
 async function getNewStations(article, stationMappings, locals) {
   const
     { getAllStations } = __,
