@@ -12,7 +12,6 @@ module.exports = unityComponent({
   render: async (uri, data, locals) => {
     locals.loadedIds.push(uri);
     await autoLink(data, [
-      { slug: data.stationSlug, text: data.stationName },
       'sectionFront',
       'secondarySectionFront'
     ], locals);

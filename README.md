@@ -4,15 +4,13 @@ A repo that contains a basic site and the necessary files to provision AWS resou
 
 ## Prerequisites:
 
-Before starting the installation process, it's recommended to have the software below:
-
 * [Docker desktop](https://www.docker.com/products/docker-desktop)
 * [Homebrew](https://brew.sh/)
+    * quick install: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 * [mkcert](https://github.com/FiloSottile/mkcert)
+    * quick install: `brew install mkcert && brew install nss`
 
 ## To Start
-
-Make sure you have docker installed and you're using Node.js version V10.16.3 and npm version 6.9.0.
 
 Edit your `/etc/hosts` file to include the following:
 

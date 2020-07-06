@@ -1,4 +1,4 @@
-_version: 12.0
+_version: 13.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -352,8 +352,14 @@ syndicatedUrl:
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
       pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
       patternMessage: Must be a valid URL
+featuredSports:
+  _label: Feature - Sports
+  _has: checkbox
+featuredNews:
+  _label: Feature - News
+  _has: checkbox
 featured:
-  _label: Is this a featured gallery?
+  _label: Feature - Music
   _has: checkbox
 editorialFeeds:
   _label: Gallery Terms for Editorial Feeds
@@ -461,6 +467,8 @@ _groups:
       - noIndexNoFollow
   syndication:
     fields:
+      - featuredSports
+      - featuredNews
       - featured
       - editorialFeeds
       - corporateSyndication
@@ -524,8 +532,6 @@ footer:
       - youtube
       - html-embed
       - omny
-    validate:
-      max: 2
 
 # Component properties
 contentPageSponsorLogo:
