@@ -117,9 +117,10 @@ module.exports = unityComponent({
         name: 'facebook',
         link: `http://www.facebook.com/sharer/sharer.php${getUtmTracking({
           u: locals.url,
-          text: episodeData ? `${episodeData.title} - ${episodeData.description}` : undefined,
-          utm_source: 'facebook.com'
-        })}`
+          quote: episodeData ? `${episodeData.title} - ${episodeData.description}` : undefined,
+          utm_source: 'facebook.com',
+          }
+        )}`
       },
       twitter: {
         name: 'twitter',

@@ -5,26 +5,29 @@
 <img class="podcast-lead__image" src="{{ defaultImg }}?crop=1:1,offset-y0" alt="{{ title }}">
 {{/if}}
 {{/inline}}
+{{#*inline "emailIcon"}}
+{{{ read 'components/share/media/email.svg' }}}
+{{/inline}}
 
 {{#*inline "socialSubscribe"}}
-<div class="podcast-lead__social{{#if isMedium}}--md{{/if}}">
+<div class="{{#unless isMedium}}podcast-lead__social{{/unless}} {{#if isMedium}}podcast-lead__social--md{{/if}}">
   {{#ifAny shares.facebook shares.twitter shares.email}}
   <div class="podcast-lead__share">
     <div class="podcast-lead__share-label">Share</div>
     <div class="podcast-lead__share-actions">
       {{#if shares.facebook}}
-      <a class="podcast-lead__subscribe-link" href={{shares.facebook.link}}>
+      <a class="podcast-lead__share-link" href={{shares.facebook.link}} target="_blank">
         {{{ read 'components/share/media/facebook.svg' }}}
       </a>
       {{/if}}
       {{#if shares.twitter}}
-      <a class="podcast-lead__subscribe-link" href={{shares.twitter.link}}>
+      <a class="podcast-lead__share-link" href={{shares.twitter.link}} target="_blank">
         {{{ read 'components/share/media/twitter.svg' }}}
       </a>
       {{/if}}
       {{#if shares.email}}
-      <a class="podcast-lead__subscribe-link" href={{shares.email.link}}>
-        {{{ read 'components/share/media/email.svg' }}}
+      <a class="podcast-lead__share-link" href={{shares.email.link}} target="_blank">
+        {{> emailIcon}}
       </a>
       {{/if}}
     </div>
@@ -52,6 +55,12 @@
 
 <section class="component podcast-lead component--podcast-lead podcast-lead--{{ sectionFront }}"
   data-uri="{{ default _ref _self }}" data-track-type="podcast-lead">
+
+  {{!-- This needs to be here and hidden so that the inline 'socialSubscribe' works on medium screen. --}}
+  <div class="podcast-lead__email-svg--hidden">
+    {{{ read 'components/share/media/email.svg' }}}
+  </div>
+  
   <div class="podcast-lead__head--sm">
     <div class="podcast-lead__heading--sm">
       {{ _computed.title }}

@@ -75,6 +75,12 @@
     }
 
   }
+
+  &__email-svg--hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
   
   &__main {
     display: flex;
@@ -155,6 +161,7 @@
     max-height: em(19,15);
     text-decoration: none;
     margin-bottom: em(20,18);
+    text-transform: capitalize;
     svg {
       height: 50%;
     }
@@ -215,6 +222,7 @@
     &--md {
       @mixin default-screen {
         display: none;
+        position: relative;
       }
   
       @mixin large-screen {
@@ -248,7 +256,7 @@
     display: flex;
     margin-right: em(20);
     &--subscriptions {
-      .podcast-lead__subscribe-link {
+      .podcast-lead__share-link {
         width: auto;
         svg {
           height: 100%;
@@ -258,19 +266,17 @@
     }
   }
 
-  &__subscribe {
-    &-link {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: em(1) solid $alto;
-      height: em(32);
-      width: em(32);
-      svg {
-        height: em(16);
-        width: em(16);
-      }
-    }
+  &__subscribe-link, &__share-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: em(1) solid $alto;
+    height: em(32);
+    width: em(32);
+  }
+  &__share-link svg {
+    height: em(16);
+    width: em(16);
   }
   
   @mixin medium-small-screen {
