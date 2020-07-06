@@ -4,35 +4,29 @@ const url = require('url'),
   /** Determine the Frequency drupal url
  *
  * @param  {String} pathname shows/show-schedule
- * @param  {String} callsign winsam
- * @return {String} Url https://winsam.prd-radio-drupal.com/shows/show-schedule?theme=radiocom
+ * @param  {String} hostname clay.radio.com
+ * @param  {String} callsign KROQFM
+ * @return {String} Url https://kroqfm.dev-radio-drupal.com/shows/show-schedule?theme=radiocom
  */
-  sanitizeUrl = (pathname, callsign) => {
-    const queryString = '?theme=radiocom';
-    let host;
-    
-    switch (process.env.NODE_ENV) {
-      case 'production':
-        host = 'prd-radio-drupal.com';
-        break;
-      case 'staging':
-        host = 'stg-radio-drupal.com';
-        break;
-      default:
-        host = 'dev-radio-drupal.com';
-        break;
-    }
-    
-    const [,,...rest] = pathname.split('/');
+  sanitizeUrl = (pathname, hostname, callsign) => {
+    const endpoints = {
+        'clay.radio.com': 'dev-radio-drupal.com',
+        'dev-clay.radio.com': 'dev-radio-drupal.com',
+        'stg-clay.radio.com': 'stg-radio-drupal.com',
+        'radio.com': 'prd-radio-drupal.com'
+      },
+      host = endpoints[hostname],
+      queryString = '?theme=radiocom',
+      [,,...rest] = pathname.split('/');
 
     return `https://${callsign}.${host}/${rest}${queryString}`.replace(/,/gi,'/');
   };
 
 /**
  * Determines frequency url from the Unity URL
- * i.e. https://radio.com/1010wins/shows/show-schedule
+ * i.e. http://clay.radio.com/kroq/shows/show-schedule
  * and return the proper frequency url
- * i.e. https://winsam.prd-radio-drupal.com/shows/show-schedule?theme=radiocom
+ * i.e. https://kroqfm.dev-radio-drupal.com/shows/show-schedule?theme=radiocom
  *
  * @param  {String} urlString
  * @param  {String} callsign
@@ -40,8 +34,8 @@ const url = require('url'),
  */
 
 function frequencyIframeUrl(urlString, callsign) {
-  const { pathname } = url.parse(urlString),
-    frequencyUrl = sanitizeUrl(pathname, callsign.toLowerCase());
+  const { pathname, hostname } = url.parse(urlString),
+    frequencyUrl = sanitizeUrl(pathname, hostname , callsign.toLowerCase());
     
   return frequencyUrl;
 }
