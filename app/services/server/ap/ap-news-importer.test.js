@@ -27,7 +27,8 @@ describe('server', () => {
             slug: '',
             sectionFront: '',
             secondarySectionFront: '',
-            stationSyndication: []
+            stationSyndication: [],
+            ...options.article
           },
           NEW_PAGE_DATA = {
             main: [{ ...DEFAULT_ARTICLE_DATA }]
@@ -203,7 +204,58 @@ describe('server', () => {
           stationSlug: 'stationA'
         }]);
       });
+
+      it('only gets new stations if article already exists', async () => {
+        const { result } = await setup_importArticle({
+          stationsBySlug: {
+            stationA: {
+              callsign: 'STA',
+              name: 'Station A'
+            },
+            stationB: {
+              callsign: 'STB',
+              name: 'Station B'
+            },
+            stationC: {
+              callsign: 'STC',
+              name: 'Station C'
+            }
+          },
+          apMeta: {
+            altids: { itemid: 'some-existing-id' }
+          },
+          stationMappings: {
+            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' },
+            stationB: { sectionFront: 'news' },
+            stationC: { sectionFront: 'music', secondarySectionFront: 'pop' }
+          },
+          article: {
+            slug: 'some-news-slug',
+            stationSlug: 'stationA',
+            sectionFront: 'music',
+            secondarySectionFront: 'urban',
+            stationSyndication: [
+              {
+                callsign: 'STB',
+                sectionFront: 'news',
+                stationName: 'Station B',
+                stationSlug: 'stationB',
+                syndicatedArticleSlug: '/stationB/news/some-news-slug'
+              }
+            ]
+          }
+        });
+
+        expect(result.newStations).to.eql([{
+          callsign: 'STC',
+          sectionFront: 'music',
+          secondarySectionFront: 'pop',
+          stationName: 'Station C',
+          stationSlug: 'stationC'
+        }]);
+
+      });
+
     });
   });
-})
-;
+});
