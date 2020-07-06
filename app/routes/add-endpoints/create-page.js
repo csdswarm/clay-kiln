@@ -1,16 +1,11 @@
 'use strict';
 
 const amphora = require('amphora'),
-  { elastic } = require('amphora-search'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   stationUtils = require('../../services/server/station-utils'),
   db = require('../../services/server/db'),
   _get = require('lodash/get'),
   utils = require('../../services/universal/utils'),
-  addStationSlug = (uri, stationSlug) => stationSlug && amphora.db.getMeta(uri)
-    .then(meta => ({ ...meta, stationSlug }))
-    .then(updatedMeta => amphora.db.putMeta(uri, updatedMeta))
-    .then(data => elastic.put('pages', uri, data)),
   updateSyndication = (content) => ({
     ...content,
     corporateSyndication: null,
@@ -36,13 +31,14 @@ const amphora = require('amphora'),
 
     const result = await amphora.pages.create(uri, body, res.locals);
 
-    await addStationSlug(result._ref, stationSlug);
+    await updateMetaData(result._ref, { stationSlug });
 
     return {
       result,
       res
     };
-  };
+  },
+  { updateMetaData } = require('../../services/server/update-metadata');
     
 module.exports = router => {
   router.post('/_pages', (req, res) => {

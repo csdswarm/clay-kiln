@@ -8,9 +8,6 @@ module.exports = function (ref, data) {
   return {
     role: 'heading2',
     text: data.text,
-    layout: 'subheaderLayout',
-    style: 'subheaderStyle',
-    textStyle: 'subheaderTextStyle',
     format: 'html'
   };
 };
