@@ -6,7 +6,7 @@ module.exports = {
   getStationsSubscribedToContent: require('./get-stations-subscribed-to-content'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
-  nationalSubscriptions: require('./national-subscription'),
+  contentSubscription: require('./content-subscription'),
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),

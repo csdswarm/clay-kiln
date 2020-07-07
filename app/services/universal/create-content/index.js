@@ -16,7 +16,7 @@ const _get = require('lodash/get'),
   promises = require('../promises'),
   rest = require('../rest'),
   circulationService = require('../circulation'),
-  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  applyContentSubscriptions = require('./apply-content-subscriptions'),
   mediaplay = require('../media-play'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../url-exists'),
@@ -613,8 +613,8 @@ async function save(uri, data, locals) {
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
 
-  // we need apply national subscriptions before creating slugs for syndicated content
-  await applyNationalSubscriptions(data, locals);
+  // we need apply content subscriptions before creating slugs for syndicated content
+  await applyContentSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),

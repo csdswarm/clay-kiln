@@ -130,7 +130,7 @@ function userPermissionRouter() {
   //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
 
-  addToLocals.nationalSubscriptions(userPermissionRouter);
+  addToLocals.contentSubscriptions(userPermissionRouter);
 
   return userPermissionRouter;
 }

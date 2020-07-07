@@ -158,7 +158,7 @@ module.exports = router => {
   addEndpoints.alerts(router);
   addEndpoints.createPage(router);
   addEndpoints.imageInfo(router, checkAuth);
-  addEndpoints.nationalSubscriptions(router);
+  addEndpoints.contentSubscription(router);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
   addEndpoints.signOut(router);

@@ -14,7 +14,7 @@ module.exports = () => {
   require('./plugins/content-search')();
   require('./plugins/content-syndication')();
   require('./plugins/instagram')();
-  require('./plugins/national-subscriptions')();
+  require('./plugins/content-subscriptions')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
   require('./plugins/restrict-users')();

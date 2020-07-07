@@ -23,7 +23,7 @@ const _noop = require('lodash/noop'),
           });
       }
     },
-    './apply-national-subscriptions': _noop
+    './apply-content-subscriptions': _noop
   }),
   mockData = {
     data: {

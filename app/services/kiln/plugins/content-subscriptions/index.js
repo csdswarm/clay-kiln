@@ -2,8 +2,8 @@
 
 // Require depedencies.
 const { DEFAULT_STATION } = require('../../../universal/constants'),
-  nationalSubscriptionsButton = require('./national-subscriptions-button.vue'),
-  nationalSubscriptions = require('./national-subscriptions.vue'),
+  button = require('./button.vue'),
+  content = require('./content.vue'),
   _set = require('lodash/set'),
   _get = require('lodash/get');
 
@@ -12,7 +12,7 @@ module.exports = () => {
   const currentStationId = _get(window, 'kiln.locals.stationForPermissions.id', DEFAULT_STATION.id);
 
   if ( currentStationId !== DEFAULT_STATION.id) {
-    _set(window, 'kiln.navButtons.national-subscriptions', nationalSubscriptionsButton);
-    _set(window, 'kiln.navContent.national-subscriptions', nationalSubscriptions);
+    _set(window, 'kiln.navButtons.content-subscriptions', button);
+    _set(window, 'kiln.navContent.content-subscriptions', content);
   }
 };
