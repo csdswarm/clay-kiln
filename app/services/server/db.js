@@ -68,7 +68,7 @@ const utils = require('../universal/utils'),
     var tableName;
 
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      if (key.indexOf(`/_${DATA_TYPE}`) > -1) {
+      if (key.indexOf(`_${DATA_TYPE}`) > -1) {
         tableName = DATA_TYPE;
       }
     });
@@ -136,7 +136,7 @@ const utils = require('../universal/utils'),
    */
   post = async (key, value) => {
     const tableName = findSchemaAndTable(key);
-
+    
     if (!tableName) {
       return db.put(key, value);
     } else {
