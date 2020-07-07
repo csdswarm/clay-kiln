@@ -30,11 +30,11 @@
     </div>
 </template>
 <script>
-	const getStations = require('../../../../services/universal/getStations');
-	const utils = require('../../../../services/universal/podcast');
+	const _get = require('lodash/get');
+	const stationUtils = require('../../../client/station-utils');
+	const podcastUtils = require('../../../../services/universal/podcast');
 	const UiSelect = window.kiln.utils.components.UiSelect;
 	const UiTextbox = window.kiln.utils.components.UiTextbox;
-	const _get = require('lodash/get');
 
 	export default {
 		props: ['name', 'data', 'schema', 'args'],
@@ -77,21 +77,18 @@
 						return response.json();
 					})
 					.then(async podcastResponse => {
+						const podcasts = podcastResponse.data,
+                        stationsById = await podcastUtils.getStationsForPodcasts(podcasts,window.kiln.locals);
 
-                        const stationIds = podcastResponse.data.map((podcast) => {
-                                return _get(podcast, 'attributes.station[0].id');
-                            }).filter((id) => id),
-                            { data: stationsById } = await getStations.getStationsById(stationIds);
-
-						self.podcastOptions = await Promise.all(podcastResponse.data.map(async (podcast) => {
+						self.podcastOptions = podcasts.map((podcast) => {
 							return {
 								label: podcast.attributes.title,
 								title: podcast.attributes.title,
-								url: utils.createUrl(podcast,stationsById),
-								imageUrl: utils.createImageUrl(podcast.attributes.image),
+								url: podcastUtils.createUrl(podcast,stationsById[podcastUtils.getStationIdForPodcast(podcast)]),
+								imageUrl: podcastUtils.createImageUrl(podcast.attributes.image),
 								description: podcast.attributes.description
 							}
-						}));
+						});
 						self.cachedResults[self.filter] = self.podcastOptions
 					})
 					.catch(e => {

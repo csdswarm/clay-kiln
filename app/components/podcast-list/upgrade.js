@@ -24,7 +24,7 @@ module.exports['2.0'] = function (uri, data) {
 
 module.exports['3.0'] = async (uri, data, locals) => {
   const { items } = data,
-    allStationData = await stationUtils.getAllStations.byId({ locals });
+    stationsById = await stationUtils.getAllStations.byId({ locals });
 
   await Promise.all(items.map(async (item) => {
     const { title } = item.podcast,
@@ -33,7 +33,7 @@ module.exports['3.0'] = async (uri, data, locals) => {
       },
       { data: [podcast] } = await radioApiService.get('podcasts', params, null, {}, locals);
 
-    item.podcast.url = podcastUtils.createUrl(podcast, allStationData);
+    item.podcast.url = podcastUtils.createUrl(podcast, stationsById[podcastUtils.getStationIdForPodcast(podcast)]);
   }));
   return data;
 };
