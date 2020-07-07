@@ -6,6 +6,7 @@ const _noop = require('lodash/noop'),
   { expect } = require('chai'),
 
   locals = {},
+  nationalStationSlug = '',
   testStation = { name: 'test station', site_slug: 'testSlug' },
   success = [testStation],
 
@@ -47,6 +48,11 @@ describe('getStationsSubscribedToContent', () => {
     const fn = makeFn(mockSubscriptions.dontMatchContentType);
 
     expect(await fn(mockContent.default, locals)).to.be.empty;
+  });
+  it('should not match per station slug', async () => {
+    const fn = makeFn(mockSubscriptions.allContent);
+
+    expect(await fn(mockContent.differentStation, locals)).to.be.empty;
   });
 
   it('should match per all-content', async () => {
@@ -189,7 +195,8 @@ function toMockSubscriptions(mockSubscriptions, val, key) {
   if (Array.isArray(val)) {
     mockSubscriptions[key] = val.map(filter => ({
       filter,
-      station_slug: testStation.site_slug
+      station_slug: testStation.site_slug,
+      from_station_slug: nationalStationSlug
     }));
   } else {
     mockSubscriptions[key] = _reduce(val, toMockSubscriptions, {});
@@ -219,21 +226,28 @@ function getMockContent() {
       contentType: 'article',
       textTags: ['match', 'exclude'],
       sectionFront: 'match',
-      secondarySectionFront: 'match'
+      secondarySectionFront: 'match',
+      stationSlug: nationalStationSlug
+    },
+    differentStation: {
+      stationSlug: 'q94'
     },
     excludeSectionFront: {
       sectionFront: 'exclude',
-      secondarySectionFront: 'exclude'
+      secondarySectionFront: 'exclude',
+      stationSlug: nationalStationSlug
     },
     sectionFrontAndTag: {
       contentType: 'article',
       textTags: ['match'],
-      sectionFront: 'match'
+      sectionFront: 'match',
+      stationSlug: nationalStationSlug
     },
     onlyTag: {
       contentType: 'article',
       textTags: ['match'],
-      sectionFront: 'dont-match_content'
+      sectionFront: 'dont-match_content',
+      stationSlug: nationalStationSlug
     }
   };
 }
