@@ -2,6 +2,10 @@
 
 const db = require('../db'),
   uuidV4 = require('uuid/v4'),
+  __ = {
+    dbPost: db.post,
+    dbPut: db.put
+  },
   /**
    * Get a record matching a given id
    *
@@ -33,17 +37,18 @@ const db = require('../db'),
    */
   save = async (id = '', subscription = {}) => {
     if (id) {
-      return await db.put(id, subscription);
+      return await __.dbPut(id, subscription);
     } else {
       const id = uuidV4(),
         key = `_ap_subscriptions${id}`;
 
-      await db.post(key, subscription);
+      await __.dbPost(key, subscription);
       return key;
     };
   };
 
 module.exports = {
+  _internals: __,
   ensureRecordExists,
   getAll,
   save
