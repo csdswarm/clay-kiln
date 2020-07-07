@@ -96,8 +96,10 @@ async function getArticleData({ head, main }) {
       metaImage,
       metaTags,
       metaTitle
-    ] = await Promise.all(['description', 'image', 'tags', 'title']
-      .map(async name => await dbGet(head.find(text => text.includes(`meta-${name}`)))));
+    ] = await Promise.all(
+      ['description', 'image', 'tags', 'title']
+        .map(async name => await dbGet(head.find(text => text.includes(`meta-${name}`))))
+    );
 
   return {
     article,
@@ -147,39 +149,52 @@ async function getNewStations(article, stationMappings, locals) {
 /**
  *
  * @param {object} apMeta
- * @param {object} article
+ * @param {object} articleData
+ * @param {object} articleData.article
+ * @param {object} articleData.metaTitle
  * @returns {object}
  */
-function mapApDataToArticle(apMeta, article) {
+function mapApDataToArticle(apMeta, { article , metaTitle }) {
   const
     tags = _get(article, 'tags.items', []),
     tagSlugs = tags.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
-    newArticle = {
-      ...article,
-      ap: {
-        itemid: apMeta.altids.itemid,
-        etag: apMeta.altids.etag,
-        version: apMeta.version,
-        ednote: apMeta.ednote
+    articleData = {
+      article: {
+        ...article,
+        ap: {
+          itemid: apMeta.altids.itemid,
+          etag: apMeta.altids.etag,
+          version: apMeta.version,
+          ednote: apMeta.ednote
+        },
+        headline: apMeta.headline,
+        shortHeadline: apMeta.headline,
+        msnTitle: apMeta.headline,
+        pageTitle: apMeta.headline,
+        slug: slugifyService(apMeta.headline),
+        seoDescription: apMeta.headline_extended,
+        pageDescription: apMeta.headline_extended,
+        tags: {
+          items: [
+            ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' }],
+            ...tags,
+            ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
+          ]
+        }
       },
-      headline: apMeta.headline,
-      shortHeadline: apMeta.headline,
-      msnTitle: apMeta.headline,
-      pageTitle: apMeta.headline,
-      slug: slugifyService(apMeta.headline),
-      seoDescription: apMeta.headline_extended,
-      pageDescription: apMeta.headline_extended,
-      tags: { items: [
-        ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' } ],
-        ...tags,
-        ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
-      ] }
+      metaTitle: {
+        ...metaTitle,
+        kilnTitle: apMeta.headline,
+        ogTitle: apMeta.headline,
+        title: apMeta.headline,
+        twitterTitle: apMeta.headline
+      }
     };
 
 
-  return newArticle;
+  return articleData;
 }
 
 /**
@@ -202,12 +217,13 @@ async function importArticle(apMeta, stationMappings, locals) {
     articleData = await getArticleData(preExistingArticle || await createNewArticle(stationMappings, locals)),
     isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
     newStations = await getNewStations(articleData.article, stationMappings),
-    article = isModifiedByAP ? mapApDataToArticle(apMeta, articleData.article) : articleData;
+    { article, metaTitle } = isModifiedByAP ? mapApDataToArticle(apMeta, articleData) : articleData;
 
   return {
     article,
     isApContentPublishable,
     isModifiedByAP,
+    metaTitle,
     newStations,
     preExistingArticle
   };

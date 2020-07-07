@@ -226,9 +226,9 @@ describe('server', () => {
                   nitf: {
                     href: 'https://api.ap.org/media/v/content/c116ac3656f240238ee7529720e4a4b8/download?type=text&format=NITF'
                   }
-                }
-              },
-              ...options.apMeta
+                },
+                ...options.apMeta
+              }
             }),
             { __, stubs } = setup;
             
@@ -242,6 +242,7 @@ describe('server', () => {
         it('maps AP data to article if content is publishable', async () => {
           const { result } = await setup_modifiedByAP(),
             { article } = result,
+            expectedTitle = 'Something tragic happened',
             expected = {
               ap:
                 {
@@ -250,10 +251,10 @@ describe('server', () => {
                   version: 1,
                   ednote: 'go ahead and publish, there are no problems here.'
                 },
-              headline: 'Something tragic happened',
-              shortHeadline: 'Something tragic happened',
-              msnTitle: 'Something tragic happened',
-              pageTitle: 'Something tragic happened',
+              headline: expectedTitle,
+              shortHeadline: expectedTitle,
+              msnTitle: expectedTitle,
+              pageTitle: expectedTitle,
               slug: 'something-tragic-happened',
               seoDescription: 'Something tragic happened on the way to heaven',
               pageDescription: 'Something tragic happened on the way to heaven'
@@ -271,14 +272,27 @@ describe('server', () => {
             ...expected,
             tags: { ...expectedTags }
           });
-
-          
-          // TODO: test meta-title - title, ogTitle, twitterTitle, kilnTitle ?
-          // TODO: test meta-description - description, defaultDescription ?
-          // TODO: test meta-image
-
-          // TODO: test body mapping.
         });
+        
+        it('maps AP data to meta title when publishable', async () => {
+          const
+            expectedTitle = 'You can go your own way!',
+            { result } = await setup_modifiedByAP({ apMeta: { headline: expectedTitle } }),
+            { metaTitle } = result;
+
+          expect(metaTitle).to.deep.include({
+            kilnTitle: expectedTitle,
+            ogTitle: expectedTitle,
+            title: expectedTitle,
+            twitterTitle: expectedTitle
+          });
+        });
+
+        // TODO: test meta-description - description, defaultDescription ?
+
+        // TODO: test meta-image
+
+        // TODO: test body mapping.
       });
 
       it('gets any new stations to map to', async () => {
