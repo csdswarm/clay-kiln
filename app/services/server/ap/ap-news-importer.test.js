@@ -21,17 +21,16 @@ describe('server', () => {
 
     describe('importArticle', () => {
       async function setup_importArticle(options = {}) {
+        // TODO: simplify this function by abstracting some things to different functions - ensure they are easy to find and read
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
+          HOST = 'some.radio.com',
           DEFAULT_ARTICLE_DATA = {
             slug: '',
             sectionFront: '',
             secondarySectionFront: '',
             stationSyndication: [],
             ...options.article
-          },
-          NEW_PAGE_DATA = {
-            main: [{ ...DEFAULT_ARTICLE_DATA }]
           },
           DEFAULT_AP_META = {
             signals: ['newscontent'],
@@ -42,15 +41,24 @@ describe('server', () => {
               etag: 'abcdefg_1234'
             }
           },
-          HOST = 'some.radio.com',
+          {
+            EXISTING_ARTICLE_ID,
+            EXISTING_PAGE_DATA,
+            EXISTING_PAGE_ARTICLE
+          } = buildApData('Existing', HOST, DEFAULT_ARTICLE_DATA),
+          {
+            NEW_ARTICLE_ID,
+            NEW_PAGE_DATA,
+            NEW_PAGE_ARTICLE
+          } = buildApData('New', HOST, DEFAULT_ARTICLE_DATA),
           LOCALS = { site: { host: HOST } },
           ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
-          EXISTING_ARTICLE_ID = `${HOST}/_components/article/instances/ck64dqppgzzzzabcd01234567@published`,
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
           locals = { ...LOCALS, ...options.locals },
           stationMappings = options.stationMappings || {},
           createPageStub = sinon.stub(),
           dbGetStub = sinon.stub(),
+          dbRawStub = sinon.stub(),
           bySlugStub = sinon.stub(),
           logStub = sinon.stub(),
           searchByQueryStub = sinon.stub();
@@ -61,6 +69,16 @@ describe('server', () => {
         dbGetStub
           .withArgs('_pages/new-two-col')
           .resolves(NEW_PAGE_DATA);
+        dbGetStub
+          .withArgs(NEW_ARTICLE_ID)
+          .resolves(NEW_PAGE_ARTICLE);
+        dbGetStub
+          .withArgs(EXISTING_ARTICLE_ID)
+          .resolves(EXISTING_PAGE_ARTICLE);
+
+        dbRawStub
+          .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING_ARTICLE_ID)
+          .resolves({ rows: [ EXISTING_PAGE_DATA ] });
 
         bySlugStub.resolves(options.stationsBySlug || {});
 
@@ -80,6 +98,7 @@ describe('server', () => {
 
         __.createPage = createPageStub;
         __.dbGet = dbGetStub;
+        __.dbRaw = dbRawStub;
         __.getAllStations = { bySlug: bySlugStub };
         __.log = logStub;
         __.searchByQuery = searchByQueryStub;
@@ -90,8 +109,10 @@ describe('server', () => {
           ...setup,
           ELASTIC_AP_ID_PATH,
           EXISTING_ARTICLE_ID,
+          EXISTING_PAGE_DATA,
           createPageStub,
           dbGetStub,
+          dbRawStub,
           locals,
           logStub,
           result,
@@ -126,8 +147,10 @@ describe('server', () => {
         const
           itemid = 'some-existing-id',
           {
+            dbRawStub,
             ELASTIC_AP_ID_PATH,
             EXISTING_ARTICLE_ID,
+            EXISTING_PAGE_DATA,
             result,
             searchByQueryStub
           } = await setup_importArticle({ apMeta: { altids: { itemid } } });
@@ -135,7 +158,12 @@ describe('server', () => {
         expect(result).to.have.property('preExistingArticle');
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
         expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
-        expect(result.preExistingArticle._id).to.eql(EXISTING_ARTICLE_ID);
+        expect(dbRawStub).to.have.been.calledOnceWith(sinon.match('article_id = ?'), EXISTING_ARTICLE_ID);
+        expect(result).to.deep.include({
+          preExistingArticle: {
+            ...EXISTING_PAGE_DATA
+          }
+        });
       });
 
       it('creates a new article if one does not already exist', async () => {
@@ -163,7 +191,7 @@ describe('server', () => {
         expect(result.preExistingArticle).to.be.undefined;
         expect(result).to.have.property('article');
         expect(createPageStub).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
-        expect(dbGetStub).to.have.been.calledOnceWith('_pages/new-two-col');
+        expect(dbGetStub).to.have.been.calledWith('_pages/new-two-col');
       });
 
       it('traps errors when checking for existing elastic content', async () => {
@@ -332,3 +360,27 @@ describe('server', () => {
     });
   });
 });
+
+function buildApData(name, host, data) {
+  const
+    PRE = name.toUpperCase(),
+    POST = name.toLowerCase(),
+    INSTANCE_ID = POST.padStart(26, 'ck64dqppgzzzzabcd012345678'),
+    ARTICLE_ID = `${host}/_components/article/instances/${INSTANCE_ID}`;
+  
+  return {
+    [`${PRE}_ARTICLE_ID`]: `${host}/_components/article/instances/${INSTANCE_ID}`,
+    [`${PRE}_PAGE_DATA`]: {
+      head: [
+        `${host}/_components/meta-title/instances/${INSTANCE_ID}`,
+        `${host}/_components/meta-description/instances/${INSTANCE_ID}`,
+        `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
+        `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
+      ],
+      main: [ARTICLE_ID]
+    },
+    [`${PRE}_PAGE_ARTICLE`]: {
+      ...data
+    }
+  };
+}

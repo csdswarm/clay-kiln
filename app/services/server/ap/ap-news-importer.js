@@ -5,7 +5,7 @@ const
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
   { createPage } = require('../page-utils'),
-  { get: dbGet, put: dbPut, raw: getSQL } = require('../db'),
+  { get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { searchByQuery } = require('../query'),
 
@@ -24,8 +24,8 @@ const
     createPage,
     dbGet,
     dbPut,
+    dbRaw,
     getAllStations,
-    getSQL,
     log,
     searchByQuery
   };
@@ -49,13 +49,19 @@ function checkApPublishable({ editorialtypes, pubstatus, signals }) {
  */
 async function findExistingArticle({ itemid } = {}) {
   const
-    { log, searchByQuery } = __,
+    { dbRaw, log, searchByQuery } = __,
     query = _set({ ...QUERY_TEMPLATE }, 'body.query.term[\'ap.itemid\']', itemid);
 
   try {
-    const [existing] = await searchByQuery(query, null, { includeIdInResult: true });
+    const [existing] = await searchByQuery(query, null, { includeIdInResult: true }),
+      { rows } = existing && await dbRaw(`
+        SELECT data 
+        FROM pages, jsonb_array_elements_text(data->\'main\') article_id
+        WHERE article_id = ?`,
+      existing._id) || {};
 
-    return existing;
+    return rows && rows[0];
+
   } catch (error) {
     log('error', 'Problem getting existing data from elastic', error);
   }
@@ -68,9 +74,38 @@ async function findExistingArticle({ itemid } = {}) {
  * @returns {Promise<Object>}
  */
 async function createNewArticle(stationMappings, locals) {
-  const newPage = await __.createPage(await __.dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+  const { createPage, dbGet } = __;
 
-  return _get(newPage, 'main.0');
+  return createPage(await dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+}
+
+/**
+ * Gets all necessary info to handle updating the page, including the
+ * article, meta-title, meta-description, meta-image, meta-tags and tags
+ * @param {object} pageData
+ * @param {string[]} pageData.head
+ * @param {string[]} pageData.main
+ * @returns {Promise<object>}
+ */
+async function getArticleData({ head, main }) {
+  const
+    { dbGet } = __,
+    article = await dbGet(main[0]),
+    [
+      metaDescription,
+      metaImage,
+      metaTags,
+      metaTitle
+    ] = await Promise.all(['description', 'image', 'tags', 'title']
+      .map(async name => await dbGet(head.find(text => text.includes(`meta-${name}`)))));
+
+  return {
+    article,
+    metaDescription,
+    metaImage,
+    metaTags,
+    metaTitle
+  };
 }
 
 /**
@@ -160,14 +195,14 @@ async function importArticle(apMeta, stationMappings, locals) {
 
   if (!isApContentPublishable && preExistingArticle) {
     // TODO: unpublish
-    return { isApContentPublishable, article: preExistingArticle };
+    return { isApContentPublishable, preExistingArticle };
   }
 
   const
-    articleData = preExistingArticle || await createNewArticle(stationMappings, locals),
-    isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'ap.etag'),
-    newStations = await getNewStations(articleData, stationMappings),
-    article = isModifiedByAP ? mapApDataToArticle(apMeta, articleData) : articleData;
+    articleData = await getArticleData(preExistingArticle || await createNewArticle(stationMappings, locals)),
+    isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
+    newStations = await getNewStations(articleData.article, stationMappings),
+    article = isModifiedByAP ? mapApDataToArticle(apMeta, articleData.article) : articleData;
 
   return {
     article,
