@@ -1,4 +1,5 @@
 'use strict';
+
 const { recirculationData } = require('../../services/universal/recirc/recirculation'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   { DEFAULT_STATION } = require('../../services/universal/constants');

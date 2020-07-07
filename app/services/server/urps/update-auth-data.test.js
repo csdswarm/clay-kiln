@@ -47,7 +47,7 @@ describe('getFromUrps', () => {
     const { locals, session } = getMockData({
       auth: {
         expires: Date.now() - 1000,
-        token: {}
+        idToken: {}
       }
     });
 

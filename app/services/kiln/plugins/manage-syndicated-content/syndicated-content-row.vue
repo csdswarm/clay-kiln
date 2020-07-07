@@ -13,7 +13,14 @@
       <span v-if="statusTime" class="status-time">{{ statusTime }}</span>
     </div>
     <div class="page-list-item__manage buttons-group">
-      <ui-button v-if="status === 'published'" class="buttons-group__unpublish" buttonType="button" color="red">Unpublish</ui-button>
+      <ui-button v-if="status === 'published'" 
+        class="buttons-group__unpublish" 
+        buttonType="button" 
+        color="red" 
+        @click.stop="onUnpublish" 
+        :loading="unpublishLoading">
+        Unpublish
+      </ui-button>
       <div v-else-if="status === 'available'">
         <ui-button
           class="buttons-group__syndicate"
@@ -21,7 +28,7 @@
           @click.stop="onSyndicate"
           :loading="syndicationLoading"
         >Syndicate</ui-button>
-        <ui-button class="buttons-group__clone" buttonType="button" color="accent">Clone</ui-button>
+        <ui-button class="buttons-group__clone" buttonType="button" color="accent" :loading="cloneLoading" @click="clonePage(content.canonicalUrl)">Clone</ui-button>
       </div>
     </div>
   </div>
@@ -29,6 +36,7 @@
 
 <script>
   import _ from 'lodash';
+  import axios from 'axios';
   import isValidDate from 'date-fns/is_valid';
   import dateFormat from 'date-fns/format';
   import isToday from 'date-fns/is_today';
@@ -37,6 +45,7 @@
   import isThisYear from 'date-fns/is_this_year';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
   import { findSyndicatedStation } from '../../../universal/syndication-utils';
+  import { pagesRoute,refProp, uriToUrl, htmlExt, editExt } from '../new-page-override/clay-kiln-utils';
 
   const { UiButton } = window.kiln.utils.components,
     nationalStationName = DEFAULT_STATION.name,
@@ -69,6 +78,12 @@
 
   export default {
     props: ['content', 'stationFilter'],
+    data() {
+      return {
+        unpublishLoading: false,
+        cloneLoading: false
+      }
+    },
     computed: {
       syndicationLoading() {
         return this.content.syndicationLoading || false;
@@ -86,6 +101,8 @@
           findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(content.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
+
+        this.unpublishLoading = false;
 
         /*
           if the station slug of a content is equal to current selected station
@@ -126,6 +143,21 @@
       }
     },
     methods: {
+      async clonePage(canonicalUrl) {
+        this.cloneLoading = true;
+
+        const prefix = _.get(this.$store, 'state.site.prefix'),
+          { data: newPage } = await axios.post(`/rdc/clone-content`,
+            {
+              canonicalUrl,
+              stationSlug: this.selectedStation.slug
+            },
+            { withCredentials: true }
+          ),
+          editNewPageUrl = uriToUrl(newPage[refProp]) + htmlExt + editExt;
+
+        window.location.href = editNewPageUrl;
+      },
       /**
        * generate a content url to link to
        * @param  {object} syndicatedStation
@@ -149,6 +181,15 @@
       onSyndicate() {
         this.$emit('createSyndication', this.content._id);
       },
+      /**
+       * unpublish syndicated station from content
+       */
+      async onUnpublish() {
+        this.unpublishLoading = true;
+        await axios.post('/rdc/syndicated-content/unpublish', { uri: this.content._id, station: this.selectedStation });
+        // Reload content to refresh updated data
+        this.$emit('reloadContent', null);
+      }
     },
     components: {
       UiButton

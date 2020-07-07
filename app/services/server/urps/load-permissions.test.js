@@ -17,7 +17,7 @@ describe('loadPermissions', () => {
     }),
     getMockData = ({ permissions }) => ({
       auth: {
-        token: {},
+        idToken: {},
         permissions
       },
       stationDomainNames: [rdcDomainName]
@@ -34,7 +34,7 @@ describe('loadPermissions', () => {
 
     expect(getPermissions.calledOnce).to.be.true;
     expect(getPermissions.firstCall.args).to.deep.equal([
-      auth.token,
+      auth.idToken,
       stationDomainNames
     ]);
   });

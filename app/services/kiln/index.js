@@ -28,6 +28,7 @@ module.exports = () => {
   require('./plugins/subscriptions')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
+  require('./plugins/editorial-feeds')();
   require('./validators')();
   secureAllSchemas();
   addStationCheckToSelect();

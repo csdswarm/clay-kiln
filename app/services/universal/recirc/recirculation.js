@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl, boolObjectToArray } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -319,10 +319,10 @@ const
     if (locals && locals.tag) {
       // This is from load more on a tag page
       tags = locals.tag;
-    } else if (locals && locals.params && locals.params.tag) {
+    } else if (_get(locals, 'params.tag')) {
       // This is from a tag page but do not override a manually set tag
       tags = data.tag || locals.params.tag;
-    } else if (locals && locals.params && locals.params.dynamicTag) {
+    } else if (_get(locals, 'params.dynamicTag')) {
       // This is from a tag page
       tags = locals.params.dynamicTag;
     }
@@ -384,7 +384,6 @@ const
    * @returns {boolean}
    */
   validUrl = url => url && !isComponent(url),
-  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
   // Get both the results and the total number of results for the query
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
@@ -536,6 +535,8 @@ const
             shouldDedupeContent: false
           },
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
+
+        item.uri = result._id;
 
         return mapResultsToTemplate(locals, result, item);
       }));

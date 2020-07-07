@@ -45,7 +45,6 @@ configmap:
     INLINE_EDIT_STYLES: "true"
     IP_ADDRESS: "0.0.0.0"
     LOG: "info"
-    LYTICS_API_URL: "https://api.lytics.io/api"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
     REDIS_HOST: "redis://stg-redis.radio-stg.com:6379"

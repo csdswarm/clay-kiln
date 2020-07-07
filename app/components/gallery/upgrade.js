@@ -243,3 +243,9 @@ module.exports['13.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['14.0'] = (uri, data) => {
+  data.stationSyndication.map(syndication => syndication.source = syndication.source || 'manual syndication');
+
+  return data;
+};

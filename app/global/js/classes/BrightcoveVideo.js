@@ -17,7 +17,8 @@ class BrightcoveVideo extends Video {
   constructor(brightcoveComponent) {
     const videoPlayer = brightcoveComponent.querySelector('video-js'),
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
-      brightcovePlayerId = videoPlayer.getAttribute('data-player');
+      brightcovePlayerId = videoPlayer.getAttribute('data-player'),
+      videoPlayerCloseBtn = brightcoveComponent.querySelector('.player__video-close-btn');
 
     super(brightcoveComponent, {
       script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`,
@@ -51,6 +52,9 @@ class BrightcoveVideo extends Video {
         this.hideStickyPlayer();
       }
     });
+
+    // add handler for closing the stick player
+    videoPlayerCloseBtn.addEventListener('click', () => this.onCloseStickyPlayer());
   }
   /**
    * @override
@@ -261,6 +265,14 @@ class BrightcoveVideo extends Video {
         myPlayer.ima3.settings.serverUrl = serverUrl;
       }
     });
+  }
+
+  /**
+   * handler for closing the sticky player
+   * @function
+   */
+  onCloseStickyPlayer() {
+    this.pause();
   }
 }
 

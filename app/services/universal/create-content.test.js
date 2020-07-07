@@ -21,6 +21,11 @@ const expect = require('chai').expect,
             seoHeadline: ''
           });
       }
+    },
+    './editorial-feed-syndication': {
+      addStationsByEditorialGroup: () => {
+        mockData.data.stationSyndication = [];
+      }
     }
   }),
   mockData = {
@@ -94,9 +99,6 @@ const expect = require('chai').expect,
           name: 'New York, NY'
         },
         category: ''
-      },
-      lytics: {
-        uid: '1234'
       },
       user: {
         auth: 'admin',
