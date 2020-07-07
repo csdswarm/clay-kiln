@@ -70,7 +70,10 @@ describe('server', () => {
           .resolves([{ _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'some-existing-id' } }]);
         searchByQueryStub
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'abcdefg'))
-          .resolves([{ _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' } }]);
+          .resolves([{
+            _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA,
+            ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' }
+          }]);
         searchByQueryStub
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
@@ -180,13 +183,93 @@ describe('server', () => {
         expect(result.isModifiedByAP).to.eql(true);
       });
 
+      describe('modified by AP', () => {
+        async function setup_modifiedByAP(options = {}) {
+          const
+            setup = await setup_importArticle({
+              apMeta: {
+                altids: {
+                  itemid: 'xyz123',
+                  etag: 'xyz123_mod1'
+                },
+                version: 1,
+                ednote: 'go ahead and publish, there are no problems here.',
+                headline: 'Something tragic happened',
+                headline_extended: 'Something tragic happened on the way to heaven',
+                subject: [
+                  { name: 'Heaven', creator: 'Machine' },
+                  { name: 'Earth', creator: 'Machine' },
+                  { name: 'Tragedy', creator: 'Machine' }
+                ],
+                associations: {
+                  1: {
+                    uri: 'https://api.ap.org/media/v/content/0726a2a7a06b48d0af1e41bf04fe8f80',
+                    altids: { itemid: '0726a2a7a06b48d0af1e41bf04fe8f80' },
+                    type: 'picture',
+                    headline: 'Something tragic'
+                  }
+                },
+                renditions: {
+                  nitf: {
+                    href: 'https://api.ap.org/media/v/content/c116ac3656f240238ee7529720e4a4b8/download?type=text&format=NITF'
+                  }
+                }
+              },
+              ...options.apMeta
+            }),
+            { __ } = setup,
+            dbPutStub = sinon.stub();
+
+          __.dbPut = dbPutStub;
+
+          return { ...setup, dbPutStub };
+        }
+
+        it('maps AP data to article if content is publishable', async () => {
+          const { result } = await setup_modifiedByAP(),
+            { article } = result,
+            expected = {
+              ap:
+                {
+                  itemid: 'xyz123',
+                  etag: 'xyz123_mod1',
+                  version: 1,
+                  ednote: 'go ahead and publish, there are no problems here.'
+                },
+              headline: 'Something tragic happened',
+              shortHeadline: 'Something tragic happened',
+              msnTitle: 'Something tragic happened',
+              pageTitle: 'Something tragic happened',
+              slug: 'something-tragic-happened',
+              seoDescription: 'Something tragic happened on the way to heaven',
+              pageDescription: 'Something tragic happened on the way to heaven'
+            },
+            expectedTags = {
+              items: [
+                { text: 'AP News', slug: 'ap-news' },
+                { text: 'Heaven', slug: 'heaven' },
+                { text: 'Earth', slug: 'earth' },
+                { text: 'Tragedy', slug: 'tragedy' }
+              ]
+            };
+
+          expect(article).to.deep.include({
+            ...expected,
+            tags: { ...expectedTags }
+          });
+
+          // TODO: test meta-title - title, ogTitle, twitterTitle, kilnTitle ?
+          // TODO: test meta-description - description, defaultDescription ?
+          // TODO: test meta-image
+
+          // TODO: test body mapping.
+        });
+      });
+
       it('gets any new stations to map to', async () => {
         const { result } = await setup_importArticle({
           stationsBySlug: {
-            stationA: {
-              callsign: 'STA',
-              name: 'Station A'
-            }
+            stationA: { callsign: 'STA', name: 'Station A' }
           },
           apMeta: {
             altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
@@ -208,18 +291,9 @@ describe('server', () => {
       it('only gets new stations if article already exists', async () => {
         const { result } = await setup_importArticle({
           stationsBySlug: {
-            stationA: {
-              callsign: 'STA',
-              name: 'Station A'
-            },
-            stationB: {
-              callsign: 'STB',
-              name: 'Station B'
-            },
-            stationC: {
-              callsign: 'STC',
-              name: 'Station C'
-            }
+            stationA: { callsign: 'STA', name: 'Station A' },
+            stationB: { callsign: 'STB', name: 'Station B' },
+            stationC: { callsign: 'STC', name: 'Station C' }
           },
           apMeta: {
             altids: { itemid: 'some-existing-id' }
@@ -255,7 +329,6 @@ describe('server', () => {
         }]);
 
       });
-
     });
   });
 });

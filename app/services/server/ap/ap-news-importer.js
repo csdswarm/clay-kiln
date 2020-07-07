@@ -3,8 +3,9 @@ const
   _get = require('lodash/get'),
   _set = require('lodash/set'),
   logger = require('../../universal/log'),
+  slugifyService = require('../../universal/slugify'),
   { createPage } = require('../page-utils'),
-  { get: dbGet } = require('../db'),
+  { get: dbGet, put: dbPut, raw: getSQL } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { searchByQuery } = require('../query'),
 
@@ -22,7 +23,9 @@ const
   __ = {
     createPage,
     dbGet,
+    dbPut,
     getAllStations,
+    getSQL,
     log,
     searchByQuery
   };
@@ -107,6 +110,44 @@ async function getNewStations(article, stationMappings, locals) {
 }
 
 /**
+ *
+ * @param {object} apMeta
+ * @param {object} article
+ * @returns {object}
+ */
+function mapApDataToArticle(apMeta, article) {
+  const
+    tags = _get(article, 'tags.items', []),
+    tagSlugs = tags.map(({ slug }) => slug),
+    newTags = _get(apMeta, 'subject', [])
+      .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
+    newArticle = {
+      ...article,
+      ap: {
+        itemid: apMeta.altids.itemid,
+        etag: apMeta.altids.etag,
+        version: apMeta.version,
+        ednote: apMeta.ednote
+      },
+      headline: apMeta.headline,
+      shortHeadline: apMeta.headline,
+      msnTitle: apMeta.headline,
+      pageTitle: apMeta.headline,
+      slug: slugifyService(apMeta.headline),
+      seoDescription: apMeta.headline_extended,
+      pageDescription: apMeta.headline_extended,
+      tags: { items: [
+        ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' } ],
+        ...tags,
+        ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
+      ] }
+    };
+
+
+  return newArticle;
+}
+
+/**
  * Handles the logic needed to import or update an artice from the AP media api
  * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
@@ -115,10 +156,18 @@ async function getNewStations(article, stationMappings, locals) {
  */
 async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
-    preExistingArticle = await findExistingArticle(apMeta.altids),
-    article = preExistingArticle || await createNewArticle(stationMappings, locals),
-    isModifiedByAP = apMeta.altids.etag !== _get(article, 'ap.etag'),
-    newStations = await getNewStations(article, stationMappings);
+    preExistingArticle = await findExistingArticle(apMeta.altids);
+
+  if (!isApContentPublishable && preExistingArticle) {
+    // TODO: unpublish
+    return { isApContentPublishable, article: preExistingArticle };
+  }
+
+  const
+    articleData = preExistingArticle || await createNewArticle(stationMappings, locals),
+    isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'ap.etag'),
+    newStations = await getNewStations(articleData, stationMappings),
+    article = isModifiedByAP ? mapApDataToArticle(apMeta, articleData) : articleData;
 
   return {
     article,
