@@ -234,6 +234,11 @@ module.exports.render = async (ref, data, locals) => {
 
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
         }
+      },
+      // exclude content from importer
+      importer: {
+        excludeConditionType: 'addMustNot',
+        createObj: bool => ({ match: { ['stationSyndication.importer']: bool } })
       }
     };
 
