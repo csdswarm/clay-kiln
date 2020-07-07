@@ -103,6 +103,9 @@ function setupApp(app) {
     extended: true
   }));
 
+  addEndpoints.contentWithSyndicatedUrl(app);
+  addEndpoints.contentAndPageInfo(app);
+
   // Set the static path here so all middleware gets skipped
   // TODO: ON-1788: Reorder Middleware and shortcut for paths that do not need the logic
   app.use(express.static('public'));
@@ -126,8 +129,6 @@ function setupApp(app) {
 
   addInterceptor.cacheControl(app);
 
-  addEndpoints.contentWithSyndicatedUrl(app);
-  addEndpoints.contentAndPageInfo(app);
   addEndpoints.fetchStationFeed(app);
   addEndpoints.msnFeed(app);
   addEndpoints.s3StationFeedImgUrl(app);
