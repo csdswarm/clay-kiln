@@ -119,7 +119,7 @@ install:
 	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm run build-production
 
 lint:
-	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix
+	npm run --silent lint:app:js; npm run --silent lint:spa:js
 
 build-player:
 	if cd ./radio-web-player; then git pull; else git clone git@bitbucket.org:entercom/rad-web-player.git ./radio-web-player; fi
