@@ -1,13 +1,13 @@
 'use strict';
 
-const radioApiService = require('../../services/server/radioApi'),
-  slugifyService = require('../../services/universal/slugify'),
-  getStations = require('../../services/universal/getStations'),
-  utils = require('../../services/universal/podcast'),
+const _get = require('lodash/get'),
+  backFillThreshold = 3,
   logger = require('../../services/universal/log'),
   log = logger.setup({ file: __filename }),
   maxItems = 4,
-  backFillThreshold = 3,
+  podcastUtils = require('../../services/universal/podcast'),
+  radioApiService = require('../../services/server/radioApi'),
+  slugifyService = require('../../services/universal/slugify'),
   /**
    * determines if the array of podcast items contains a url
    * @param {object} arr
@@ -45,7 +45,7 @@ module.exports.render = async function (ref, data, locals) {
 
       if (podcast) {
         podcast.imageUrl = podcast.imageUrl
-          ? utils.createImageUrl(podcast.imageUrl)
+          ? podcastUtils.createImageUrl(podcast.imageUrl)
           : '';
       }
     });
@@ -72,12 +72,9 @@ module.exports.render = async function (ref, data, locals) {
       const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
         numItemsToBackFill = maxItems - curatedCount,
         itemsToGetStationData = podcasts.slice(0,maxItems),
-        stationIds = itemsToGetStationData.map((podcast)=>{
-          return _get(podcast, 'attributes.station[0].id');
-        }).filter((id) => !!id),
-        { data: stationsById } = await getStations.getStationsById(stationIds),
+        stationsById = await podcastUtils.getStationsForPodcasts(itemsToGetStationData,locals),
         uniqueUrls = (podcast) => {
-          const url = utils.createUrl(podcast, stationsById);
+          const url = podcastUtils.createUrl(podcast,stationsById[podcastUtils.getStationIdForPodcast(podcast)]);
 
           return !containsUrl(data.items, url);
         },
@@ -85,14 +82,14 @@ module.exports.render = async function (ref, data, locals) {
           .filter(uniqueUrls)
           .slice(0, numItemsToBackFill)
           .map((podcast) => {
-            const url = utils.createUrl(podcast,stationsById);
+            const url = podcastUtils.createUrl(podcast,stationsById[podcastUtils.getStationIdForPodcast(podcast)]);
 
             return {
               podcast: {
                 label: podcast.attributes.title,
                 title: podcast.attributes.title,
                 url,
-                imageUrl: utils.createImageUrl(podcast.attributes.image)
+                imageUrl: podcastUtils.createImageUrl(podcast.attributes.image)
               }
             };
           });

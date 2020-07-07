@@ -1,9 +1,7 @@
 'use strict';
 
-const _memoize = require('lodash/memoize'),
-  _pick = require('lodash/pick'),
-  stationUtils = require('../../services/server/station-utils'),
-  getStationsById = _memoize(stationUtils.getAllStations.byId, ()=>'byId');
+const _pick = require('lodash/pick'),
+  stationUtils = require('../../services/server/station-utils');
 
 /**
  * Add routes for station utils
@@ -17,7 +15,7 @@ module.exports = router => {
    * ids can be in any order or contain duplicates, but for best results (i.e. properly using cache) ids should be ordered lowest->highest with no duplicates
    */
   router.get('/rdc/station-utils/stations-by-id', async (req, res) => {
-    const allStationsById = await getStationsById({ locals: res.locals }),
+    const allStationsById = await stationUtils.getAllStations.byId({ locals: res.locals }),
       { ids = '' } = req.query,
       result = _pick(allStationsById, ids.split(','));
 
