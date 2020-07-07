@@ -4,6 +4,7 @@ const _ = require('lodash'),
   getContentSubscriptions = require('./get-content-subscriptions'),
   stationUtils = require('./station-utils'),
   { includesAny } = require('../universal/utils'),
+  { DEFAULT_STATION } = require('../universal/constants'),
 
   matchesOn = buildMatchesOn(),
   stationPropsForSyndication = ['callsign', 'name', 'site_slug'];
@@ -105,9 +106,12 @@ function makeIsSubscribed(data) {
   const tags = new Set(data.textTags || []);
 
   return subscriptionsPerStation => subscriptionsPerStation.some(sub => {
-    const { filter, from_station_slug: fromStationSlug } = sub;
+    const { filter, from_station_slug: fromStationSlug } = sub,
+      matchesStation = fromStationSlug === DEFAULT_STATION.site_slug
+        ? !data.stationSlug
+        : data.stationSlug === fromStationSlug;
 
-    return data.stationSlug === fromStationSlug
+    return matchesStation
       && !isExcluded(data, tags, filter)
       && filter.contentType.includes(data.contentType)
       && matchesOn[filter.populateFrom](data, tags, filter);
