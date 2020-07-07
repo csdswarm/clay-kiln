@@ -16,11 +16,6 @@ const _ = require('lodash'),
  * @returns {object[]}
  */
 const getStationsSubscribedToContent = async (data, locals) => {
-  // we're only covering national content for now
-  if (data.stationSlug) {
-    return [];
-  }
-
   // unable to declare 'let' and 'const' in parallel
   // eslint-disable-next-line prefer-const
   let [nationalSubscriptions, allStations] = await Promise.all([
@@ -28,10 +23,7 @@ const getStationsSubscribedToContent = async (data, locals) => {
     stationUtils.getAllStations({ locals })
   ]);
 
-  nationalSubscriptions = _.chain(nationalSubscriptions)
-    .groupBy('station_slug')
-    .mapValues(toArrayOfFilters)
-    .value();
+  nationalSubscriptions = _.groupBy(nationalSubscriptions, 'station_slug');
 
   const isSubscribed = makeIsSubscribed(data),
     subscribedStations = _.chain(nationalSubscriptions)
@@ -112,26 +104,14 @@ function makeIsSubscribed(data) {
   // not all content types have tags yet
   const tags = new Set(data.textTags || []);
 
-  return subscriptionFiltersPerStation => {
+  return subscriptionsPerStation => subscriptionsPerStation.some(sub => {
+    const { filter, from_station_slug: fromStationSlug } = sub;
 
-    return subscriptionFiltersPerStation.some(filter => {
-      return !isExcluded(data, tags, filter)
-        && filter.contentType.includes(data.contentType)
-        && matchesOn[filter.populateFrom](data, tags, filter);
-    });
-  };
-}
-
-/**
- * turns an array of subscriptions to an array of the subscription filters
- *
- * this is a helper method since inline'ing it didn't read well imo
- *
- * @param {object[]} subscriptions
- * @returns {object[]}
- */
-function toArrayOfFilters(subscriptions) {
-  return _.map(subscriptions, 'filter');
+    return data.stationSlug === fromStationSlug
+      && !isExcluded(data, tags, filter)
+      && filter.contentType.includes(data.contentType)
+      && matchesOn[filter.populateFrom](data, tags, filter);
+  });
 }
 
 module.exports = getStationsSubscribedToContent;
