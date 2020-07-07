@@ -160,10 +160,14 @@
     flex-basis: 100%;
     max-height: em(19,15);
     text-decoration: none;
-    margin-bottom: em(20,18);
+    margin-bottom: em(20,15);
     text-transform: capitalize;
+    display: flex;
+    align-items: center;
     svg {
-      height: 50%;
+      height: em(12,15);
+      display: block;
+      margin-left: em(5,15);
     }
   }
   

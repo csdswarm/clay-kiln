@@ -5,9 +5,6 @@
 <img class="podcast-lead__image" src="{{ defaultImg }}?crop=1:1,offset-y0" alt="{{ title }}">
 {{/if}}
 {{/inline}}
-{{#*inline "emailIcon"}}
-{{{ read 'components/share/media/email.svg' }}}
-{{/inline}}
 
 {{#*inline "socialSubscribe"}}
 <div class="{{#unless isMedium}}podcast-lead__social{{/unless}} {{#if isMedium}}podcast-lead__social--md{{/if}}">
@@ -27,7 +24,7 @@
       {{/if}}
       {{#if shares.email}}
       <a class="podcast-lead__share-link" href={{shares.email.link}} target="_blank">
-        {{> emailIcon}}
+        <span>{{{ read 'components/podcast-lead/media/email.svg'}}}</span>
       </a>
       {{/if}}
     </div>
@@ -55,12 +52,6 @@
 
 <section class="component podcast-lead component--podcast-lead podcast-lead--{{ sectionFront }}"
   data-uri="{{ default _ref _self }}" data-track-type="podcast-lead">
-
-  {{!-- This needs to be here and hidden so that the inline 'socialSubscribe' works on medium screen. --}}
-  <div class="podcast-lead__email-svg--hidden">
-    {{{ read 'components/share/media/email.svg' }}}
-  </div>
-  
   <div class="podcast-lead__head--sm">
     <div class="podcast-lead__heading--sm">
       {{ _computed.title }}
@@ -113,7 +104,7 @@
       {{/if}}
       {{#if _computed.episodeListURL}}
       <a class="podcast-lead__see-all" target="_blank" href={{_computed.episodeListURL}}>
-        See all episodes <span>{{{ read 'components/podcast-lead/media/caret-right.svg' }}}</span>
+        See all episodes {{{ read 'components/podcast-lead/media/caret-right.svg' }}}
       </a>
       {{/if}}
       {{#if _computed.category}}
