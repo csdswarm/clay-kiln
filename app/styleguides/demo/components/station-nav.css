@@ -217,6 +217,7 @@ $caret-margin-right: em(25);
             svg {
               width: 100%;
               height: auto;
+              fill: $station-primaryColor;
             }
           }
         }
@@ -475,6 +476,10 @@ $caret-margin-right: em(25);
             width: em(60);
             height: em(60);
             @mixin medium-screen {
+              width: em(50);
+              height: em(50);
+            }
+            @mixin only-medium-screen {
               width: em(100);
               height: em(100);
             }
