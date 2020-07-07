@@ -152,15 +152,17 @@ async function getNewStations(article, stationMappings, locals) {
  * @param {object} articleData
  * @param {object} articleData.article
  * @param {object} articleData.metaTitle
+ * @param {object} articleData.metaDescription
  * @returns {object}
  */
-function mapApDataToArticle(apMeta, { article , metaTitle }) {
+function mapApDataToArticle(apMeta, articleData) {
   const
+    { article , metaTitle, metaDescription } = articleData,
     tags = _get(article, 'tags.items', []),
     tagSlugs = tags.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
-    articleData = {
+    newArticleData = {
       article: {
         ...article,
         ap: {
@@ -184,6 +186,10 @@ function mapApDataToArticle(apMeta, { article , metaTitle }) {
           ]
         }
       },
+      metaDescription: {
+        ...metaDescription,
+        description: apMeta.headline_extended
+      },
       metaTitle: {
         ...metaTitle,
         kilnTitle: apMeta.headline,
@@ -193,8 +199,7 @@ function mapApDataToArticle(apMeta, { article , metaTitle }) {
       }
     };
 
-
-  return articleData;
+  return newArticleData;
 }
 
 /**
@@ -217,12 +222,19 @@ async function importArticle(apMeta, stationMappings, locals) {
     articleData = await getArticleData(preExistingArticle || await createNewArticle(stationMappings, locals)),
     isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
     newStations = await getNewStations(articleData.article, stationMappings),
-    { article, metaTitle } = isModifiedByAP ? mapApDataToArticle(apMeta, articleData) : articleData;
+    {
+      article,
+      metaDescription,
+      metaTitle
+    } = isModifiedByAP
+      ? mapApDataToArticle(apMeta, articleData)
+      : articleData;
 
   return {
     article,
     isApContentPublishable,
     isModifiedByAP,
+    metaDescription,
     metaTitle,
     newStations,
     preExistingArticle

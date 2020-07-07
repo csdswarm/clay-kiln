@@ -288,7 +288,16 @@ describe('server', () => {
           });
         });
 
-        // TODO: test meta-description - description, defaultDescription ?
+        it('maps AP data to meta description when publishable', async () => {
+          const
+            expected = 'You can go your own way, but it might be really, really far!',
+            { result } = await setup_modifiedByAP({ apMeta: { headline_extended: expected } }),
+            { metaDescription } = result;
+
+          expect(metaDescription).to.deep.include({
+            description: expected
+          });
+        });
 
         // TODO: test meta-image
 
