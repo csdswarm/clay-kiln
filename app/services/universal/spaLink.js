@@ -30,7 +30,9 @@ function addEventListeners(anchorTagsContainer) {
           event.preventDefault();
           anchor.removeEventListener('click', anchor.fn, false);
 
-          navigateTo(URL(link).pathname);
+          const hash = URL(link).hash || '';
+
+          navigateTo(`${URL(link).pathname}${hash}`);
         });
       }
     });
