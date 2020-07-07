@@ -1,6 +1,6 @@
 'use strict';
 
-const { assignStationInfo } = require('../../services/universal/create-content.js');
+const { assignStationInfo } = require('../../services/universal/create-content');
 
 module.exports.render = (uri, data, locals) => {
   if (data.title) {

@@ -32,31 +32,49 @@ const redisKey = 'national-subscriptions',
    * returns all rows from public.national_subscriptions sorted by
    *   last_updated_utc descending
    *
+   * @param {bool} shouldOrder
    * @returns {NationalSubscription[]}
    */
-  getNationalSubscriptions = async () => {
-    let subscriptions = await redis.get(redisKey);
+  getNationalSubscriptions = async ({ shouldOrder = true } = {}) => {
+    try {
+      let subscriptions = await redis.get(redisKey);
 
-    if (!subscriptions) {
-      subscriptions = (
-        await db.raw(`
-          select *
-          from national_subscriptions
-          order by last_updated_utc asc
-        `)
-      ).rows;
+      if (!subscriptions) {
+        const orderClause = shouldOrder
+          ? 'order by last_updated_utc asc'
+          : '';
 
-      await redis.set(redisKey, JSON.stringify(subscriptions));
-    } else {
-      subscriptions = JSON.parse(subscriptions)
-        .map(sub => {
-          sub.last_updated_utc = new Date(sub.last_updated_utc);
+        subscriptions = (
+          await db.raw(`
+            select *
+            from national_subscriptions
+            ${orderClause}
+          `)
+        ).rows;
 
-          return sub;
-        });
+        await redis.set(redisKey, JSON.stringify(subscriptions));
+      } else {
+        subscriptions = JSON.parse(subscriptions)
+          .map(sub => {
+            sub.last_updated_utc = new Date(sub.last_updated_utc);
+
+            return sub;
+          });
+      }
+
+      return subscriptions;
+    } catch (err) {
+      // without this, make bootstrap fails locally on a lot of content-related
+      //   operations since 'national_subscriptions' doesn't exist yet
+      if (
+        process.env.NODE_ENV === 'local'
+        && err.message.includes('relation "national_subscriptions" does not exist')
+      ) {
+        return [];
+      }
+
+      throw err;
     }
-
-    return subscriptions;
   };
 
 /**

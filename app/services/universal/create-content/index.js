@@ -4,17 +4,24 @@ const _get = require('lodash/get'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
-  sanitize = require('./sanitize'),
-  promises = require('./promises'),
-  rest = require('./rest'),
-  circulationService = require('./circulation'),
-  mediaplay = require('./media-play'),
+  {
+    uriToUrl,
+    replaceVersion,
+    has,
+    isFieldEmpty,
+    textToEncodedSlug,
+    urlToElasticSearch
+  } = require('../utils'),
+  sanitize = require('../sanitize'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  circulationService = require('../circulation'),
+  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  mediaplay = require('../media-play'),
   articleOrGallery = new Set(['article', 'gallery']),
-  urlExists = require('../../services/universal/url-exists'),
-  { urlToElasticSearch } = require('../../services/universal/utils'),
+  urlExists = require('../url-exists'),
   { getComponentName } = require('clayutils'),
-  slugify = require('../../services/universal/slugify');
+  slugify = require('../slugify');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -605,6 +612,9 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need apply national subscriptions before creating slugs for syndicated content
+  await applyNationalSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
