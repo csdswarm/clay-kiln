@@ -31,7 +31,7 @@ module.exports = router => {
       WHERE content.syndicationStatus = 'syndicated'
         AND content.syndicatedUrl = ?
         AND content.id NOT LIKE '%@published'
-      UNINON
+      UNION
       SELECT
         u.url AS content_url,
         p.id AS page_id,
