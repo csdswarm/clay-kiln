@@ -2,7 +2,6 @@
 
 const db = require('../db'),
   uuidV4 = require('uuid/v4'),
-  CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   /**
    * Get a record matching a given id
    *
@@ -37,10 +36,10 @@ const db = require('../db'),
       return await db.put(id, subscription);
     } else {
       const id = uuidV4(),
-        key = `${CLAY_SITE_HOST}/_ap_subscriptions/${id}`;
+        key = `_ap_subscriptions${id}`;
 
       await db.post(key, subscription);
-      return id;
+      return key;
     };
   };
 
