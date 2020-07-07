@@ -1,0 +1,123 @@
+{{#*inline "eventMeta" }}
+  {{! event microdata }}
+  <meta itemprop="url" content="{{ @root.locals.url }}" />
+  <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+  <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+    <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+    <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <meta itemprop="url"
+        content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+      <meta itemprop="height" content="60" />
+      <meta itemprop="width" content="600" />
+    </div>
+  </div>
+  <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+    <meta itemprop="url" content="{{ feedImgUrl }}" />
+    <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+    <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+  </div>
+  <meta itemprop="dateModified" content="{{ dateModified }}" />
+{{/inline}}
+
+{{#*inline "eventInfo" }}
+  <div class="event__info-container">
+    <div class="event__info-title">Event Information:</div>
+    <div class="event__info-row">
+      <div class="event__info-icon event__info-icon--date">
+        {{{ read "components/event/media/icon-time-date.svg" }}}
+      </div>
+      <div class="event__info-text" data-editable="publishedDateGroup">
+        {{#ifAll startDate startTime}}
+          {{ _computed.dateTime }}
+        {{/ifAll}}
+      </div>
+    </div>
+    <div class="event__info-row">
+      <div class="event__info-icon event__info-icon--location">
+        {{{ read "components/event/media/icon-location.svg" }}}
+      </div>
+      <div class="event__info-text">
+        <div class="event__info-text-venue-name" data-editable="venueName">{{{ venueName }}}</div>
+        <div class="event__info-text-venue-address" data-editable="venueAddress">{{{ venueAddress }}}</div>
+      </div>
+    </div>
+  </div>
+{{/inline}}
+
+{{#*inline "componentSettings" }}
+  <section
+    class="component-settings {{if this.classModifier (concat 'component-settings' this.classModifier) else='' }}">
+    <h2 class="component-settings__title">{{ this.settingsTitle }}</h2>
+    {{#each this.sections as |section|}}
+      {{> componentSettingsSection section }}
+    {{/each}}
+  </section>
+{{/inline}}
+
+{{#*inline "componentSettingsSection" }}
+  <section class="component-settings__section" data-editable="{{ this.dataEditable }}">
+    <h3 class="component-settings__section-title subtitle">{{ this.sectionTitle }}</h3>
+    <ul class="component-settings__properties">
+      {{#each this.settings as |setting|}}
+        <li class="component-settings__property">
+          <h4
+            class="component-settings__property-title {{if setting.isRequired 'component-settings__property-title--required' else=''}}">
+            {{ setting.title }}</h4>
+          <p class="component-settings__property-data">
+            {{{ renderTemplateString setting.templateString ../../this }}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+{{/inline}}
+
+
+
+
+<article role="main" data-uri="{{ default _ref _self }}"
+  class="component component--event event{{ if @root.locals.edit ' editing' }}" itemscope
+  itemtype="http://schema.org/Article" data-headline="{{ striptags headline }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}" data-station-slug="{{ stationSlug }}">
+  {{> breadcrumbs this }}
+  <header class="event__header">
+    {{! meta }}
+    {{> eventMeta }}
+    {{! title }}
+    <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    {{! subtitle }}
+    {{#ifAny @root.locals.edit subHeadline}}
+      <div class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">
+        {{{ subHeadline }}}
+      </div>
+    {{/ifAny}}
+    {{! lead }}
+    <div class="lead" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  </header>
+  <section class="event__body">
+    <div class="event__share">
+      {{! Social Share Buttons }}
+      {{> share sideShare }}
+    </div>
+    <div class="event__content">
+      {{! eventInfo }}
+      {{> eventInfo }}
+      {{! content }}
+      <div data-editable="content" itemprop="eventBody">
+        {{> component-list content }}
+      </div>
+      {{! Tags }}
+      {{> tags tags}}
+      {{! Ad Tags }}
+      {{> ad-tags adTags}}
+    </div>
+  </section>
+
+  {{#if @root.locals.edit }}
+    {{! event circ settings }}
+    {{> componentSettings _computed.eventCirculationSettings }}
+  {{/if}}
+</article>

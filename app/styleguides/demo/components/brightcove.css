@@ -1,4 +1,7 @@
+@import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
+@import "_global/fonts";
 
 .component--brightcove {
   margin-bottom: em(20);
@@ -95,7 +98,7 @@
       left: -100%;
       transition: left 100ms ease-in;
       /* needed to override BC important */
-      display: block !important; 
+      display: block !important;
       .rdc-overlay__close {
         display: none;
       }

@@ -31,8 +31,10 @@ const ensureEndsWith = suffix => str => {
 //            create a new module or add those directly to migration-utils.js
 module.exports = {
   DEFAULT_HEADERS,
+  _: require('../../app/node_modules/lodash'),
   _chunk: require('../../app/node_modules/lodash/chunk'),
   _defaults: require('../../app/node_modules/lodash/defaults'),
+  _flatMap: require('../../app/node_modules/lodash/flatMap'),
   _get: require('../../app/node_modules/lodash/get'),
   _has: require('../../app/node_modules/lodash/has'),
   _identity: require('../../app/node_modules/lodash/identity'),
@@ -40,6 +42,7 @@ module.exports = {
   _set: require('../../app/node_modules/lodash/set'),
   _unset: require('../../app/node_modules/lodash/unset'),
   axios: require('../../app/node_modules/axios'),
+  bluebird: require('../../app/node_modules/bluebird'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),
   clone: obj => obj && JSON.parse(JSON.stringify(obj)),

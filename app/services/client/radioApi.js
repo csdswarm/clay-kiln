@@ -69,6 +69,10 @@ const rest = require('../universal/rest'),
   spaInterface = (doc) => {
     return spaFunctions.reduce((node, func) => func(node), doc);
   },
+  __ = {
+    clientStateInterface,
+    spaInterface
+  },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object
    *
@@ -76,11 +80,12 @@ const rest = require('../universal/rest'),
    * @param {object} opts
    * @param {object} opts.shouldDedupeContent - handles the x-loaded-ids request and response header.
    *   See 'loaded-ids.js' under startup/add-to-locals/ and add-interceptor/ for more details.
+   * @param {object} opts.bypassCache - adds random query parameter to bypass caching
    *
    * @returns {Promise} which returns {Node}
    */
-  fetchDOM = async (route, { shouldDedupeContent = false } = {}) => {
-    const state = (await clientStateInterface.getState())[0],
+  fetchDOM = async (route, { shouldDedupeContent = false, bypassCache = false } = {}) => {
+    const state = (await __.clientStateInterface.getState())[0],
       separator = route.includes('?') ? '&' : '?',
       requestHeaders = { 'x-locals': JSON.stringify(getLocals(state)) };
 
@@ -98,12 +103,13 @@ const rest = require('../universal/rest'),
     }
 
     const options = { headers: new Headers(requestHeaders) },
-      url = `${route}${separator}ignore_resolve_media=true${loadedIdsHash}`,
+      bypass = bypassCache ? `&random=${Date.now()}` : '',
+      url = `${route}${separator}ignore_resolve_media=true${loadedIdsHash}${bypass}`,
       response = await fetch(url, options),
       loadedIdsStr = response.headers.get('x-loaded-ids');
 
     if (shouldDedupeContent && loadedIdsStr) {
-      clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
+      __.clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
     }
 
     const html = await response.text(),
@@ -113,10 +119,10 @@ const rest = require('../universal/rest'),
 
     if (Array.isArray(elements)) {
       elements.forEach((element) => frag.append(element));
-      return spaInterface(frag);
+      return __.spaInterface(frag);
     }
 
-    return spaInterface(elements);
+    return __.spaInterface(elements);
   },
   /**
    * Get data
@@ -136,3 +142,4 @@ const rest = require('../universal/rest'),
 module.exports.get = get;
 module.exports.fetchDOM = fetchDOM;
 module.exports.TTL = TTL;
+module.exports._internals = __;

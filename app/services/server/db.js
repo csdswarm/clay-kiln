@@ -3,7 +3,10 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
-  DATA_STRUCTURES = ['alert', 'valid_source', 'apple_news'],
+  _get = require('lodash/get'),
+  DATA_STRUCTURES = [
+    'alert', 'apple_news', 'station_themes', 'valid_source'
+  ],
   /**
    * Check Postgres to see if the table exists
    *
@@ -25,15 +28,16 @@ const utils = require('../universal/utils'),
    * Create table in Postgres if it doesn't exist
    *
    * @param {string} tableName
+   * @param {string} dataType
    * @returns {Promise}
    */
-  createTable = async (tableName) => {
+  createTable = async (tableName, dataType = 'jsonb') => {
     if (!await checkTableExists(tableName)) {
       try {
         await db.raw(`
           CREATE TABLE ${tableName} (
             id text PRIMARY KEY,
-            data jsonb
+            data ${dataType}
           )
         `);
       } catch (e) {
@@ -120,7 +124,6 @@ const utils = require('../universal/utils'),
           if (!rows.length) {
             return defaultValue || Promise.reject(new Error(`No result found in ${ tableName } for ${ key }`));
           }
-
           return rows[0].data;
         });
     }
@@ -169,14 +172,32 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [value, key]);
     }
+  },
+  /**
+   * retrieves the data from the uri
+   *
+   * @param {string} uri
+   * @param {string} [key]
+   *
+   * @return {object}
+   */
+  getComponentData = async (uri, key) => {
+    const data = await db.get(uri.split('@')[0]) || {};
+
+    return key ? _get(data, key) : data;
   };
 
-module.exports.getUri = uri => db.get(uri);
-module.exports.del = del;
-module.exports.get = get;
-module.exports.post = post;
-module.exports.put = put;
-module.exports.raw = db.raw;
-module.exports.uriToUrl = utils.uriToUrl;
-module.exports.ensureTableExists = ensureTableExists;
-module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
+module.exports = {
+  getUri: uri => db.get(uri),
+  del,
+  get,
+  post,
+  put,
+  raw: db.raw,
+  uriToUrl: utils.uriToUrl,
+  checkTableExists,
+  createTable,
+  ensureTableExists,
+  DATA_STRUCTURES,
+  getComponentData
+};

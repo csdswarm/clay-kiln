@@ -21,8 +21,8 @@ pipeline {
       }
       agent {
         docker {
-          label 'docker && !php' 
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
+          label 'docker && !php'
+          image 'quay.io/reactiveops/ci-images:v11-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
       }
@@ -54,6 +54,20 @@ pipeline {
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
+                docker-pull -f deploy/build.config;
+                ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
+                export ROK8S_DOCKER_BUILD_EXTRAARGS;
+                docker-build -f deploy/build.config;
+                docker-push -f deploy/build.config'''
+                break
+
+              case "preprod":
+                env.ROK8S_CONFIG='deploy/pre-production.config'
+                env.BUILD_EXTRAARGS='--build-arg mode=production --build-arg productionbuild=true'
+                ROK8S_CLUSTER='working.k8s.radio-dev.com'
+                CRED_ID='prd'
+                sh '''#!/bin/bash -xe
+                prepare-awscli;
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
@@ -95,7 +109,7 @@ pipeline {
             }
           }
           steps {
-            sh 'cd spa && npm install && npm run lint -- --no-fix'
+            sh 'cd spa && npm ci && cd ../ && npm run --silent lint:spa:js'
           }
         }
 
@@ -108,7 +122,7 @@ pipeline {
             }
           }
           steps {
-            sh 'cd /usr/src/app && npm run eslint'
+            sh 'cd app && npm ci && cd ../ && npm run --silent lint:app:js'
           }
         }
 
@@ -121,12 +135,11 @@ pipeline {
           agent {
             docker {
               label 'docker && !php'
-              image 'quay.io/reactiveops/ci-images:v10-stretch'
+              image 'quay.io/reactiveops/ci-images:v11-stretch'
             }
           }
           steps {
             sh ''
-            sh 'helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
             sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml'
             sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml > ${ROK8S_TMP}/out.yaml'
@@ -144,13 +157,13 @@ pipeline {
       agent {
         docker {
           label 'docker && !php'
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
+          image 'quay.io/reactiveops/ci-images:v11-stretch'
         }
       }
 
       when {
         expression {
-          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
+          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
         }
       }
 
@@ -160,7 +173,7 @@ pipeline {
           sh "kubectl config use-context ${ROK8S_CLUSTER}"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
-      } 
+      }
     }
   }
 }

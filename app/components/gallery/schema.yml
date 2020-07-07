@@ -1,4 +1,4 @@
-_version: 11.0
+_version: 13.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -352,8 +352,14 @@ syndicatedUrl:
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
       pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
       patternMessage: Must be a valid URL
+featuredSports:
+  _label: Feature - Sports
+  _has: checkbox
+featuredNews:
+  _label: Feature - News
+  _has: checkbox
 featured:
-  _label: Is this a featured gallery?
+  _label: Feature - Music
   _has: checkbox
 editorialFeeds:
   _label: Gallery Terms for Editorial Feeds
@@ -363,6 +369,8 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+  _permission:
+    distribute: vertical-level-content
 corporateSyndication:
   _label: Syndicate to corporate website(s)
   _has:
@@ -371,14 +379,20 @@ corporateSyndication:
     search: true
     list: corporate_websites
     help: Select all corporate websites for syndication
+  _permission:
+    distribute: market-level-content
 stationSyndication:
   _label: Syndicate to station(s)
   _has:
     input: station-select
+  _permission:
+    distribute: market-level-content
 genreSyndication:
   _label: Syndicate to genre(s)
   _has:
     input: genre-select
+  _permission:
+    distribute: vertical-level-content
 
 _groups:
   publishedDate:
@@ -441,6 +455,7 @@ _groups:
       - toggleEditorCondensedSlidesView
   settings:
     fields:
+      - stationName
       - feeds
       - showSocial
       - hasSecondaryBylines
@@ -452,6 +467,8 @@ _groups:
       - noIndexNoFollow
   syndication:
     fields:
+      - featuredSports
+      - featuredNews
       - featured
       - editorialFeeds
       - corporateSyndication
@@ -515,8 +532,6 @@ footer:
       - youtube
       - html-embed
       - omny
-    validate:
-      max: 2
 
 # Component properties
 contentPageSponsorLogo:
@@ -558,3 +573,10 @@ noIndexNoFollow:
 toggleEditorCondensedSlidesView:
   _label: Condensed Slide View On
   _has: checkbox
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

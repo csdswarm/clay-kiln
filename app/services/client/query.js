@@ -141,6 +141,26 @@ function onePublishedArticleByUrl(url, fields, locals) {
 }
 
 /**
+ * construct query to get published station-front from stationSlug
+ * @param {string} stationSlug
+ * @param {Array} fields you want returned
+ * @param {Object} locals
+ * @returns {Promise}
+ */
+function stationFrontFromSlug(stationSlug, fields, locals) {
+  const query = newQueryWithCount('published-stations', null, locals);
+
+  universalQuery.addFilter(query, {
+    term: { stationSlug }
+  });
+  if (fields) {
+    universalQuery.onlyWithTheseFields(query, fields);
+  };
+
+  return query;
+}
+
+/**
  * Log error to console when a query fails
  * @param  {Error} e
  * @param  {String} ref
@@ -150,34 +170,17 @@ function logCatch(e, ref) {
 }
 
 module.exports = newQueryWithLocals;
-module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
-module.exports.getCount = getCount;
-module.exports.logCatch = logCatch;
-module.exports.newQueryWithCount = newQueryWithCount;
-module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
-module.exports.searchByQuery = searchByQuery;
-module.exports.searchByQueryWithRawResult = searchByQueryWithRawResult;
-module.exports.updateByQuery = updateByQuery;
 
-module.exports.addAggregation = universalQuery.addAggregation;
-module.exports.addFilter = universalQuery.addFilter;
-module.exports.addMinimumShould = universalQuery.addMinimumShould;
-module.exports.addMust = universalQuery.addMust;
-module.exports.addMustNot = universalQuery.addMustNot;
-module.exports.addSearch = universalQuery.addSearch;
-module.exports.addShould = universalQuery.addShould;
-module.exports.addSize = universalQuery.addSize;
-module.exports.addSort = universalQuery.addSort;
-module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
-module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
-module.exports.matchIgnoreCase = universalQuery.matchIgnoreCase;
-module.exports.matchSimple = universalQuery.matchSimple;
-module.exports.moreLikeThis = universalQuery.moreLikeThis;
-module.exports.newNestedQuery = universalQuery.newNestedQuery;
-module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
-module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
-module.exports.terms = universalQuery.terms;
-module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
-
-// For testing
-module.exports.post = universalRest.post;
+Object.assign(module.exports, universalQuery, {
+  executeMultipleSearchRequests,
+  getCount,
+  logCatch,
+  newQueryWithCount,
+  onePublishedArticleByUrl,
+  stationFrontFromSlug,
+  searchByQuery,
+  searchByQueryWithRawResult,
+  updateByQuery,
+  // For testing
+  post: universalRest.post
+});

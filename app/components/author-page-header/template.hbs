@@ -3,7 +3,7 @@
     Follow {{ author }}:
   </div>
   <aside class="author-page-header__links">
-    {{#each socialLinks}}
+    {{#each _computed.socialLinks}}
       <a target="_blank" href="{{ this.url }}" class="author-page-header__link author-page-header__link--{{ this.type }}" title="{{ this.title }}"
       aria-label="{{ this.title }}"></a>
     {{/each}}
@@ -13,7 +13,7 @@
 <section data-uri="{{ default _ref _self }}"
   class="component component--author-page-header author-page-header"
   data-editable="settings">
-  {{#if dynamic }}
+  {{#if _computed.dynamic }}
     <div class="author-page-header__dynamic-container">
       <div class="author-page-header__line"></div>
       <h1 class="author-page-header__dynamic-name">{{ author }}</h1>
@@ -30,7 +30,7 @@
         <div class="author-page-header__text-container">
           <div class="author-page-header__name">{{ author }}</div>
           <div class="author-page-header__schedule">{{ scheduleTime }}</div>
-          {{#if socialLinks.length }}
+          {{#if _computed.socialLinks.length }}
             <div class="author-page-header__social-container">
               {{> authorLinks }}
             </div>
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="author-page-header__bio-text-container">
-        {{#if socialLinks.length }}
+        {{#if _computed.socialLinks.length }}
           <div class="author-page-header__social-container--md-sm-screen">
             {{> authorLinks }}
           </div>
