@@ -33,9 +33,11 @@ function syndicationUrlPremap(stationSlug) {
       if (noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
-        const { syndicatedArticleSlug = '' } = syndicatedStation(item.stationSyndication) || {};
+        const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
 
         item.canonicalUrl = `${getOrigin(item.canonicalUrl)}${syndicatedArticleSlug}`;
+        item.syndicatedLabel = sectionFront;
+
         delete item.stationSyndication;
       }
     }

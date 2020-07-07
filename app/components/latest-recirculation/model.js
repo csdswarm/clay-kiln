@@ -75,7 +75,7 @@ module.exports = recirculationData({
       canonicalUrl: item.url || result.canonicalUrl,
       date: item.overrideDate || result.date,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideDate || result.label,
+      label: result.syndicatedLabel || result.label,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       sectionFront: item.overrideSectionFront || result.sectionFront
     });

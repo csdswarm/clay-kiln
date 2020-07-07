@@ -80,12 +80,14 @@
     props: ['content', 'stationFilter'],
     data() {
       return {
-        syndicationLoading: false,
         unpublishLoading: false,
         cloneLoading: false
       }
     },
     computed: {
+      syndicationLoading() {
+        return this.content.syndicationLoading || false;
+      },
       selectedStation() {
         return this.stationFilter;
       },
@@ -100,7 +102,6 @@
           syndicatedStation = findSyndication(content.stationSyndication),
           syndicationStatus = syndicatedStation ? 'published' : 'available';
 
-        this.syndicationLoading = false;
         this.unpublishLoading = false;
 
         /*
@@ -178,7 +179,6 @@
        * fronts before creating the syndication
        */
       onSyndicate() {
-        this.syndicationLoading = true;
         this.$emit('createSyndication', this.content._id);
       },
       /**

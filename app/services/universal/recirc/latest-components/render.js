@@ -124,10 +124,14 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
         }
       );
 
-      data._computed.articles = data._computed.articles.map(item => ({
-        ...item,
-        label: getSectionFrontName(item.sectionFront, primarySectionFronts)
-      }));
+      data._computed.articles = data._computed.articles.map(item => {
+        const label = getSectionFrontName(item.label || item.sectionFront, primarySectionFronts);
+
+        return {
+          ...item,
+          label
+        };
+      });
     }
     // Reset value of customTitle to avoid an override inside the template when the rss option is not selected.
     if (data.populateFrom !== 'rss-feed') {
