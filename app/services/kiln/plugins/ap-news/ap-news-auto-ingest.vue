@@ -157,10 +157,10 @@
       isHeader: true
     }
   ]
+  const apiEndpoint = '/ap-subscriptions'
 
   class ApSubscription {
     constructor () {
-      this.id = `${Math.random()}`, // NOTE: Will need to be removed for 1998
       this.data = {
         stationSlug: { label: 'Radio.com (NATL-RC)', value: ''},
         entitlements: [],
@@ -188,7 +188,7 @@
       this.getList('ap-media-entitlements', 'entitlements')
       this.getList('primary-section-fronts', 'primarySectionFronts')
       this.getList('secondary-section-fronts', 'secondarySectionFronts')
-      // need to get subscriptions
+      this.getApNewsSubscriptions()
     },
     methods: {
       openModal (ref) {
@@ -222,21 +222,29 @@
         const split = longName.split(' - ')
         return split[1]
       },
-      getApNewsSubscriptions () {},
+      getApNewsSubscriptions () {
+        console.log('[getApNewsSubscriptions...]');
+        axios.get(apiEndpoint)
+          .then(response => {
+            this.subscriptions = [...response.data]
+            console.log('[this.subscriptions]', this.subscriptions)
+          })
+          .catch(this.handleError)
+          .finally(() => { this.isLoading = false })
+      },
       createApNewsSubscription () {
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
-          ...this.workingSubscription
+          ...this.workingSubscription.data
         }
         console.log('NEW:', newSub)
-        //TODO: need to POST when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.post(apiEndpoint, newSub)
           .then(response => {
-            this.subscriptions.push(newSub)
+            console.log('[response]', response.data)
+            this.subscriptions.push({...response.data})
             this.showSnack('AP News Subscription Added')
             this.closeModal('subscriptionModal')
-            // this.workingSubscription = new ApSubscription()
           })
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
@@ -245,15 +253,14 @@
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
-          ...this.workingSubscription
+          ...this.workingSubscription.data
         }
         console.log('UPDATE:', updatedSub)
-        //TODO: need to PUT when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.put(`${apiEndpoint}/${updatedSub.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
               if (sub.id === response.data.id) {
-                return { ...updatedSub } //will be response.data when updated for 1998
+                return { ...response.data }
               } else {
                 return sub
               }
@@ -268,9 +275,9 @@
         if (this.isLoading) return
         this.isLoading = true
         console.log('DELETE:', id)
-        //TODO: need to DELETE when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.delete(`${apiEndpoint}/${id}`)
           .then(response => {
+            console.log('[DELETE response]', response)
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
             this.showSnack('AP News Subscription Removed')
           })
