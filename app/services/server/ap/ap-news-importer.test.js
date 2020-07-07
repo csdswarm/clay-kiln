@@ -21,7 +21,6 @@ describe('server', () => {
 
     describe('importArticle', () => {
       async function setup_importArticle(options = {}) {
-        // TODO: simplify this function by abstracting some things to different functions - ensure they are easy to find and read
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
           HOST = 'some.radio.com',
@@ -41,82 +40,71 @@ describe('server', () => {
               etag: 'abcdefg_1234'
             }
           },
-          {
-            EXISTING_ARTICLE_ID,
-            EXISTING_PAGE_DATA,
-            EXISTING_PAGE_ARTICLE
-          } = buildApData('Existing', HOST, DEFAULT_ARTICLE_DATA),
-          {
-            NEW_ARTICLE_ID,
-            NEW_PAGE_DATA,
-            NEW_PAGE_ARTICLE
-          } = buildApData('New', HOST, DEFAULT_ARTICLE_DATA),
+          EXISTING = buildApData('exists', HOST, DEFAULT_ARTICLE_DATA),
+          NEW = buildApData('new', HOST, DEFAULT_ARTICLE_DATA),
           LOCALS = { site: { host: HOST } },
           ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
           locals = { ...LOCALS, ...options.locals },
           stationMappings = options.stationMappings || {},
-          createPageStub = sinon.stub(),
-          dbGetStub = sinon.stub(),
-          dbRawStub = sinon.stub(),
-          bySlugStub = sinon.stub(),
-          logStub = sinon.stub(),
-          searchByQueryStub = sinon.stub();
+          stubs = [
+            'bySlug',
+            'createPage',
+            'dbGet',
+            'dbRaw',
+            'log',
+            'searchByQuery'
+          ].reduce((acc, name) => ({ ...acc, [name]: sinon.stub() }), {});
 
-        createPageStub.resolves({ ...NEW_PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
+        stubs.createPage.resolves({ ...NEW.PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
 
-        dbGetStub.resolves({});
-        dbGetStub
+        stubs.dbGet.resolves({});
+        stubs.dbGet
           .withArgs('_pages/new-two-col')
-          .resolves(NEW_PAGE_DATA);
-        dbGetStub
-          .withArgs(NEW_ARTICLE_ID)
-          .resolves(NEW_PAGE_ARTICLE);
-        dbGetStub
-          .withArgs(EXISTING_ARTICLE_ID)
-          .resolves(EXISTING_PAGE_ARTICLE);
+          .resolves(NEW.PAGE_DATA);
+        stubs.dbGet
+          .withArgs(NEW.ARTICLE.ID)
+          .resolves(NEW.PAGE_ARTICLE);
+        stubs.dbGet
+          .withArgs(EXISTING.ARTICLE.ID)
+          .resolves(EXISTING.PAGE_ARTICLE);
 
-        dbRawStub
-          .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING_ARTICLE_ID)
-          .resolves({ rows: [ EXISTING_PAGE_DATA ] });
+        stubs.dbRaw
+          .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING.ARTICLE.ID)
+          .resolves({ rows: [ EXISTING.PAGE_DATA ] });
 
-        bySlugStub.resolves(options.stationsBySlug || {});
+        stubs.bySlug.resolves(options.stationsBySlug || {});
 
-        searchByQueryStub.resolves([]);
-        searchByQueryStub
+        stubs.searchByQuery.resolves([]);
+        stubs.searchByQuery
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'some-existing-id'))
-          .resolves([{ _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'some-existing-id' } }]);
-        searchByQueryStub
+          .resolves([{ _id: EXISTING.ARTICLE.ID, ...DEFAULT_ARTICLE_DATA, ap: { itemid: 'some-existing-id' } }]);
+        stubs.searchByQuery
           .withArgs(sinon.match.hasNested(ELASTIC_AP_ID_PATH, 'abcdefg'))
           .resolves([{
-            _id: EXISTING_ARTICLE_ID, ...DEFAULT_ARTICLE_DATA,
+            _id: EXISTING.ARTICLE.ID, ...DEFAULT_ARTICLE_DATA,
             ap: { itemid: 'abcdefg', etag: 'abcdefg_4321' }
           }]);
-        searchByQueryStub
+        stubs.searchByQuery
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
 
-        __.createPage = createPageStub;
-        __.dbGet = dbGetStub;
-        __.dbRaw = dbRawStub;
-        __.getAllStations = { bySlug: bySlugStub };
-        __.log = logStub;
-        __.searchByQuery = searchByQueryStub;
+        Object.entries(stubs)
+          .filter(([name]) => name !== 'bySlug')
+          .forEach(([key, value]) => __[key] = value);
+
+        __.getAllStations.bySlug = stubs.bySlug;
 
         const result = await importArticle(apMeta, stationMappings, locals);
 
         return {
           ...setup,
           ELASTIC_AP_ID_PATH,
-          EXISTING_ARTICLE_ID,
-          EXISTING_PAGE_DATA,
-          createPageStub,
-          dbGetStub,
-          dbRawStub,
+          EXISTING,
+          NEW,
           locals,
-          logStub,
           result,
-          searchByQueryStub,
+          stubs,
           stationMappings
         };
       }
@@ -147,32 +135,29 @@ describe('server', () => {
         const
           itemid = 'some-existing-id',
           {
-            dbRawStub,
             ELASTIC_AP_ID_PATH,
-            EXISTING_ARTICLE_ID,
-            EXISTING_PAGE_DATA,
+            EXISTING,
             result,
-            searchByQueryStub
+            stubs
           } = await setup_importArticle({ apMeta: { altids: { itemid } } });
 
         expect(result).to.have.property('preExistingArticle');
-        expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
-        expect(searchByQueryStub).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
-        expect(dbRawStub).to.have.been.calledOnceWith(sinon.match('article_id = ?'), EXISTING_ARTICLE_ID);
+        expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
+        expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
+        expect(stubs.dbRaw).to.have.been.calledOnceWith(sinon.match('article_id = ?'), EXISTING.ARTICLE.ID);
         expect(result).to.deep.include({
           preExistingArticle: {
-            ...EXISTING_PAGE_DATA
+            ...EXISTING.PAGE_DATA
           }
         });
       });
 
       it('creates a new article if one does not already exist', async () => {
         const {
-            createPageStub,
-            dbGetStub,
-            result,
             locals,
-            stationMappings
+            result,
+            stationMappings,
+            stubs
           } = await setup_importArticle({
             stationsBySlug: {
               'test-station': {},
@@ -190,17 +175,17 @@ describe('server', () => {
 
         expect(result.preExistingArticle).to.be.undefined;
         expect(result).to.have.property('article');
-        expect(createPageStub).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
-        expect(dbGetStub).to.have.been.calledWith('_pages/new-two-col');
+        expect(stubs.createPage).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
+        expect(stubs.dbGet).to.have.been.calledWith('_pages/new-two-col');
       });
 
       it('traps errors when checking for existing elastic content', async () => {
         const
           noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined),
-          { logStub, result, searchByQueryStub } = await setup_importArticle({ apMeta: { altids: { undefined } } });
+          { result, stubs } = await setup_importArticle({ apMeta: { altids: { undefined } } });
 
-        expect(searchByQueryStub).to.have.been.calledWith(noItemId);
-        expect(logStub).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
+        expect(stubs.searchByQuery).to.have.been.calledWith(noItemId);
+        expect(stubs.log).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
         expect(result.preExistingArticle).to.be.undefined;
       });
 
@@ -245,12 +230,13 @@ describe('server', () => {
               },
               ...options.apMeta
             }),
-            { __ } = setup,
-            dbPutStub = sinon.stub();
+            { __, stubs } = setup;
+            
+          stubs.dbPut = sinon.stub();
 
-          __.dbPut = dbPutStub;
+          __.dbPut = stubs.dbPut;
 
-          return { ...setup, dbPutStub };
+          return { ...setup };
         }
 
         it('maps AP data to article if content is publishable', async () => {
@@ -286,6 +272,7 @@ describe('server', () => {
             tags: { ...expectedTags }
           });
 
+          
           // TODO: test meta-title - title, ogTitle, twitterTitle, kilnTitle ?
           // TODO: test meta-description - description, defaultDescription ?
           // TODO: test meta-image
@@ -361,25 +348,27 @@ describe('server', () => {
   });
 });
 
-function buildApData(name, host, data) {
+function buildApData(idPostFix, host, data) {
   const
-    PRE = name.toUpperCase(),
-    POST = name.toLowerCase(),
-    INSTANCE_ID = POST.padStart(26, 'ck64dqppgzzzzabcd012345678'),
-    ARTICLE_ID = `${host}/_components/article/instances/${INSTANCE_ID}`;
+    INSTANCE_ID = idPostFix.toLowerCase().padStart(26, 'ck64dqppgzzzzabcd012345678'),
+    ARTICLE = {
+      ID: `${host}/_components/article/instances/${INSTANCE_ID}`
+    },
+    META = {
+      TITLE: `${host}/_components/meta-title/instances/${INSTANCE_ID}`,
+      DESCRIPTION: `${host}/_components/meta-description/instances/${INSTANCE_ID}`,
+      IMAGE: `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
+      TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
+    };
   
   return {
-    [`${PRE}_ARTICLE_ID`]: `${host}/_components/article/instances/${INSTANCE_ID}`,
-    [`${PRE}_PAGE_DATA`]: {
-      head: [
-        `${host}/_components/meta-title/instances/${INSTANCE_ID}`,
-        `${host}/_components/meta-description/instances/${INSTANCE_ID}`,
-        `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
-        `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
-      ],
-      main: [ARTICLE_ID]
+    ARTICLE,
+    META,
+    PAGE_DATA: {
+      head: [...Object.values(META)],
+      main: [ARTICLE.ID]
     },
-    [`${PRE}_PAGE_ARTICLE`]: {
+    PAGE_ARTICLE: {
       ...data
     }
   };
