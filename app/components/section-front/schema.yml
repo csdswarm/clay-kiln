@@ -1,4 +1,4 @@
-_version: 3.0
+_version: 4.0
 _confirmRemoval: true
 
 title:
@@ -92,21 +92,19 @@ canonicalUrl:
   _has:
     help: Canonical URL of an article. Set when the article publishes.
 
-# Component properties
-sectionLead:
-  _component:
+mainContent:
+  _placeholder:
+    text: Main Content
+    height: 100px
+    required: true
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
     include:
-    - section-lead
-
-googleAdUnderStationsModule:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
+    - google-ad-manager
+    - multi-column
+    - podcast-list
+    - stations-carousel
+    - two-column-component
 
 _groups:
   settings:
@@ -115,7 +113,6 @@ _groups:
       - primary
       - primarySectionFront
       - title
-      - includePodcastModule
 
 stationName:
   _publish: stationName

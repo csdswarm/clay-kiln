@@ -284,11 +284,8 @@ const
       // This is from load more on an author page
       author = locals.author;
     } else if (locals && locals.params && locals.params.author) {
-      // This is from an author page
+      // This is from a curated & dynamic author page
       author = locals.params.author;
-    } else if (locals && locals.params && locals.params.dynamicAuthor) {
-      // This is from an dynamic author page
-      author = locals.params.dynamicAuthor;
     }
 
     // Used for load-more queries
@@ -392,26 +389,17 @@ const
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
-   * Use filters to query elastic for content
-   *
-   * @param {object} config
-   * @param {object} config.filters
-   * @param {object} config.excludes
-   * @param {array} config.elasticFields
-   * @param {number} config.maxItems
-   * @param {boolean} config.shouldAddAmphoraTimings
-   * @param {Object} locals
-   * @returns {array} elasticResults
-   */
-  fetchRecirculation = async (config, locals) => {
-    const {
-      filters,
-      excludes,
-      elasticFields,
-      maxItems,
-      shouldAddAmphoraTimings
-    } = config;
-
+ * Use filters to query elastic for content
+ *
+ * @param {object} config.filter
+ * @param {object} config.exclude
+ * @param {array} config.fields
+ * @param {object} config.pagination
+ * @param {number} config.maxItems
+ * @param {Object} [locals]
+ * @returns {array} elasticResults
+ */
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
     let results = {
       content: [],
       totalHits: 0
@@ -558,5 +546,6 @@ const
   });
 
 module.exports = {
-  recirculationData
+  recirculationData,
+  sectionOrTagCondition
 };

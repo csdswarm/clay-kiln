@@ -1,5 +1,7 @@
 _components:
   two-column-component:
+    col1: []
+    col2: []
     instances:
       new:
         col1: []

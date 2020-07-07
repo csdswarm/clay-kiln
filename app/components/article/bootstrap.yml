@@ -50,6 +50,8 @@ _components:
     plaintextPrimaryHeadline: ''
     sectionFront: ''
     contentType: 'article'
+    featuredSports: false
+    featuredNews: false
     featured: false
     editorialFeeds: {}
     isContentFromAP: false
