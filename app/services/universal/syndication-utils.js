@@ -3,9 +3,9 @@
 const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
-
+  findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
   __ =  {
-    findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
+    findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
     inStation: stationSlug => syndicationEntry => {
       return stationSlug === (syndicationEntry.stationSlug || DEFAULT_STATION.site_slug);
@@ -33,9 +33,11 @@ function syndicationUrlPremap(stationSlug) {
       if (noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
-        const { syndicatedArticleSlug = '' } = syndicatedStation(item.stationSyndication) || {};
+        const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
 
         item.canonicalUrl = `${getOrigin(item.canonicalUrl)}${syndicatedArticleSlug}`;
+        item.syndicatedLabel = sectionFront;
+
         delete item.stationSyndication;
       }
     }
@@ -46,5 +48,6 @@ function syndicationUrlPremap(stationSlug) {
 
 module.exports = {
   _internals: __,
-  syndicationUrlPremap
+  syndicationUrlPremap,
+  findSyndicatedStation
 };

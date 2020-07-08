@@ -13,6 +13,7 @@ const
   slugify = require('../../services/universal/slugify'),
   striptags = require('striptags'),
   urlExists = require('../../services/universal/url-exists'),
+  { addStationsByEditorialGroup } = require('./editorial-feed-syndication'),
   { DEFAULT_STATION } = require('../../services/universal/constants'),
   { PAGE_TYPES } = require('./../universal/constants'),
   { getComponentName } = require('clayutils'),
@@ -529,7 +530,10 @@ function addTwitterHandle(data, locals) {
  * @param {Object} data
  */
 function renderStationSyndication(data) {
-  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+  const syndicatedStations = (data.stationSyndication || [])
+    .filter(syndication => syndication.source === 'manual syndication');
+
+  data._computed.stationSyndicationCallsigns = syndicatedStations
     .map(station => station.callsign)
     .sort()
     .join(', ');
@@ -648,6 +652,9 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need to get stations by editorial feeds before creating slugs for syndicated content
+  await addStationsByEditorialGroup(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
@@ -662,9 +669,11 @@ async function save(uri, data, locals) {
   });
 }
 
-module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
-module.exports.updateStationSyndicationType = updateStationSyndicationType;
-
-module.exports.render = render;
-module.exports.save = save;
-module.exports.assignStationInfo = assignStationInfo;
+module.exports = {
+  addStationSyndicationSlugs,
+  assignStationInfo,
+  render,
+  save,
+  setNoIndexNoFollow,
+  updateStationSyndicationType
+};

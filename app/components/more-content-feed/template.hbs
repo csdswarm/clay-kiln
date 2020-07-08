@@ -54,7 +54,7 @@
                  data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
                   {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
-                    <span class="thumb__section-front">{{{ feedItem.sectionFront }}}</span>
+                    <span class="thumb__section-front">{{{ feedItem.label }}}</span>
                   {{/ifAll}}
                   {{#unless (compare ../locationOfContentFeed 'homepage')}}
                     {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
