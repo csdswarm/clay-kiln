@@ -16,7 +16,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   utils = require('../../services/universal/utils'),
   { urlToElasticSearch } = utils,
-  { assignStationInfo } = require('../../services/universal/create-content.js');
+  { assignStationInfo } = require('../../services/universal/create-content');
 
 function getFormattedDate(date, time) {
   return date && time ? moment(`${date} ${time}`).format('LLLL') : '';

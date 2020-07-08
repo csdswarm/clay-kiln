@@ -1,4 +1,4 @@
-_version: 13.0
+_version: 14.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -580,3 +580,6 @@ stationName:
   _reveal:
     field: stationName
     operator: truthy
+
+textTags:
+  _subscribe: textTags
