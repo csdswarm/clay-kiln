@@ -10,7 +10,7 @@
       </thead>
       <tbody>
         <tr v-for="(subscription, index) in subscriptions" :key="index">
-          <td>{{ getStationSlug(subscription) }}</td>
+          <td>{{ getStation(subscription) }}</td>
           <td>
             <ui-collapsible :title="getFirstItemValue(subscription)">
               <ol class="entitlements-list">
@@ -54,7 +54,7 @@
                 label="Station"
                 placeholder="Radio.com (NATL-RC)"
                 :options="options.stations"
-                v-model="workingSubscription.data.stationSlug"
+                v-model="workingSubscription.data.station"
                 @input="onStationChange"
               ></ui-select>
               <ui-select
@@ -90,7 +90,7 @@
                 has-search
                 label="Secondary Section Front"
                 placeholder="Select Secondary Section Front to Include"
-
+                ref="secondarySectionFrontInput"
                 :options="secondarySectionFronts.map(essf => essf.name)"
 
                 v-model="workingSubscription.data.mappings[index].secondarySectionFront"
@@ -137,7 +137,7 @@
       isHeader: false
     },
     {
-      key: 'data.stationSlug',
+      key: 'data.station',
       display: 'station slug',
       isHeader: true
     },
@@ -162,7 +162,7 @@
   class ApSubscription {
     constructor () {
       this.data = {
-        stationSlug: { label: 'Radio.com (NATL-RC)', value: ''},
+        station: { label: 'Radio.com (NATL-RC)', value: ''},
         entitlements: [],
         mappings: [{
           sectionFront: '',
@@ -290,7 +290,7 @@
       onCreate () {
         this.modalMode = 'new'
         this.workingSubscription = new ApSubscription()
-        this.onStationChange(this.workingSubscription.data.stationSlug)
+        this.onStationChange(this.workingSubscription.data.station)
         this.openModal('subscriptionModal')
       },
       onEdit (subscription) {
@@ -318,15 +318,19 @@
       onStationChange (station) {
         console.log('[onStationChange]', station.value)
         const delim = station.value === '' ? '' : '-'
+        // get new lists based on station selection
         this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
         this.getList(`${station.value}${delim}secondary-section-fronts`, 'secondarySectionFronts')
+        // reset the selections
+        this.$refs.primarySectionFrontInput.forEach(psfi => psfi.reset())
+        this.$refs.secondarySectionFrontInput.forEach(ssfi => ssfi.reset())
       },
       getFirstItemValue(subscription, path='entitlements[0].name') {
         const name = _get(subscription, `data.${path}`)
         return name ? name + '...' : ''
       },
-      getStationSlug(subscription) {
-        const slug = _get(subscription, 'data.stationSlug.value')
+      getStation(subscription) {
+        const slug = _get(subscription, 'data.station.value')
         return slug ? slug : 'Radio.com (NATL-RC)'
       }
     },
