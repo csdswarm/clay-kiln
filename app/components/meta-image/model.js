@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _isString = require('lodash/isString'),
   { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save');
 
 module.exports.render = (ref, data, locals) => {
@@ -10,6 +11,13 @@ module.exports.render = (ref, data, locals) => {
     if (value && data.defaultImageUrl.includes('${paramValue}')) {
       data.defaultImageUrl = data.defaultImageUrl.replace('${paramValue}', value);
     } else {
+      if (!_isString(value)) {
+        throw new Error(
+          'the dynamic value must point to a string'
+          + `\ntypeof value: ${typeof value}`
+        );
+      }
+
       data.defaultImageUrl = value;
     }
   }
