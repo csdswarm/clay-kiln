@@ -10,9 +10,9 @@
       </thead>
       <tbody>
         <tr v-for="(subscription, index) in subscriptions" :key="index">
-          <td>{{ subscription.data.stationSlug }}</td>
+          <td>{{ getStationSlug(subscription) }}</td>
           <td>
-            <ui-collapsible :title="subscription.data.entitlements[0].name + '...'">
+            <ui-collapsible :title="getFirstItemValue(subscription)">
               <ol class="entitlements-list">
                 <li v-for="(entitlement, eindex) in subscription.data.entitlements" :key="eindex">
                   {{ entitlement.name }}
@@ -21,7 +21,7 @@
             </ui-collapsible>
           </td>
           <td>
-            <ui-collapsible :title="subscription.data.mappings[0].sectionFront + '...'">
+            <ui-collapsible :title="getFirstItemValue(subscription, 'mappings[0].sectionFront')">
               <ol class="mappings-list">
                 <li v-for="(mapping, mindex) in subscription.data.mappings" :key="mindex">
                   <div class="mapping">
@@ -79,7 +79,7 @@
                 has-search
                 label="Primary Section Front"
                 placeholder="Select Primary Section Front to Include"
-
+                ref="primarySectionFrontInput"
                 :options="primarySectionFronts.map(psf => psf.name)"
                 :invalid="isPrimarySectionfrontsInvalid"
 
@@ -157,7 +157,7 @@
       isHeader: true
     }
   ]
-  const apiEndpoint = '/ap-subscriptions'
+  const apiEndpoint = '/rdc/ap-subscriptions'
 
   class ApSubscription {
     constructor () {
@@ -256,7 +256,7 @@
           ...this.workingSubscription.data
         }
         console.log('UPDATE:', updatedSub)
-        axios.put(`${apiEndpoint}/${updatedSub.id}`, updatedSub)
+        axios.put(`${apiEndpoint}/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
               if (sub.id === response.data.id) {
@@ -284,10 +284,13 @@
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
-      addMapping() {},
+      addMapping() {
+        // here for when multiple mappings are possible
+      },
       onCreate () {
         this.modalMode = 'new'
         this.workingSubscription = new ApSubscription()
+        this.onStationChange(this.workingSubscription.data.stationSlug)
         this.openModal('subscriptionModal')
       },
       onEdit (subscription) {
@@ -303,14 +306,6 @@
         this.workingSubscription = { ...subscription }
         this.$refs.deleteConfirm.open()
       },
-      workingSubscriptionIsValid () {
-        console.log('[this.workingSubscription.data.entitlements.length < 1]', this.workingSubscription.data.entitlements.length < 1)
-        console.log('[this.workingSubscription.data.mappings[0].sectionFront === ""]', this.workingSubscription.data.mappings[0].sectionFront === '');
-        return (
-          this.workingSubscription.data.entitlements.length < 1 ||
-          this.workingSubscription.data.mappings[0].sectionFront === ''
-        )
-      },
       onEntitlementChange (e, entitlement) {
         console.log('[onEntitlementChange]', e, entitlement)
         if(e) {
@@ -325,6 +320,14 @@
         const delim = station.value === '' ? '' : '-'
         this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
         this.getList(`${station.value}${delim}secondary-section-fronts`, 'secondarySectionFronts')
+      },
+      getFirstItemValue(subscription, path='entitlements[0].name') {
+        const name = _get(subscription, `data.${path}`)
+        return name ? name + '...' : ''
+      },
+      getStationSlug(subscription) {
+        const slug = _get(subscription, 'data.stationSlug.value')
+        return slug ? slug : 'Radio.com (NATL-RC)'
       }
     },
     computed: {
