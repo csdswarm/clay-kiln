@@ -34,4 +34,6 @@ module.exports['2.0'] = (uri, data) => {
 
 module.exports['3.0'] = (uri, data) => {
   data.defaultImageUrl = data.imageUrl || '';
+
+  return data;
 };
