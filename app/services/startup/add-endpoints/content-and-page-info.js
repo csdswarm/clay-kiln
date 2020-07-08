@@ -14,23 +14,32 @@ module.exports = router => {
     preventFastlyCache(res);
 
     const result = await db.raw(`
-      select
-        p.id as page_id,
-        content.id as content_uri,
-        content.data as content_data
-      from (
-        select id,
+      SELECT
+        p.id AS page_id,
+        content.id AS content_uri,
+        content.data AS content_data
+      FROM (
+        SELECT id,
           data
-        from components.article
-        union
-        select id,
+        FROM components.article
+      ) AS content
+      JOIN pages p ON p.data->'main'->>0 = content.id
+      JOIN uris u ON u.data = p.id
+      WHERE u.url = ?
+      UNION
+      SELECT
+        p.id AS page_id,
+        content.id AS content_uri,
+        content.data AS content_data
+      FROM (
+        SELECT id,
           data
-        from components.gallery
-      ) as content
-      join pages p on p.data->'main'->>0 = content.id
-      join uris u on u.data = p.id
-      where u.url = ?
-    `, [req.query.url]);
+        FROM components.gallery
+      ) AS content
+      JOIN pages p ON p.data->'main'->>0 = content.id
+      JOIN uris u ON u.data = p.id
+      WHERE u.url = ?
+    `, [req.query.url, req.query.url]);
 
     if (!result.rows.length) {
       res.status(404).end();
