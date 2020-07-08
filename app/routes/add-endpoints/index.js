@@ -2,6 +2,7 @@
 
 module.exports = {
   alerts: require('./alerts'),
+  contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
   getStationsSubscribedToContent: require('./get-stations-subscribed-to-content'),
   imageInfo: require('./image-info'),

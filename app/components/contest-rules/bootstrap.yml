@@ -1,0 +1,6 @@
+_components:
+  contest-rules:
+    rulesBodyText: ''
+    instances:
+      new:
+        rulesBodyText: ''

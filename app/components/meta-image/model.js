@@ -1,6 +1,7 @@
 'use strict';
 
-const _get = require('lodash/get');
+const _get = require('lodash/get'),
+  _isString = require('lodash/isString');
 
 module.exports.render = (ref, data, locals) => {
   if (data.localsKey && locals) {
@@ -8,7 +9,14 @@ module.exports.render = (ref, data, locals) => {
 
     if (value && data.imageUrl.includes('${paramValue}')) {
       data.imageUrl = data.imageUrl.replace('${paramValue}', value);
-    } else {
+    } else if (value) {
+      if (!_isString(value)) {
+        throw new Error(
+          'the dynamic value must point to a string'
+          + `\ntypeof value: ${typeof value}`
+        );
+      }
+
       data.imageUrl = value;
     }
   }

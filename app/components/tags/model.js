@@ -2,6 +2,8 @@
 
 const _find = require('lodash/find'),
   _map = require('lodash/map'),
+  { unityComponent } = require('../../services/universal/amphora'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { textToEncodedSlug } = require('../../services/universal/utils');
 
 /**
@@ -29,10 +31,19 @@ function clean(items) {
   }));
 }
 
-module.exports.save = function (uri, data) {
-  data.items = clean(data.items); // first, make sure everything is lowercase and has trimmed whitespace
-  data.featureRubric = getRubric(data.items); // also grab the feature rubric
-  data.textTags = _map(data.items, 'text');
-  return data;
-};
+module.exports = unityComponent({
+  render: function (uri, data, locals) {
+    data._computed.stationSlug = locals.station.id === DEFAULT_STATION.id
+      ? ''
+      : `/${locals.station.site_slug}`;
+    return data;
+  },
+  save: function (uri, data) {
+    data.items = clean(data.items); // first, make sure everything is lowercase and has trimmed whitespace
+    data.featureRubric = getRubric(data.items); // also grab the feature rubric
+    data.textTags = _map(data.items, 'text');
+    return data;
+  }
+});
+
 module.exports.clean = clean;

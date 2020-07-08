@@ -1,0 +1,88 @@
+{{#*inline "newsletterInput"}}
+  <label class="newsletter-sign-up__form-input-label newsletter-sign-up__form-input-label--empty"
+    {{#if label}}
+      data-input-label="{{ label }}"
+    {{/if}}
+  >
+    <input
+      class="newsletter-sign-up__form-input {{ if modifier (concat 'newsletter-sign-up__form-input--' modifier) }}"
+      {{#if type}}
+        type="{{ type }}"
+      {{/if}}
+      {{#if size}}
+        size="{{ size }}"
+      {{/if}}
+      {{#if name}}
+        name="{{ name }}"
+      {{/if}}
+      {{#if placeholder}}
+        placeholder="{{ placeholder }}"
+      {{/if}}
+      {{#if value}}
+        value="{{ value }}"
+      {{/if}}
+      {{#if required}}
+        required="required"
+      {{/if}}
+      {{#if pattern}}
+        pattern="{{ pattern }}"
+      {{/if}}
+    />
+    <div class="newsletter-sign-up__form-input-msg">this is a test</div>
+  </label>
+{{/inline}}
+
+<div
+  class="component component--newsletter-sign-up newsletter-sign-up newsletter-sign-up--layout-{{ layoutType }}"
+  data-uri="{{ default _ref _self }}" data-editable="settings"
+  >
+  <h3 class="newsletter-sign-up__title">
+    <span class="newsletter-sign-up__title-text">{{ title }}</span>
+  </h3>
+  <form method="POST" class="newsletter-sign-up__form" action="http://www.e.radio.com/Subscribe.do?action=easySignup" novalidate>
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--email">
+      {{> newsletterInput
+        type="email"
+        name="email"
+        modifier="email"
+        label="Email"
+        required=true
+      }}
+    </div>
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--zip">
+      {{> newsletterInput
+        type="text"
+        name="zip"
+        label="Postal Code"
+        modifier="zip"
+        required=true
+      }}
+    </div>
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--birthday">
+      {{> newsletterInput
+        type="text"
+        name="birthday"
+        label="Birthday - mm/dd/yyyy"
+        modifier="birthday"
+        required=true
+      }}
+    </div>
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--submit">
+      {{> newsletterInput type="Submit" name="Subscribe" value="Submit" modifier="submit" }}
+    </div>
+  </form>
+  <div class="newsletter-sign-up__sign-up-terms">
+    <p>By clicking Submit, you acknowledge you have read and agree to <a href="{{ privacyTermsPath }}">Entercom’s Website and Digital Terms of Use</a> and <a href="{{ privacyPolicyPath }}">Privacy Policy</a>.</p>
+  </div>
+  <div class="newsletter-sign-up__success-msg">
+    <div class="newsletter-sign-up__success-msg-icon">
+      {{{ read 'components/newsletter-sign-up/media/icon-sub-success.svg' }}}
+    </div>
+    <div class="newsletter-sign-up__success-msg-title">
+      <span>{{ successTitle }}</span>
+    </div>
+    <div class="newsletter-sign-up__success-msg-text">
+      <span>{{ successMsg }}</span>
+    </div>
+  </div>
+</div>

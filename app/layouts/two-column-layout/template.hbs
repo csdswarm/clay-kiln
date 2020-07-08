@@ -33,7 +33,8 @@
 </head>
 <body>
 <div id="vue-app-mount-point">
-  <section class="layout layout--two-column{{#if @root.locals.showNoEditPermissionsBanner}} layout--no-permissions{{/if}}">
+  <section class="layout layout--two-column{{#if @root.locals.showNoEditPermissionsBanner}} layout--no-permissions{{/if}}"
+    data-main-component="{{ getComponentName main.0._ref }}">
     {{#if @root.locals.showNoEditPermissionsBanner}}
       <h1 class="layout__no-permissions-message">Sorry, but you do not have permissions to edit {{ @root.locals.updateTarget }}.</h1>
     {{/if}}

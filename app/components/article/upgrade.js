@@ -202,4 +202,12 @@ module.exports['11.0'] = async (uri, data) => {
 
 module.exports['12.0'] = updateStationSyndication;
 
-module.exports['13.0'] = addTextTags;
+module.exports['13.0'] = (uri, data) => {
+  data.featured = data.featured || false;
+  data.featuredSports = false;
+  data.featuredNews = false;
+
+  return data;
+};
+
+module.exports['14.0'] = addTextTags;

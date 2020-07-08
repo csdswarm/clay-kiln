@@ -1,9 +1,22 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  striptags = require('striptags'),
+const
+  _get = require('lodash/get'),
+  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  articleOrGallery = new Set(['article', 'gallery']),
+  circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
+  mediaplay = require('../media-play'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  sanitize = require('../sanitize'),
+  slugify = require('../slugify'),
+  striptags = require('striptags'),
+  urlExists = require('../url-exists'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants'),
+  { getComponentName } = require('clayutils'),
   {
     uriToUrl,
     replaceVersion,
@@ -11,17 +24,7 @@ const _get = require('lodash/get'),
     isFieldEmpty,
     textToEncodedSlug,
     urlToElasticSearch
-  } = require('../utils'),
-  sanitize = require('../sanitize'),
-  promises = require('../promises'),
-  rest = require('../rest'),
-  circulationService = require('../circulation'),
-  applyNationalSubscriptions = require('./apply-national-subscriptions'),
-  mediaplay = require('../media-play'),
-  articleOrGallery = new Set(['article', 'gallery']),
-  urlExists = require('../url-exists'),
-  { getComponentName } = require('clayutils'),
-  slugify = require('../slugify');
+  } = require('../utils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -176,6 +179,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else {
+    data.date = dateFormat(new Date()); // ISO 8601 date string
   }
 }
 
@@ -302,6 +307,31 @@ function setSlugAndLock(data, prevData, publishedData) {
     // if the slug is NOT locked (and no other situation above matches), generate it
     generateSlug(data);
   } // if the slug is locked (and no other situation above matches), do nothing
+}
+
+/**
+ * Ensure required data exists on certain page types
+ *
+ * @param {object} data
+ * @param {string} componentName
+ */
+function standardizePageData(data, componentName) {
+  switch (componentName) {
+    case PAGE_TYPES.AUTHOR:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
+      data.slug = sanitize.cleanSlug(data.author);
+      break;
+    case PAGE_TYPES.CONTENT_COLLECTION:
+      data.feedImgUrl = data.image;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
+      data.slug = sanitize.cleanSlug(data.tag);
+      break;
+    case PAGE_TYPES.STATIC_PAGES:
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
+      break;
+    default:
+  }
 }
 
 /**
@@ -521,7 +551,10 @@ function addStationSyndicationSlugs(data) {
 
   data.stationSyndication = data.stationSyndication
     .map(station => {
-      if (station.stationSlug) {
+      // if the station is national, there must be a primary section front. otherwise, the slug must just be truthy
+      const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
+
+      if (shouldSetSlug) {
         station.syndicatedArticleSlug = '/' + [
           station.stationSlug,
           slugify(station.sectionFront),
@@ -576,7 +609,8 @@ function assignStationInfo(uri, data, locals) {
     Object.assign(data, {
       stationSlug: station.site_slug,
       stationName: station.name,
-      stationCallsign: station.callsign
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
@@ -585,11 +619,19 @@ function assignStationInfo(uri, data, locals) {
         stationURL: station.website
       });
     }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
+      });
+    }
   }
 }
 
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined';
+  const isClient = typeof window !== 'undefined',
+    componentName = getComponentName(uri);
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
@@ -603,6 +645,7 @@ async function save(uri, data, locals) {
   // sanitizing inputs, setting fields, etc
   assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
+  standardizePageData(data, componentName);
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
