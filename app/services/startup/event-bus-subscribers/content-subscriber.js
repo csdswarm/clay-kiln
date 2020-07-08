@@ -18,7 +18,8 @@ const
     getComponentName,
     getUri: uri.getUri,
     handlePublishStationSyndication,
-    setUri: uri.setUri
+    setUri: uri.setUri,
+    getByUrl: uri.getByUrl
   };
 
 /**
@@ -111,6 +112,8 @@ async function handleUnpublishContentPg(page) {
     const pageData = await __.dbGet(page.uri),
       mainRef = pageData.main[0];
 
+    updateSyndicationRedirects(page);
+    
     if (['article', 'gallery'].includes(__.getComponentName(mainRef)) &&
       process.env.APPLE_NEWS_ENABLED === 'TRUE') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
@@ -136,6 +139,21 @@ async function handleUnpublishContentPg(page) {
   } catch (e) {
     log('error', `APPLE NEWS LOG -- Error hitting apple news api on unpub: ${ e.message } ${ e.stack }`);
   }
+}
+
+async function updateSyndicationRedirects(page) {
+  const pageData = await __.dbGet(page.uri),
+    mainRef = pageData.main[0],
+    host = page.uri.split('/')[0],
+    contentData = await __.dbGet(mainRef);
+
+  (contentData.stationSyndication || []).forEach(async syndication => {
+    const stationFrontId = _get(await __.getByUrl(`${host}/${syndication.stationSlug}`), '0.id');
+
+    if (stationFrontId) {
+      await __.setUri(stationFrontId, `${host}${syndication.syndicatedArticleSlug}`);
+    };
+  });
 }
 
 /**
