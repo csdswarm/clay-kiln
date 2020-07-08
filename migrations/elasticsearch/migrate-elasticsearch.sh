@@ -38,7 +38,7 @@ if [ -z $4 ] ; then
 		if [ $? -ne 0 ]; then { echo "Failed, aborting." ; exit 1; } fi
 	done
 	echo "Setup aliases"
-	curl "$1/_cat/aliases/$alias?v&s=index:desc&format=json" | jq -r '.[].alias' | while read alias ; do
+	curl "$1/_cat/aliases?v&s=index:desc&format=json" | jq -r '.[].alias' | while read alias ; do
 		echo "Porting alias - $1/$alias to $2/$alias"
 		elasticdump --input=$1/$alias --output=$2/$alias --type=alias
 		if [ $? -ne 0 ]; then { echo "Failed, aborting." ; exit 1; } fi
