@@ -34,6 +34,7 @@ module.exports = {
   _: require('../../app/node_modules/lodash'),
   _chunk: require('../../app/node_modules/lodash/chunk'),
   _defaults: require('../../app/node_modules/lodash/defaults'),
+  _flatMap: require('../../app/node_modules/lodash/flatMap'),
   _get: require('../../app/node_modules/lodash/get'),
   _has: require('../../app/node_modules/lodash/has'),
   _identity: require('../../app/node_modules/lodash/identity'),

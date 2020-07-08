@@ -15,7 +15,6 @@ $thumbnail-continer-width: 70px;
         width: 100%;
         left: 0;
         z-index: 99;
-
         background: $white;
         height: em(71, 16);
         display: flex;
@@ -130,5 +129,18 @@ $thumbnail-continer-width: 70px;
         /* autoprefixer: on */
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+  &.empty:not(.editing) {
+    display: none;
+  }
+}
+
+.editing .latest-top-recirc-slider {
+    &__slider-container {
+        top: em(116, 16);
+        @mixin medium-screen {
+            top: em(102, 16);
+        }
     }
 }
