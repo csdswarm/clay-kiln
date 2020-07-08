@@ -1,0 +1,9 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--podcast-category-strip {
+  &.podcast-category-strip {
+
+  }
+}
