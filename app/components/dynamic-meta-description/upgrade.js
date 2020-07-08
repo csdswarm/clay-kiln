@@ -7,9 +7,15 @@ module.exports['1.0'] = async (uri, data) => {
   };
 };
 
-module.exports['1.0'] = async (uri, data) => {
-  return {
-    ...data,
-    routeParam: ''
-  };
+module.exports['2.0'] = async (uri, data) => {
+  const isCuratedTopic = uri.endsWith('curated-topic');
+
+  if (isCuratedTopic) {
+    return {
+      ...data,
+      routeParam: ''
+    };
+  }
+
+  return data;
 };
