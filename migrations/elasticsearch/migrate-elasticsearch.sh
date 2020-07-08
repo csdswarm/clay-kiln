@@ -38,15 +38,10 @@ if [ -z $4 ] ; then
 		if [ $? -ne 0 ]; then { echo "Failed, aborting." ; exit 1; } fi
 	done
 	echo "Setup aliases"
-	curl "$1/_cat/aliases?v&s=index:desc&format=json" | jq -r '.[].index' | while read index ; do
-		echo "Porting settings - $1/$index to $2/$index"
-		elasticdump --input=$1/$index --output=$2/$index --type=settings
+	curl "$1/_cat/aliases/$alias?v&s=index:desc&format=json" | jq -r '.[].alias' | while read alias ; do
+		echo "Porting alias - $1/$alias to $2/$alias"
+		elasticdump --input=$1/$alias --output=$2/$alias --type=alias
 		if [ $? -ne 0 ]; then { echo "Failed, aborting." ; exit 1; } fi
-		echo "Porting mapping - $1/$index to $2/$index"
-		elasticdump --input=$1/$index --output=$2/$index --type=mapping
-		if [ $? -ne 0 ]; then { echo "Failed, aborting." ; exit 1; } fi
-		echo "Porting data - $1/$index to $2/$index"
-		elasticdump --input=$1/$index --output=$2/$index --type=data --limit=500 --transform=@./migrate-elastic-transform.js?hostname=$toHostname
 	done
 else
 	index=$4;

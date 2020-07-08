@@ -1,17 +1,24 @@
-module.exports = function (doc, options) {
+/**
+ * Replace references of clay sites with specified domain
+ *
+ * @param string
+ * @param options
+ * @returns {string}
+ */
+const replaceDomains = (string, options) => {
   const regex = /(www|[[a-zA-Z]+-]?clay)\.radio\.com/g;
 
-  let sourceString = JSON.stringify(doc._source);
+  return string.replace(regex, options.hostname || 'clay.radio.com');
+};
+
+module.exports = function (doc, options) {
+
   // Replace all references to the previous env to the current
-  sourceString = sourceString.replace(regex, options.hostname || 'clay.radio.com');
-  doc._source = JSON.parse(sourceString);
+  doc._source = JSON.parse(replaceDomains(JSON.stringify(doc._source), options));
 
   if (typeof doc.fields !== 'undefined') {
-    let fieldsString = JSON.stringify(doc.fields);
-    // Replace all references to the previous env to the current
-    fieldsString = fieldsString.replace(regex, options.hostname || 'clay.radio.com');
-    doc.fields = JSON.parse(fieldsString);
+    doc.fields = JSON.parse(replaceDomains(JSON.stringify(doc.fields), options));
   }
 
-  doc._id = doc._id.replace(regex, options.hostname || 'clay.radio.com');
+  doc._id = replaceDomains(doc._id, options);
 };
