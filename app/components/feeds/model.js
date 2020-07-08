@@ -235,10 +235,21 @@ module.exports.render = async (ref, data, locals) => {
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
         }
       },
-      // exclude content from importer
+      // exclude content from importer (only works for exclude, not filter)
       importer: {
         excludeConditionType: 'addMustNot',
-        createObj: bool => ({ match: { ['stationSyndication.importer']: bool } })
+        createObj: bool => ({
+          nested : {
+            path : 'stationSyndication',
+            query : {
+              bool : {
+                must_not : [
+                  { match : { 'stationSyndication.importer' : bool } }
+                ]
+              }
+            }
+          }
+        })
       }
     };
 
