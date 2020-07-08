@@ -13,12 +13,19 @@ let desktopNavItems,
   stationId,
   stationListenNavInstance,
   lastTarget,
-  isMobile = false;
+  isMobile = false,
+  thresholdNavBar;
 
-const thresholdNavBar = document.querySelector('.station-nav__fixed-container').offsetTop;
 
-// Needs to be added outside the station-nav-mount event.
-window.onscroll = function () { toggleStickyNavBar(); };
+const stationNavBar = document.querySelector('.station-nav__fixed-container');
+
+if (stationNavBar) {
+  // Assures that the stationNavBar is present before attaching the event.
+  thresholdNavBar = stationNavBar.offsetTop;
+  // Needs to be added outside the station-nav-mount event.
+  window.onscroll = function () { toggleStickyNavBar(); };
+}
+
 
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
