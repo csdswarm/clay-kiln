@@ -11,7 +11,7 @@ module.exports = router => {
     const params = qs.stringify({ ...req.body, publish: false }),
       { results } = await rest.get(`${importContentUrl}?${params}`);
 
-    if (results.url) {
+    if (results && results[0].url) {
       const metaDataModificationRequests = results.map(({ url }) => {
         const pagePathRaw = url.replace('.html', ''),
           ref = `${req.host}${pagePathRaw}`,
