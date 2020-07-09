@@ -8,18 +8,20 @@ const urlParse = require('url-parse'),
  * @param {string} title
  * @returns {string}
  */
-module.exports.createUrl = (title) => {
-  // remove common words and special characters
-  // test here: https://gist.github.com/sbryant31/b316df0a9e7d9446b8871ca688405a15
-  const processedTitle = title
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9- ]+/g, '')
-    .replace(/\b(\a|an|as|at|before|but|by|for|from|is|in|into|like|of|off|on|onto|per|since|than|the|this|that|to|up|via|with)\b /gi, '')
-    .replace(/ +/g, '-')
-    .replace(/-+/g, '-');
+module.exports.createUrl = (podcast_slug,station_slug) => {
+  let url = '/';
 
-  return `https://www.radio.com/media/podcast/${processedTitle}`;
+  if (station_slug) {
+    url += station_slug + '/';
+  }
+
+  url += 'podcast/';
+
+  if (podcast_slug) {
+    url += podcast_slug + '/';
+  }
+
+  return url;
 };
 
 /**
