@@ -40,13 +40,13 @@ module.exports = unityComponent({
       'sectionFront',
       'secondarySectionFront'
     ], locals);
-    const dataWithContent = await createContent.render(uri, data, locals);
+    await createContent.render(uri, data, locals);
 
     if (!locals.edit) {
-      injectAdsToArticleContent(dataWithContent);
+      injectAdsToArticleContent(data);
     }
 
-    return dataWithContent;
+    return data;
   },
   save: async (uri, data, locals) => {
     data.dateModified = (new Date()).toISOString();
