@@ -15,10 +15,8 @@ module.exports = router => {
    * ids can be in any order or contain duplicates, but for best results (i.e. properly using cache) ids should be ordered lowest->highest with no duplicates
    */
   router.get('/rdc/station-utils/stations-by-id', async (req, res) => {
-    const allStationsById = await stationUtils.getAllStations.byId({ locals: res.locals }),
-      { ids = '' } = req.query,
-      result = _pick(allStationsById, ids.split(','));
+    const stationsById = await stationUtils.getSomeStations.byId({ locals: res.locals, ids: req.query.ids.split(',') });
 
-    res.status(200).send(result);
+    res.status(200).send(stationsById);
   });
 };

@@ -78,13 +78,13 @@
 					})
 					.then(async podcastResponse => {
 						const podcasts = podcastResponse.data,
-                        stationsById = await podcastUtils.getStationsForPodcasts(podcasts,window.kiln.locals);
+							stationsById = await podcastUtils.getStationsForPodcasts(podcasts, window.kiln.locals);
 
 						self.podcastOptions = podcasts.map((podcast) => {
 							return {
 								label: podcast.attributes.title,
 								title: podcast.attributes.title,
-								url: podcastUtils.createUrl(podcast,stationsById[podcastUtils.getStationIdForPodcast(podcast)]),
+								url: podcastUtils.createUrl(podcast, stationsById[podcastUtils.getStationIdForPodcast(podcast)]),
 								imageUrl: podcastUtils.createImageUrl(podcast.attributes.image),
 								description: podcast.attributes.description
 							}

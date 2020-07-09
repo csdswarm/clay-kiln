@@ -14,11 +14,8 @@ module.exports = {
     byId:async ({ ids }) => {
       if (_isEmpty(ids))
         return {};
-      const protocol = 'https:',
-        host = typeof window === 'undefined' ? process.env.CLAY_SITE_HOST : window.location.host,
-        route = '/rdc/station-utils/stations-by-id/?ids=' + _sortedUniq(ids.sort()).join(','), // sort the items and filter out duplicates so that fastly will properly cache the result.
-        url = protocol + '//' + host + route,
-        { data } = await axios.get(url);
+      const route = '/rdc/station-utils/stations-by-id/?ids=' + _sortedUniq(ids.sort()).join(','), // sort the items and filter out duplicates so that fastly will properly cache the result.
+        { data } = await axios.get(route);
 
       return data;
     }
