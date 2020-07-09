@@ -238,14 +238,12 @@ module.exports.render = async (ref, data, locals) => {
       // exclude content from importer (only works for exclude, not filter)
       importer: {
         excludeConditionType: 'addMustNot',
-        createObj: bool => ({
+        createObj: () => ({
           nested : {
             path : 'stationSyndication',
             query : {
-              bool : {
-                must_not : [
-                  { match : { 'stationSyndication.importer' : bool } }
-                ]
+              exists : {
+                field : 'stationSyndication.importer'
               }
             }
           }
