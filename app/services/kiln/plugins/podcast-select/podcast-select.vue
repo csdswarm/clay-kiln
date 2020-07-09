@@ -31,7 +31,6 @@
 </template>
 <script>
 	const _get = require('lodash/get');
-	const stationUtils = require('../../../client/station-utils');
 	const podcastUtils = require('../../../../services/universal/podcast');
 	const UiSelect = window.kiln.utils.components.UiSelect;
 	const UiTextbox = window.kiln.utils.components.UiTextbox;
