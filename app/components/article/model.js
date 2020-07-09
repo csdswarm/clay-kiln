@@ -16,9 +16,15 @@ const _get = require('lodash/get'),
   injectAdsToArticleContent = async (dataWithContent) => {
     const insertEvery = +ARTICLE_AD_INSERT_EVERY;
 
-    if (dataWithContent.content.length > 4) {
-      for (let i = insertEvery; i < dataWithContent.content.length; i += insertEvery + 1) {
-        dataWithContent.content.splice(i, 0, {
+    // There should be at least 2 components below where's going to be inserted the ad slot
+    if (dataWithContent.content.length > insertEvery + 1) {
+      /**
+       * Start on the position that we want to place the ad slot + 2 to make sure there are at least 2 components below
+       * where the ad slot would be inserted, then insert it 2 positions above where we started, then sum 1 to the next iteration's
+       * position to take into account newly added ad slot component.
+       */
+      for (let i = insertEvery + 2; i < dataWithContent.content.length; i += insertEvery + 1) {
+        dataWithContent.content.splice(i - 2, 0, {
           _ref: `${host}/_components/google-ad-manager/instances/mediumRectangleBottom`
         });
       }
@@ -35,7 +41,7 @@ module.exports = unityComponent({
       'secondarySectionFront'
     ], locals);
     const dataWithContent = await createContent.render(uri, data, locals);
-    
+
     if (!locals.edit) {
       injectAdsToArticleContent(dataWithContent);
     }
