@@ -1,7 +1,6 @@
 'use strict';
 
-const _pick = require('lodash/pick'),
-  stationUtils = require('../../services/server/station-utils');
+const stationUtils = require('../../services/server/station-utils');
 
 /**
  * Add routes for station utils
