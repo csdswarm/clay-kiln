@@ -9,5 +9,6 @@ module.exports = {
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
+  stationUtils: require('./station-utils'),
   validSource: require('./valid-source')
 };

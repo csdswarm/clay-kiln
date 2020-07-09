@@ -154,12 +154,13 @@ module.exports = router => {
    */
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
-  additionalDataTypes.inject(router, checkAuth);
-  stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);
   addEndpoints.createPage(router);
   addEndpoints.imageInfo(router, checkAuth);
-  ensureStationOnCustomUrl(router);
-  addEndpoints.validSource(router);
   addEndpoints.signOut(router);
+  addEndpoints.stationUtils(router);
+  addEndpoints.validSource(router);
+  additionalDataTypes.inject(router, checkAuth);
+  ensureStationOnCustomUrl(router);
+  stationTheming.inject(router, checkAuth);
 };

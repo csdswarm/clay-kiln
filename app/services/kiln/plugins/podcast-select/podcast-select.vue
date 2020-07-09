@@ -176,8 +176,8 @@
                     self.podcastOptions = self.cachedResults[self.filter];
                 }
                 const url = self.filter && self.filter.length
-                    ? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
-                    : 'https://api.radio.com/v1/podcasts';
+                    ? `${window.location.protocol}//api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
+                    : `${window.location.protocol}//api.radio.com/v1/podcasts`;
 
                 radioApi.get(url)
                     .then( async podcastResponse => {
