@@ -1,44 +1,45 @@
 'use strict';
 
-const { uploadImage } = require('../s3'),
-  rest = require('../../universal/rest'),
-  cache = require ('../cache'),
-  logger = require('../../universal/log'),
+const cache = require ('../cache'),
   domUtils = require('../dom-utils'),
+  logger = require('../../universal/log'),
+  rest = require('../../universal/rest'),
+  { uploadImage } = require('../s3'),
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
-  searchURL = 'https://api.ap.org/media/v/content/search',
-  _ = {
-    rest,
-    searchURL,
+
+  __ = {
     cache,
+    log,
+    rest,
     uploadImage
   },
 
   searchAp = async ( filterConditions ) => {
-    if (typeof filterConditions !== 'string' && filterConditions !== '') {
-      log('error', 'filterConditions must be a string');
+    if (typeof filterConditions !== 'string' || filterConditions === '') {
+      __.log('error', 'filterConditions must be a string or have a value');
       return null;
     }
-    const API_URL = `${_.searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100`;
+    const searchURL = 'https://api.ap.org/media/v/content/search',
+      API_URL = `${searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100`;
 
     try {
-      const response = await _.rest.get(API_URL),
+      const response = await __.rest.get(API_URL),
         items = response.data.items;
     
       return items.map(({ item }) => item);
     } catch (e) {
-      log('error', 'Bad request getting data from search ap-media', e);
+      __.log('error', 'Bad request getting data from search ap-media', e);
       return [];
     }
   },
   getApFeed = async () => {
     try {
-      const next_page = await _.cache.get('ap-subscriptions-url');
+      const next_page = await __.cache.get('ap-subscriptions-url');
 
       if (!next_page) {
-        log('error', 'Could not get any value from ap-subscriptions-url');
+        __.log('error', 'Could not get any value from ap-subscriptions-url');
         return null;
       }
 
@@ -46,12 +47,12 @@ const { uploadImage } = require('../s3'),
           `${next_page}&apikey=${apMediaKey}` :
           `${next_page}?apikey=${apMediaKey}`,
 
-        response = await _.rest.get(endpoint),
+        response = await __.rest.get(endpoint),
         items = response.data.items;
     
       return items.map(({ item }) => item);
     } catch (e) {
-      log('error', 'Bad request getting ap feed from ap-media', e);
+      __.log('error', 'Bad request getting ap feed from ap-media', e);
       return [];
     }
 
@@ -59,14 +60,15 @@ const { uploadImage } = require('../s3'),
   saveApPicture = async ( pictureEndpoint ) => {
     try {
       if (!pictureEndpoint) {
+        __.log('error', 'Missing pictureEndpoint');
         return null;
       }
       const endpoint = pictureEndpoint.split('&').length === 1 ?
           `${pictureEndpoint}&apikey=${apMediaKey}` :
           `${pictureEndpoint}?apikey=${apMediaKey}`,
-        response = await _.rest.get(endpoint),
+        response = await __.rest.get(endpoint),
         item = response.data.item,
-        url = await _.uploadImage(item.renditions.main.href),
+        url = await __.uploadImage(item.renditions.main.href),
         { pubstatus, altids, headline } = item;
 
       return {
@@ -77,7 +79,7 @@ const { uploadImage } = require('../s3'),
         url
       };
     } catch (e) {
-      log('error', 'Bad request saving ap picture', e);
+      __.log('error', 'Bad request saving ap picture', e);
       return {};
     }
     
@@ -85,7 +87,7 @@ const { uploadImage } = require('../s3'),
   getApArticleBody = async ( nitfUrl ) => {
     try {
       if (!nitfUrl) {
-        log('error', 'Not niftUrl was passed');
+        __.log('error', 'Not niftUrl was passed');
         return null;
       }
     
@@ -93,26 +95,26 @@ const { uploadImage } = require('../s3'),
           `${nitfUrl}&apikey=${apMediaKey}` :
           `${nitfUrl}?apikey=${apMediaKey}`,
 
-        response = await _.rest.getHTML(endpoint),
+        response = await __.rest.getHTML(endpoint),
         doc = new domUtils.DOMParser().parseFromString(response, 'text/html'),
         hedline = doc.getElementsByTagName('hedline'),
         block = doc.getElementsByTagName('block');
     
       if (hedline.length > 0 && block.length > 0) {
         return { hedline: hedline[0], block: block[0] };
-      } else  {
+      } else {
         return {};
       }
     } catch (e) {
-      log('error', 'Bad request getting article body', e);
+      __.log('error', 'Bad request getting article body', e);
       return {};
     }
   };
 
 module.exports = {
-  _internals: _,
-  searchAp,
+  _internals: __,
+  getApArticleBody,
   getApFeed,
   saveApPicture,
-  getApArticleBody
+  searchAp
 };

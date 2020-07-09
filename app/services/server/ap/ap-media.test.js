@@ -1,10 +1,10 @@
 'use strict';
 
 const
+  apMedia = require('./ap-media'),
   chai = require('chai'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
-  apMedia = require('./ap-media'),
   { expect } = chai;
 
 chai.use(sinonChai);
@@ -14,46 +14,55 @@ describe('server', () => {
 
   describe('ap-media', () => {
     function setupApMedia() {
-      const { _internals: _, searchAp, getApFeed, saveApPicture, getApArticleBody } = apMedia,
+      const { _internals: __, getApArticleBody, getApFeed, saveApPicture, searchAp } = apMedia,
         DEFAULT_RESULT = {
           data: {
             items: [{
               item: {
                 altids: {
-                  itemid: '79d0ea3ba4ae89885134d8a27a702413',
                   etag: '79d0ea3ba4ae89885134d8a27a702413_3a19aza0c0',
-                  friendlykey: '342896153812'
+                  friendlykey: '342896153812',
+                  itemid: '79d0ea3ba4ae89885134d8a27a702413'
                 },
-                version: 3,
                 pubstatus: 'usable',
-                type: 'text',
                 signals: [
                   'newscontent'
-                ]
+                ],
+                type: 'text',
+                version: 3
               }
             }]
           }
         };
     
-      return { _, searchAp, getApFeed, saveApPicture, getApArticleBody, DEFAULT_RESULT };
+      return {
+        __,
+        DEFAULT_RESULT,
+        getApArticleBody,
+        getApFeed,
+        saveApPicture,
+        searchAp
+      };
     }
     
     describe('searchAp', () => {
-      async function setup_searchAp(options = {}) {
-        const { searchAp, _, DEFAULT_RESULT } = setupApMedia(),
-          DEFAULT_FILTER_CONDITIONS = 'productid:42428',
-          filterConditions = options.filterConditions || DEFAULT_FILTER_CONDITIONS,
+      async function setup_searchAp(options = { filterConditions: 'productid:42428' }) {
+        const { __, DEFAULT_RESULT, searchAp } = setupApMedia(),
+          filterConditions = options.filterConditions,
           result = { ...DEFAULT_RESULT, ...options.result },
-          getStub = sinon.stub();
+          getStub = sinon.stub(),
+          logStub = sinon.stub();
 
         getStub.resolves(result);
-        _.rest.get = getStub;
-        _.searchURL = 'http://test.ap/media/content/search';
+        __.log = logStub;
+        __.rest.get = getStub;
+        
         const response = await searchAp(filterConditions);
 
         return {
-          response,
-          getStub
+          getStub,
+          logStub,
+          response
         };
       }
 
@@ -71,18 +80,30 @@ describe('server', () => {
               productid: '1245'
             }
           },
-          { response } = await setup_searchAp(options);
+          { logStub, response } = await setup_searchAp(options);
 
         expect(response).to.equal(null);
+        expect(logStub).to.have.been.calledOnceWith('error', 'filterConditions must be a string or have a value');
+      });
+
+      it('error in filterConditions, empty string', async () => {
+        const options = {
+            filterConditions: ''
+          },
+          { logStub, response } = await setup_searchAp(options);
+
+        expect(response).to.equal(null);
+        expect(logStub).to.have.been.calledOnceWith('error', 'filterConditions must be a string or have a value');
       });
     });
 
     describe('getApFeed', () => {
       async function setup_getApFeed(options = { isCacheStubResolved: true }) {
-        const { _, getApFeed, DEFAULT_RESULT } = setupApMedia(),
-          result = { ...DEFAULT_RESULT, ...options.result },
+        const { __, getApFeed, DEFAULT_RESULT } = setupApMedia(),
           isCacheStubResolved = options.isCacheStubResolved,
+          result = { ...DEFAULT_RESULT, ...options.result },
           cacheStub = sinon.stub(),
+          logStub = sinon.stub(),
           getStub = sinon.stub();
 
         if (isCacheStubResolved) {
@@ -90,20 +111,23 @@ describe('server', () => {
         } else {
           cacheStub.rejects();
         }
+
         getStub.resolves(result);
-        _.cache.get = cacheStub;
-        _.rest.get = getStub;
+        __.cache.get = cacheStub;
+        __.log = logStub;
+        __.rest.get = getStub;
 
         const response = await getApFeed();
 
         return {
-          response,
-          cacheStub
+          cacheStub,
+          logStub,
+          response
         };
       }
 
       it('Get AP feed from next_page link', async () => {
-        const { response, cacheStub } = await setup_getApFeed();
+        const { cacheStub, response } = await setup_getApFeed();
 
         expect(cacheStub).to.have.been.callCount(1);
         expect(response[0]).to.have.property('type')
@@ -112,21 +136,19 @@ describe('server', () => {
 
       it('Error getting AP feed from next_page', async () => {
         const options = { isCacheStubResolved: false },
-          { response } = await setup_getApFeed(options);
+          { logStub, response } = await setup_getApFeed(options);
 
-        expect(response).to.be.an('array');
         expect(response).that.eql([]);
+        expect(response).to.be.an('array');
+        expect(logStub).to.have.been.calledOnceWith('error', 'Bad request getting ap feed from ap-media');
       });
     });
 
     describe('saveApPicture', () => {
       async function setup_saveApPicture(options = { isEndpoint: true }) {
-        const { _, saveApPicture } = setupApMedia(),
+        const { __, saveApPicture } = setupApMedia(),
           DEFAULT_ENDPOINT = 'http://ap.testing.com/image',
           endpoint = options.isEndpoint ? DEFAULT_ENDPOINT : null,
-          getStub = sinon.stub(),
-          uploadImageStub = sinon.stub(),
-          url = 'https://imageendpoint.com/hello.jpg',
           result = {
             id: 'asgaJ2jf',
             data: {
@@ -143,19 +165,25 @@ describe('server', () => {
                 headline: 'This news does not real'
               }
             }
-          };
+          },
+          url = 'https://imageendpoint.com/hello.jpg',
+          getStub = sinon.stub(),
+          logStub = sinon.stub(),
+          uploadImageStub = sinon.stub();
         
         getStub.resolves(result);
         uploadImageStub.resolves(url);
-        _.uploadImage = uploadImageStub;
-        _.rest.get = getStub;
+        __.log = logStub;
+        __.rest.get = getStub;
+        __.uploadImage = uploadImageStub;
 
         const response = await saveApPicture(endpoint);
 
         return {
+          getStub,
+          logStub,
           response,
-          uploadImageStub,
-          getStub
+          uploadImageStub
         };
       }
 
@@ -170,15 +198,16 @@ describe('server', () => {
 
       it('Error saving an ap-media picture', async () => {
         const options = { isEndpoint: false },
-          { response } = await setup_saveApPicture(options);
+          { logStub, response } = await setup_saveApPicture(options);
 
         expect(response).that.eql(null);
+        expect(logStub).to.have.been.calledOnceWith('error', 'Missing pictureEndpoint');
       });
     });
 
     describe('getApArticleBody', () => {
       async function setup_getArticleBody(options = {}) {
-        const { _, getApArticleBody } = setupApMedia(),
+        const { __, getApArticleBody } = setupApMedia(),
           DEFAULT_RESULT = `
             <?xml version="1.0" encoding="utf-8"?><nitf version="-//IPTC//DTD NITF 3.4//EN" change.date="October 18, 2006" change.time="19:30">
               <body>
@@ -206,18 +235,18 @@ describe('server', () => {
                 </body.content>
               </body>
             </nitf>`,
-          result = options.result || DEFAULT_RESULT,
           niftUrl = 'https://gettingaparticle.body',
+          result = options.result || DEFAULT_RESULT,
           getStub = sinon.stub();
 
         getStub.resolves(result);
-        _.rest.getHTML = getStub;
+        __.rest.getHTML = getStub;
 
         const response = await getApArticleBody(niftUrl);
 
         return {
-          response,
-          getStub
+          getStub,
+          response
         };
       }
 
@@ -233,7 +262,7 @@ describe('server', () => {
 
       it('error getting ap article body', async () => {
         const options = { result: '<body></body>' },
-          { response } = await setup_getArticleBody(options);
+          { response } = await setup_getArticleBody(options);
         
         expect(response).that.eql({});
         
