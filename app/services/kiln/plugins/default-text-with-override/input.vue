@@ -40,7 +40,7 @@
       <div class="ui-textbox__feedback-text">{{ overrideHelp }}</div>
     </div>
 
-    <ui-textbox v-if="shouldOverride"
+    <ui-textbox v-if="canOverride && shouldOverride"
       class="default-text-with-override__custom-text"
       :floatingLabel="true"
       :help="customTextHelp"
@@ -71,21 +71,9 @@
     name: 'default-text-with-override',
     props: ['name', 'data', 'schema', 'args'],
     data() {
-      const { min, max, pattern } = this.args.validate,
-        validate = Object.assign(
-          {
-            requiredMessage: 'A value is required',
-            minMessage: `The value must be at least ${min} characters`,
-            maxMessage: `The value must be at most ${max} characters`,
-            patternMessage: `The value must match the pattern "/${pattern}/ig`
-          },
-          this.args.validate
-        );
-
       return {
         customText: this.getInternalState('customText', this.getDefaultText()),
-        shouldOverride: this.getInternalState('shouldOverride', false),
-        validate
+        shouldOverride: this.getInternalState('shouldOverride', false)
       };
     },
     computed: {
