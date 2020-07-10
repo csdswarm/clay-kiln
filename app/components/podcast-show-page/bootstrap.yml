@@ -3,6 +3,8 @@ _components:
     stationSlug: ''
     episodeList:
       _ref: /_components/podcast-episode-list/instances/default
+    podcastDiscover:
+      _ref: /_components/podcast-discover/instances/default
     podcastLead:
           _ref: /_components/podcast-lead/instances/default
     instances:
@@ -10,5 +12,7 @@ _components:
         stationSlug: ''
         episodeList:
           _ref: /_components/podcast-episode-list/instances/default
+        podcastDiscover:
+          _ref: /_components/podcast-discover/instances/default
         podcastLead:
           _ref: /_components/podcast-lead/instances/default
