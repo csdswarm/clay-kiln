@@ -13,19 +13,16 @@
     <div class="podcast-lead__share-label">Share</div>
     <div class="podcast-lead__share-actions">
       {{#if shares.facebook}}
-      <a class="podcast-lead__share-link" href={{shares.facebook.link}} target="_blank">
-        {{{ read 'components/share/media/facebook.svg' }}}
-      </a>
+      <a class="podcast-lead__share-link podcast-lead__share-link--facebook" href={{shares.facebook.link}}
+        target="_blank"> </a>
       {{/if}}
       {{#if shares.twitter}}
-      <a class="podcast-lead__share-link" href={{shares.twitter.link}} target="_blank">
-        {{{ read 'components/share/media/twitter.svg' }}}
-      </a>
+      <a class="podcast-lead__share-link podcast-lead__share-link--twitter" href={{shares.twitter.link}}
+        target="_blank"> </a>
       {{/if}}
       {{#if shares.email}}
-      <a class="podcast-lead__share-link" href={{shares.email.link}} target="_blank">
-        <span>{{{ read 'components/podcast-lead/media/email.svg'}}}</span>
-      </a>
+      <a class="podcast-lead__share-link podcast-lead__share-link--email" href={{shares.email.link}}
+        target="_blank"></a>
       {{/if}}
     </div>
   </div>
@@ -75,7 +72,8 @@
   <div class="podcast-lead__main  {{#if _computed.episode}}podcast-lead__main--episode{{/if}}">
     <div class="podcast-lead__image-podcast">
       {{> podcastImage _computed defaultImg=_computed.DEFAULT_RADIOCOM_LOGO}}
-      <div data-play-episode="{{_computed.episode.id}}" data-play-podcast="{{_computed.podcast.id}}" class="image__play-btn {{_computed.episode.playingClass}}"></div>
+      <div data-play-episode="{{_computed.episode.id}}" data-play-podcast="{{_computed.podcast.id}}"
+        class="image__play-btn {{_computed.episode.playingClass}}"></div>
     </div>
     <div class="podcast-lead__main main__content">
       <div class="podcast-lead__heading">

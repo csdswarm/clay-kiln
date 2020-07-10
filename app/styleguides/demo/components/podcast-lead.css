@@ -259,15 +259,6 @@
   &__share-actions {
     display: flex;
     margin-right: em(20);
-    &--subscriptions {
-      .podcast-lead__share-link {
-        width: auto;
-        svg {
-          height: 100%;
-          width: auto;
-        }
-      }
-    }
   }
 
   &__subscribe-link, &__share-link {
@@ -278,9 +269,46 @@
     height: em(32);
     width: em(32);
   }
-  &__share-link svg {
-    height: em(16);
-    width: em(16);
+  &__share-link {
+    /* Set each item to constant 40x40px, including border */
+    width: em(40);
+    height: em(40);
+    border: em(1) solid $alto;
+    box-sizing: border-box;
+    /* Center image, set size to 20x20px, and don't repeat it */
+    background: center/em(20) em(20) no-repeat;
+
+    &--twitter {
+      background-image: url("/media/components/share/twitter.svg");
+      background-size: auto em(17); /* Firefox scaling/bounding fix */
+      &:hover,
+      &:active {
+        background-color: $cerulean;
+        border-color: $cerulean;
+        background-image: url("/media/components/share/twitter--hover.svg");
+      }
+    }
+
+    &--facebook {
+      background-image: url("/media/components/share/facebook.svg");
+      background-size: auto em(22); /* Increase FB image height to 22px */
+      &:hover,
+      &:active {
+        background-color: $chambray;
+        border-color: $chambray;
+        background-image: url("/media/components/share/facebook--hover.svg");
+      }
+    }
+
+    &--email {
+      background-image: url("/media/components/share/email.svg");
+      &:hover,
+      &:active {
+        background-color: $parisM;
+        border-color: $parisM;
+        background-image: url("/media/components/share/email--hover.svg");
+      }
+    }
   }
   
   @mixin medium-small-screen {
