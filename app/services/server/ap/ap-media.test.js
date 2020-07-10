@@ -99,11 +99,17 @@ describe('server', () => {
 
     describe('getApFeed', () => {
       async function setup_getApFeed(options = { isCacheStubResolved: true }) {
+        console.log('options', options);
         const { __, getApFeed, DEFAULT_RESULT } = setupApMedia(),
+          entitlements = [
+            { name: 'Product 1', value: 42502 },
+            { name: 'Product 2', value: 42802 }
+          ],
           isCacheStubResolved = options.isCacheStubResolved,
           cacheResult = options.cacheResult,
           result = { ...DEFAULT_RESULT, ...options.result },
           cacheStub = sinon.stub(),
+          locals = { site: { host: 'some.radio.com' } },
           logStub = sinon.stub(),
           getStub = sinon.stub(),
           retrieveListStub = sinon.stub();
@@ -115,12 +121,13 @@ describe('server', () => {
         }
 
         getStub.resolves(result);
+        retrieveListStub.resolves(entitlements);
         __.cache.get = cacheStub;
         __.log = logStub;
         __.rest.get = getStub;
         __.retrieveList = retrieveListStub;
 
-        const response = await getApFeed();
+        const response = await getApFeed(locals);
 
         return {
           cacheStub,
@@ -131,7 +138,10 @@ describe('server', () => {
       }
 
       it('Get AP feed from next_page link', async () => {
-        const options = { cacheResult: 'http://someurl.nextpage' },
+        const options = {
+            cacheResult: 'http://someurl.nextpage',
+            isCacheStubResolved: true
+          },
           { cacheStub, response } = await setup_getApFeed(options);
 
         expect(cacheStub).to.have.been.callCount(1);
@@ -140,10 +150,14 @@ describe('server', () => {
       });
 
       it('Get AP feed from feed endpoint when next does not exist', async () => {
-        const options = { cacheResult: null },
+        const options = {
+            cacheResult: null,
+            isCacheStubResolved: true
+          },
           { cacheStub, response } = await setup_getApFeed(options);
 
         expect(cacheStub).to.have.been.calledWith('ap-subscriptions-url');
+        console.log('response', response);
         expect(response[0]).to.have.property('signals')
           .that.eqls(['newscontent']);
       });
