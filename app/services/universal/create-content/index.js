@@ -1,22 +1,30 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  striptags = require('striptags'),
+const
+  _get = require('lodash/get'),
+  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  articleOrGallery = new Set(['article', 'gallery']),
+  circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
-  sanitize = require('./sanitize'),
-  promises = require('./promises'),
-  rest = require('./rest'),
-  circulationService = require('./circulation'),
-  mediaplay = require('./media-play'),
-  { PAGE_TYPES } = require('./../universal/constants'),
-  articleOrGallery = new Set(['article', 'gallery']),
-  urlExists = require('../../services/universal/url-exists'),
-  { DEFAULT_STATION } = require('../../services/universal/constants'),
-  { urlToElasticSearch } = require('../../services/universal/utils'),
+  mediaplay = require('../media-play'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  sanitize = require('../sanitize'),
+  slugify = require('../slugify'),
+  striptags = require('striptags'),
+  urlExists = require('../url-exists'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants'),
   { getComponentName } = require('clayutils'),
-  slugify = require('../../services/universal/slugify');
+  {
+    uriToUrl,
+    replaceVersion,
+    has,
+    isFieldEmpty,
+    textToEncodedSlug,
+    urlToElasticSearch
+  } = require('../utils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -299,6 +307,31 @@ function setSlugAndLock(data, prevData, publishedData) {
     // if the slug is NOT locked (and no other situation above matches), generate it
     generateSlug(data);
   } // if the slug is locked (and no other situation above matches), do nothing
+}
+
+/**
+ * Ensure required data exists on certain page types
+ *
+ * @param {object} data
+ * @param {string} componentName
+ */
+function standardizePageData(data, componentName) {
+  switch (componentName) {
+    case PAGE_TYPES.AUTHOR:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
+      data.slug = sanitize.cleanSlug(data.author);
+      break;
+    case PAGE_TYPES.CONTENT_COLLECTION:
+      data.feedImgUrl = data.image;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
+      data.slug = sanitize.cleanSlug(data.tag);
+      break;
+    case PAGE_TYPES.STATIC_PAGES:
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
+      break;
+    default:
+  }
 }
 
 /**
@@ -597,7 +630,8 @@ function assignStationInfo(uri, data, locals) {
 }
 
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined';
+  const isClient = typeof window !== 'undefined',
+    componentName = getComponentName(uri);
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
@@ -611,6 +645,7 @@ async function save(uri, data, locals) {
   // sanitizing inputs, setting fields, etc
   assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
+  standardizePageData(data, componentName);
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
@@ -620,6 +655,9 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need apply national subscriptions before creating slugs for syndicated content
+  await applyNationalSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),

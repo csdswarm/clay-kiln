@@ -500,6 +500,25 @@ function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
   }
 }
 
+/**
+ * like _includes except tests whether any elements are included
+ *
+ * @param {*} iterable1
+ * @param {*} iterable2
+ * @returns {bool}
+ */
+function includesAny(iterable1, iterable2) {
+  const setOfElements = new Set(iterable1);
+
+  for (const el of iterable2) {
+    if (setOfElements.has(el)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
@@ -513,6 +532,7 @@ module.exports = {
   getFullOriginalUrl,
   getSiteBaseUrl,
   has,
+  includesAny,
   isContentComponent,
   isFieldEmpty,
   isInstance,
