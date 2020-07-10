@@ -50,7 +50,7 @@
         if (self.cachedResults) {
           self.categoryOptions = self.cachedResults;
         }
-        fetch('https://api.radio.com/v1/categories')
+        fetch(`${window.location.protocol}//api.radio.com/v1/categories`)
           .then(response => {
             return response.json();
           })
