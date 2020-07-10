@@ -9,6 +9,7 @@ const
   qs = require('qs'),
   componentClassName = 'podcast-episode-list',
   { utils } = require('../../services/client/utils'),
+  clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
   loadMoreAmount = 20;
 
 let
@@ -138,7 +139,10 @@ class PodcastListComponentView {
               element.setAttribute('href', data.attributes.audio_url);
               break;
             case 'playBtn':
-              element.setAttribute('href', data.attributes.episode_detail_url);
+              element.setAttribute('href', '#');
+              // setting for player needs
+              element.dataset.playPodcastEpisodeId = data.id,
+              element.dataset.playPodcastShowId = data.attributes.podcast[0].id;
               break;
             default:
               let value = data.attributes[key];
@@ -215,6 +219,7 @@ class PodcastListComponentController {
     if (this.model.isLoading) {
       return;
     }
+
     if (e.target === this.view.elements.loadMoreBtn) {
       this.model.isLoading == true;
       this.model.getEpisodes()
@@ -229,6 +234,23 @@ class PodcastListComponentController {
           }
         })
         .finally(()=> this.model.isLoading = false);
+    }
+
+    // to launch web player
+    const playBtnEl = e.target.closest('.podcast-episode-list__play-btn');
+
+    if (playBtnEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      const
+        episodeId = playBtnEl.dataset.playPodcastEpisodeId,
+        podcastId = playBtnEl.dataset.playPodcastShowId;
+
+      clientCommunicationBridge
+        .sendMessage(
+          'SpaPlayerInterfacePlaybackStatus',
+          { stationId: null, playbackStatus: 'play', podcastId, episodeId }
+        );
     }
   }
   /**
