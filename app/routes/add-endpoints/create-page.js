@@ -1,15 +1,45 @@
 'use strict';
 
 const amphora = require('amphora'),
-  { elastic } = require('amphora-search'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   stationUtils = require('../../services/server/station-utils'),
-  addStationSlug = (uri, stationSlug) => stationSlug && amphora.db.getMeta(uri)
-    .then(meta => ({ ...meta, stationSlug }))
-    .then(updatedMeta => amphora.db.putMeta(uri, updatedMeta))
-    .then(data => elastic.put('pages', uri, data));
-    
+  db = require('../../services/server/db'),
+  _get = require('lodash/get'),
+  utils = require('../../services/universal/utils'),
+  updateSyndication = (content, ogCanonicalUrl) => ({
+    ...content,
+    corporateSyndication: null,
+    editorialFeeds: null,
+    genreSyndication: null,
+    stationSyndication: [],
+    syndicatedUrl: ogCanonicalUrl,
+    syndicationStatus: 'syndicated',
+    isCloned: true
+  }),
+  removeSectionFronts = (content) => ({
+    ...content,
+    sectionFront: '',
+    secondarySectionFront: ''
+  }),
+  // eslint-disable-next-line max-params
+  createPage = async (uri, body, res, stationSlug, locals) => {
+    if (stationSlug) {
+      const allStations = await stationUtils.getAllStations({ locals });
 
+      res.locals.newPageStation = allStations.bySlug[stationSlug];
+    }
+
+    const result = await amphora.pages.create(uri, body, res.locals);
+
+    await updateMetaData(result._ref, { stationSlug });
+
+    return {
+      result,
+      res
+    };
+  },
+  { updateMetaData } = require('../../services/server/update-metadata');
+    
 module.exports = router => {
   router.post('/_pages', (req, res) => {
     res.status(404);
@@ -28,22 +58,46 @@ module.exports = router => {
       res.status(400).send({ error: "'pageBody' is required" });
       return;
     }
-
-    // stationSlug is valid due to a check in
-    // app/services/server/permissions/has-permissions/create-page.js
-    if (stationSlug) {
-      const allStations = await stationUtils.getAllStations({ locals });
-
-      res.locals.newPageStation = allStations.bySlug[stationSlug];
-    }
-
-    // we need to mutate locals before declaring the result
-    // eslint-disable-next-line one-var
-    const result = await amphora.pages.create(pagesUri, pageBody, res.locals);
     
-    await addStationSlug(result._ref, stationSlug);
+    const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals);
 
-    res.status(201);
-    res.send(result);
+    updatedResponse.status(201);
+    updatedResponse.send(result);
+  }));
+
+  router.post('/rdc/clone-content', wrapInTryCatch(async (req, res) => {
+    const { canonicalUrl, stationSlug } = req.body,
+      pagesUri = req.hostname + '/_pages/',
+      { locals } = res,
+      url = canonicalUrl.split('//')[1],
+      
+      QUERY = `SELECT p.data
+      FROM uris u
+        JOIN pages p
+          ON u.data || '@published' = p.id
+      WHERE u.url = ?`;
+
+    let pageBody = await db.raw(QUERY, [url]).then(results => _get(results, 'rows[0].data'));
+      
+    if (!pageBody) {
+      res.status(404).send({ error: 'Page not found' });
+      return;
+    }
+    
+    pageBody = {
+      ...pageBody,
+      layout: utils.replaceVersion(pageBody.layout)
+    };
+    
+    const { result, res: updatedResponse } = await createPage(pagesUri, pageBody, res, stationSlug, locals),
+      resultContentUri = result.main[0],
+      resultContent = await db.get(resultContentUri),
+      unsyndicatedContent = updateSyndication(resultContent, canonicalUrl),
+      updatedContent = removeSectionFronts(unsyndicatedContent);
+
+    await db.put(resultContentUri, updatedContent);
+    
+    updatedResponse.status(201);
+    updatedResponse.send(result);
   }));
 };

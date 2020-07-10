@@ -1,49 +1,51 @@
 {{#if _computed.initialLoad}}
-  <section
-    class="component component--more-content-feed
-    {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
-    {{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
-    data-track-populate-from="{{ populateFrom }}"
-    data-track-location="{{ locationOfContentFeed }}"
-    data-uri="{{ default _ref _self }}"
-    data-track-type="more-content-feed"
-    data-lazy-loads="{{ _computed.lazyLoads }}"
-  >
-    {{#if componentTitleVisible}}
-      <h2 class="more-content-feed__title
-        {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
-        {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
-        {{#if station }}more-content-feed__title--station-front{{/if}}"
-        data-editable="header"
-      >
-        <span>{{ componentTitle }}</span>
-      </h2>
-    {{/if}}
-    <div class="more-content-feed__container">
-      <div class="more-content-feed__content">
-        {{#unless dynamicTagPage}}
-          <div class="more-content-feed__intro-components" data-editable="introComponents">
-            {{> component-list introComponents}}
-          </div>
-        {{/unless}}
-        {{#unless _computed.content.length}}
-          {{#if @root.locals.edit}}
-            <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
-              <div class="placeholder-label">
-                <span class="ui-icon placeholder-icon material-icons add">add</span>
-                <span class="placeholder-text">Content Feed</span>
-                <div class="ui-ripple-ink"></div>
-              </div>
+    <section
+      class="component component--more-content-feed
+      {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
+      {{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
+      data-track-populate-from="{{ populateFrom }}"
+      data-track-location="{{ locationOfContentFeed }}"
+      data-uri="{{ default _ref _self }}"
+      data-track-type="more-content-feed"
+      data-lazy-loads="{{ _computed.lazyLoads }}"
+    >
+      {{#if componentTitleVisible}}
+        <h2 class="more-content-feed__title
+          {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
+          {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
+          {{#if station }}more-content-feed__title--station-front{{/if}}"
+          data-editable="header"
+        >
+          <span>{{ componentTitle }}</span>
+        </h2>
+      {{/if}}
+      <div class="more-content-feed__container">
+        <div class="more-content-feed__content">
+          {{#unless dynamicTagPage}}
+            <div class="more-content-feed__intro-components" data-editable="introComponents">
+              {{> component-list introComponents}}
             </div>
-          {{/if}}
-        {{/unless}}
-        {{#ifAny _computed.content.length @root.locals.edit}}
-          <ul class="more-content-feed__links" data-editable="contentFeed">
-        {{/ifAny}}
+          {{/unless}}
+          {{#unless _computed.content.length}}
+            {{#if @root.locals.edit}}
+              <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
+                <div class="placeholder-label">
+                  <span class="ui-icon placeholder-icon material-icons add">add</span>
+                  <span class="placeholder-text">Content Feed</span>
+                  <div class="ui-ripple-ink"></div>
+                </div>
+              </div>
+            {{else}}
+              <!-- No content for {{ default _ref _self }} -->
+            {{/if}}
+          {{/unless}}
+          {{#ifAny _computed.content.length @root.locals.edit}}
+            <ul class="more-content-feed__links" data-editable="contentFeed">
+          {{/ifAny}}
 {{/if}}
           {{#each _computed.content as |feedItem|}}
             <li>
-              <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
+              <a class="links__link {{#if ../_computed.applyStationTheme }}links__link--station-theme {{else}} links__link--{{ feedItem.sectionFront }}{{/if}}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
                  data-track-component-name="more-content-feed"
                  data-track-page-uri="{{ feedItem.pageUri }}"
@@ -52,7 +54,7 @@
                  data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
                   {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
-                    <span class="thumb__section-front">{{{ feedItem.sectionFront }}}</span>
+                    <span class="thumb__section-front">{{{ feedItem.label }}}</span>
                   {{/ifAll}}
                   {{#unless (compare ../locationOfContentFeed 'homepage')}}
                     {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
@@ -109,7 +111,8 @@
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
-        {{#if author}}data-author="{{ author }}"{{/if}}>
+        {{#if author}}data-author="{{ author }}"{{/if}}
+        {{#if _computed.stationId}}data-station="{{ _computed.stationId }}"{{/if}}>
       <button class="more-content-feed__loadmore">
         <div class="loadmore__text">Load More</div>
       </button>

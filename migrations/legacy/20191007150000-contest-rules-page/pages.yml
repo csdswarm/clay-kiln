@@ -1,0 +1,13 @@
+_pages:
+  contest-rules-page:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/contest-rules-page-header/instances/new
+    main:
+      - /_components/contest-rules-page/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+    layout: /_layouts/two-column-layout/instances/contest

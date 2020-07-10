@@ -4,6 +4,31 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Latest Content Fonts Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-content-font1 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 25px;
+}
+@define-mixin latest-content-font2 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin latest-content-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
+}
+@define-mixin latest-content-font4 {
+  @mixin font CircularStd-Medium, 14px, theme(primaryFontColor, $white), -.23px, 18px;
+}
+@define-mixin latest-content-font5 {
+  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
+}
+@define-mixin latest-content-font6 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin latest-content-font7 {
+  @mixin font CircularStd-Medium, 18px, theme(primaryFontColor, $white), -.3px, 23px;
+}
+
 $latestArticleHeight: em(168);
 
 .component--latest-content {
@@ -26,10 +51,9 @@ $latestArticleHeight: em(168);
     position: relative;
     z-index: 1;
     text-align: center;
-    color: $parisM;
 
     &:before {
-      border-top: em(1, 20) solid $parisM;
+      border-top: em(1, 20) solid theme(primaryColor, $parisM);
       content: "";
       margin: 0 auto;
       position: absolute;
@@ -71,13 +95,13 @@ $latestArticleHeight: em(168);
     }
 
     &.section__container-- {
-      &music {
+      &music, &firstColumn {
          order: 1;
        }
-      &news {
+      &news, &secondColumn {
          order: 2;
        }
-      &sports {
+      &sports, &thirdColumn {
          order: 3;
          padding-right: 0;
        }
@@ -208,7 +232,7 @@ $latestArticleHeight: em(168);
     height: em(26, 14);
     position: absolute;
     top: 0;
-    background-color: $parisM;
+    background-color: theme(primaryColor, $parisM);
     padding: 0 em(6, 14);
     line-height: em(26, 14);
 
@@ -217,13 +241,13 @@ $latestArticleHeight: em(168);
      }
 
     &--news {
-       background-color: $lightningYellow;
+       background-color: theme(primaryColor, $lightningYellow);
      }
     &--music {
-       background-color: $sunsetOrange;
+       background-color: theme(primaryColor, $sunsetOrange);
      }
     &--sports {
-       background-color: $azureRadience;
+       background-color: theme(primaryColor, $azureRadience);
      }
 
     @mixin medium-small-screen {
