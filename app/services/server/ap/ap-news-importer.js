@@ -4,7 +4,7 @@ const
   _set = require('lodash/set'),
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
-  { createPage } = require('../page-utils'),
+  { addLazyLoadProperty } = require('../../universal/utils'),
   { get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { searchByQuery } = require('../query'),
@@ -21,7 +21,6 @@ const
   },
 
   __ = {
-    createPage,
     dbGet,
     dbPut,
     dbRaw,
@@ -29,6 +28,10 @@ const
     log,
     searchByQuery
   };
+
+// createPage utilizes a number of imports that call io-redis before
+// any logic is done to verify that network access exists, so lazy load this
+addLazyLoadProperty(__, 'createPage', require('../page-utils'));
 
 /**
  * Checks to see if the AP Content is publishable
@@ -76,7 +79,11 @@ async function findExistingArticle({ itemid } = {}) {
 async function createNewArticle(stationMappings, locals) {
   const { createPage, dbGet } = __;
 
-  return createPage(await dbGet('_pages/new-two-col'), Object.keys(stationMappings)[0] || '', locals);
+  return createPage(
+    await dbGet(`${locals.site.host}/_pages/new-two-col`),
+    Object.keys(stationMappings)[0] || '',
+    locals
+  );
 }
 
 /**
@@ -155,47 +162,62 @@ async function getNewStations(article, stationMappings, locals) {
  * @param {object} articleData.metaDescription
  * @returns {object}
  */
-function mapApDataToArticle(apMeta, articleData) {
+async function mapApDataToArticle(apMeta, articleData) {
   const
+    { dbGet } = __,
     { article , metaTitle, metaDescription } = articleData,
-    tags = _get(article, 'tags.items', []),
-    tagSlugs = tags.map(({ slug }) => slug),
+    { altids, ednote, headline, headline_extended, version } = apMeta,
+    [sideShare, tags] = [
+      await dbGet(article.sideShare._ref),
+      await dbGet(article.tags._ref)
+    ],
+    tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
     newArticleData = {
       article: {
         ...article,
         ap: {
-          itemid: apMeta.altids.itemid,
-          etag: apMeta.altids.etag,
-          version: apMeta.version,
-          ednote: apMeta.ednote
+          itemid: altids.itemid,
+          etag: altids.etag,
+          version,
+          ednote
         },
-        headline: apMeta.headline,
-        shortHeadline: apMeta.headline,
-        msnTitle: apMeta.headline,
-        pageTitle: apMeta.headline,
-        slug: slugifyService(apMeta.headline),
-        seoDescription: apMeta.headline_extended,
-        pageDescription: apMeta.headline_extended,
+        headline,
+        msnTitle: headline,
+        pageDescription: headline_extended,
+        pageTitle: headline,
+        plainTextPrimaryHeadline: headline,
+        plainTextShortHeadline: headline,
+        primaryHeadline: headline,
+        seoDescription: headline_extended,
+        seoHeadline: headline,
+        shortHeadline: headline,
+        sideShare: {
+          _ref: article.sideShare._ref,
+          ...sideShare,
+          title: headline,
+          shortTitle: headline
+        },
+        slug: slugifyService(headline),
         tags: {
           items: [
             ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' }],
-            ...tags,
+            ...tags.items,
             ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
           ]
         }
       },
       metaDescription: {
         ...metaDescription,
-        description: apMeta.headline_extended
+        description: headline_extended
       },
       metaTitle: {
         ...metaTitle,
-        kilnTitle: apMeta.headline,
-        ogTitle: apMeta.headline,
-        title: apMeta.headline,
-        twitterTitle: apMeta.headline
+        kilnTitle: headline,
+        ogTitle: headline,
+        title: headline,
+        twitterTitle: headline
       }
     };
 
@@ -227,7 +249,7 @@ async function importArticle(apMeta, stationMappings, locals) {
       metaDescription,
       metaTitle
     } = isModifiedByAP
-      ? mapApDataToArticle(apMeta, articleData)
+      ? await mapApDataToArticle(apMeta, articleData)
       : articleData;
 
   return {

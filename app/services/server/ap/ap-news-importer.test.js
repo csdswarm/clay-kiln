@@ -24,11 +24,76 @@ describe('server', () => {
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
           HOST = 'some.radio.com',
+          DEFAULT_CONTENT_ITEMS = [
+            {
+              _ref: `clay.radio.com/_components/paragraph/instances/${fakeId('new')}`,
+              text: 'Some content'
+            },
+            ...options.content || []
+          ],
+          DEFAULT_FEED_IMAGES = [
+            {
+              _ref: `clay.radio.com/_components/feed-image/instances/${fakeId('new')}`,
+              alt: '',
+              url: ''
+            },
+            ...options.feedImages || []
+          ],
+          DEFAULT_SIDE_SHARES = [
+            {
+              _ref: `clay.radio.com/_components/share/instances/${fakeId('new')}`,
+              url: '',
+              title: '',
+              domain: HOST,
+              pinImage: '',
+              description: ''
+            },
+            ...options.sideShares || []
+          ],
+          DEFAULT_TAGS = [
+            {
+              _ref: `clay.radio.com/_components/tags/instances/${fakeId('new')}`,
+              items: []
+            },
+            ...options.tags || []
+          ],
           DEFAULT_ARTICLE_DATA = {
-            slug: '',
-            sectionFront: '',
+            byline: [
+              {
+                names: [],
+                prefix: 'by',
+                sources: []
+              }
+            ],
+            content: [
+              {
+                _ref: `clay.radio.com/_components/paragraph/instances/${fakeId('new')}`
+              }
+            ],
+            date: '2020-02-02T02:02:02.020+00:00',
+            dateModified: '2020-02-02T02:02:02.020+00:00',
+            feedImg: {
+              _ref: `clay.radio.com/_components/feed-image/instances/${fakeId('new')}`
+            },
+            headline: '',
+            feedImgUrl: '',
+            isContentFromAP: false,
+            lead: [],
+            msnTitle: '',
+            noIndexNoFollow: false,
+            primaryHeadline: '',
             secondarySectionFront: '',
+            sectionFront: '',
+            sideShare: {
+              _ref: `clay.radio.com/_components/share/instances/${fakeId('new')}`
+            },
+            slug: '',
+            sources: [],
             stationSyndication: [],
+            tags: {
+              _ref: `clay.radio.com/_components/tags/instances/${fakeId('new')}`
+            },
+            teaser: '',
             ...options.article
           },
           DEFAULT_AP_META = {
@@ -59,19 +124,19 @@ describe('server', () => {
         stubs.createPage.resolves({ ...NEW.PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
 
         stubs.dbGet.resolves({});
-        stubs.dbGet
-          .withArgs('_pages/new-two-col')
-          .resolves(NEW.PAGE_DATA);
-        stubs.dbGet
-          .withArgs(NEW.ARTICLE.ID)
-          .resolves(NEW.PAGE_ARTICLE);
-        stubs.dbGet
-          .withArgs(EXISTING.ARTICLE.ID)
-          .resolves(EXISTING.PAGE_ARTICLE);
+        [
+          { _ref: `${HOST}/_pages/new-two-col`, ...NEW.PAGE_ARTICLE } ,
+          { _ref: NEW.ARTICLE.ID, ...NEW.PAGE_ARTICLE },
+          { _ref: EXISTING.ARTICLE.ID, ...EXISTING.PAGE_ARTICLE },
+          ...DEFAULT_CONTENT_ITEMS,
+          ...DEFAULT_FEED_IMAGES,
+          ...DEFAULT_SIDE_SHARES,
+          ...DEFAULT_TAGS
+        ].forEach(item => stubs.dbGet.withArgs(item._ref).resolves(item));
 
         stubs.dbRaw
           .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING.ARTICLE.ID)
-          .resolves({ rows: [ EXISTING.PAGE_DATA ] });
+          .resolves({ rows: [EXISTING.PAGE_DATA] });
 
         stubs.bySlug.resolves(options.stationsBySlug || {});
 
@@ -176,7 +241,7 @@ describe('server', () => {
         expect(result.preExistingArticle).to.be.undefined;
         expect(result).to.have.property('article');
         expect(stubs.createPage).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
-        expect(stubs.dbGet).to.have.been.calledWith('_pages/new-two-col');
+        expect(stubs.dbGet).to.have.been.calledWith(sinon.match('_pages/new-two-col'));
       });
 
       it('traps errors when checking for existing elastic content', async () => {
@@ -231,7 +296,7 @@ describe('server', () => {
               }
             }),
             { __, stubs } = setup;
-            
+
           stubs.dbPut = sinon.stub();
 
           __.dbPut = stubs.dbPut;
@@ -252,28 +317,41 @@ describe('server', () => {
                   ednote: 'go ahead and publish, there are no problems here.'
                 },
               headline: expectedTitle,
-              shortHeadline: expectedTitle,
               msnTitle: expectedTitle,
+              pageDescription: 'Something tragic happened on the way to heaven',
               pageTitle: expectedTitle,
-              slug: 'something-tragic-happened',
+              plainTextPrimaryHeadline: expectedTitle,
+              plainTextShortHeadline: expectedTitle,
+              primaryHeadline: expectedTitle,
               seoDescription: 'Something tragic happened on the way to heaven',
-              pageDescription: 'Something tragic happened on the way to heaven'
-            },
-            expectedTags = {
-              items: [
-                { text: 'AP News', slug: 'ap-news' },
-                { text: 'Heaven', slug: 'heaven' },
-                { text: 'Earth', slug: 'earth' },
-                { text: 'Tragedy', slug: 'tragedy' }
-              ]
+              seoHeadline: expectedTitle,
+              shortHeadline: expectedTitle,
+              slug: 'something-tragic-happened'
             };
 
+          // deep include expects "sub" objects to be identical, so, since we are only checking
+          // certain values in the things like sideShare and tags, extract those to their own
+          // assertions
           expect(article).to.deep.include({
-            ...expected,
-            tags: { ...expectedTags }
+            ...expected
           });
+
+          expect(article.sideShare).to.deep.include({
+            title: expectedTitle,
+            shortTitle: expectedTitle
+          });
+          
+          expect(article.tags).to.deep.include({
+            items: [
+              { text: 'AP News', slug: 'ap-news' },
+              { text: 'Heaven', slug: 'heaven' },
+              { text: 'Earth', slug: 'earth' },
+              { text: 'Tragedy', slug: 'tragedy' }
+            ]
+          });
+          
         });
-        
+
         it('maps AP data to meta title when publishable', async () => {
           const
             expectedTitle = 'You can go your own way!',
@@ -371,9 +449,17 @@ describe('server', () => {
   });
 });
 
+/**
+ * Produces constants for common data to use and reflect on for testing, modifying each to reflect the generality
+ * of what is being tested.
+ * @param {string} idPostFix short string to append to the end of the fake id to make it unique and recognizable
+ * @param {string} host some fake hostname like test.clay.radio.com or something
+ * @param {object} data the data to include as the page's article data
+ * @returns {{META: {IMAGE: string, DESCRIPTION: string, TITLE: string, TAGS: string}, ARTICLE: {ID: string}, PAGE_DATA: {head: string[], main: [string]}, PAGE_ARTICLE}}
+ */
 function buildApData(idPostFix, host, data) {
   const
-    INSTANCE_ID = idPostFix.toLowerCase().padStart(26, 'ck64dqppgzzzzabcd012345678'),
+    INSTANCE_ID = fakeId(idPostFix),
     ARTICLE = {
       ID: `${host}/_components/article/instances/${INSTANCE_ID}`
     },
@@ -383,7 +469,7 @@ function buildApData(idPostFix, host, data) {
       IMAGE: `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
       TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
     };
-  
+
   return {
     ARTICLE,
     META,
@@ -395,4 +481,14 @@ function buildApData(idPostFix, host, data) {
       ...data
     }
   };
+}
+
+/**
+ * Creates a fake id for testing that looks similar to what we would expect to see in a
+ * real id
+ * @param {string} postfix
+ * @returns {string}
+ */
+function fakeId(postfix) {
+  return postfix.toLowerCase().padStart(26, 'ck64dqppgzzzzabcd012345678');
 }
