@@ -155,7 +155,7 @@ const _get = require('lodash/get'),
     }).then(({ status, statusText, body: section }) => {
       if (status === 200) res.send(section.data);
       else res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, 'Error getting data for apple news section ID', requestURL, res));
+    }).catch(e => handleReqErr(e, 'Error getting data for apple news section ID', { requestURL }, res));
   },
   /**
    * Search for articles in section
