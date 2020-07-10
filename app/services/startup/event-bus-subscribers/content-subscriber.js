@@ -145,13 +145,16 @@ async function updateSyndicationRedirects(page) {
   const pageData = await __.dbGet(page.uri),
     mainRef = pageData.main[0],
     host = page.uri.split('/')[0],
-    contentData = await __.dbGet(mainRef);
+    contentData = await __.dbGet(mainRef),
+    hostId = _get(await __.getByUrl(`${host}/`), '0.id');
 
   (contentData.stationSyndication || []).forEach(async syndication => {
     const stationFrontId = _get(await __.getByUrl(`${host}/${syndication.stationSlug}`), '0.id');
 
     if (stationFrontId) {
       await __.setUri(stationFrontId, `${host}${syndication.syndicatedArticleSlug}`);
+    } else {
+      await __.setUri(hostId, `${host}${syndication.syndicatedArticleSlug}`);
     };
   });
 }
