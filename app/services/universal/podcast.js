@@ -45,7 +45,7 @@ const
 
     return '/' + [
       station_slug,
-      'podcast',
+      'podcasts',
       podcast_slug
     ].filter(segment => segment).join('/');
   },
