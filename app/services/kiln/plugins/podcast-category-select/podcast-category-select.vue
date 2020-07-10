@@ -21,8 +21,10 @@
   </div>
 </template>
 <script>
+  const radioApi = require('../../../client/radioApi');
   const utils = require('../../../../services/universal/podcast');
   const UiSelect = window.kiln.utils.components.UiSelect;
+
   export default {
     props: ['name', 'data', 'schema', 'args'],
     data() {
@@ -50,10 +52,7 @@
         if (self.cachedResults) {
           self.categoryOptions = self.cachedResults;
         }
-        fetch('https://api.radio.com/v1/categories')
-          .then(response => {
-            return response.json();
-          })
+        radioApi.get('https://api.radio.com/v1/categories')
           .then(categoriesResponse => {
             self.categoryOptions = categoriesResponse.data.map(category => {
               return {
