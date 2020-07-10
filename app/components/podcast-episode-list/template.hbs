@@ -27,8 +27,10 @@
       <div class="podcast-episode-list__description">{{truncate description 210}}</div>
     </div>
     <div class="podcast-episode-list__item-controls">
-      <a class="podcast-episode-list__play-btn podcast-episode-list__btn"
-        href="{{ episode_detail_url }}"
+      <a class="podcast-episode-list__play-btn podcast-episode-list__btn {{playing_class}}"
+        href="#"
+        data-play-podcast-episode-id="{{ podcastId }}"
+        data-play-podcast-show-id="{{ podcast.[0].id }}"
       >
         {{{ read 'components/podcast-episode-list/media/play_sm.svg' }}}
       </a>
@@ -49,7 +51,7 @@
   </div>
   <ol class="podcast-episode-list__episodes">
     {{#each _computed.episodes as |podcast|}}
-      {{> podcastListItem podcast.attributes }}
+      {{> podcastListItem podcast.attributes podcastId=podcast.id }}
     {{/each}}
   </ol>
   {{#if _computed.loadMoreEnabled}}
