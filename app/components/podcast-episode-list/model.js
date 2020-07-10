@@ -7,7 +7,8 @@ const
   parse = require('date-fns/parse'),
   _get = require('lodash/get'),
   radioApiService = require('../../services/server/radioApi'),
-  { replaceWithString } = require('../../services/universal/sanitize');
+  { replaceWithString } = require('../../services/universal/sanitize'),
+  { playingClass } = require('../../services/universal/spaLocals');
 
 /**
  * returns a boolean for if the media is from omny
@@ -52,10 +53,11 @@ function getDurationFormat(durationInSeconds) {
  */
 function getEpisodesInShow(locals) {
   const route = 'episodes',
-    { sort = 'newest',
+    {
+      sort = 'newest',
       page = 1,
       'podcast-site-slug': podcastSiteSlug
-    } = locals.query,
+    } = _get(locals,'query',{}),
     params = {
       'filter[podcast_site_slug]': _get(locals, 'params.dynamicSlug') || podcastSiteSlug,
       'page[size]': 20,
@@ -71,10 +73,16 @@ function getEpisodesInShow(locals) {
       params.sort = '-published_date';
   };
 
-  return radioApiService.get(route, params, null, {}, locals).then(response => {
-    return response.data || [];
-  });
+  return radioApiService.get(route, params, null, {}, locals)
+    .then(response => {
+      if (locals.podcast) {
+        return response.data || [];
+      } else {
+        return getMissingPodcast(locals, podcastSiteSlug, response.data || []);
+      }
+    });
 }
+
 // NOTE: do js doc
 function buildEpisodeDetailLink(episode, locals) {
   const {
@@ -94,6 +102,23 @@ function buildEpisodeDetailLink(episode, locals) {
   url += `/podcasts/${podcast}/${episode.attributes.site_slug}`;
 
   return url;
+}
+
+/**
+ * since async call doesn't have locals.podcast this will populate if needed
+ *
+ * @param {object} locals
+ * @param {string} podcastSiteSlug
+ * @param {array} episodes
+ * @returns {array}
+ */
+function getMissingPodcast(locals, podcastSiteSlug, episodes) {
+  return radioApiService
+    .get('podcasts', { 'filter[site_slug]':  _get(locals, 'params.dynamicSlug') || podcastSiteSlug }, null, {}, locals)
+    .then(response => {
+      locals.podcast = _get(response, 'data[0]', {});
+      return episodes;
+    });
 }
 
 module.exports = unityComponent({
@@ -134,6 +159,9 @@ module.exports = unityComponent({
       ) : null;
 
       attributes.episode_detail_url = buildEpisodeDetailLink(episodeData, locals);
+
+      // need to get the playing class on each episode in list for ON-1961
+      attributes.playing_class = playingClass(locals, episodeData.id);
 
       return episodeData;
     });
