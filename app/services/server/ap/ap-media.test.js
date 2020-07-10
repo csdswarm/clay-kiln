@@ -101,13 +101,15 @@ describe('server', () => {
       async function setup_getApFeed(options = { isCacheStubResolved: true }) {
         const { __, getApFeed, DEFAULT_RESULT } = setupApMedia(),
           isCacheStubResolved = options.isCacheStubResolved,
+          cacheResult = options.cacheResult,
           result = { ...DEFAULT_RESULT, ...options.result },
           cacheStub = sinon.stub(),
           logStub = sinon.stub(),
-          getStub = sinon.stub();
+          getStub = sinon.stub(),
+          retrieveListStub = sinon.stub();
 
         if (isCacheStubResolved) {
-          cacheStub.resolves('http://test.ap/media/content/search');
+          cacheStub.resolves(cacheResult);
         } else {
           cacheStub.rejects();
         }
@@ -116,22 +118,34 @@ describe('server', () => {
         __.cache.get = cacheStub;
         __.log = logStub;
         __.rest.get = getStub;
+        __.retrieveList = retrieveListStub;
 
         const response = await getApFeed();
 
         return {
           cacheStub,
           logStub,
-          response
+          response,
+          retrieveListStub
         };
       }
 
       it('Get AP feed from next_page link', async () => {
-        const { cacheStub, response } = await setup_getApFeed();
+        const options = { cacheResult: 'http://someurl.nextpage' },
+          { cacheStub, response } = await setup_getApFeed(options);
 
         expect(cacheStub).to.have.been.callCount(1);
         expect(response[0]).to.have.property('type')
           .that.eqls('text');
+      });
+
+      it('Get AP feed from feed endpoint when next does not exist', async () => {
+        const options = { cacheResult: null },
+          { cacheStub, response } = await setup_getApFeed(options);
+
+        expect(cacheStub).to.have.been.calledWith('ap-subscriptions-url');
+        expect(response[0]).to.have.property('signals')
+          .that.eqls(['newscontent']);
       });
 
       it('Error getting AP feed from next_page', async () => {

@@ -4,6 +4,7 @@ const cache = require ('../cache'),
   domUtils = require('../dom-utils'),
   logger = require('../../universal/log'),
   rest = require('../../universal/rest'),
+  { retrieveList } = require('../lists'),
   { uploadImage } = require('../s3'),
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
@@ -13,9 +14,15 @@ const cache = require ('../cache'),
     cache,
     log,
     rest,
+    retrieveList,
     uploadImage
   },
 
+  /**
+   * Queries the ap-media search endpoint for recent articles that match a user query
+   * @param {string} filterConditions
+   * @return {array}
+   */
   searchAp = async ( filterConditions ) => {
     if (typeof filterConditions !== 'string' || filterConditions === '') {
       __.log('error', 'filterConditions must be a string or have a value');
@@ -34,29 +41,45 @@ const cache = require ('../cache'),
       return [];
     }
   },
-  getApFeed = async () => {
+
+  /**
+   * Retrieves the latest feed info from ap-media
+   * @param {object} locals
+   * @return {array}
+   */
+  getApFeed = async (locals) => {
     try {
-      const next_page = await __.cache.get('ap-subscriptions-url');
+      const next_page = await __.cache.get('ap-subscriptions-url'),
+        apFeedUrl = 'https://api.ap.org/media/v/content/feed',
+        pageSize = 100;
 
-      if (!next_page) {
-        __.log('error', 'Could not get any value from ap-subscriptions-url');
-        return null;
-      }
+      let endpoint;
 
-      const endpoint = next_page.split('&').length === 1 ?
+      if (next_page) {
+        endpoint = next_page.split('&').length === 1 ?
           `${next_page}&apikey=${apMediaKey}` :
-          `${next_page}?apikey=${apMediaKey}`,
-
-        response = await __.rest.get(endpoint),
+          `${next_page}?apikey=${apMediaKey}`;
+      } else {
+        const entitlements = await __.retrieveList('ap-media-entitlements', Object.assign({ locals }, null)),
+          entitlementsStr = entitlements.map(e => e.value).join(' OR ');
+        
+        endpoint = `${ apFeedUrl }?q=productid%3A(${ entitlementsStr })&page_size=${ pageSize }&include=meta.products&apikey=${ apMediaKey }`;
+      }
+      const response = await __.rest.get(endpoint),
         items = response.data.items;
-    
+      
       return items.map(({ item }) => item);
     } catch (e) {
       __.log('error', 'Bad request getting ap feed from ap-media', e);
       return [];
     }
-
   },
+
+  /**
+   * Gets the picture metadata from ap-media to upload it to s3
+   * @param {string} pictureEndpoint
+   * @return {object}
+   */
   saveApPicture = async ( pictureEndpoint ) => {
     try {
       if (!pictureEndpoint) {
@@ -84,6 +107,12 @@ const cache = require ('../cache'),
     }
     
   },
+
+  /**
+   * Make a request to get the article body and return the hedline and block portions
+   * @param {string} nitfUrl
+   * @return {object}
+   */
   getApArticleBody = async ( nitfUrl ) => {
     try {
       if (!nitfUrl) {
