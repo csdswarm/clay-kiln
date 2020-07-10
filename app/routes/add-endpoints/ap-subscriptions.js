@@ -3,11 +3,13 @@
 const db = require('../../services/server/db'),
   log = require('../../services/universal/log').setup({ file: __filename }),
   { ensureRecordExists, getAll, save } = require('../../services/server/ap/ap-subscriptions'),
+  { STATUS_CODE } = require('../../services/universal/constants'),
   __ = {
     dbGet: db.get,
     dbDel: db.del,
     ensureRecordExists,
     getAll,
+    log,
     save
   },
   /**
@@ -21,11 +23,11 @@ const db = require('../../services/server/db'),
     router.get('/rdc/ap-subscriptions', async (req, res) => {
       try {
         const data = await __.getAll();
-
-        return res.status(200).send(data);
+        
+        return res.status(STATUS_CODE.OK).send(data);
       } catch (e) {
         log('error', e.message);
-        return res.status(500).send('There was an error getting the subscriptions.');
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error getting the subscriptions.' });
       }
     });
     /**
@@ -37,10 +39,10 @@ const db = require('../../services/server/db'),
       try {
         const data = await __.dbGet(id);
 
-        return res.status(200).send(data);
+        return res.status(STATUS_CODE.OK).send(data);
       } catch (e) {
-        log('error', e);
-        return res.status(500).send('There was an error getting current subscription.');
+        __.log('error', e);
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error getting current subscription.' });
       }
     });
     /**
@@ -52,10 +54,10 @@ const db = require('../../services/server/db'),
       try {
         const key  = await __.save(null, subscription);
 
-        return res.status(201).send({ id: key, data: subscription });
+        return res.status(STATUS_CODE.CREATED).send({ id: key, data: subscription });
       } catch (e) {
-        log('error', e.message);
-        return res.status(400).send('There was an error saving the supscription');
+        __.log('error', e.message);
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error saving the supscription' });
       }
     });
     /**
@@ -67,14 +69,14 @@ const db = require('../../services/server/db'),
         { ...subscription } = req.body;
       
       if (!await __.ensureRecordExists(id)) {
-        return res.status(400).send({ message: `No record was found for id ${id}` });
+        return res.status(STATUS_CODE.BAD_REQUEST).send({ message: `No record was found for id ${id}` });
       }
       try {
         await __.save(id, subscription);
-        return res.status(200).send({ key: id, subscription });
+        return res.status(STATUS_CODE.OK).send({ key: id, subscription });
       } catch (e) {
-        log('error', e.message);
-        return res.status(400).send('There was an error saving the supscription');
+        __.log('error', e.message);
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error saving the supscription' });
       }
     });
     /**
@@ -84,14 +86,14 @@ const db = require('../../services/server/db'),
       const { id } = req.params;
 
       if (!await __.ensureRecordExists(id)) {
-        return res.status(400).send({ message: `No record was found for id ${id}` });
+        return res.status(STATUS_CODE.BAD_REQUEST).send({ message: `No record was found for id ${id}` });
       }
       try {
         await __.dbDel(id);
-        return res.status(200).send({ message: `The record associated to id ${id} has been removed.` });
+        return res.status(STATUS_CODE.OK).send({ message: `The record associated to id ${id} has been removed.` });
       } catch (e) {
-        log('error', e.message);
-        return res.status(500).send('There was an error removing the subscription');
+        __.log('error', e.message);
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error removing the subscription' });
       }
     });
   };
