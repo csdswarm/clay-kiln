@@ -162,7 +162,7 @@ const rest = require('../universal/rest'),
         return getFreshData();
       }
 
-      if ((new Date() - new Date(data.updated_at) > options.ttl)) {
+      if (new Date() - new Date(data.updated_at) > options.ttl) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
         return getFreshData(2000, data);
       }
@@ -201,7 +201,7 @@ const rest = require('../universal/rest'),
     try {
       response = await rest.get(endpoint, options.headers);
     } finally {
-      log('error', 'Endpoint not cached in REDIS - Making REST call', { requestTime: (new Date() - start), endpoint });
+      log('error', 'Endpoint not cached in REDIS - Making REST call', { requestTime: new Date() - start, endpoint });
       addAmphoraRenderTime(
         locals,
         {

@@ -185,6 +185,7 @@
       @mixin labelBackground news, $lightningYellow;
       @mixin labelBackground sports, $azureRadience;
       @mixin labelBackground podcasts, $robinsEggBlue;
+      @mixin labelBackground station-theme, $purple;
 
       .link__info {
         padding-left: em(20);
@@ -192,7 +193,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        
+
         @mixin medium-small-screen {
           height: auto;
           padding: 0;

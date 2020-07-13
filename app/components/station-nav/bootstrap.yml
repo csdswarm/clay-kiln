@@ -1,30 +1,6 @@
 _components:
   station-nav:
-    primaryLinks:
-      -
-        url:
-        text: playlist
-        drawer: false
-      -
-        url:
-        text: shows
-        drawer: true
-        secondaryLinks: []
-      -
-        url:
-        text: contests
-        drawer: true
-        secondaryLinks: []
-      -
-        url:
-        text: events
-        drawer: true
-        secondaryLinks: []
-      -
-        url:
-        text: more from
-        drawer: true
-        secondaryLinks: []
+    primaryLinks: []
     featuredLinks: []
     listenNav:
       _ref: /_components/station-listen-nav/instances/new

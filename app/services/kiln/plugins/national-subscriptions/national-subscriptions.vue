@@ -71,20 +71,22 @@
             label="Section Front"
             placeholder="Select Primary Section Front to Include"
 
-            :options="primarySectionFronts.map(psf => psf.name)"
+            :options="primarySectionFronts"
 
-            v-model="workingSubscription.filter.sectionFront"
+            :value="workingSectionFront"
+            @input="opt => setSectionFrontFilter('sectionFront', opt)"
           ></ui-select>
           <!-- secondary section fronts -->
           <ui-select
-            v-if="workingSubscription.filter.populateFrom === 'sectionFront' || workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || workingSubscription.filter.populateFrom === 'sectionFrontOrTag'"
+            v-if="shouldShowSecondarySectionFront"
             has-search
             label="Secondary Section Front"
             placeholder="Select Secondary Section Front to Include"
 
-            :options="secondarySectionFronts.map(essf => essf.name)"
+            :options="secondarySectionFronts"
 
-            v-model="workingSubscription.filter.secondarySectionFront"
+            :value="workingSecondarySectionFront"
+            @input="opt => setSectionFrontFilter('secondarySectionFront', opt)"
           ></ui-select>
           <!-- on all pop from choices -->
           <ui-checkbox-group
@@ -105,9 +107,10 @@
             placeholder="Select Primary Section Fronts to Exclude"
             multiple
 
-            :options="primarySectionFronts.map(psf => psf.name)"
+            :options="primarySectionFronts"
 
-            v-model="workingSubscription.filter.excludeSectionFronts"
+            :value="workingExcludeSectionFronts"
+            @input="opt => setSectionFrontFilter('excludeSectionFronts', opt)"
           ></ui-select>
           <!-- exclude secondary section fronts -->
           <ui-select
@@ -116,9 +119,10 @@
             placeholder="Select Secondary Section Fronts to Exclude"
             multiple
 
-            :options="secondarySectionFronts.map(essf => essf.name)"
+            :options="secondarySectionFronts"
 
-            v-model="workingSubscription.filter.excludeSecondarySectionFronts"
+            :value="workingExcludeSecondarySectionFronts"
+            @input="opt => setSectionFrontFilter('excludeSecondarySectionFronts', opt)"
           ></ui-select>
         </form>
         <div slot="footer">
@@ -227,7 +231,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       short_desc: '',
       filter: {
         // as currently described in get-national-subscriptions.js
-        populateFrom: 'allContent', // {string}
+        populateFrom: 'all-content', // {string}
         contentType: [PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY], // {string[]}
         sectionFront: '', // {string}
         secondarySectionFront: '', // {string}
@@ -257,6 +261,10 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         workingSubscription: new NationalSubscription(),
         workingTags: [],
         workingExcludeTags: [],
+        workingSectionFront: '',
+        workingSecondarySectionFront: '',
+        workingExcludeSectionFronts: [],
+        workingExcludeSecondarySectionFronts: [],
         primarySectionFronts: [],
         secondarySectionFronts: [],
         stationName,
@@ -265,6 +273,15 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     },
     methods: {
+      setSectionFrontFilter(key, option) {
+        this['working' + capitalize(key)] = option
+
+        this.workingSubscription.filter[key] = Array.isArray(option)
+          ? option.map(opt => opt.value)
+          : option.value;
+
+        console.log(JSON.stringify(this.workingSubscription.filter, null, 2));
+      },
       openModal (ref) {
         this.$refs[ref].open()
       },
@@ -356,11 +373,13 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       onConfirmDelete () {
         this.deleteSubscription(this.workingSubscription.id)
       },
-      getList (listName, dataKey) {
-        axios.get(`/_lists/${listName}`)
-          .then(r => {
-            this[dataKey] = [...r.data]
-          })
+      async loadList(listName, dataKey) {
+        const { data } = await axios.get(`/_lists/${listName}`)
+
+        this[dataKey] = data.map(item => ({
+          label: item.name,
+          value: item.value
+        }))
       },
       hookDataToTags() {
         // since we are using SimpleList outside kiln we need to hook into the
@@ -370,7 +389,13 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           const { payload, type } = mutation,
             { path, data } = payload || {}
 
-          if (mutation.type !== 'UPDATE_FORMDATA' || path !== 'tags' && path !== 'excludeTags') {
+          if (
+            mutation.type !== 'UPDATE_FORMDATA'
+            || (
+              path !== 'tags'
+              && path !== 'excludeTags'
+            )
+          ) {
             return
           }
 
@@ -380,13 +405,16 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     },
     mounted () {
-      this.getList('primary-section-fronts', 'primarySectionFronts')
-      this.getList('secondary-section-fronts', 'secondarySectionFronts')
+      this.loadList('primary-section-fronts', 'primarySectionFronts')
+      this.loadList('secondary-section-fronts', 'secondarySectionFronts')
     },
     created () {
       this.hookDataToTags()
     },
     computed: {
+      shouldShowSecondarySectionFront() {
+        return this.workingSubscription.filter.populateFrom.includes('section-front');
+      },
       tableHeaders () {
         return tableConfig.filter(config => config.isHeader)
       },
@@ -398,11 +426,11 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           populateFrom: [
             {
               label: 'All Content',
-              value: 'allContent'
+              value: 'all-content'
             },
             {
               label: 'Section Front',
-              value: 'sectionFront'
+              value: 'section-front'
             },
             {
               label: 'Tag',
@@ -410,11 +438,11 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
             },
             {
               label: 'Contains Both Section Front and Tag',
-              value: 'sectionFrontAndTag'
+              value: 'section-front-and-tag'
             },
             {
               label: 'Contains Either Section Front or Tag',
-              value: 'sectionFrontOrTag'
+              value: 'section-front-or-tag'
             }
           ],
           contentTypes: [
@@ -430,14 +458,14 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         }
       },
       includeSectionFronts () {
-        return this.workingSubscription.filter.populateFrom === 'sectionFront'
-          || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag'
-          || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+        return this.workingSubscription.filter.populateFrom === 'section-front'
+          || this.workingSubscription.filter.populateFrom === 'section-front-and-tag'
+          || this.workingSubscription.filter.populateFrom === 'section-front-or-tag'
       },
       includeSectionTags () {
         return this.workingSubscription.filter.populateFrom === 'tag'
-          || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag'
-          || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+          || this.workingSubscription.filter.populateFrom === 'section-front-and-tag'
+          || this.workingSubscription.filter.populateFrom === 'section-front-or-tag'
       },
       simpleListArgs() {
         return {

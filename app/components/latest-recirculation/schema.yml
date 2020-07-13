@@ -1,4 +1,4 @@
-_version: 5.0
+_version: 6.0
 _confirmRemoval: true
 
 _description: |
@@ -25,6 +25,9 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+      - 
+        name: External RSS Feed
+        value: rss-feed
 
 contentType:
   _label: Content type
@@ -35,6 +38,66 @@ contentType:
     options:
       - article
       - gallery
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+customTitle:
+  _label: Custom Title
+  _has:
+    input: text
+    help: Override the default component title
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+hyperLinkTitle:
+  _label: Should the title link to an external source ?
+  _has:
+    input: checkbox
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+hyperLinkUrl:
+  _label: External URL Title HyperLink
+  _has:
+    input: text
+    validate:
+      required:
+        field: hyperLinkTitle
+        operator: truthy
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+      #TODO: Ask for the proper pattern to be used. So far this in an example https://<site_slug>.radio.com/station_feed.json
+  _reveal:
+    field: hyperLinkTitle
+    operator: truthy
 
 sectionFront:
   _subscribe: sectionFront
@@ -101,6 +164,11 @@ excludeSectionFronts:
     search: true
     multiple: true
     list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -109,6 +177,11 @@ excludeSecondarySectionFronts:
     search: true
     multiple: true
     list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 excludeTags:
   _label: Exclude Tags
@@ -119,6 +192,11 @@ excludeTags:
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 items:
   _label: Items
@@ -161,12 +239,21 @@ items:
       _has:
         validate:
           required: true
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 _groups:
   latestRecirculationItems:
     fields:
       - populateFrom
       - contentType
+      - rssFeed
+      - customTitle
+      - hyperLinkTitle
+      - hyperLinkUrl
       - sectionFrontManual
       - secondarySectionFront
       - tag

@@ -12,7 +12,9 @@
             data-click-to-play={{ clickToPlay }}
             data-embed="default"
             data-application-id
-            controls></video-js>
+            controls
+            data-station-dbc-bannertag="{{ @root.locals.station.doubleclick_bannertag }}"
+          ></video-js>
 
             <meta itemprop="name" content="{{ name }}">
             <meta itemprop="headline" content="{{ seoHeadline }}">

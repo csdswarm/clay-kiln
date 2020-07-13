@@ -1,0 +1,28 @@
+_components:
+  contest:
+    contentType: 'contest'
+    headline: ''
+    primaryHeadline: ''
+    plaintextPrimaryHeadline: ''
+    teaser: ''
+    subHeadline: ''
+    feedImgUrl: ''
+    slug: ''
+    pageTitle: ''
+    rulesBodyText: ''
+    sideShare:
+      _ref: /_components/share/instances/new
+    lead: []
+    description:
+      -
+        _ref: /_components/paragraph/instances/new
+    embed:
+      _ref: /_components/html-embed/instances/new
+    startDate: ''
+    endDate: ''
+    rules:
+      _ref: /_components/contest-rules/instances/new
+    tags:
+      _ref: /_components/tags/instances/contests
+    adTags:
+      _ref: /_components/ad-tags/instances/new
