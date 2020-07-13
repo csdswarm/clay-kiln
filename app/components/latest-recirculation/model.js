@@ -90,7 +90,7 @@ const db = require('../../services/server/db'),
           locals
         ),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
-      
+
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
         const feedImgUrl = _get(item, "node['OG Image'].src"),
           s3FeedImgUrl = feedImgUrl
