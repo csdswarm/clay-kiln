@@ -24,7 +24,7 @@ const _get = require('lodash/get'),
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
   articleOrGalleryPage = new Set(['article', 'vgallery']),
-  isHomepage = new Set(['homepage', 'sectionFront']),
+  homepageOrSectionFront = new Set(['homepage', 'sectionFront']),
   /**
    * stationsDirectory utilities assume the pathname passes `isStationsDirectory`
    */
@@ -148,7 +148,7 @@ module.exports = ({ pathname, url } = {}) => {
       const { page, pageName } = pageData;
       let pageId = pageName;
 
-      if (isHomepage.has(page)) {
+      if (homepageOrSectionFront.has(page)) {
         pageId = pageTypeHomepage;
       } else if (articleOrGalleryPage.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
