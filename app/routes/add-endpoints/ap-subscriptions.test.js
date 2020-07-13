@@ -25,12 +25,7 @@ describe('ap-subscriptions', () => {
         delete: routerFn('delete')
       };
 
-    sinon.stub(__, 'dbDel');
-    sinon.stub(__, 'dbGet');
-    sinon.stub(__, 'ensureRecordExists');
-    sinon.stub(__, 'getAll');
-    sinon.stub(__, 'log');
-    sinon.stub(__, 'save');
+    sinon.stub(__);
     apSubscriptions(router);
 
     return { __, apSubscriptions, res, routes, sendStub, statusStub };

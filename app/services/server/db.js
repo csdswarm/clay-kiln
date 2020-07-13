@@ -4,7 +4,7 @@ const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
-  DATA_STRUCTURES = ['alert', 'apple_news', 'station_themes', 'valid_source', 'ap_subscriptions'],
+  DATA_STRUCTURES = ['alert', 'ap_subscriptions', 'apple_news', 'station_themes', 'valid_source'],
   /**
    * Check Postgres to see if the table exists
    *
@@ -68,7 +68,7 @@ const utils = require('../universal/utils'),
     var tableName;
 
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      if (key.indexOf(`_${DATA_TYPE}`) > -1) {
+      if (key.includes(`_${DATA_TYPE}`)) {
         tableName = DATA_TYPE;
       }
     });
