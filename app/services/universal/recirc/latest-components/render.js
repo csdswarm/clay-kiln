@@ -107,7 +107,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
 
     if (data.populateFrom === 'station' && locals.params) {
       data._computed.station = locals.station.name;
-      if (!data._computed.isMigrated) {
+      if (!data._computed.isMigrated && locals.station.website) {
         return renderStation(data, locals);// gets the articles from drupal and displays those instead
       }
     }
