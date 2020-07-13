@@ -44,12 +44,10 @@ module.exports = unityComponent({
       'secondarySectionFront'
     ], locals);
     await createContent.render(uri, data, locals);
-    console.log(data.content);
 
     if (!locals.edit) {
       injectAdsToArticleContent(data);
     }
-    console.log(data.content);
     return data;
   },
   save: async (uri, data, locals) => {
