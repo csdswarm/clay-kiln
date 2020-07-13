@@ -199,7 +199,6 @@
       },
       getList (listName, dataKey) {
         this.isLoading = true
-        console.log('[getList]', listName, dataKey)
         axios.get(`/_lists/${listName}`)
           .then(r => {
             this[dataKey] = [...r.data]
@@ -223,11 +222,9 @@
         return split[1]
       },
       getApNewsSubscriptions () {
-        console.log('[getApNewsSubscriptions...]');
         axios.get(apiEndpoint)
           .then(response => {
             this.subscriptions = [...response.data]
-            console.log('[this.subscriptions]', this.subscriptions)
           })
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
@@ -238,10 +235,8 @@
         const newSub = {
           ...this.workingSubscription.data
         }
-        console.log('NEW:', newSub)
         axios.post(apiEndpoint, newSub)
           .then(response => {
-            console.log('[response]', response.data)
             this.subscriptions.push({...response.data})
             this.showSnack('AP News Subscription Added')
             this.closeModal('subscriptionModal')
@@ -255,7 +250,6 @@
         const updatedSub = {
           ...this.workingSubscription.data
         }
-        console.log('UPDATE:', updatedSub)
         axios.put(`${apiEndpoint}/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
@@ -274,10 +268,8 @@
       deleteApNewsSubscription (id) {
         if (this.isLoading) return
         this.isLoading = true
-        console.log('DELETE:', id)
         axios.delete(`${apiEndpoint}/${id}`)
           .then(response => {
-            console.log('[DELETE response]', response)
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
             this.showSnack('AP News Subscription Removed')
           })
@@ -302,21 +294,17 @@
         this.deleteApNewsSubscription(this.workingSubscription.id)
       },
       onDelete (subscription) {
-        console.log('[subscription]', subscription);
         this.workingSubscription = { ...subscription }
         this.$refs.deleteConfirm.open()
       },
       onEntitlementChange (e, entitlement) {
-        console.log('[onEntitlementChange]', e, entitlement)
         if(e) {
           this.workingSubscription.data.entitlements.push(entitlement)
         } else {
           this.workingSubscription.data.entitlements = this.workingSubscription.data.entitlements.filter(ent => ent.value !== entitlement.value)
         }
-        this.workingSubscription.data.entitlements.forEach(ent => console.log(ent.name))
       },
       onStationChange (station) {
-        console.log('[onStationChange]', station.value)
         const delim = station.value === '' ? '' : '-'
         // get new lists based on station selection
         this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
