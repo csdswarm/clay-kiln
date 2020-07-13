@@ -6,3 +6,7 @@
 
 /* This file should only include article-specific styles.
    Any styling that is shared by other content page types should be included in the global contest-page stylesheet. */
+
+.article__body .component--google-ad-manager.sticky {
+   position: initial;
+}
