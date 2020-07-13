@@ -32,9 +32,9 @@
             class="from-station-slug"
             has-search
             label="From Station"
-            placeholder="Radio.com (NATL-RC)"
 
             :options="stations"
+            @change="loadSectionFronts"
 
             v-model="workingSubscription.from_station_slug"
           ></ui-select>
@@ -317,6 +317,15 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
+      loadSectionFronts() {
+        const slug = this.workingSubscription.from_station_slug.value,
+          listPrefix = slug
+            ? slug + '-'
+            : '';
+
+        this.loadList(`${listPrefix}primary-section-fronts`, 'primarySectionFronts')
+        this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts')
+      },
       updateSubscription () {
         if (this.isLoading) return
         this.isLoading = true
@@ -405,8 +414,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     },
     mounted () {
-      this.loadList('primary-section-fronts', 'primarySectionFronts')
-      this.loadList('secondary-section-fronts', 'secondarySectionFronts')
+      this.loadSectionFronts()
     },
     created () {
       this.hookDataToTags()
