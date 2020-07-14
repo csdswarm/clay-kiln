@@ -87,6 +87,13 @@ $caret-margin-right: em(25);
     cursor: pointer;
   }
 
+  @mixin medium-small-screen {
+    height: em(110);
+  }
+  @mixin small-screen {
+    height: em(110);
+  }
+
   .station-nav__fixed-container {
     background: none;
     display: flex;
@@ -542,9 +549,4 @@ $caret-margin-right: em(25);
     top: 0;
     z-index: 1000;
   }
-}
-
-/*  Reset behavior of radioCom top nav bar */
-.reset-radiocom-top-nav {
-  position: unset !important;
 }

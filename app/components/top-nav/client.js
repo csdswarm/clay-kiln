@@ -1,10 +1,13 @@
 'use strict';
 
+
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
   isDesktop = require('../../services/client/isDesktop'),
   navIncludes = require('./nav-includes'),
   _debounce = require('lodash/debounce'),
+
+  
 
   /**
    * Determines whether or not the hamburger menu is in the 'active' state.
@@ -176,6 +179,28 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
 
     window.addEventListener('resize', debounced);
   },
+
+  /**
+   * Toggle Sticky Station Nav Bar
+   */
+  toggleStickyNavBar = () => {
+    // Handles sticky nav bars.
+    const topNavBar = document.querySelector('.radiocom-nav'),
+      stationNavBar = document.querySelector('.station-nav__fixed-container'),
+      latestRecircSlider = document.querySelector('.latest-top-recirc-slider__slider-container');
+
+    topNavBar.classList.add('reset-radiocom-top-nav');
+    latestRecircSlider ? latestRecircSlider.classList.add('reset-slider-top-nav') : null;
+   
+    const action = window.pageYOffset >  thresholdNavBar ? 'add' : 'remove';
+  
+    stationNavBar.classList[action]('sticky-station-nav-bar');
+    latestRecircSlider ? latestRecircSlider.classList[action]('sticky-latest-recirc-slider-bar') : null;
+    // if (latestRecircSlider) {
+    //   latestRecircSlider.classList[action]('sticky-latest-recirc-slider-bar');
+    // }
+  },
+
   /**
    * Add event listeners to header elements to toggle drawers & images.
    * @function addEventListeners
@@ -187,16 +212,27 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
     closeNavOnResize();
   };
 
+let thresholdNavBar;
+
 // mount listener for vue (optional)
 document.addEventListener('top-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
   addEventListeners();
   navIncludes.stagingHelper.onMount();
+
+  const stationNavBar = document.querySelector('.station-nav__fixed-container');
+  
+  // Assures that the stationNavBar is present before attaching the event.
+  if (stationNavBar) {
+    thresholdNavBar = stationNavBar.offsetTop;
+    window.addEventListener('scroll', toggleStickyNavBar);
+  }
 });
 
 
 // dismount listener for vue
 document.addEventListener('top-nav-dismount', function () {
+  window.removeEventListener('scroll', toggleStickyNavBar);
   // code to run when vue mounts/updates, aka after a new "pageview" has unloaded.
   navIncludes.stagingHelper.onDismount();
 });

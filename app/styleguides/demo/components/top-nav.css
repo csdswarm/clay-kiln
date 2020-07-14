@@ -784,3 +784,8 @@ $drawerSelector: nav-drawer;
     top: 76px;
   }
 }
+
+/*  Reset behavior of radioCom top nav bar */
+.radiocom-nav.reset-radiocom-top-nav {
+  position: unset;
+}
