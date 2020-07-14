@@ -15,7 +15,6 @@ _components:
     excludeTags: []
     excludeSectionFronts: []
     excludeSecondarySectionFronts: []
-    excludeSubscriptions: false
     populateFrom: ''
     locationOfContentFeed: ''
     sharethroughTag:

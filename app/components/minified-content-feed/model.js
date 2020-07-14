@@ -101,7 +101,7 @@ module.exports = recirculationData({
         'component-name': 'minified-content-feed',
         'component-title': 'Minified Content Feed'
       },
-      fields: ['category']
+      fields: [ 'category' ]
     };
 
     data._computed.cards = transformCard('minified', data._computed.cards, options);

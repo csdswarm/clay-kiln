@@ -87,7 +87,7 @@ const assertIndexConvention = (index, indexConventionRe) => {
  * @param {string} alias
  * @param {RegExp} indexConventionRe
  */
-const getRecentAndNewIndexes = async (httpEs, alias, indexConventionRe) => {
+const getLatestAndNewIndex = async (httpEs, alias, indexConventionRe) => {
   // the 'h' param is documented here:
   // https://www.elastic.co/guide/en/elasticsearch/reference/6.2/cat.html#headers
   const resp = await httpEs.get.asText(`/_cat/indices/${alias}*?h=index`),
@@ -97,7 +97,6 @@ const getRecentAndNewIndexes = async (httpEs, alias, indexConventionRe) => {
       .sort(descending)[0];
 
   return {
-    previousIndex: `${alias}_v${latestVersion - 1}`,
     latestIndex: `${alias}_v${latestVersion}`,
     newIndex: `${alias}_v${latestVersion + 1}`
   };
@@ -313,7 +312,7 @@ const updateIndex = async (parsedHost, alias, fns = {}, reindexScript) => {
   const httpEs = makeHttpEs(parsedHost),
     indexConventionRe = new RegExp(`^${alias}_v(\\d+)$`),
     currentIndex = await getCurrentIndex(httpEs, alias, indexConventionRe),
-    { latestIndex, newIndex } = await getRecentAndNewIndexes(httpEs, alias, indexConventionRe),
+    { latestIndex, newIndex } = await getLatestAndNewIndex(httpEs, alias, indexConventionRe),
     settings = await getSettings(httpEs, currentIndex),
     mappings = await getMappings(httpEs, currentIndex);
 
@@ -330,29 +329,6 @@ const updateIndex = async (parsedHost, alias, fns = {}, reindexScript) => {
   return newIndex;
 };
 
-/**
- * Reverts a recent updatedIndex to the previous index
- * @param {object} parsedHost
- * @param {string} alias
- * @param {function} shouldUpdate
- * @returns {Promise<string>}
- */
-const revertIndex = async (parsedHost, alias, shouldUpdate) => {
-  const httpEs = makeHttpEs(parsedHost),
-    indexConventionRe = new RegExp(`^${alias}_v(\\d+)$`),
-    { latestIndex, previousIndex } = await getRecentAndNewIndexes(httpEs, alias, indexConventionRe),
-    settings = await getSettings(httpEs, latestIndex),
-    mappings = await getMappings(httpEs, latestIndex);
-
-  if (!shouldUpdate(mappings, settings)) {
-    return;
-  }
-
-  await reindex(httpEs, latestIndex, previousIndex);
-  await updateAlias(httpEs, latestIndex, previousIndex, alias);
-  return previousIndex;
-}
-
-const v1 = { revertIndex, updateIndex };
+const v1 = { updateIndex };
 
 module.exports = { v1 };

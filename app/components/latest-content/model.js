@@ -1,12 +1,9 @@
 'use strict';
-const
-  contentTypeService = require('../../services/universal/content-type'),
-  queryService = require('../../services/server/query'),
+const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
-  { getStationSlug, makeSubscriptionsQuery } = require('../../services/universal/recirc/recirculation'),
-  { DEFAULT_STATION } = require('../../services/universal/constants'),
+  contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
-
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -14,8 +11,8 @@ const
     'feedImgUrl',
     'contentType'
   ],
-  elasticIndex = 'published-content',
-  maxItems = 3;
+  maxItems = 3,
+  { DEFAULT_STATION } = require('../../services/universal/constants');
 
 /**
  * For each section's override items (0 through 3), look up the associated
@@ -103,7 +100,7 @@ module.exports.render = async function (ref, data, locals) {
     if (station_slug === DEFAULT_STATION.site_slug) {
       queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
     }
-
+    
     // Filter out the following tags
     if (data.filterTags) {
       for (const tag of data.filterTags.map((tag) => tag.text)) {
@@ -114,21 +111,12 @@ module.exports.render = async function (ref, data, locals) {
     // Filter out the following secondary article type
     if (data.filterSecondarySectionFronts) {
       Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-        const [secondarySectionFrontFilter, filterOut] = secondarySectionFront;
+        const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
         if (filterOut) {
           queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
         }
       });
-    }
-
-    if (data.excludeSubscriptions) {
-      const stationSlug = getStationSlug(locals);
-
-      queryService.addMustNot(query, makeSubscriptionsQuery({
-        stationSlug,
-        subscriptions: ['national subscription']
-      }));
     }
 
     // exclude the current page in results

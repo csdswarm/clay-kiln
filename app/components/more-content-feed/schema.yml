@@ -200,11 +200,6 @@ excludeSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
-excludeSubscriptions:
-  _label: Exclude Subscriptions
-  _has:
-    input: checkbox
-
 items:
   _label: Items
   _has:
@@ -319,7 +314,6 @@ _groups:
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
-      - excludeSubscriptions
       - curatedContentHeader
       - items
     _placeholder:

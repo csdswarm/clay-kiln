@@ -1,7 +1,6 @@
 'use strict';
 
 const { recirculationData } = require('../../services/universal/recirc/recirculation'),
-
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -11,7 +10,6 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
     'contentType'
   ],
   maxItems = 6,
-
   excludedTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text);
 
 module.exports = recirculationData({
