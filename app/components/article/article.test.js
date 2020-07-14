@@ -38,7 +38,7 @@ describe(dirname, () => {
       it('should not have and ad instance at all.', () => {
         return render(ref, data, locals).then(result => {
           expect(result.content).to.have.lengthOf(3);
-          expect(_find(result.content, { _ref: '/_components/google-ad-manager/instances/mediumRectangleBottom' })).to.not.exist;
+          expect(_find(result.content, { _ref: '/_components/google-ad-manager/instances/mediumRectangleContentBody' })).to.not.exist;
         });
       });
 
@@ -49,7 +49,7 @@ describe(dirname, () => {
         ];
         return render(ref, data, locals).then(result => {
           expect(result.content).to.have.lengthOf(6);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleBottom');
+          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
         });
       });
 
@@ -60,8 +60,8 @@ describe(dirname, () => {
         ];
         return render(ref, data, locals).then(result => {
           expect(result.content).to.have.lengthOf(8);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleBottom');
-          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleBottom')).length).to.equal(1);
+          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(1);
         });
       });
 
@@ -73,9 +73,9 @@ describe(dirname, () => {
 
         return render(ref, data, locals).then(result => {
           expect(result.content).to.have.lengthOf(10);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleBottom');
-          expect(result.content[7]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleBottom');
-          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleBottom')).length).to.equal(2);
+          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+          expect(result.content[7]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(2);
         });
       });
 
