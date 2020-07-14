@@ -24,16 +24,17 @@ describe('server', () => {
         const setup = setup_apNewsImporter(),
           { __, importArticle } = setup,
           HOST = 'some.radio.com',
+          NEW_ID = fakeId('new'),
           DEFAULT_CONTENT_ITEMS = [
             {
-              _ref: `clay.radio.com/_components/paragraph/instances/${fakeId('new')}`,
+              _ref: `clay.radio.com/_components/paragraph/instances/${NEW_ID}`,
               text: 'Some content'
             },
             ...options.content || []
           ],
           DEFAULT_FEED_IMAGES = [
             {
-              _ref: `clay.radio.com/_components/feed-image/instances/${fakeId('new')}`,
+              _ref: `clay.radio.com/_components/feed-image/instances/${NEW_ID}`,
               alt: '',
               url: ''
             },
@@ -41,7 +42,7 @@ describe('server', () => {
           ],
           DEFAULT_SIDE_SHARES = [
             {
-              _ref: `clay.radio.com/_components/share/instances/${fakeId('new')}`,
+              _ref: `clay.radio.com/_components/share/instances/${NEW_ID}`,
               url: '',
               title: '',
               domain: HOST,
@@ -52,7 +53,7 @@ describe('server', () => {
           ],
           DEFAULT_TAGS = [
             {
-              _ref: `clay.radio.com/_components/tags/instances/${fakeId('new')}`,
+              _ref: `clay.radio.com/_components/tags/instances/${NEW_ID}`,
               items: []
             },
             ...options.tags || []
@@ -67,13 +68,13 @@ describe('server', () => {
             ],
             content: [
               {
-                _ref: `clay.radio.com/_components/paragraph/instances/${fakeId('new')}`
+                _ref: `clay.radio.com/_components/paragraph/instances/${NEW_ID}`
               }
             ],
             date: '2020-02-02T02:02:02.020+00:00',
             dateModified: '2020-02-02T02:02:02.020+00:00',
             feedImg: {
-              _ref: `clay.radio.com/_components/feed-image/instances/${fakeId('new')}`
+              _ref: `clay.radio.com/_components/feed-image/instances/${NEW_ID}`
             },
             headline: '',
             feedImgUrl: '',
@@ -85,13 +86,13 @@ describe('server', () => {
             secondarySectionFront: '',
             sectionFront: '',
             sideShare: {
-              _ref: `clay.radio.com/_components/share/instances/${fakeId('new')}`
+              _ref: `clay.radio.com/_components/share/instances/${NEW_ID}`
             },
             slug: '',
             sources: [],
             stationSyndication: [],
             tags: {
-              _ref: `clay.radio.com/_components/tags/instances/${fakeId('new')}`
+              _ref: `clay.radio.com/_components/tags/instances/${NEW_ID}`
             },
             teaser: '',
             ...options.article
@@ -113,13 +114,28 @@ describe('server', () => {
           locals = { ...LOCALS, ...options.locals },
           stationMappings = options.stationMappings || {},
           stubs = [
+            'assignDimensionsAndFileSize',
             'bySlug',
             'createPage',
             'dbGet',
             'dbRaw',
             'log',
+            'saveApPicture',
             'searchByQuery'
           ].reduce((acc, name) => ({ ...acc, [name]: sinon.stub() }), {});
+
+        stubs.assignDimensionsAndFileSize.callsFake(async (uri, data) => {
+          await Promise.resolve();
+
+          Object.assign(data, {
+            sizeInBytes: 50000,
+            height: 515,
+            width: 775,
+            ...options.assignDimensionsAndFileSize
+          });
+        });
+
+        stubs.bySlug.resolves(options.stationsBySlug || {});
 
         stubs.createPage.resolves({ ...NEW.PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
 
@@ -138,7 +154,12 @@ describe('server', () => {
           .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING.ARTICLE.ID)
           .resolves({ rows: [EXISTING.PAGE_DATA] });
 
-        stubs.bySlug.resolves(options.stationsBySlug || {});
+        stubs.saveApPicture.resolves({});
+        if (options.saveApPicture) {
+          stubs.saveApPicture
+            .withArgs(options.saveApPicture.args)
+            .resolves(options.saveApPicture.resolves);
+        }
 
         stubs.searchByQuery.resolves([]);
         stubs.searchByQuery
@@ -265,6 +286,7 @@ describe('server', () => {
         async function setup_modifiedByAP(options = {}) {
           const
             setup = await setup_importArticle({
+              ...options,
               apMeta: {
                 altids: {
                   itemid: 'xyz123',
@@ -377,7 +399,77 @@ describe('server', () => {
           });
         });
 
-        // TODO: test meta-image
+        it('maps AP image data to the article and meta-image when publishable', async () => {
+          const
+            imageTitle = 'Something is on Fire',
+            newImageUrl = 'https://images.radio.com/aiu-media/SomethingIsOnFire4832149-43125-5415.jpg',
+            apUri = 'https://api.ap.org/media/v/content/abcdef123456789?qt=QueryId&et=someEtag&ai=SoMeAltID',
+            { result } = await setup_modifiedByAP({
+              saveApPicture: {
+                args: apUri,
+                resolves: {
+                  pubstatus: 'usable',
+                  itemid: 'abcdef123456780',
+                  etag: 'someEtag',
+                  headline: imageTitle,
+                  url: newImageUrl
+                }
+              },
+              apMeta: {
+                associations: {
+                  1: {
+                    uri: apUri,
+                    type: 'picture',
+                    headline: imageTitle
+                  },
+                  2: {
+                    uri: 'https://api.ap.org/media/v/content/abcdef123456780?qt=QueryId&et=someEtag&ai=SoMeAltID',
+                    type: 'picture',
+                    headline: 'some other image, we don\'t really care'
+                  }
+                }
+              },
+              image: {
+                height: 515,
+                sizeInBytes: 50000,
+                title: imageTitle,
+                width: 775,
+                url: newImageUrl
+              }
+            }),
+            { article, metaImage } = result;
+
+          expect(article).to.deep.include({
+            feedImgUrl: newImageUrl
+          });
+
+          // deep include expects exact values on sub objects, so do each sub object separately
+          expect(article.lead[0]).to.deep.include(
+            {
+              alt: imageTitle,
+              height: 515,
+              sizeInBytes: 50000,
+              url: newImageUrl,
+              width: 775
+            }
+          );
+
+          expect(article.feedImg).to.deep.include({
+            alt: imageTitle,
+            height: 515,
+            sizeInBytes: 50000,
+            url: newImageUrl,
+            width: 775
+          });
+
+          expect(article.sideShare).to.deep.include({
+            pinImage: newImageUrl
+          });
+
+          expect(metaImage).to.deep.include({
+            imageUrl: newImageUrl
+          });
+        });
 
         // TODO: test body mapping.
       });

@@ -5,8 +5,11 @@ const
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
+  { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
+  { inspect } = require('util'),
+  { saveApPicture } = { saveApPicture: () => {} }, // require('./ap-media'),
   { searchByQuery } = require('../query'),
 
   log = logger.setup({ file: __filename }),
@@ -21,17 +24,19 @@ const
   },
 
   __ = {
+    assignDimensionsAndFileSize,
     dbGet,
     dbPut,
     dbRaw,
     getAllStations,
+    inspect,
     log,
+    saveApPicture,
     searchByQuery
   };
 
-// createPage utilizes a number of imports that call io-redis before
-// any logic is done to verify that network access exists, so lazy load this
-addLazyLoadProperty(__, 'createPage', require('../page-utils'));
+// createPage imports hierarchy makes an immediate call to redis, which causes issues in tests, so lazy load only.
+addLazyLoadProperty(__, 'createPage', require('../page-utils').createPage);
 
 /**
  * Checks to see if the AP Content is publishable
@@ -57,13 +62,13 @@ async function findExistingArticle({ itemid } = {}) {
 
   try {
     const [existing] = await searchByQuery(query, null, { includeIdInResult: true }),
-      { rows } = existing && await dbRaw(`
+      { rows: [data] = [] } = existing && await dbRaw(`
         SELECT data 
         FROM pages, jsonb_array_elements_text(data->\'main\') article_id
         WHERE article_id = ?`,
       existing._id) || {};
 
-    return rows && rows[0];
+    return data;
 
   } catch (error) {
     log('error', 'Problem getting existing data from elastic', error);
@@ -97,16 +102,16 @@ async function createNewArticle(stationMappings, locals) {
 async function getArticleData({ head, main }) {
   const
     { dbGet } = __,
-    article = await dbGet(main[0]),
     [
-      metaDescription,
-      metaImage,
-      metaTags,
-      metaTitle
-    ] = await Promise.all(
-      ['description', 'image', 'tags', 'title']
-        .map(async name => await dbGet(head.find(text => text.includes(`meta-${name}`))))
-    );
+      article,
+      [ metaDescription, metaImage, metaTags, metaTitle ]
+    ] = [
+      await dbGet(main.find(text => text.includes('_components/article'))),
+      await Promise.all(head
+        .filter(text => ['description', 'image', 'tags', 'title'].some(name => text.includes('meta-' + name)))
+        .sort()
+        .map(dbGet))
+    ];
 
   return {
     article,
@@ -164,10 +169,25 @@ async function getNewStations(article, stationMappings, locals) {
  */
 async function mapApDataToArticle(apMeta, articleData) {
   const
-    { dbGet } = __,
-    { article , metaTitle, metaDescription } = articleData,
-    { altids, ednote, headline, headline_extended, version } = apMeta,
-    [sideShare, tags] = [
+    { altids, associations, ednote, headline, headline_extended, version } = apMeta,
+    { article, metaDescription, metaImage, metaTitle } = articleData,
+    { assignDimensionsAndFileSize, dbGet, inspect, log, saveApPicture } = __;
+  
+  if ( !associations ) {
+    log(
+      'error',
+      'missing image data',
+      new Error(`cannot find associations${inspect({ apMeta }, { depth: 20 })}`)
+    );
+    return {};
+  }
+  
+  const
+    apImageInfo = Object.values(associations).find(({ type }) => type === 'picture'),
+    [feedImg, image, lead, sideShare, tags] = [
+      await dbGet(article.feedImg._ref),
+      await saveApPicture(apImageInfo.uri),
+      await Promise.all(article.lead.map(dbGet)),
       await dbGet(article.sideShare._ref),
       await dbGet(article.tags._ref)
     ],
@@ -183,7 +203,14 @@ async function mapApDataToArticle(apMeta, articleData) {
           version,
           ednote
         },
+        feedImg: {
+          ...feedImg,
+          url: image.url,
+          alt: image.headline
+        },
+        feedImgUrl: image.url,
         headline,
+        lead,
         msnTitle: headline,
         pageDescription: headline_extended,
         pageTitle: headline,
@@ -196,8 +223,9 @@ async function mapApDataToArticle(apMeta, articleData) {
         sideShare: {
           _ref: article.sideShare._ref,
           ...sideShare,
-          title: headline,
-          shortTitle: headline
+          pinImage: image.url,
+          shortTitle: headline,
+          title: headline
         },
         slug: slugifyService(headline),
         tags: {
@@ -218,8 +246,27 @@ async function mapApDataToArticle(apMeta, articleData) {
         ogTitle: headline,
         title: headline,
         twitterTitle: headline
+      },
+      metaImage: {
+        ...metaImage,
+        imageUrl: image.url
       }
-    };
+    },
+  
+    newFeedImage = _get(newArticleData, 'article.feedImg', {});
+
+  await assignDimensionsAndFileSize(image.url, newFeedImage);
+
+  const { _ref, ...props } = newFeedImage,
+    imgRef = _ref.replace(/feed\-image/, 'image');
+
+  if (!lead.length) {
+    lead.push({ _ref: imgRef, ...props });
+  } else {
+    const existing = lead.find(({ _ref }) => _ref.includes('_components/image')) || {};
+
+    Object.assign(existing, { _ref: imgRef, ...existing, ...props });
+  }
 
   return newArticleData;
 }
@@ -247,6 +294,7 @@ async function importArticle(apMeta, stationMappings, locals) {
     {
       article,
       metaDescription,
+      metaImage,
       metaTitle
     } = isModifiedByAP
       ? await mapApDataToArticle(apMeta, articleData)
@@ -257,6 +305,7 @@ async function importArticle(apMeta, stationMappings, locals) {
     isApContentPublishable,
     isModifiedByAP,
     metaDescription,
+    metaImage,
     metaTitle,
     newStations,
     preExistingArticle
