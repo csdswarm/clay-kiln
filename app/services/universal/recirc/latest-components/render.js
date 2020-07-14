@@ -4,7 +4,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
   fetchStationFeeds = require('../../../server/fetch-station-feeds'),
   getS3StationFeedImgUrl = require('../../../server/get-s3-station-feed-img-url'),
   _get = require('lodash/get'),
-  { DEFAULT_RADIOCOM_LOGO } = require('../../../universal/constants'),
+  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../../universal/constants'),
   radioApiService = require('../../../server/radioApi'),
   /**
    * This pulls articles from the station_feed provided by the Frequency API.
@@ -77,6 +77,8 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
           primaryHeadline: item.node.field_engagement_title || item.node.title
         };
       }));
+    } else {
+      data._computed.station = DEFAULT_STATION.name;
     }
     return data;
   },
@@ -107,7 +109,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
 
     if (data.populateFrom === 'station' && locals.params) {
       data._computed.station = locals.station.name;
-      if (!data._computed.isMigrated && locals.station.website) {
+      if (!data._computed.isMigrated) {
         return renderStation(data, locals);// gets the articles from drupal and displays those instead
       }
     }
