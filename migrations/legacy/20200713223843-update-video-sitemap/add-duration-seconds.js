@@ -9,7 +9,7 @@ const migrationUtils = require('../../utils/migration-utils').v1;
 
 const { dbCursor, moment } = migrationUtils,
   { read, usingCursor } = dbCursor,
-  requestNumRows = 1
+  requestNumRows = 100
 
 module.exports = async db => {
   const cursorQuery = `
