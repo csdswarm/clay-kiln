@@ -59,7 +59,7 @@ function navigateTo(path) {
  * @returns {boolean}
  */
 function isSpaLink(uri) {
-  return spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' && !uri.includes('/media/podcast/') );
+  return spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' && !uri.includes('/media/podcast/') && !uri.startsWith('/audio-channel') );
 }
 
 /**
