@@ -12,19 +12,13 @@ process.env.ARTICLE_AD_INSERT_EVERY = 3;
 
 describe(dirname, () => {
   describe(filename, () => {
-    const { render } = require('./model');
+    const { _internals: { injectAdsToArticleContent } } = require('./model');
 
     describe('render', () => {
       let sandbox;
-      const ref = '_components/article/instances/1',
-        data = {
-          content: Array(3).fill({ _ref: '' })
-        },
-        locals = {
-          loadedIds: [],
-          station: {},
-          edit: false
-        };
+      const data = {
+        content: Array(3).fill({ _ref: '' })
+      };
 
       beforeEach(function () {
         data.content = Array(3).fill({ _ref: '' });
@@ -36,10 +30,10 @@ describe(dirname, () => {
       });
 
       it('should not have and ad instance at all.', () => {
-        return render(ref, data, locals).then(result => {
-          expect(result.content).to.have.lengthOf(3);
-          expect(_find(result.content, { _ref: '/_components/google-ad-manager/instances/mediumRectangleContentBody' })).to.not.exist;
-        });
+        injectAdsToArticleContent(data);
+
+        expect(data.content).to.have.lengthOf(3);
+        expect(_find(data.content, { _ref: '/_components/google-ad-manager/instances/mediumRectangleContentBody' })).to.not.exist;
       });
 
       it('should have and ad instance after the 4th component.', () => {
@@ -47,10 +41,11 @@ describe(dirname, () => {
           ...data.content,
           ...Array(2).fill({ _ref: '' })
         ];
-        return render(ref, data, locals).then(result => {
-          expect(result.content).to.have.lengthOf(6);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
-        });
+
+        injectAdsToArticleContent(data);
+
+        expect(data.content).to.have.lengthOf(6);
+        expect(data.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
       });
 
       it('should only have and ad instance after the 4th component.', () => {
@@ -58,11 +53,12 @@ describe(dirname, () => {
           ...data.content,
           ...Array(4).fill({ _ref: '' })
         ];
-        return render(ref, data, locals).then(result => {
-          expect(result.content).to.have.lengthOf(8);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
-          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(1);
-        });
+
+        injectAdsToArticleContent(data);
+
+        expect(data.content).to.have.lengthOf(8);
+        expect(data.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+        expect(data.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(1);
       });
 
       it('should have two ad instances, one after the 3rd component and one after the 6th component.', () => {
@@ -71,12 +67,12 @@ describe(dirname, () => {
           ...Array(5).fill({ _ref: '' })
         ];
 
-        return render(ref, data, locals).then(result => {
-          expect(result.content).to.have.lengthOf(10);
-          expect(result.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
-          expect(result.content[7]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
-          expect(result.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(2);
-        });
+        injectAdsToArticleContent(data);
+
+        expect(data.content).to.have.lengthOf(10);
+        expect(data.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+        expect(data.content[7]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
+        expect(data.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(2);
       });
 
     });

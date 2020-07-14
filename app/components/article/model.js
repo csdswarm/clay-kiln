@@ -61,3 +61,7 @@ module.exports = unityComponent({
     return data;
   }
 });
+
+module.exports._internals = {
+  injectAdsToArticleContent
+};
