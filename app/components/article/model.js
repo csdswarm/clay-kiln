@@ -25,7 +25,7 @@ const _get = require('lodash/get'),
        */
       for (let i = insertEvery + 1; i < dataWithContent.content.length; i += insertEvery + 1) {
         // Don't inject if there's already a published ad.
-        if (dataWithContent.content[i - 1]._ref !== `${host}/_components/google-ad-manager/instances/mediumRectangleBottom@published`) {
+        if (!dataWithContent.content[i - 1]._ref.includes(`${host}/_components/google-ad-manager/instances/mediumRectangleBottom`)) {
           dataWithContent.content.splice(i - 1, 0, {
             _ref: `${host}/_components/google-ad-manager/instances/mediumRectangleBottom`
           });
