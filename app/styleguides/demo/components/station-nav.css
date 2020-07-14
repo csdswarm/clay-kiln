@@ -48,14 +48,14 @@
 
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
-$logo-margin-right: em(40);
+$logo-margin-right: em(60);
 $caret-width: em(16);
 $caret-margin-right: em(25);
 
 @define-mixin triangle {
   width: 0;
   height: 0;
-  border-bottom: em(12) solid $station-tertiaryColor;
+  border-bottom: em(12) solid $station-secondaryColor;
   border-left: em(9) solid transparent;
   border-right: em(9) solid transparent;
   margin-top: em(-12);
@@ -217,6 +217,7 @@ $caret-margin-right: em(25);
             svg {
               width: 100%;
               height: auto;
+              fill: $station-primaryFontColor;
             }
           }
         }
@@ -356,7 +357,7 @@ $caret-margin-right: em(25);
               height: em(30);
               align-items: center;
               &:hover {
-                background: $parisM;
+                background: $station-primaryColor;
               }
               a {
                 @mixin anchor-reset;
@@ -469,12 +470,16 @@ $caret-margin-right: em(25);
           h3 {
             @mixin station-listen-nav-font1;
             text-transform: uppercase;
-            margin-bottom: em(5, 15);
+            margin-bottom: em(15, 15);
           }
           img {
             width: em(60);
             height: em(60);
             @mixin medium-screen {
+              width: em(50);
+              height: em(50);
+            }
+            @mixin only-medium-screen {
               width: em(100);
               height: em(100);
             }
@@ -519,6 +524,11 @@ $caret-margin-right: em(25);
               @mixin medium-screen {
                 @mixin station-listen-nav-font4;
               }
+            }
+            .show__play {
+              display: table-cell;
+              line-height: inherit;
+              padding-bottom: em(7, 14);
             }
           }
           .drawer__featured {
