@@ -5,16 +5,12 @@
 * this new 'mediumRectangleContentBody' isn't sticky.
 */
 
-const { _set, clayImport, clayExport } = require('../migration-utils').v1,
-  host = process.argv[2] || 'clay.radio.com',
-  componentInstance = '_components/google-ad-manager/instances';
+const { _set, clayImport } = require('../migration-utils').v1,
+  host = process.argv[2] || 'clay.radio.com';
 
 (async () => {
   try {
-    // get the existing data
-    let data = await clayExport({
-      componentUrl: `${host}/${componentInstance}`
-    });
+    let data = {};
 
     // adding the ad instance
     _set(data, 'data._components.google-ad-manager.instances.mediumRectangleContentBody', {
@@ -31,10 +27,10 @@ const { _set, clayImport, clayExport } = require('../migration-utils').v1,
       payload: data.data,
       publish: true
     });
-  } catch(error) {
+  } catch (error) {
     console.error('Unable to add ad instance to google-ad-manager component');
     console.error(error);
   }
-  
+
 })();
 
