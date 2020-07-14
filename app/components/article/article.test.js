@@ -8,7 +8,6 @@ const chai = require('chai'),
   filename = __filename.split('/').pop().split('.').shift(),
   _find = require('lodash/find');
 
-chai.use(require('chai-sorted'));
 process.env.ARTICLE_AD_INSERT_EVERY = 3;
 
 describe(dirname, () => {
