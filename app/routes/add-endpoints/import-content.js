@@ -9,12 +9,14 @@ const qs = require('qs'),
 module.exports = router => {
   router.post('/import-content', wrapInTryCatch(async (req, res) => {
     const params = qs.stringify({ ...req.body, publish: false }),
-      { results } = await rest.get(`${importContentUrl}?${params}`),
-      { stationSlug } = req.body,
-      metaDataModificationRequests = results.map(({ url }) => {
+      { results } = await rest.get(`${importContentUrl}?${params}`);
+
+    if (results && results[0].url) {
+      const metaDataModificationRequests = results.map(({ url }) => {
         const pagePathRaw = url.replace('.html', ''),
           ref = `${req.host}${pagePathRaw}`,
-          fullUrl = `${req.protocol}://${ref}`;
+          fullUrl = `${req.protocol}://${ref}`,
+          { stationSlug } = req.body;
 
         return updateMetaData(ref, {
           stationSlug,
@@ -22,8 +24,9 @@ module.exports = router => {
           siteSlug: 'demo'
         });
       });
-      
-    await Promise.all(metaDataModificationRequests);
+
+      await Promise.all(metaDataModificationRequests);
+    }
 
     res.send(results);
   }));
