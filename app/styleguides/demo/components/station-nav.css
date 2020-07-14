@@ -78,8 +78,6 @@ $caret-margin-right: em(25);
   text-decoration: none
 }
 
-
-
 .component--station-nav {
   display: block;
   height: em(130);
@@ -93,10 +91,12 @@ $caret-margin-right: em(25);
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: fixed;
     width: 100%;
     z-index: 100;
-    
+    @mixin medium-screen {
+      position: relative;
+    }
     .station-nav__menu {
       background: $station-primaryColor;
       display: flex;
@@ -536,15 +536,4 @@ $caret-margin-right: em(25);
       }
     }
   }
-
-  .station-nav__fixed-container.sticky-station-nav-bar {
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-  }
-}
-
-/*  Reset behavior of radioCom top nav bar */
-.reset-radiocom-top-nav {
-  position: unset !important;
 }
