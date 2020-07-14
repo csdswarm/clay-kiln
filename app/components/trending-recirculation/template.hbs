@@ -3,11 +3,7 @@
          data-track-type="trending-recirculation"
          data-editable="trendingItems">
   <h2 class="trending__title">
-    {{#if lytics}}
-      <span>You May Also Like</span>
-    {{else}}
-      <span>TRENDING on RADIO.COM</span>
-    {{/if}}
+    <span>TRENDING on RADIO.COM</span>
   </h2>
   <div class="trending__data">
     {{#each _computed.articles}}
@@ -18,8 +14,7 @@
            data-track-component-name="trending"
            data-track-page-uri="{{ pageUri }}"
            data-track-headline="{{ primaryHeadline }}"
-           data-track-component-title="Trending"
-           data-track-lytics="{{ lytics }}">
+           data-track-component-title="Trending">
           <img
             onerror="this.onerror=null; this.src='https://images.radio.com/aiu-media/og_775x515_0.jpg'; this.srcset=this.srcset.replace(new RegExp(this.srcset.split('?')[0], 'g'), this.src);"
             src="{{ feedImgUrl }}width=300&height=169&crop=16:9,offset-y0"

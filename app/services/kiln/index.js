@@ -17,6 +17,7 @@ module.exports = () => {
   require('./plugins/content-syndication')();
   require('./plugins/default-text-with-override')();
   require('./plugins/instagram')();
+  require('./plugins/manage-syndicated-content')();
   require('./plugins/national-subscriptions')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
@@ -28,6 +29,7 @@ module.exports = () => {
   require('./plugins/subscriptions')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
+  require('./plugins/editorial-feeds')();
   require('./validators')();
   secureAllSchemas();
   addStationCheckToSelect();

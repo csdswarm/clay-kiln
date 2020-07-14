@@ -5,7 +5,6 @@ const axios = require('axios'),
   jwt = require('jsonwebtoken'),
   log = require('../universal/log').setup({ file: __filename }),
   cache = require('../server/cache'),
-  { getUser } = require('../server/cognito'),
   { SECOND, HOUR } = require('../universal/constants').time,
   STORE_IN_CACHE_SECONDS = 4 * HOUR / SECOND,
 
@@ -30,25 +29,42 @@ const axios = require('axios'),
       try {
         const response = await axios(options),
           currentTime = Date.now(),
-          { access_token: token, refresh_token: refreshToken, expires_in } = response.data,
-          { email: userName } = await getUser(token),
-          { device_key: deviceKey } = jwt.decode(token);
+          {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in,
+            id_token: idToken
+          } = response.data,
+          { device_key: deviceKey } = jwt.decode(accessToken),
+          { email } = jwt.decode(idToken);
 
-        await cache.set(`cognito-auth--${userName.toLowerCase()}`,
+        await cache.set(`cognito-auth--${email.toLowerCase()}`,
           JSON.stringify({
-            token,
-            refreshToken,
-            expires: currentTime + ((expires_in || 0) * SECOND),
+            accessToken,
             deviceKey,
-            lastUpdated: currentTime
+            expires: currentTime + ((expires_in || 0) * SECOND),
+            idToken,
+            lastUpdated: currentTime,
+            refreshToken
           }),
           STORE_IN_CACHE_SECONDS
         );
+
+        // this validate step is defined here
+        // https://entercomdigitalservices.atlassian.net/wiki/spaces/AUDIOADMIN/pages/628753835/JWT%2BClient%2BAuthentication%2BStrategy
+        await axios.post(
+          process.env.URPS_AUTHORIZATIONS_URL + '/users/validate',
+          {},
+          { headers: { Authorization: `Bearer ${idToken}` } }
+        );
+
         res.send(response.data);
       } catch (e) {
-        log('error', 'There was an error attempting to process the oAuth2 token for cognito', e);
+        const errMsg = 'There was an error attempting to process the oAuth2 token for cognito';
 
-        res.status(e.response.status).json(e.response.data);
+        log('error', errMsg, e);
+
+        res.status(500).send(errMsg);
       }
     });
   };

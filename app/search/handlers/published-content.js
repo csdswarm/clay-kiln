@@ -3,13 +3,21 @@
 const
   db = require('../../services/server/db'),
   h = require('highland'),
-  { PAGE_TYPES } = require('../../services/universal/constants'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { elastic, filters, helpers, subscribe } = require('amphora-search'),
   { getComponentInstance, getComponentName } = require('clayutils'),
   { isOpForComponents } = require('../filters'),
   { logError, logSuccess } = require('../helpers/log-events'),
-  CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.EVENT]),
+  CONTENT = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    CONTENT_COLLECTION: 'topic-page-header',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    GALLERY: 'gallery',
+    STATIC_PAGE: 'static-page'
+  },
+  CONTENT_FILTER = isOpForComponents(Object.values(CONTENT)),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX);
 
 // Subscribe to the save stream
@@ -81,7 +89,7 @@ function processContent(obj, components) {
     }
   });
 
-  if (componentName === PAGE_TYPES.GALLERY) {
+  if (componentName === CONTENT.GALLERY) {
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
 
@@ -137,7 +145,6 @@ function save(stream) {
       components.push(param);
       return param;
     })
-    // only bring back articles and galleries
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)

@@ -17,7 +17,7 @@ describe('getFromUrps', () => {
     }),
     mock = {
       // has a decoded property 'sub' with the value 'test123'.  This is the cognito_id
-      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0MTIzIn0.ZOXBQI81oKp29IAZ934o6atL_4c2YyfcLhU3JVGTD3s',
+      idToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0MTIzIn0.ZOXBQI81oKp29IAZ934o6atL_4c2YyfcLhU3JVGTD3s',
       path: '/test/path',
       reqBody: {}
     },
@@ -41,13 +41,13 @@ describe('getFromUrps', () => {
     const getFromUrps = makeGetFromUrps(),
       expected = getExpectedData();
 
-    await getFromUrps(mock.path, mock.reqBody, mock.jwt);
+    await getFromUrps(mock.path, mock.reqBody, mock.idToken);
 
     expect(axiosPost.calledOnce).to.be.true;
     expect(axiosPost.firstCall.args).to.deep.equal([
       expected.path,
       mock.reqBody,
-      { headers: { Authorization: mock.jwt } }
+      { headers: { Authorization: `Bearer ${mock.idToken}` } }
     ]);
   });
 
@@ -55,13 +55,13 @@ describe('getFromUrps', () => {
     const getFromUrps = makeGetFromUrps(),
       expected = getExpectedData();
 
-    await getFromUrps(mock.path, mock.reqBody, mock.jwt);
+    await getFromUrps(mock.path, mock.reqBody, mock.idToken);
 
     expect(axiosPost.calledOnce).to.be.true;
     expect(axiosPost.firstCall.args).to.deep.equal([
       expected.path,
       { cognito_id: expected.decodedCognitoId },
-      { headers: { Authorization: mock.jwt } }
+      { headers: { Authorization: `Bearer ${mock.idToken}` } }
     ]);
   });
 });
