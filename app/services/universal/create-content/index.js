@@ -14,7 +14,7 @@ const
   slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
-  { addStationsByEditorialGroup } = require('./editorial-feed-syndication'),
+  { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
   { DEFAULT_STATION } = require('../constants'),
   { PAGE_TYPES } = require('../constants'),
   { getComponentName } = require('clayutils'),

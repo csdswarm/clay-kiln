@@ -24,7 +24,7 @@ const _noop = require('lodash/noop'),
       }
     },
     './apply-national-subscriptions': _noop,
-    './editorial-feed-syndication': {
+    '../editorial-feed-syndication': {
       addStationsByEditorialGroup: () => {
         mockData.data.stationSyndication = [];
       }
