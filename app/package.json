@@ -139,6 +139,7 @@
     "localforage": "^1.7.1",
     "mocha": "^6.0.0",
     "pg": "^7.12.1",
+    "pg-cursor": "^2.3.0",
     "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",
     "postcss-mixins": "^6.2.0",
