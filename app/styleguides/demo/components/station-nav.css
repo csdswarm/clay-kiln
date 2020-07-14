@@ -217,7 +217,7 @@ $caret-margin-right: em(25);
             svg {
               width: 100%;
               height: auto;
-              fill: $station-primaryColor;
+              fill: $station-primaryFontColor;
             }
           }
         }
