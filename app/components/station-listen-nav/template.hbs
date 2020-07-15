@@ -50,15 +50,13 @@
           <h3>{{ _computed.station.phonetic_name }}</h3>
         </li>
       {{/if }}
-      <div class="drawer__social">
+      <li class="drawer__social">
         {{#each _computed.socialButtons as |button|}}
           <a href="{{button.url}}" title="{{ button.url }}">
-            <object type="image/svg+xml" data="/media/components/station-listen-nav/{{ button.type }}.svg">
-              <img src="/media/components/station-listen-nav/{{ button.type }}.svg">
-            </object>
+            {{{ read (concat 'components/station-listen-nav/media/' button.type '.svg') }}}
           </a>
         {{/each}}
-      </div>
+      </li>
     </ul>
   </section>
   <section class="drawer__featured">
