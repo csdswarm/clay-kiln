@@ -101,6 +101,7 @@
           justify-content: center;
           &::after {
             margin: 0;
+            margin-left: em(2);
           }
         }
 
