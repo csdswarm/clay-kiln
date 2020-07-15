@@ -196,9 +196,6 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
   
     stationNavBar.classList[action]('sticky-station-nav-bar');
     latestRecircSlider ? latestRecircSlider.classList[action]('sticky-latest-recirc-slider-bar') : null;
-    // if (latestRecircSlider) {
-    //   latestRecircSlider.classList[action]('sticky-latest-recirc-slider-bar');
-    // }
   },
 
   /**
