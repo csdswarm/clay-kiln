@@ -93,20 +93,34 @@
         bottom: 0;
         right: 0;
         margin: 0 em(10) em(10) 0;
-        width: em(48);
-        height: em(48);
-        &.show__play {
-          @mixin show__play
+        @define-mixin podcast-lead__show-play {
+          width: em(48);
+          height: em(48);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          &::after {
+            margin: 0;
+          }
         }
+
+        &.show__play {
+          @mixin show__play;
+          @mixin podcast-lead__show-play;
+        }
+
         &.show__pause {
           @mixin show__pause
+          @mixin podcast-lead__show-play;
         }
         &.show__stop {
           @mixin show__stop
+          @mixin podcast-lead__show-play;
         }
         &:hover {
           opacity: 0.7;
         }
+        
       }
     }
     
