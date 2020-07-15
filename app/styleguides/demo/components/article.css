@@ -7,6 +7,9 @@
 /* This file should only include article-specific styles.
    Any styling that is shared by other content page types should be included in the global contest-page stylesheet. */
 
-.article__body .body__content .google-ad-manager--medium-rectangle .google-ad-manager__slot--medium-rectangle {
-   width: 100%;
+.article__body .body__content .google-ad-manager--medium-rectangle {
+   background: transparent;
+   .google-ad-manager__slot--medium-rectangle {
+      width: 100%;
+   }
 }
