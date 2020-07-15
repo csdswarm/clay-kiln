@@ -156,7 +156,4 @@ $thumbnail-continer-width: 70px;
     @mixin medium-small-screen {
         top: em(110);
     }
-    @mixin small-screen {
-        top: em(110);
-    }
   }

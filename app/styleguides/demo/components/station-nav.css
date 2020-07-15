@@ -90,9 +90,6 @@ $caret-margin-right: em(25);
   @mixin medium-small-screen {
     height: em(110);
   }
-  @mixin small-screen {
-    height: em(110);
-  }
 
   .station-nav__fixed-container {
     background: none;
