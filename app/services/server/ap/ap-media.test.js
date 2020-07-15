@@ -30,6 +30,9 @@ describe('server', () => {
                 ],
                 type: 'text',
                 version: 3
+              },
+              meta: {
+                products: []
               }
             }]
           }
@@ -99,7 +102,6 @@ describe('server', () => {
 
     describe('getApFeed', () => {
       async function setup_getApFeed(options = { isCacheStubResolved: true }) {
-        console.log('options', options);
         const { __, getApFeed, DEFAULT_RESULT } = setupApMedia(),
           entitlements = [
             { name: 'Product 1', value: 42502 },
@@ -145,7 +147,7 @@ describe('server', () => {
           { cacheStub, response } = await setup_getApFeed(options);
 
         expect(cacheStub).to.have.been.callCount(1);
-        expect(response[0]).to.have.property('type')
+        expect(response[0].item).to.have.property('type')
           .that.eqls('text');
       });
 
@@ -157,9 +159,9 @@ describe('server', () => {
           { cacheStub, response } = await setup_getApFeed(options);
 
         expect(cacheStub).to.have.been.calledWith('ap-subscriptions-url');
-        console.log('response', response);
-        expect(response[0]).to.have.property('signals')
+        expect(response[0].item).to.have.property('signals')
           .that.eqls(['newscontent']);
+        expect(response[0].products).to.be.an('array');
       });
 
       it('Error getting AP feed from next_page', async () => {
