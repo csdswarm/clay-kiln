@@ -3,12 +3,21 @@
 const
   db = require('../../services/server/db'),
   h = require('highland'),
-  { PAGE_TYPES } = require('../../services/universal/constants'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { elastic, filters, helpers, subscribe } = require('amphora-search'),
-  { isOpForComponents, stripPostProperties } = require('../filters'),
+  { getComponentInstance, getComponentName } = require('clayutils'),
+  { isOpForComponents } = require('../filters'),
   { logError, logSuccess } = require('../helpers/log-events'),
-  CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.EVENT]),
+  CONTENT = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    CONTENT_COLLECTION: 'topic-page-header',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    GALLERY: 'gallery',
+    STATIC_PAGE: 'static-page'
+  },
+  CONTENT_FILTER = isOpForComponents(Object.values(CONTENT)),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX);
 
 // Subscribe to the save stream
@@ -29,7 +38,7 @@ subscribe('unpublishPage').through(unpublishPage);
 function getContent(obj, param, components, transform = (data) => data) {
   const content = obj[param],
     getData = (ref) => components.find(item => item.key === ref).value,
-    addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
+    addData = (component) => component._ref ? { ...component, data: transform(getData(component._ref)) } : component;
 
   // add a key with the data to each ref object
   obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
@@ -71,26 +80,19 @@ function getSlideEmbed(slides, components) {
  * @returns {Object}
  */
 function processContent(obj, components) {
-  obj.value = getContent(obj.value, 'lead', components);
-  obj.value = getContent(obj.value, 'content', components);
-  obj.value = getContent(obj.value, 'tags', components);
+  const componentName = getComponentName(obj.key),
+    contentFields = ['lead', 'content', 'tags', 'description', 'feedImg', 'slides', 'footer'];
 
-  if (obj.key.includes(PAGE_TYPES.CONTEST)) {
-    obj.value = getContent(obj.value, 'description', components);
-  } else {
-    obj.value = getContent(obj.value, 'content', components);
-  }
+  contentFields.forEach(field => {
+    if (obj.value[field]) {
+      obj.value = getContent(obj.value, field, components);
+    }
+  });
 
-  if (obj.key.includes(PAGE_TYPES.ARTICLE)) {
-    obj.value = getContent(obj.value, 'feedImg', components);
-  } else if (obj.key.includes(PAGE_TYPES.GALLERY)) {
-    obj.value = getContent(obj.value, 'slides', components);
+  if (componentName === CONTENT.GALLERY) {
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
-
-    obj.value = getContent(obj.value, 'footer', components);
   }
 
-  // ensure dateModified is always set
   obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
@@ -121,6 +123,18 @@ function transformAuthorsAndTags(op) {
   return op;
 }
 
+/**
+ * Should not publish default or new instances
+ *
+ * @param {Object} op
+ * @return {boolean}
+ */
+function isNotNewInstance(op) {
+  const instance = getComponentInstance(op.key);
+
+  return instance !== 'new' && instance !== 'default';
+}
+
 function save(stream) {
   let components = [];
 
@@ -131,14 +145,13 @@ function save(stream) {
       components.push(param);
       return param;
     })
-    // only bring back articles and galleries
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
+    .filter(isNotNewInstance)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
-    .map(stripPostProperties)
     .map(transformAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data

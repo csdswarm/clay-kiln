@@ -3,6 +3,7 @@
 const _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
   addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
+  addTextTags = require('../../services/server/component-upgrades/add-text-tags'),
   cuid = require('cuid'),
   updateStationSyndication = require('../../services/server/component-upgrades/update-stationsyndication-type'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
@@ -243,3 +244,11 @@ module.exports['13.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['14.0'] = (uri, data) => {
+  data.stationSyndication.map(syndication => syndication.source = syndication.source || 'manual syndication');
+
+  return data;
+};
+
+module.exports['15.0'] = addTextTags;

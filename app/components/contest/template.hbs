@@ -61,7 +61,11 @@
       <div class="body__contest-dates">
         <h3>Contest Dates:</h3>
         <span data-editable="dates">
-          {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]") ' through ' }}
+          {{ formatDateTimeRange
+            dateFrom=startDateTime
+            dateTo=endDateTime
+            format=(concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]")
+          }}
         </span>
       </div>
 

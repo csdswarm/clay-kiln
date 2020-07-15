@@ -14,38 +14,50 @@ module.exports = router => {
     preventFastlyCache(res);
 
     const result = await db.raw(`
-      select
-        u.url as content_url,
-        p.id as page_id,
-        content.id as content_uri,
-        content.data as content_data
-      from (
-        select id,
+      SELECT
+        u.url AS content_url,
+        p.id AS page_id,
+        content.id AS content_uri,
+        content.data AS content_data
+      FROM (
+        SELECT id,
           data,
-          data->>'syndicatedUrl' as syndicatedUrl,
-          data->>'syndicationStatus' as syndicationStatus
-        from components.article
-        union
-        select id,
+          data->>'syndicatedUrl' AS syndicatedUrl,
+          data->>'syndicationStatus' AS syndicationStatus
+        FROM components.article
+      ) AS content
+      JOIN pages p ON p.data->'main'->>0 = content.id
+      JOIN uris u ON u.data = p.id
+      WHERE content.syndicationStatus = 'syndicated'
+        AND content.syndicatedUrl = ?
+        AND content.id NOT LIKE '%@published'
+      UNION
+      SELECT
+        u.url AS content_url,
+        p.id AS page_id,
+        content.id AS content_uri,
+        content.data AS content_data
+      FROM (
+        SELECT id,
           data,
-          data->>'syndicatedUrl' as syndicatedUrl,
-          data->>'syndicationStatus' as syndicationStatus
-        from components.gallery
-      ) as content
-      join pages p on p.data->'main'->>0 = content.id
-      join uris u on u.data = p.id
-      where content.syndicationStatus = 'syndicated'
-        and content.syndicatedUrl = ?
-        and content.id not like '%@published'
+          data->>'syndicatedUrl' AS syndicatedUrl,
+          data->>'syndicationStatus' AS syndicationStatus
+        FROM components.gallery
+      ) AS content
+      JOIN pages p ON p.data->'main'->>0 = content.id
+      JOIN uris u ON u.data = p.id
+      WHERE content.syndicationStatus = 'syndicated'
+        AND content.syndicatedUrl = ?
+        AND content.id NOT LIKE '%@published'
 
       -- we limit 1 because there shouldn't be a case where multiple pieces of
       --   content are syndicated from the same canonical
       --
       -- * canonical is overloaded, in the context of station migrations it
-      --   refers to the canonical as drupal stores it.  In unity the drupal
-      --   canonical is stored as syndicatedUrl
-      limit 1
-    `, [req.query.url]);
+      --   refers to the canonical AS drupal stores it.  In unity the drupal
+      --   canonical is stored AS syndicatedUrl
+      LIMIT 1
+    `, [req.query.url, req.query.url]);
 
     if (!result.rows.length) {
       res.status(404).end();

@@ -267,6 +267,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   articleRequest = async (req, res) => {
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
+    let articleData;
+
     try {
       const updateArticle = !!req.params.articleID,
         method = 'POST',
@@ -325,6 +327,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           },
           body: formData
         }).then(({ status, statusText, body: article }) => {
+          articleData = JSON.stringify(article);
           if ([ 200, 201 ].includes(status)) {
             log('error', 'APPLE NEWS LOG -- ARTICLE POST CONTENT:', {
               status,
@@ -350,7 +353,12 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
-      log('error', `APPLE NEWS LOG -- ${ e }`);
+      log('error', 'APPLE NEWS LOG --', {
+        data: articleData,
+        enabled: process.env.APPLE_NEWS_ENABLED,
+        preview: process.env.APPLE_NEWS_PREVIEW_ONLY,
+        e
+      });
       res.status(500).send(e);
     }
   },
