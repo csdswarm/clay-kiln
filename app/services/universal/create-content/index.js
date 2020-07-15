@@ -2,23 +2,30 @@
 
 const
   _get = require('lodash/get'),
+  applyNationalSubscriptions = require('./apply-national-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
-  circulationService = require('./circulation'),
+  circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  mediaplay = require('./media-play'),
-  promises = require('./promises'),
-  rest = require('./rest'),
-  sanitize = require('./sanitize'),
-  slugify = require('../../services/universal/slugify'),
+  mediaplay = require('../media-play'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  sanitize = require('../sanitize'),
+  slugify = require('../slugify'),
   striptags = require('striptags'),
-  urlExists = require('../../services/universal/url-exists'),
-  { addStationsByEditorialGroup } = require('./editorial-feed-syndication'),
-  { DEFAULT_STATION } = require('../../services/universal/constants'),
-  { PAGE_TYPES } = require('./../universal/constants'),
+  urlExists = require('../url-exists'),
+  { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants'),
   { getComponentName } = require('clayutils'),
-  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
-  { urlToElasticSearch } = require('../../services/universal/utils');
+  {
+    uriToUrl,
+    replaceVersion,
+    has,
+    isFieldEmpty,
+    textToEncodedSlug,
+    urlToElasticSearch
+  } = require('../utils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -655,6 +662,7 @@ async function save(uri, data, locals) {
 
   // we need to get stations by editorial feeds before creating slugs for syndicated content
   await addStationsByEditorialGroup(data, locals);
+  await applyNationalSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),

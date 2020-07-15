@@ -18,6 +18,7 @@ module.exports = () => {
   require('./plugins/default-text-with-override')();
   require('./plugins/instagram')();
   require('./plugins/manage-syndicated-content')();
+  require('./plugins/national-subscriptions')();
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
   require('./plugins/restrict-users')();

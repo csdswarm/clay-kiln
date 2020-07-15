@@ -11,6 +11,7 @@ const
   sanitizeURI = require('./sanitizeURI'),
   truncate = require('./truncate'),
   toUpperCase = require('./toUpperCase'),
+  frequencyIframeUrl = require('./frequency-iframe-url'),
   {
     formatDateRange,
     formatDateTimeRange,
@@ -58,6 +59,7 @@ module.exports = {
   secondsToISO,
   timeAgoTimestamp,
   truncateText: truncate,
+  frequencyIframeUrl,
   toUpperCase,
   userLocalDate,
   withoutResolution: getRenditionWithoutPixelDensity,

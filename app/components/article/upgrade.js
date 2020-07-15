@@ -2,6 +2,7 @@
 
 const _get = require('lodash/get'),
   addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
+  addTextTags = require('../../services/server/component-upgrades/add-text-tags'),
   updateStationSyndication = require('../../services/server/component-upgrades/update-stationsyndication-type'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content'),
@@ -214,3 +215,6 @@ module.exports['14.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['15.0'] = addTextTags;
+
