@@ -563,7 +563,7 @@ function addStationSyndicationSlugs(data) {
           station.stationSlug,
           slugify(station.sectionFront),
           slugify(station.secondarySectionFront),
-          data.slug
+          station.slug || data.slug
         ].filter(Boolean).join('/');
       } else {
         delete station.syndicatedArticleSlug;
