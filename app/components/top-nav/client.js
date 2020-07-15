@@ -232,7 +232,8 @@ document.addEventListener('top-nav-mount', function () {
 
 // dismount listener for vue
 document.addEventListener('top-nav-dismount', function () {
-  window.removeEventListener('scroll', toggleStickyNavBar);
   // code to run when vue mounts/updates, aka after a new "pageview" has unloaded.
   navIncludes.stagingHelper.onDismount();
+
+  window.removeEventListener('scroll', toggleStickyNavBar);
 });
