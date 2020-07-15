@@ -44,7 +44,7 @@ module.exports.routes = [
   { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
+  // { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
@@ -69,15 +69,40 @@ module.exports.routes = [
   { path: '/contests', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
   { path: '/contests/:slug' },
-  { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
-  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
   { path: '/:year/:month/:name' },
-  { path: '/:year/:month/:day/:name' }
+  { path: '/:year/:month/:day/:name' },
+
+  withMiddleware((req, res, routeObject) => {
+    console.log('WITH MIDDLEWARE');
+    // console.log('\nRes.locals: \n', res.locals);
+    console.log('\n ROUTE OBJECT: \n', routeObject);
+
+    const layoutStyle = res.locals.someCondition;
+
+    if (layoutStyle === 'stationA') {
+      routeObject.dynamicPage = 'stationPageA';
+    }
+    if (layoutStyle === 'stationB') {
+      routeObject.dynamicPage = 'stationPageB';
+    }
+  }, {
+    path: '/:dynamicStation/listen',
+    dynamicPage: 'station'
+  })
 ];
+
+function withMiddleware(middlewareFn, routeObject) {
+  const wrappedMiddleware = (req, res, routeObject) => {
+    middlewareFn(req, res, routeObject);
+  };
+
+  routeObject.middleware = wrappedMiddleware;
+  return routeObject;
+};
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [
