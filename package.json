@@ -2,7 +2,10 @@
   "name": "clay-radio",
   "version": "1.0.0",
   "description": "A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.19",
+    "node-fetch": "^2.6.0"
+  },
   "devDependencies": {
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",

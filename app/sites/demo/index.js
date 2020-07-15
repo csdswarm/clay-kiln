@@ -1,6 +1,7 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
+  axios = require('../../node_modules/axios'),
   mainComponentRefs = [
     '/_components/article/instances',
     '/_components/gallery/instances',
@@ -76,22 +77,37 @@ module.exports.routes = [
   { path: '/:year/:month/:name' },
   { path: '/:year/:month/:day/:name' },
 
-  withMiddleware((req, res, routeObject) => {
-    console.log('WITH MIDDLEWARE');
-    // console.log('\nRes.locals: \n', res.locals);
-    console.log('\n ROUTE OBJECT: \n', routeObject);
+  withMiddleware(async (req, res, routeObject) => {
+    const listenOnlyStationStyle = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
+      .then((response) => response.data)
+      .catch((error) => {
+        console.log('An error occured getting the listen only station style list. \n ERROR: ', error);
+      });
 
-    const layoutStyle = res.locals.someCondition;
+    console.log('Listen Only Stations: ', listenOnlyStationStyle);
+    console.log(res.locals.station.site_slug);
+    // console.log('LOCALS: ', res.locals.routes)
 
-    if (layoutStyle === 'stationA') {
-      routeObject.dynamicPage = 'stationPageA';
-    }
-    if (layoutStyle === 'stationB') {
-      routeObject.dynamicPage = 'stationPageB';
-    }
+    if (listenOnlyStationStyle.includes(res.locals.station.site_slug)) {
+      console.log('WORKS');
+    } else {
+      routeObject.dynamicPage = 'station';
+    };
+
+    // const layoutStyle = res.locals.someCondition;
+    // if (layoutStyle === 'stationA') {
+    //   routeObject.dynamicPage = 'stationPageA';
+    // }
+    // if (layoutStyle === 'stationB') {
+    //   routeObject.dynamicPage = 'stationPageB';
+    // }
+
+    console.log(routeObject);
+    console.log(res.locals.station);
+
   }, {
     path: '/:dynamicStation/listen',
-    dynamicPage: 'station'
+    dynamicPage: ''
   })
 ];
 
