@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 'use strict';
 const
   chai = require('chai'),
@@ -25,16 +26,23 @@ describe('server', () => {
           { __, importArticle } = setup,
           HOST = 'some.radio.com',
           NEW_ID = fakeId('new'),
+          DEFAULT_COMPONENTS = [
+            { _ref: `${HOST}/_components/blockquote`, text: '' },
+            { _ref: `${HOST}/_components/divider`, title: '' },
+            { _ref: `${HOST}/_components/html-embed`, text: '' },
+            { _ref: `${HOST}/_components/paragraph`, text: '' },
+            { _ref: `${HOST}/_components/subheader`, text: '' }
+          ],
           DEFAULT_CONTENT_ITEMS = [
             {
-              _ref: `clay.radio.com/_components/paragraph/instances/${NEW_ID}`,
+              _ref: `${HOST}/_components/paragraph/instances/${NEW_ID}`,
               text: 'Some content'
             },
             ...options.content || []
           ],
           DEFAULT_FEED_IMAGES = [
             {
-              _ref: `clay.radio.com/_components/feed-image/instances/${NEW_ID}`,
+              _ref: `${HOST}/_components/feed-image/instances/${NEW_ID}`,
               alt: '',
               url: ''
             },
@@ -42,7 +50,7 @@ describe('server', () => {
           ],
           DEFAULT_SIDE_SHARES = [
             {
-              _ref: `clay.radio.com/_components/share/instances/${NEW_ID}`,
+              _ref: `${HOST}/_components/share/instances/${NEW_ID}`,
               url: '',
               title: '',
               domain: HOST,
@@ -53,7 +61,7 @@ describe('server', () => {
           ],
           DEFAULT_TAGS = [
             {
-              _ref: `clay.radio.com/_components/tags/instances/${NEW_ID}`,
+              _ref: `${HOST}/_components/tags/instances/${NEW_ID}`,
               items: []
             },
             ...options.tags || []
@@ -68,13 +76,13 @@ describe('server', () => {
             ],
             content: [
               {
-                _ref: `clay.radio.com/_components/paragraph/instances/${NEW_ID}`
+                _ref: `${HOST}/_components/paragraph/instances/${NEW_ID}`
               }
             ],
             date: '2020-02-02T02:02:02.020+00:00',
             dateModified: '2020-02-02T02:02:02.020+00:00',
             feedImg: {
-              _ref: `clay.radio.com/_components/feed-image/instances/${NEW_ID}`
+              _ref: `${HOST}/_components/feed-image/instances/${NEW_ID}`
             },
             headline: '',
             feedImgUrl: '',
@@ -86,13 +94,13 @@ describe('server', () => {
             secondarySectionFront: '',
             sectionFront: '',
             sideShare: {
-              _ref: `clay.radio.com/_components/share/instances/${NEW_ID}`
+              _ref: `${HOST}/_components/share/instances/${NEW_ID}`
             },
             slug: '',
             sources: [],
             stationSyndication: [],
             tags: {
-              _ref: `clay.radio.com/_components/tags/instances/${NEW_ID}`
+              _ref: `${HOST}/_components/tags/instances/${NEW_ID}`
             },
             teaser: '',
             ...options.article
@@ -117,8 +125,10 @@ describe('server', () => {
             'assignDimensionsAndFileSize',
             'bySlug',
             'createPage',
+            'dbDel',
             'dbGet',
             'dbRaw',
+            'getApArticleBody',
             'log',
             'saveApPicture',
             'searchByQuery'
@@ -141,9 +151,10 @@ describe('server', () => {
 
         stubs.dbGet.resolves({});
         [
-          { _ref: `${HOST}/_pages/new-two-col`, ...NEW.PAGE_ARTICLE } ,
+          { _ref: `${HOST}/_pages/new-two-col`, ...NEW.PAGE_ARTICLE },
           { _ref: NEW.ARTICLE.ID, ...NEW.PAGE_ARTICLE },
           { _ref: EXISTING.ARTICLE.ID, ...EXISTING.PAGE_ARTICLE },
+          ...DEFAULT_COMPONENTS,
           ...DEFAULT_CONTENT_ITEMS,
           ...DEFAULT_FEED_IMAGES,
           ...DEFAULT_SIDE_SHARES,
@@ -153,6 +164,11 @@ describe('server', () => {
         stubs.dbRaw
           .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING.ARTICLE.ID)
           .resolves({ rows: [EXISTING.PAGE_DATA] });
+
+        stubs.getApArticleBody.resolves({ block: {} });
+        if (options.apBodyContent) {
+          options.apBodyContent.forEach(obj => stubs.getApArticleBody.withArgs(...obj.args).resolves(obj.resolves));
+        }
 
         stubs.saveApPicture.resolves({});
         if (options.saveApPicture) {
@@ -187,7 +203,9 @@ describe('server', () => {
           ...setup,
           ELASTIC_AP_ID_PATH,
           EXISTING,
+          HOST,
           NEW,
+          NEW_ID,
           locals,
           result,
           stubs,
@@ -362,7 +380,7 @@ describe('server', () => {
             title: expectedTitle,
             shortTitle: expectedTitle
           });
-          
+
           expect(article.tags).to.deep.include({
             items: [
               { text: 'AP News', slug: 'ap-news' },
@@ -371,7 +389,7 @@ describe('server', () => {
               { text: 'Tragedy', slug: 'tragedy' }
             ]
           });
-          
+
         });
 
         it('maps AP data to meta title when publishable', async () => {
@@ -471,7 +489,64 @@ describe('server', () => {
           });
         });
 
-        // TODO: test body mapping.
+        it('maps the body content when the article is publishable', async () => {
+          const
+            BLOCKQUOTE_TEXT = 'Some more<br>text that would<br>have been inside a <br>blockquote',
+            BULLETS = ['Some Text', 'More Text'],
+            DEF_LIST_TEXT = '<dl><dt>Topic</dt><dd>Definition</dd></dl>',
+            ITEM_ID = 'content_test',
+            MEDIA_TEXT = '<img src="some-source.jpg"><div class="caption">possible contents of media tag</div>',
+            NITF_REF = 'https://api.ap.org/media/v/content/abcdefg1234567/download?type=text&format=NITF',
+            P_TEXT = 'Some text that could be html so let\'s have an <a href="#">Anchor</a> tag in it.',
+            PRE_TEXT = '<pre>This might have\nNewlines in it and stuff</pre>',
+            TABLE_TEXT = '<table><thead><tr><th>stuff</th></tr></thead><tbody><tr><td>things</td></tr></tbody></table>',
+            querySelectorAll = () => BULLETS.map(innerHTML => ({ innerHTML })),
+            { HOST, result } = await setup_modifiedByAP({
+              apMeta: {
+                altids: {
+                  itemid: `${ITEM_ID}`,
+                  etag: `${ITEM_ID}_mod1`
+                },
+                renditions: {
+                  nitf: {
+                    href: NITF_REF
+                  }
+                }
+              },
+              apBodyContent: [
+                {
+                  args: [NITF_REF], resolves: {
+                    block: {
+                      children: [
+                        { localName: 'bq', innerHTML: BLOCKQUOTE_TEXT },
+                        { localName: 'dl', outerHTML: DEF_LIST_TEXT },
+                        { localName: 'hr' },
+                        { localName: 'media', innerHTML: MEDIA_TEXT },
+                        { localName: 'nitf-table' },
+                        { localName: 'ol', querySelectorAll },
+                        { localName: 'p', innerHTML: P_TEXT },
+                        { localName: 'pre', outerHTML: PRE_TEXT },
+                        { localName: 'table', outerHTML: TABLE_TEXT },
+                        { localName: 'ul', querySelectorAll }
+                      ]
+                    }
+                  }
+                }
+              ]
+            });
+
+          expect(result.article.content).to.deep.include(
+            { _ref: `${HOST}/_components/blockquote/instances/ap-${ITEM_ID}-1`, text: BLOCKQUOTE_TEXT },
+            { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-2`, text: DEF_LIST_TEXT },
+            { _ref: `${HOST}/_components/divider/instances/ap-${ITEM_ID}-3`, title: '' },
+            { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-4`, text: MEDIA_TEXT },
+            { _ref: `${HOST}/_components/paragraph/instances/ap-${ITEM_ID}-5`, text: '1. Some text<br>\n2. More Text' },
+            { _ref: `${HOST}/_components/paragraph/instances/ap-${ITEM_ID}-6`, text: P_TEXT },
+            { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-7`, text: PRE_TEXT },
+            { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-8`, text: TABLE_TEXT },
+            { _ref: `${HOST}/_components/paragraph/instances/ap-${ITEM_ID}-9`, text: '• Some text<br>\n• More Text' }
+          );
+        });
       });
 
       it('gets any new stations to map to', async () => {
@@ -575,6 +650,7 @@ function buildApData(idPostFix, host, data) {
   };
 }
 
+// TODO: fix so that we just use the ap_id for this stuff, why the heck am I making this so hard?
 /**
  * Creates a fake id for testing that looks similar to what we would expect to see in a
  * real id

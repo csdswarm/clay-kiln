@@ -1,15 +1,16 @@
 'use strict';
 const
   _get = require('lodash/get'),
+  _memoize = require('lodash/memoize'),
   _set = require('lodash/set'),
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
-  { get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
+  { del: dbDel, get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { inspect } = require('util'),
-  { saveApPicture } = { saveApPicture: () => {} }, // require('./ap-media'),
+  { getApArticleBody, saveApPicture } = require('./ap-media'),
   { searchByQuery } = require('../query'),
 
   log = logger.setup({ file: __filename }),
@@ -25,15 +26,19 @@ const
 
   __ = {
     assignDimensionsAndFileSize,
+    dbDel,
     dbGet,
     dbPut,
     dbRaw,
     getAllStations,
+    getApArticleBody,
     inspect,
     log,
     saveApPicture,
     searchByQuery
-  };
+  },
+
+  getNewComponent = _memoize((name, { site: { host } }) => __.dbGet(`${host}/_components/${name}`));
 
 // createPage imports hierarchy makes an immediate call to redis, which causes issues in tests, so lazy load only.
 addLazyLoadProperty(__, 'createPage', require('../page-utils').createPage);
@@ -159,19 +164,21 @@ async function getNewStations(article, stationMappings, locals) {
 }
 
 /**
- *
+ * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
  * @param {object} articleData.article
  * @param {object} articleData.metaTitle
  * @param {object} articleData.metaDescription
+ * @param {object} locals
  * @returns {object}
  */
-async function mapApDataToArticle(apMeta, articleData) {
+async function mapApDataToArticle(apMeta, articleData, locals) {
   const
-    { altids, associations, ednote, headline, headline_extended, version } = apMeta,
+    { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
     { article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbGet, inspect, log, saveApPicture } = __;
+    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, inspect, log, saveApPicture } = __,
+    { itemid } = altids;
   
   if ( !associations ) {
     log(
@@ -198,7 +205,7 @@ async function mapApDataToArticle(apMeta, articleData) {
       article: {
         ...article,
         ap: {
-          itemid: altids.itemid,
+          itemid,
           etag: altids.etag,
           version,
           ednote
@@ -268,6 +275,52 @@ async function mapApDataToArticle(apMeta, articleData) {
     Object.assign(existing, { _ref: imgRef, ...existing, ...props });
   }
 
+  const
+    TYPES = {
+      bq: 'blockquote',
+      dl: 'html-embed',
+      fn: 'paragraph',
+      hl2: 'subheader',
+      hr: 'divider',
+      media: 'html-embed',
+      note: 'paragraph',
+      ol: 'paragraph',
+      p: 'paragraph',
+      pre: 'html-embed',
+      table: 'html-embed',
+      ul: 'paragraph'
+    },
+    INNER_TEXT_TYPES = 'bq fn hl2 note p media'.split(/ /g),
+    OUTER_TEXT_TYPES = 'dl pre table'.split(/ /g),
+    LIST_TYPES = 'ol ul'.split(/ /g),
+    { block: apContent } = await getApArticleBody(renditions.nitf.href);
+
+  article.content.map(({ _ref }) => _ref).forEach(dbDel);
+
+  newArticleData.article.content = await Promise.all(Array.from(_get(apContent, 'children', []))
+    .filter(el => TYPES[el.localName.toLowerCase()])
+    .map(async (el, index) => {
+      const
+        instanceId = `${itemid}-${index + 1}`,
+        name = el.localName.toLowerCase(),
+        componentName = TYPES[name] || 'html-embed',
+        data = { ...await getNewComponent(componentName, locals) };
+
+      data._ref = `${locals.site.host}/_components/${componentName}/instances/ap-${instanceId}`;
+
+      if (INNER_TEXT_TYPES.includes(name)) {
+        data.text = el.innerHTML;
+      } else if (OUTER_TEXT_TYPES.includes(name)) {
+        data.text = el.outerHTML;
+      } else if (LIST_TYPES.includes(name)) {
+        data.text = Array.from(el.querySelectorAll('li'))
+          .map((item, idx) => `${el.localName === 'ol' ? idx + 1 + '.' : '•'} ${item.innerHTML}`)
+          .join('<br>/n');
+      }
+
+      return data;
+    }));
+
   return newArticleData;
 }
 
@@ -297,7 +350,7 @@ async function importArticle(apMeta, stationMappings, locals) {
       metaImage,
       metaTitle
     } = isModifiedByAP
-      ? await mapApDataToArticle(apMeta, articleData)
+      ? await mapApDataToArticle(apMeta, articleData, locals)
       : articleData;
 
   return {
