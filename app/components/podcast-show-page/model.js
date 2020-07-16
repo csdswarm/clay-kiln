@@ -3,6 +3,7 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
+  radioApiService = require('../../services/server/radioApi'),
   { autoLink } = require('../breadcrumbs');
 
 /**
@@ -23,11 +24,24 @@ async function addBreadcrumbs(data, locals) {
   }
 }
 
+async function getPodcastShow(locals) {
+  const route = 'podcasts';
+
+  return await radioApiService.get(route, {
+    'filter[site_slug]': locals.params.dynamicSlug
+  }, null, {}, locals);
+}
+
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     if (!locals || !locals.params) {
       return data;
     }
+
+    const podcast = await getPodcastShow(locals);
+
+    // Setting data to be referenced on podcast lead
+    locals.podcast = _get(podcast, 'data[0]');
 
     data.stationSlug = _get(locals, 'params.stationSlug');
     await addBreadcrumbs(data, locals);
