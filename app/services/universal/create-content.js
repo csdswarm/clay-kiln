@@ -565,8 +565,8 @@ function addStationSyndicationSlugs(data) {
     });
 }
 
-function doNotPublishToANF(data, locals) {
-  if (locals.newPageStation || data.isCloned) {
+function doNotPublishToANF(data) {
+  if (data.feeds && (data.stationSlug || data.isCloned)) {
     data.feeds = {
       ...data.feeds,
       'apple-news': false
@@ -581,7 +581,7 @@ function render(ref, data, locals) {
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
   renderStationSyndication(data);
-  doNotPublishToANF(data, locals);
+  doNotPublishToANF(data);
 
   if (locals && !locals.edit) {
     return data;
