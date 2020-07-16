@@ -86,41 +86,22 @@ module.exports.routes = [
         console.log('An error occured getting the listen only station style list. \n ERROR: ', error);
       });
 
-    console.log('Listen Only Stations: \n', listenOnlyStations);
-    console.log('locals site slug: \n', res.locals.station.site_slug);
+    console.log('\n res.locals site slug: \n', res.locals.station.site_slug);
 
-    const test = [
-        {
-          market: '',
-          callsign: '',
-          site_slug: 'q945'
-        },
-        {
-          market: '',
-          callsign: '',
-          site_slug: 'q104'
-        }
-      ],
+    const listenOnlyStationSlugs = listenOnlyStations.map((station) => {
+      return station.siteSlug;
+    });
 
-      // replace test with listenOnlyStations before pushing
-      //
-      //
-      listenOnlySiteSlugs = test.map((station) => {
-        return station.site_slug;
-      });
+    console.log('\n Listen Only Station Slugs: \n', listenOnlyStationSlugs);
 
-    if (listenOnlySiteSlugs.includes(res.locals.station.site_slug)) {
-      routeObject.dynamicPage = 'listenOnly';
+    if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
+      routeObject.dynamicPage = 'station-detail-listen-only';
     } else {
       routeObject.dynamicPage = 'station';
     };
-    // const uri = res.req.uri;
 
-    // console.log(amphoraRender)
-    console.log('RESPONSE: \n', res);
-
-    amphoraRender(req, res);
-    console.log(routeObject.dynamicPage);
+    amphoraRender.renderDynamicRoute('clay.radio.com/_pages/station-detail-listen-only');
+    console.log('After amorpha');
 
   }, {
     path: '/:dynamicStation/listen',
