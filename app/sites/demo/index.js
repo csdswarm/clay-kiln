@@ -2,6 +2,7 @@
 
 const publishing = require('../../services/publishing'),
   axios = require('../../node_modules/axios'),
+  amphoraRender = require('../../node_modules/amphora/lib/render'),
   mainComponentRefs = [
     '/_components/article/instances',
     '/_components/gallery/instances',
@@ -77,33 +78,49 @@ module.exports.routes = [
   { path: '/:year/:month/:name' },
   { path: '/:year/:month/:day/:name' },
 
+  // Station listen pages path
   withMiddleware(async (req, res, routeObject) => {
-    const listenOnlyStationStyle = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
+    const listenOnlyStations = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
       .then((response) => response.data)
       .catch((error) => {
         console.log('An error occured getting the listen only station style list. \n ERROR: ', error);
       });
 
-    console.log('Listen Only Stations: ', listenOnlyStationStyle);
-    console.log(res.locals.station.site_slug);
-    // console.log('LOCALS: ', res.locals.routes)
+    console.log('Listen Only Stations: \n', listenOnlyStations);
+    console.log('locals site slug: \n', res.locals.station.site_slug);
 
-    if (listenOnlyStationStyle.includes(res.locals.station.site_slug)) {
-      console.log('WORKS');
+    const test = [
+        {
+          market: '',
+          callsign: '',
+          site_slug: 'q945'
+        },
+        {
+          market: '',
+          callsign: '',
+          site_slug: 'q104'
+        }
+      ],
+
+      // replace test with listenOnlyStations before pushing
+      //
+      //
+      listenOnlySiteSlugs = test.map((station) => {
+        return station.site_slug;
+      });
+
+    if (listenOnlySiteSlugs.includes(res.locals.station.site_slug)) {
+      routeObject.dynamicPage = 'listenOnly';
     } else {
       routeObject.dynamicPage = 'station';
     };
+    // const uri = res.req.uri;
 
-    // const layoutStyle = res.locals.someCondition;
-    // if (layoutStyle === 'stationA') {
-    //   routeObject.dynamicPage = 'stationPageA';
-    // }
-    // if (layoutStyle === 'stationB') {
-    //   routeObject.dynamicPage = 'stationPageB';
-    // }
+    // console.log(amphoraRender)
+    console.log('RESPONSE: \n', res);
 
-    console.log(routeObject);
-    console.log(res.locals.station);
+    amphoraRender(req, res);
+    console.log(routeObject.dynamicPage);
 
   }, {
     path: '/:dynamicStation/listen',
