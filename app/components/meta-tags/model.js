@@ -22,7 +22,7 @@ const _get = require('lodash/get'),
 function getNmcData(hasImportedNmcData, componentData, locals) {
   const { station, url } = locals,
     pathname = parse(url).pathname,
-    pageData = getPageData(pathname, componentData.contentType);
+    pageData = getPageData(pathname, componentData.contentType, station.site_slug);
 
   if (hasImportedNmcData) {
     const pageId = getPageId({ pageData, pathname }),
@@ -34,7 +34,7 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
 
     return nmcData;
   } else { // nmc data is not imported
-    const contentTags = (componentData.contentTagItems || []).map(i => i.text),
+    const contentTags = [componentData.sectionFront, componentData.secondarySectionFront, ...(componentData.contentTagItems || []).map(i => i.text)].filter(Boolean),
       nmcData = getTrackingData({
         contentTags,
         pageData,
@@ -42,7 +42,7 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
         station
       });
 
-    nmcData.tag = nmcData.tag.join('/');
+    nmcData.tag = nmcData.tag.join(',');
 
     return nmcData;
   }

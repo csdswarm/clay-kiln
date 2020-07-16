@@ -19,12 +19,14 @@ const _get = require('lodash/get'),
     pageTypeTagStationsDirectory
   } = require('./shared-tracking-vars'),
   pageTypeHomepage = 'homepage',
+  pageTypeSectionFrontTag = 'sectionfront',
   pageTypeTagAuthor = 'authors',
   pageTypeTagTag = 'tag',
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
-  articleOrGalleryPage = new Set(['article', 'vgallery']),
-  homepageOrSectionFront = new Set(['homepage', 'sectionFront']),
+  ContentPages = new Set(['article', 'vgallery', 'events', 'contests']),
+  homepageOrStationFront = new Set(['homepage', 'stationFront']),
+  rdcOrStationSectionFront = new Set(['sectionFront', 'stationSectionFront']),
   /**
    * stationsDirectory utilities assume the pathname passes `isStationsDirectory`
    */
@@ -148,9 +150,11 @@ module.exports = ({ pathname, url } = {}) => {
       const { page, pageName } = pageData;
       let pageId = pageName;
 
-      if (homepageOrSectionFront.has(page)) {
+      if (homepageOrStationFront.has(page)) {
         pageId = pageTypeHomepage;
-      } else if (articleOrGalleryPage.has(page)) {
+      } else if (rdcOrStationSectionFront.has(page)) {
+        pageId = pageTypeSectionFrontTag + '_' + pageName;
+      } else if (ContentPages.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
@@ -178,9 +182,15 @@ module.exports = ({ pathname, url } = {}) => {
         case 'article':
         case 'vgallery':
           return [pageName, ...contentTags];
+        case 'events':
+        case 'contests':
+          return [pageName];
         case 'homepage':
-        case 'sectionFront':
+        case 'stationFront':
           return [pageTypeTagSection, pageTypeHomepage];
+        case 'sectionFront':
+        case 'stationSectionFront':
+          return ['sectionfront', ...pageName.split('_')];
         case 'stationsDirectory':
           return [pageTypeTagStationsDirectory, pageName];
         case 'stationDetail':
@@ -224,7 +234,7 @@ module.exports = ({ pathname, url } = {}) => {
      */
     isTopicPage: () => {
       // matches paths found on 'sites/demo/index.js'
-      return /^\/(topic|music|news|sports)\/.+$/.test(pathname);
+      return /^\/(.*\/)?topic\/.+$/.test(pathname);
     }
   };
 
