@@ -61,14 +61,17 @@ const cache = require ('../cache'),
           `${next_page}?apikey=${apMediaKey}`;
       } else {
         const entitlements = await __.retrieveList('ap-media-entitlements', Object.assign({ locals }, null)),
-          entitlementsStr = entitlements.map(e => e.value).join(' OR ');
+          entitlementsStr = entitlements.map(e => e.value).join(' OR '),
+          includes = 'associations,headline_extended,meta.products,renditions.nitf,subject';
         
-        endpoint = `${ apFeedUrl }?q=productid%3A(${ entitlementsStr })&page_size=${ pageSize }&include=meta.products&apikey=${ apMediaKey }`;
+        endpoint = `${ apFeedUrl }?q=productid%3A(${ entitlementsStr })&page_size=${ pageSize }&include=${ includes }&apikey=${ apMediaKey }`;
       }
       const response = await __.rest.get(endpoint),
         items = response.data.items;
       
-      return items.map(({ item }) => item);
+      return items.map(({ item, meta }) => {
+        return { item, products: meta.products };
+      });
     } catch (e) {
       __.log('error', 'Bad request getting ap feed from ap-media', e);
       return [];
