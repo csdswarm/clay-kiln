@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('../../services/server/db'),
+  { importApSubscription } = require('../../services/server/ap/ap-media'),
   log = require('../../services/universal/log').setup({ file: __filename }),
   { ensureRecordExists, getAll, save } = require('../../services/server/ap/ap-subscriptions'),
   { STATUS_CODE } = require('../../services/universal/constants'),
@@ -9,6 +10,7 @@ const db = require('../../services/server/db'),
     dbDel: db.del,
     ensureRecordExists,
     getAll,
+    importApSubscription,
     log,
     save
   },
@@ -94,6 +96,19 @@ const db = require('../../services/server/db'),
       } catch (e) {
         __.log('error', e.message);
         return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error removing the subscription' });
+      }
+    });
+    /**
+    * Import ap-subscription
+    */
+    router.post('/rdc/ap-subscriptions/import', async (req, res) => {
+      try {
+        const data = await __.importApSubscription(res.locals);
+
+        return res.status(STATUS_CODE.CREATED).send(data);
+      } catch (e) {
+        __.log('error', e.message);
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error importing the supscriptions' });
       }
     });
   };

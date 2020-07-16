@@ -2,6 +2,7 @@
 
 const cache = require ('../cache'),
   domUtils = require('../dom-utils'),
+  { getAll } = require('./ap-subscriptions'),
   logger = require('../../universal/log'),
   rest = require('../../universal/rest'),
   { retrieveList } = require('../lists'),
@@ -12,6 +13,7 @@ const cache = require ('../cache'),
 
   __ = {
     cache,
+    getAll,
     log,
     rest,
     retrieveList,
@@ -141,12 +143,53 @@ const cache = require ('../cache'),
       __.log('error', 'Bad request getting article body', e);
       return {};
     }
+  },
+
+  /**
+   * Retrieves the latest feed info from ap-media
+   * @param {object} locals
+   * @return {array}
+   */
+  importApSubscription = async (locals) => {
+    try {
+      const apFeed = await getApFeed(locals),
+        apSubscriptions = await __.getAll();
+
+      apFeed.forEach( feed => {
+        let apImportData = '{';
+
+        feed.meta.products.forEach(product => {
+          apSubscriptions.forEach(subscription => {
+            subscription.data.entitlements.forEach(entitlement => {
+              if (product.id === entitlement.id) {
+                if (!apImportData.includes(subscription.data.stationSlug)) {
+                  apImportData += `"${subscription.data.stationSlug}" : ${JSON.stringify(subscription.data.mappings[0])},`;
+                }
+              }
+            });
+          });
+        });
+
+        if (apImportData.length > 1) {
+          apImportData = apImportData.slice(0, -1) + '}';
+        }
+      });
+
+      return true;
+
+    } catch (e) {
+      __.log('error', 'Bad request importing ap feed from ap-media', e);
+      return [];
+    }
   };
+
+  
 
 module.exports = {
   _internals: __,
   getApArticleBody,
   getApFeed,
+  importApSubscription,
   saveApPicture,
   searchAp
 };
