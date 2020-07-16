@@ -1,13 +1,8 @@
 'use strict';
 
-const amphora = require('amphora'),
-  { elastic } = require('amphora-search'),
-  { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
-  stationUtils = require('../../services/server/station-utils'),
-  addStationSlug = (uri, stationSlug) => stationSlug && amphora.db.getMeta(uri)
-    .then(meta => ({ ...meta, stationSlug }))
-    .then(updatedMeta => amphora.db.putMeta(uri, updatedMeta))
-    .then(data => elastic.put('pages', uri, data));
+const
+  { createPage } = require('../../services/server/page-utils'),
+  { wrapInTryCatch } = require('../../services/startup/middleware-utils');
     
 
 module.exports = router => {
@@ -20,8 +15,6 @@ module.exports = router => {
 
   router.post('/create-page', wrapInTryCatch(async (req, res) => {
     const { pageBody, stationSlug } = req.body,
-      // pagesUri is required for the amphora.pages.create call
-      pagesUri = req.hostname + '/_pages/',
       { locals } = res;
 
     if (!pageBody) {
@@ -29,19 +22,7 @@ module.exports = router => {
       return;
     }
 
-    // stationSlug is valid due to a check in
-    // app/services/server/permissions/has-permissions/create-page.js
-    if (stationSlug) {
-      const allStations = await stationUtils.getAllStations({ locals });
-
-      res.locals.newPageStation = allStations.bySlug[stationSlug];
-    }
-
-    // we need to mutate locals before declaring the result
-    // eslint-disable-next-line one-var
-    const result = await amphora.pages.create(pagesUri, pageBody, res.locals);
-    
-    await addStationSlug(result._ref, stationSlug);
+    const result = await createPage( pageBody, stationSlug, locals );
 
     res.status(201);
     res.send(result);

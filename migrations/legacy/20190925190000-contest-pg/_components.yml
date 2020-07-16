@@ -1,0 +1,47 @@
+_components:
+  latest-recirculation:
+    instances:
+      station:
+        tag: ''
+        items: []
+        populateBy: station
+        contentType:
+          article: true
+          gallery: true
+  tags:
+    instances:
+      contests:
+        items:
+          -
+            text: 'Contests'
+        componentVariation: tags
+  contest:
+    instances:
+      new:
+        contentType: 'contest'
+        headline: ''
+        primaryHeadline: ''
+        plaintextPrimaryHeadline: ''
+        teaser: ''
+        subHeadline: ''
+        feedImgUrl: ''
+        slug: ''
+        pageTitle: ''
+        sideShare:
+          _ref: /_components/share/instances/new
+        lead: []
+        description:
+          -
+            _ref: /_components/paragraph/instances/new
+        embed:
+          _ref: /_components/html-embed/instances/new
+        startDate: ''
+        startTime: ''
+        endDate: ''
+        endTime: ''
+        rules:
+          _ref: /_components/contest-rules/instances/new
+        tags:
+          _ref: /_components/tags/instances/contests
+        adTags:
+          _ref: /_components/ad-tags/instances/new

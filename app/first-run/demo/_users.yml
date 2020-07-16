@@ -152,6 +152,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: moffkr91@gmail.com
+    provider: google
+    auth: admin
+  -
     username: lauren.hoffman@entercom.com
     provider: google
     auth: admin
@@ -319,4 +323,3 @@ _users:
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
-

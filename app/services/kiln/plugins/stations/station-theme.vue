@@ -236,6 +236,7 @@
           this.loading = false;
           this.theme = { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor };
           this.updateStatus = {type: 'success', message: 'Station theme updated.'};
+          window.location.reload();
         } catch({ response }) {
           this.loading = false;
           this.updateStatus = {type: 'error', message: `Could not update theme. ${ response.data }`};
