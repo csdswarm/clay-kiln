@@ -171,9 +171,8 @@ module.exports['8.0'] = function (uri, data) {
 
   if (data.secondaryArticleType) {
     newData.secondarySectionFront = data.secondaryArticleType || '';
+    delete newData.secondaryArticleType;
   }
-
-  delete newData.secondaryArticleType;
 
   return newData;
 };
