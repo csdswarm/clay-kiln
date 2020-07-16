@@ -240,6 +240,7 @@
       }, 2000),
       loadSectionFronts() {
         const { slug, name, callsign } = this.stationFilter,
+          stationSlug = slug ? `${slug}-` : '',
           label = `${name} | ${callsign}`,
           transformSectionFronts = sectionFronts => sectionFronts.map(sf => ({
             label: sf.name,
@@ -247,8 +248,8 @@
           }));
 
         Promise.all([
-          retrieveList(`${slug}-primary-section-fronts`),
-          retrieveList(`${slug}-secondary-section-fronts`),
+          retrieveList(`${stationSlug}primary-section-fronts`),
+          retrieveList(`${stationSlug}secondary-section-fronts`),
         ])
         .then(([primarySectionFronts, secondarySectionFronts]) => {
           if (primarySectionFronts.length || secondarySectionFronts.length) {

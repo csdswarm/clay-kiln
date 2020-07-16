@@ -91,16 +91,21 @@
   }
 
   .syndication-modal {
-    padding: 8px;
+    .ui-modal-container {
+      height: 400px;
+    }
+    .ui-modal-body {
+      height: inherit;
+    }
     &__title {
-      margin-bottom: 12px;
+      margin: 12px 0;
       font-size: 16px;
     }
     p {
       @mixin text-styles;
     }
     &__buttons {
-      margin-top: 20px;
+      margin-top: 40px;
     }
   }
 }
