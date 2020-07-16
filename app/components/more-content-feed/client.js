@@ -1,7 +1,8 @@
 'use strict';
 const { fetchDOM } = require('../../services/client/radioApi'),
   safari = require('../../services/client/safari'),
-  visibility = require('../../services/client/visibility');
+  visibility = require('../../services/client/visibility'),
+  { LOAD_MORE_LIMIT } = require('../../services/universal/constants');
 
 class MoreContentFeed {
   constructor(el) {
@@ -49,8 +50,10 @@ class MoreContentFeed {
     this.loadMoreVisibility.on('shown', async () => {
       this.loadMoreVisibility.destroy();
       await this.handleLoadMoreContent();
-      document.dispatchEvent(this.lazyLoadEvent);
-      this.setupLazyLoad();
+      if (this.loadMore) {
+        document.dispatchEvent(this.lazyLoadEvent);
+        this.setupLazyLoad();
+      }
     });
   }
 
@@ -85,7 +88,9 @@ class MoreContentFeed {
 
     // Recreate the listener for the new button
     this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
-    if (this.loadMore) {
+    if (LOAD_MORE_LIMIT === this.currentPage) {
+      this.loadMore.parentNode.removeChild(this.loadMore);
+    } else if (this.loadMore) {
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
     }
   }

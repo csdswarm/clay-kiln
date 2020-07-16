@@ -15,6 +15,7 @@ let desktopNavItems,
   lastTarget,
   isMobile = false;
 
+
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
@@ -227,17 +228,17 @@ const { getComponentInstance } = require('clayutils'),
   toggleMobileSecondaryLinks = ( event ) => {
     event.preventDefault();
 
-    const { currentTarget } = event;
-
-    if (!currentTarget.classList.contains(active)) {
+    const { currentTarget } = event,
+      drawerItem = currentTarget.closest('.drawer__item');
+    
+    if (!drawerItem.classList.contains(active)) {
       // Close dropdown of all categories
       for (const item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
-    currentTarget.classList.toggle(active);
+    drawerItem.classList.toggle(active);
   },
-
   /**
    * Add event listeners to nav elements to toggle drawers & carets.
    *
@@ -253,8 +254,10 @@ const { getComponentInstance } = require('clayutils'),
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      if (item.querySelectorAll('.item__label>.label__menu-toggle')) {
-        item.addEventListener('click', toggleMobileSecondaryLinks);
+      const menuToggle = item.querySelector('.item__label > .label__menu-toggle');
+
+      if (menuToggle) {
+        menuToggle.addEventListener('click', toggleMobileSecondaryLinks);
       }
     });
 
@@ -283,6 +286,7 @@ const { getComponentInstance } = require('clayutils'),
         }
       }
     });
+
   };
 
 // mount listener for vue (optional)
@@ -302,6 +306,7 @@ document.addEventListener('station-nav-mount', function () {
   listenNavComponent = document.querySelector('.component--station-listen-nav');
   stationId = stationNav.dataset.stationId;
   stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
+
 
   addEventListeners();
 });

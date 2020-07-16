@@ -28,11 +28,13 @@ const _get = require('lodash/get'),
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front',
+    CONTENT_COLLECTION: 'topic-page-header',
     CONTEST: 'contest',
     EVENT: 'event',
     EVENTSLISTING: 'events-listing-page',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front',
+    STATIC_PAGES: 'static-page',
     STATIONFRONT: 'station-front'
   },
 
@@ -105,24 +107,27 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: '',
-
     // in an ideal world we could store our hardcoded station in URPS, but due
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
-    urpsDomainName: 'National'
+    urpsDomainName: 'National',
+    national_doubleclick_bannertag: 'NTL.RADIO'
   },
   
   PODCASTS = 'podcasts',
   PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
-  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large,
+
+  LOAD_MORE_LIMIT = 10;
 
 module.exports = {
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
   HOUR,
+  LOAD_MORE_LIMIT,
   MINUTE,
   PAGE_TYPES,
   PODCASTS,

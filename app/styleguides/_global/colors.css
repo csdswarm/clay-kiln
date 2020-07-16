@@ -29,6 +29,7 @@ $91gray: #E8E8E8;
 $red: #F00; /* Errors */
 $crimson: #DB1111; /* Breaking Alert */
 $crimsonRGB: 219, 17, 17;
+$crimsonRGBA-20: rgba(235, 38, 42, 0.2);
 
 /* Oranges */
 $blazeOrange: #FF6E00; /* Ads Label */

@@ -60,7 +60,8 @@ module.exports = recirculationData({
    * @returns {object}
    */
   mapResultsToTemplate: async (locals, result, item = {}) => {
-    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
+    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals }),
+      label = getSectionFrontName(result.syndicatedLabel || result.sectionFront, primarySectionFronts);
 
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
@@ -73,7 +74,7 @@ module.exports = recirculationData({
       urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
-      label: result.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
+      label: result.overrideLabel || label,
       plaintextTitle: toPlainText(result.title)
     };
   },

@@ -19,7 +19,7 @@ const
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   utils = require('../../services/universal/utils'),
   { urlToElasticSearch } = utils,
-  { assignStationInfo } = require('../../services/universal/create-content.js'),
+  { assignStationInfo } = require('../../services/universal/create-content'),
   /**
    * Converts a url to be the format that was indexed
    * @param {String} url

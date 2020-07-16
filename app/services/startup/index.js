@@ -103,6 +103,10 @@ function setupApp(app) {
     extended: true
   }));
 
+  // Endpoints placed above middleware that isn't necessary to reduce request time
+  addEndpoints.contentAndPageInfo(app);
+  addEndpoints.contentWithSyndicatedUrl(app);
+
   // Set the static path here so all middleware gets skipped
   // TODO: ON-1788: Reorder Middleware and shortcut for paths that do not need the logic
   app.use(express.static('public'));
@@ -129,10 +133,9 @@ function setupApp(app) {
 
   addInterceptor.cacheControl(app);
 
+  addEndpoints.fetchStationFeed(app);
   addEndpoints.msnFeed(app);
   addEndpoints.s3StationFeedImgUrl(app);
-  addEndpoints.contentWithSyndicatedUrl(app);
-  addEndpoints.contentAndPageInfo(app);
 
   radium.inject(app);
 
