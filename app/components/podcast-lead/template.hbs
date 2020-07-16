@@ -7,7 +7,8 @@
 {{/inline}}
 
 {{#*inline "socialSubscribe"}}
-<div class="{{#unless isMedium}}podcast-lead__social{{/unless}} {{#if isMedium}}podcast-lead__social--md{{/if}}">
+<div
+  class="{{#unless isMedium}}podcast-lead__social{{/unless}} {{#if isMedium}}podcast-lead__social--md{{/if}} {{#unless isEpisode}}podcast-lead__social--podcast{{/unless}}">
   {{#ifAny shares.facebook shares.twitter shares.email}}
   <div class="podcast-lead__share">
     <div class="podcast-lead__share-label">Share</div>
@@ -49,13 +50,10 @@
 
 <section class="component podcast-lead component--podcast-lead podcast-lead--{{ sectionFront }}"
   data-uri="{{ default _ref _self }}" data-track-type="podcast-lead">
-  <div class="podcast-lead__head--sm">
+  <div class="podcast-lead__head--sm {{#if _computed.episode}}podcast-lead__head--episode{{/if}}">
     <div class="podcast-lead__heading--sm">
       {{ _computed.title }}
     </div>
-    {{#unless _computed.episode}}
-    <p class="podcast-lead__station-description--sm">{{ _computed.description }}</p>
-    {{/unless}}
     {{#if _computed.episode}}
     <div class="podcast-lead__subheading--sm">
       <span>{{_computed.published_date_formatted}}</span>
@@ -76,12 +74,9 @@
         class="image__play-btn {{_computed.episode.playingClass}}"></div>
     </div>
     <div class="podcast-lead__main main__content">
-      <div class="podcast-lead__heading">
+      <div class="podcast-lead__heading {{#if _computed.episode}}podcast-lead__heading--episode{{/if}}">
         {{ _computed.title }}
       </div>
-      {{#unless _computed.episode}}
-      <p class="podcast-lead__station-description">{{ _computed.description }}</p>
-      {{/unless}}
       {{#if _computed.episode}}
       <div class="podcast-lead__subheading">
         {{#if _computed.published_date_formatted}}
@@ -109,16 +104,16 @@
       <div class="podcast-lead__category">CATEGORY: {{_computed.category}}</div>
       {{/if}}
       {{#ifAny _computed.shares _computed.subscriptions}}
-      {{> socialSubscribe _computed}}
+      {{> socialSubscribe _computed isEpisode=_computed.episode}}
       {{/ifAny}}
     </div>
   </div>
-  {{#ifAny _computed.shares _computed.subscriptions}}
-  {{> socialSubscribe _computed isMedium=true}}
-  {{/ifAny}}
   {{#if _computed.episode}}
+  {{#ifAny _computed.shares _computed.subscriptions}}
+  {{> socialSubscribe _computed isMedium=true isEpisode=_computed.episode}}
+  {{/ifAny}}
+  {{/if}}
   <div class="podcast-lead__station-description--episode">
     {{_computed.description}}
   </div>
-  {{/if}}
 </section>

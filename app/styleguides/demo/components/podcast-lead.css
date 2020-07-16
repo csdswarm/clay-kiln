@@ -37,10 +37,21 @@
 .podcast-lead {
   margin-bottom: em(20);
 
-  &__head--sm {
-    display: none;
-    flex-direction: column;
-    margin-bottom: em(13);
+  &__head {
+    &--sm {
+      display: none;
+      flex-direction: column;
+      margin-bottom: em(20);
+    }
+    &--episode {
+      margin-bottom: 0;
+      .podcast-lead__heading--sm {
+        margin-bottom: em(15, 29);
+      }
+      .podcast-lead__subheading--sm {
+        margin-bottom: em(15, 18);
+      }
+    }
   }
 
   &__image {
@@ -138,11 +149,16 @@
     }
   }
   
-  &__heading, &__heading--sm {
+  &__heading, &__heading--sm, &__heading--episode {
     @mixin podcast-lead-heading-font;
     flex-basis: 100%;
+    margin-bottom: em(19,35);
+    &--episode {
+      margin-bottom: em(10,35);
+    }
     @mixin medium-small-screen {
       @mixin podcast-lead-heading-sm-font;
+      margin-bottom: 0;
     }
   }
   
@@ -179,6 +195,7 @@
     text-transform: capitalize;
     display: flex;
     align-items: center;
+    white-space: nowrap;
     svg {
       height: em(12,15);
       display: block;
@@ -196,7 +213,7 @@
     }
     &--episode {
       display: flex;
-      margin-top: em(15,18);
+      margin-top: em(20,18);
     }
     &--sm {
       margin-bottom: em(13,18);
@@ -262,6 +279,35 @@
         display: none;
       }
     }
+    &--podcast {
+      @mixin default-screen {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+      }
+  
+      @mixin large-screen {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+      }
+  
+      @mixin medium-screen {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+      }
+  
+      @mixin medium-small-screen {
+        display: flex;
+        position: relative;
+      }
+  
+      @mixin small-screen {
+        display: flex;
+        position: relative;
+      }
+    }
   }
   
   &__share-label {
@@ -285,17 +331,16 @@
     width: em(32);
   }
   &__share-link {
-    /* Set each item to constant 40x40px, including border */
-    width: em(40);
-    height: em(40);
+    /* Set each item to constant32x32px, including border */
+    width: em(32);
+    height: em(32);
     border: em(1) solid $alto;
     box-sizing: border-box;
-    /* Center image, set size to 20x20px, and don't repeat it */
-    background: center/em(20) em(20) no-repeat;
+    /* Center image, set size to 16x16px, and don't repeat it */
+    background: center/em(16) em(16) no-repeat;
 
     &--twitter {
       background-image: url("/media/components/share/twitter.svg");
-      background-size: auto em(17); /* Firefox scaling/bounding fix */
       &:hover,
       &:active {
         background-color: $cerulean;
@@ -306,7 +351,6 @@
 
     &--facebook {
       background-image: url("/media/components/share/facebook.svg");
-      background-size: auto em(22); /* Increase FB image height to 22px */
       &:hover,
       &:active {
         background-color: $chambray;
