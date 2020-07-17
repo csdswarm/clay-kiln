@@ -66,11 +66,35 @@ describe('universal', () => {
         expect(fromPathname.getTags({ page: 'stationFront', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['sectionfront', 'homepage']);
       });
 
-      it('should return an array that includes sectionfront and pageName parts when page is a Section Front or Station Section', () => {
+      it('should return an array that includes sectionfront and page name splitted when page is a Section Front or Station Section', () => {
         const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
 
         expect(fromPathname.getTags({ page: 'sectionFront', pageName : 'page_name_defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['sectionfront', 'page', 'name', 'defined']);
         expect(fromPathname.getTags({ page: 'stationSectionFront', pageName : 'page_name_defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['sectionfront', 'page', 'name', 'defined']);
+      });
+
+      it('should return an array that includes stationsdirectory and pagename', () => {
+        const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
+
+        expect(fromPathname.getTags({ page: 'stationsDirectory', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['stationsdirectory', 'page-name-defined']);
+      });
+
+      it('should return an array that includes livestreamplayer and unity', () => {
+        const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
+
+        expect(fromPathname.getTags({ page: 'stationDetail', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['livestreamplayer', 'unity']);
+      });
+
+      it('should return an array that includes tag sectionfront and pagename', () => {
+        const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
+
+        expect(fromPathname.getTags({ page: 'topicPage', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['tag', 'sectionfront', 'page-name-defined']);
+      });
+
+      it('should return an array that includes tag article and authors', () => {
+        const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
+
+        expect(fromPathname.getTags({ page: 'authorPage', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['article', 'authors']);
       });
     });
   });
