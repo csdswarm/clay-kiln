@@ -13,7 +13,7 @@ const
   loadMoreAmount = 20;
 
 let
-  $;
+  $, $$;
 
 
 
@@ -199,7 +199,7 @@ class PodcastListComponentController {
    * @param {HTMLElement} containerElement - The HTMLElement of the component.
    */
   constructor(containerElement) {
-    _bindAll(this, 'onMount', 'onDismount', 'onClick', 'onChange');
+    _bindAll(this, 'onMount', 'onDismount', 'onClick', 'onChange', 'onPlaybackStateChange');
     this.view = new PodcastListComponentView(containerElement);
     this.model = new PodcastListComponentModel(containerElement);
     doc.addEventListener(`${componentName}-mount`, this.onMount);
@@ -210,6 +210,7 @@ class PodcastListComponentController {
   onMount() {
     this.view.elements.container.addEventListener('click' , this.onClick);
     this.view.elements.sortDropdown.addEventListener('change' , this.onChange);
+    window.addEventListener('playbackStateChange', this.onPlaybackStateChange);
   }
   /**
    * click event handler
@@ -284,10 +285,26 @@ class PodcastListComponentController {
     this.view.elements.sortDropdown.removeEventListener('change' , this.onChange);
     doc.removeEventListener(`${componentName}-mount`, this.onMount);
   }
+
+  onPlaybackStateChange(e) {
+    const
+      { podcastEpisodeId, playerState } = e.detail,
+      targetBtn = $(`[data-play-podcast-episode-id="${podcastEpisodeId}"]`),
+      webPlayerButtons = $$(`.${componentClassName}__play-btn`);
+
+    webPlayerButtons.forEach(btn => {
+      btn.classList.remove('show__play');
+      btn.classList.remove('show__pause');
+      if (btn === targetBtn) {
+        btn.classList.add(`show__${playerState === 'pause' ? 'play' : 'pause'}`);
+      }
+    });
+  }
 }
 
 
 module.exports = (el) => {
   $ = el.querySelector.bind(el); // quick alias isolated to the container el
+  $$ = el.querySelectorAll.bind(el); // quick alias isolated to the container el
   return new PodcastListComponentController(el);
 };
