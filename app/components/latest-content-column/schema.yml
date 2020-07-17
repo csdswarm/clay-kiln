@@ -147,6 +147,12 @@ excludeTags:
       allowCreate: true
     help: Exclude content from all tags
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+  _subscribe: hasCustomColumns
+
 rssFeed:
   _label: RSS Feed URL
   _has:
@@ -298,6 +304,7 @@ _groups:
       - filterPrimarySectionFronts
       - filterSecondarySectionFronts
       - items
+      - excludeSubscriptions
   items:
     fields:
       - items
