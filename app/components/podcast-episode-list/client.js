@@ -13,7 +13,7 @@ const
   loadMoreAmount = 20;
 
 let
-  $, $$;
+  $one, $all;
 
 
 
@@ -102,9 +102,9 @@ class PodcastListComponentView {
   constructor(containerElement) {
     this.elements = {
       container: containerElement,
-      sortDropdown: $('#episodesOrder'),
-      episodesContainer: $(`.${componentClassName}__episodes`),
-      loadMoreBtn: $(`.${componentClassName}__load-more-btn`)
+      sortDropdown: $one('#episodesOrder'),
+      episodesContainer: $one(`.${componentClassName}__episodes`),
+      loadMoreBtn: $one(`.${componentClassName}__load-more-btn`)
     };
     this.itemTemplate = this.getHtmlTemplateFromClone();
   }
@@ -303,8 +303,8 @@ class PodcastListComponentController {
   onPlaybackStateChange(e) {
     const
       { podcastEpisodeId, playerState } = e.detail,
-      targetBtn = $(`[data-play-podcast-episode-id="${podcastEpisodeId}"]`),
-      webPlayerButtons = $$(`.${componentClassName}__play-btn`);
+      targetBtn = $one(`[data-play-podcast-episode-id="${podcastEpisodeId}"]`),
+      webPlayerButtons = $all(`.${componentClassName}__play-btn`);
 
     webPlayerButtons.forEach(btn => {
       btn.classList.remove('show__play');
@@ -318,7 +318,7 @@ class PodcastListComponentController {
 
 
 module.exports = (el) => {
-  $ = el.querySelector.bind(el); // quick alias isolated to the container el
-  $$ = el.querySelectorAll.bind(el); // quick alias isolated to the container el
+  $one = el.querySelector.bind(el); // quick alias isolated to the container el
+  $all = el.querySelectorAll.bind(el); // quick alias isolated to the container el
   return new PodcastListComponentController(el);
 };

@@ -6,7 +6,7 @@ const
   componentName = 'podcast-lead';
 
 let
-  $;
+  $one;
 
 /**
  * controller class for the client side component
@@ -33,8 +33,8 @@ class PodcastLeadComponentController {
   onPlaybackStateChange(e) {
     const
       { podcastEpisodeId, playerState } = e.detail,
-      targetBtn = $(`[data-play-episode="${podcastEpisodeId}"]`),
-      webPlayerButton = $(`.${'image'}__play-btn`);
+      targetBtn = $one(`[data-play-episode="${podcastEpisodeId}"]`),
+      webPlayerButton = $one(`.${'image'}__play-btn`);
 
     if (webPlayerButton === targetBtn) {
       webPlayerButton.classList.remove('show__play');
@@ -45,6 +45,6 @@ class PodcastLeadComponentController {
 }
 
 module.exports = (el) => {
-  $ = el.querySelector.bind(el); // quick alias isolated to the container el
+  $one = el.querySelector.bind(el); // quick alias isolated to the container el
   return new PodcastLeadComponentController(el);
 };
