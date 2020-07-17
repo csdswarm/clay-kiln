@@ -3,7 +3,7 @@
   <div class="ap-news-manager">
     <ui-tabs class="ap-news-manager__tabs" fullwidth @tab-change="changeTab">
        <ui-tab id="auto" title="Auto Ingest" v-if="hasAccessAutoIngestPermission">
-        Auto Goes Here!.
+        <ApNewsAutoIngest/>
       </ui-tab>
       <ui-tab selected id="manual" title="Manual Import">
         <ap-news-manual :entitlements="entitlements"></ap-news-manual>
@@ -17,7 +17,7 @@ const axios = require('axios');
 const { unityAppDomainName: unityApp } = require('../../../universal/urps');
 const { UiTabs, UiTab } = window.kiln.utils.components;
 const ApNewsManualImport = require('./ap-news-manual-import.vue');
-
+const ApNewsAutoIngest = require('./ap-news-auto-ingest.vue');
 
 export default {
   name: "AP News",
@@ -47,6 +47,7 @@ export default {
     UiTabs,
     UiTab,
     'ap-news-manual': ApNewsManualImport,
+    ApNewsAutoIngest,
   },
 };
 </script>

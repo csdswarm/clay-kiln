@@ -2,6 +2,7 @@
 
 module.exports = {
   alerts: require('./alerts'),
+  apSubscriptions: require('./ap-subscriptions'),
   createPage: require('./create-page'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
