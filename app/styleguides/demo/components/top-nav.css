@@ -489,7 +489,7 @@ $drawerSelector: nav-drawer;
 
   .radium {
     &__text {
-     @mixin radium-font1;
+      @mixin radium-font1;
     }
 
     &__link--signed-out {
@@ -551,6 +551,12 @@ $drawerSelector: nav-drawer;
 
 .kiln-wrapper.view-mode {
   top: $default-nav-height !important;
+  button.view-new-button {
+    visibility: hidden;
+  }
+  button.view-menu-button {
+    visibility: hidden;
+  }
 }
 
 .kiln-edit-mode {

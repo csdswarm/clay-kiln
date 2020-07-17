@@ -30,6 +30,9 @@ const _get = require('lodash/get'),
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    EVENTSLISTING: 'events-listing-page',
     STATIONFRONT: 'station-front'
   },
 
@@ -67,6 +70,9 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'contest',
+    'event',
+    'events-listing-page',
     'gallery',
     'homepage',
     'section-front',
@@ -106,12 +112,14 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: '',
+
     // in an ideal world we could store our hardcoded station in URPS, but due
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
     urpsDomainName: 'National'
   },
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
@@ -122,6 +130,7 @@ module.exports = {
   HOUR,
   MINUTE,
   PAGE_TYPES,
+  PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,

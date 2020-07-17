@@ -1,0 +1,11 @@
+<div class="component component--events-list events-list" data-uri="{{ default _ref _self }}" data-load-more-amount="{{ loadMoreAmount }}">
+  {{#if @root.locals.edit}}
+    <div data-editable="curatedEvents"></div>
+  {{/if}}
+  <div class="events-list__cards" data-editable="settings">
+    {{#each _computed.events as |event|}}
+      {{> content-card event _self=true }}
+    {{/each}}
+  </div>
+  <button class="events-list__load-more-btn" id="events-list-load-more-button">Load More</button>
+</div>

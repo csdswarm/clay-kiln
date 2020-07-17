@@ -24,8 +24,7 @@ describe('universal', () => {
             syndicatedArticleSlug: `/${syndicatedItemStationSlug}/main/secondary/some-article`
           }]
         } = options,
-        { _internals: __, syndicationUrlPremap } = syndicationUtils,
-        locals = { station: { site_slug: localStationSlug } },
+        { _internals: __, generateSyndicationSlug, syndicationUrlPremap } = syndicationUtils,
         testItem = {
           stationSlug: itemStationSlug,
           canonicalUrl: `https://domain.com/${itemStationSlug}/my-primary-front/some-article`,
@@ -35,29 +34,51 @@ describe('universal', () => {
       // sinon.spy(__) not working with sinon.restore() for some reason, so use sinon(__, propName) which does.
       Object.keys(__).forEach(prop => sinon.spy(__, prop));
 
-      return { __, syndicationUrlPremap, locals, testItem };
+      return { __, generateSyndicationSlug, syndicationUrlPremap, localStationSlug, testItem };
     }
+
+    describe('generateSyndicationSlug', () => {
+      const setup_generateSyndicationSlug = (options = {}) => setup_syndicationUtils(options);
+
+      it('generates a syndication URL', () => {
+        const { generateSyndicationSlug } = setup_generateSyndicationSlug(),
+          args = ['some-slug', { stationSlug: 'abc-radio', sectionFront: 'music', secondarySectionFront: 'two' }];
+
+        expect(generateSyndicationSlug(...args)).to.eql('/abc-radio/music/two/some-slug');
+      });
+
+      it('prevents double slashes when some args are missing or empty', () => {
+        const { generateSyndicationSlug } = setup_generateSyndicationSlug(),
+          slug = 'some-slug', stationSlug = 'radio-bob', sectionFront = 'music';
+
+        expect(generateSyndicationSlug(slug, { stationSlug, sectionFront })).to.eql('/radio-bob/music/some-slug');
+        expect(generateSyndicationSlug(slug, { stationSlug })).to.eql('/radio-bob/some-slug');
+        expect(generateSyndicationSlug(slug, { stationSlug: '', sectionFront })).to.eql('/music/some-slug');
+
+      });
+
+    });
 
     describe('syndicationUrlPremap', () => {
       const setup_syndicationUrlPremap = (options = {}) => setup_syndicationUtils(options);
 
       it('generates a mapping function that checks against the main station', () => {
-        const { __, syndicationUrlPremap, locals } = setup_syndicationUrlPremap(),
-          result = syndicationUrlPremap(locals);
+        const { __, syndicationUrlPremap, localStationSlug } = setup_syndicationUrlPremap(),
+          result = syndicationUrlPremap(localStationSlug);
 
         expect(typeof result).to.equal('function');
-        expect(__.inStation).to.have.been.calledWith(locals.station);
-        expect(__.findSyndicatedStation).to.have.been.calledWith(locals.station);
+        expect(__.inStation).to.have.been.calledWith(localStationSlug);
+        expect(__.findSyndicatedStation).to.have.been.calledWith(localStationSlug);
       });
 
       describe('syndicationUrlPremap_mapper', ()=> {
         function setup_syndicationUrlPremap_mapper(options = {}) {
           const assets = setup_syndicationUrlPremap(options),
-            mapper = assets.syndicationUrlPremap(assets.locals);
-          
+            mapper = assets.syndicationUrlPremap(assets.localStationSlug);
+
           return { ...assets, mapper };
         }
-        
+
         it('makes no changes if the article is in the same station', () => {
           const { mapper, testItem } = setup_syndicationUrlPremap_mapper({
               localStationSlug: 'station-a',
