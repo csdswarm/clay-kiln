@@ -167,6 +167,38 @@ function getEventsListingUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for a section front based on its primary title
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
+        return urlPatterns.sectionFront(urlOptions);
+      }
+    });
+}
+
+/**
+ * Return the url for a host page
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getHostPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.HOST) {
+        return urlPatterns.host(urlOptions);
+      }
+    });
+}
+
 module.exports = {
   getYearMonthSlugUrl,
   getArticleSlugUrl,
@@ -176,5 +208,6 @@ module.exports = {
   getEventSlugUrl,
   getEventsListingUrl,
   getContestSlugUrl,
-  getStationFrontSlugUrl
+  getStationFrontSlugUrl,
+  getHostPageSlugUrl
 };

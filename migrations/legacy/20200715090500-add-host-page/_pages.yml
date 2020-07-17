@@ -1,15 +1,13 @@
-# _pages:
-#   # Author Profile Page
-#   author-profile:
-#     head:
-#       - /_components/dynamic-meta-title/instances/author-profile
-#       - /_components/dynamic-meta-description/instances/author-profile
-#       - /_components/dynamic-meta-url/instances/general
-#       - /_components/meta-image/instances/og-logo
-#     layoutHeader:
-#       - /_components/google-ad-manager/instances/billboardTop
-#     pageHeader:
-#       - /_components/author-page-header/instances/new
-#     main:
-#       - /_components/author-page/instances/new
-#     layout: /_layouts/one-column-layout/instances/general
+_pages:
+  # Host Profile Page
+  host-profile:
+    head:
+      - /_components/dynamic-meta-title/instances/host-profile
+      - /_components/dynamic-meta-description/instances/host-profile
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/host-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general

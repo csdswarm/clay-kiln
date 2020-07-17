@@ -33,6 +33,7 @@ const _get = require('lodash/get'),
     EVENT: 'event',
     EVENTSLISTING: 'events-listing-page',
     GALLERY: 'gallery',
+    HOST: 'host-page',
     SECTIONFRONT: 'section-front',
     STATIC_PAGES: 'static-page',
     STATIONFRONT: 'station-front'

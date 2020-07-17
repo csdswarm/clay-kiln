@@ -1,24 +1,24 @@
-# _components:
-#   author-page-header:
-#     instances:
-#       new:
-#         author: ''
-#         profileImage: ''
-#         scheduleTime: ''
-#         bio: ''
-#         facebook: ''
-#         twitter: ''
-#         youtube: ''
-#         instagram: ''
-#         email: ''
-#   dynamic-meta-title:
-#     instances:
-#       author-profile:
-#         routeParam: 'author'
-#         suffix: ' | RADIO.COM'
+_components:
+  host-page:
+    instances:
+      new:
+        host: ''
+        profileImage: ''
+        scheduleTime: ''
+        bio: ''
+        facebook: ''
+        twitter: ''
+        youtube: ''
+        instagram: ''
+        email: ''
+  dynamic-meta-title:
+    instances:
+      host-profile:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
 
-#   dynamic-meta-description:
-#     instances:
-#       author-profile:
-#         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
-#         routeParam: 'author'
+  dynamic-meta-description:
+    instances:
+      host-profile:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'

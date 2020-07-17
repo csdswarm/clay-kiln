@@ -95,6 +95,15 @@ const exists = require('lodash/identity'),
       opts.stationSlug
     ].filter(exists)
       .join('/');
+  },
+  host = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.contentType,
+      opts.hostSlug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -103,6 +112,7 @@ module.exports = {
   contestSlugPattern,
   date,
   gallery,
+  host,
   sectionFront,
   event,
   eventsListing,

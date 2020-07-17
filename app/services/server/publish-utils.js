@@ -210,6 +210,10 @@ function getUrlOptions(component, locals, pageType) {
     urlOptions.contentType = 'authors';
     urlOptions.author = component.author;
     urlOptions.authorSlug = slugifyService(component.author);
+  } else if (urlOptions.pageType === PAGE_TYPES.HOST) {
+    urlOptions.contentType = 'hosts';
+    urlOptions.host = component.host;
+    urlOptions.hostSlug = slugifyService(component.host);
   }
 
   return urlOptions;

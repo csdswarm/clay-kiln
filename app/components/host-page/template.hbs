@@ -1,0 +1,53 @@
+{{#*inline "hostLinks" }}
+  <div class="host-page__links-host-name">
+    Follow {{ host }}:
+  </div>
+  <aside class="host-page__links">
+    {{#each _computed.socialLinks}}
+      <a target="_blank" href="{{ this.url }}" class="host-page__link host-page__link--{{ this.type }}" title="{{ this.title }}"
+      aria-label="{{ this.title }}"></a>
+    {{/each}}
+  </aside>
+{{/inline}}
+
+<section data-uri="{{ default _ref _self }}"
+  class="component component--host-page host-page"
+  data-editable="settings">
+  {{#if _computed.dynamic }}
+    <div class="host-page__dynamic-container">
+      <div class="host-page__line"></div>
+      <h1 class="host-page__dynamic-name">{{ host }}</h1>
+    </div>
+  {{else}}
+    <div class="host-page__left-content">
+      <div class="host-page__host-info-container">
+        <div class="host-page__img-container">
+          {{#if profileImage }}
+            <img src="{{ profileImage }}"
+              alt="host" class="host-page__host-img">
+          {{/if}}
+        </div>
+        <div class="host-page__text-container">
+          <div class="host-page__name">{{ host }}</div>
+          <div class="host-page__schedule">{{ scheduleTime }}</div>
+          {{#if _computed.socialLinks.length }}
+            <div class="host-page__social-container">
+              {{> hostLinks }}
+            </div>
+          {{/if}}
+        </div>
+      </div>
+      <div class="host-page__bio-text-container">
+        {{#if _computed.socialLinks.length }}
+          <div class="host-page__social-container--md-sm-screen">
+            {{> hostLinks }}
+          </div>
+        {{/if}}
+        <div class="host-page__bio-text paragraph">
+          {{{ bio }}}
+        </div>
+      </div>
+    </div>
+    <div class="host-page__right-content"></div>
+  {{/if}}
+</section>
