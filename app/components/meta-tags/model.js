@@ -7,7 +7,7 @@ const _get = require('lodash/get'),
   getPageId = require('../../services/universal/analytics/get-page-id'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
-  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars'),
+  { NMC, OG_TYPE, EDITORIAL_TAGS } = require('../../services/universal/analytics/shared-tracking-vars'),
   { getBranchMetaTags } = require('../../services/server/branch-io');
 
 /**
@@ -64,7 +64,8 @@ module.exports.render = async (ref, data, locals) => {
     // author is handled separately because we need to check data.authors before
     //   figuring out nmc's author value
     nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author'),
-    ROBOTS = 'robots';
+    ROBOTS = 'robots',
+    editorialTagItems = _get(data, 'contentTagItems', []).map(tag => tag.slug).join(' ,');
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
@@ -133,6 +134,13 @@ module.exports.render = async (ref, data, locals) => {
     data.metaTags.push({ name: ROBOTS, content: 'noindex, nofollow' });
   } else {
     data.unusedTags.push({ type: 'name', name: ROBOTS });
+  }
+
+  // Add 'editorial tags' meta for Google Analytics
+  if (editorialTagItems) {
+    data.metaTags.push({ name: EDITORIAL_TAGS, content: editorialTagItems });
+  } else {
+    data.unusedTags.push({ type: 'name', name: EDITORIAL_TAGS });
   }
 
   // handle nmc tags
