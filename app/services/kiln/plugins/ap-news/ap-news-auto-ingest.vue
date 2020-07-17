@@ -199,7 +199,6 @@
       },
       getList (listName, dataKey) {
         this.isLoading = true
-        console.log('[getList]', listName, dataKey)
         axios.get(`/_lists/${listName}`)
           .then(r => {
             this[dataKey] = [...r.data]

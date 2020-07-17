@@ -28,13 +28,13 @@ const cache = require ('../cache'),
       __.log('error', 'filterConditions must be a string or have a value');
       return null;
     }
-    const searchURL = 'https://api.ap.org/media/v/content/search',
-      API_URL = `${searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100`;
-
+    const searchURL = 'https://api.ap.org/media/v/content/search?',
+      API_URL = `${searchURL}apikey=${apMediaKey}&q=${filterConditions}&page_size=100`;
+    
     try {
       const response = await __.rest.get(API_URL),
         items = response.data.items;
-    
+
       return items.map(({ item }) => item);
     } catch (e) {
       __.log('error', 'Bad request getting data from search ap-media', e);

@@ -4,6 +4,8 @@ const db = require('../../services/server/db'),
   log = require('../../services/universal/log').setup({ file: __filename }),
   { ensureRecordExists, getAll, save } = require('../../services/server/ap/ap-subscriptions'),
   { STATUS_CODE } = require('../../services/universal/constants'),
+  { searchAp } = require('../../services/server/ap/ap-media'),
+  { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   __ = {
     dbGet: db.get,
     dbDel: db.del,
@@ -17,6 +19,18 @@ const db = require('../../services/server/db'),
    * @param {object} router
    */
   apSubscriptions  = router => {
+    /**
+    * Search for ap media information
+    */
+    router.get('/rdc/ap-subscriptions/search', wrapInTryCatch(async (req, res) => {
+      const { q } = req.query;
+      
+      if (!q) {
+        res.status(400).send("query param 'q' is required");
+        return;
+      }
+      res.send(await searchAp(q));
+    }));
     /**
      * Get all ap-subscriptions
      */

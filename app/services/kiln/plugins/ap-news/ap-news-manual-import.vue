@@ -2,7 +2,7 @@
 <template>
   <div class="ap-media-manual-import">
     <ui-checkbox-group
-      ref="clearSelections"
+      ref="checkboxGroup"
       v-show="entitlements.length"
       :options="formattedOptions"
       v-model="selectedEntitlements"
@@ -44,12 +44,14 @@
           class="ap-media-manual-import__mapping--selectors"
         ></ui-select>
         <ui-select
+          ref="primarySectionFrontSelect"
           placeholder="Select primary section front"
           :options="sectionFronts.primarySectionFronts"
           v-model="primarySectionFront"
           class="ap-media-manual-import__mapping--selectors"
         ></ui-select>
         <ui-select
+          ref="secondarySectionFrontSelect"
           placeholder="Select secondary section front"
           :options="sectionFronts.secondarySectionFronts"
           v-model="secondarySectionFront"
@@ -75,8 +77,7 @@ const {
 import axios from 'axios';
 import moment from 'moment';
 
-// TODO: use a BE service.
-const API_URL = "https://api.ap.org/media/v/content/search";
+const API_URL = "/rdc/ap-subscriptions/search";
 
 export default {
   name: 'ap-media-manual-import-import',
@@ -136,7 +137,9 @@ export default {
     clearSelections() {
       this.filter = "";
       this.article = "";
-      this.$refs.clearSelections.reset();
+      this.$refs.checkboxGroup.reset();
+      this.$refs.primarySectionFrontSelect.reset();
+      this.$refs.secondarySectionFrontSelect.reset();
       this.items = [];
       this.station = ''
       this.primarySectionFront = ''
@@ -175,13 +178,17 @@ export default {
       }
     },
     async fetchStationFronts(station){
-      const stationSlug = station.value
-      if (!stationSlug) {
-        return;
-      }
+      const stationSlug = station.value ? `${station.value}-` : ''
+      
+      // Reset selectors and state.
+      this.sectionFronts.primarySectionFronts = [];
+      this.sectionFronts.secondarySectionFronts = [];
+      this.$refs.primarySectionFrontSelect ? this.$refs.primarySectionFrontSelect.reset() : null;
+      this.$refs.secondarySectionFrontSelect ? this.$refs.secondarySectionFrontSelect.reset() : null;
+      
       try {
-        const primarySectionFronts = await this.getList(`${stationSlug}-primary-section-fronts`);
-        const secondarySectionFronts = await this.getList(`${stationSlug}-secondary-section-fronts`);
+        const primarySectionFronts = await this.getList(`${stationSlug}primary-section-fronts`);
+        const secondarySectionFronts = await this.getList(`${stationSlug}secondary-section-fronts`);
 
         this.sectionFronts.primarySectionFronts = primarySectionFronts.map(this.mapToOptions);
         this.sectionFronts.secondarySectionFronts = secondarySectionFronts.map(this.mapToOptions)
@@ -205,13 +212,10 @@ export default {
 
       const response = await axios.get(API_URL, {
         params: {
-          apiKey: 'thisShouldBeAnAPIKeyHandledBySOPSInTheBackendService',
           q: filterConditions,
-          page_size: 100
         },
       });
-      const items = response.data.data.items;
-      this.items = items.map(({ item }) => item);
+      this.items = response.data;
       } catch (err) {
         console.log('Something went wrong while fetching content', err);
       } finally {
