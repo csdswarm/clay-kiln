@@ -245,12 +245,22 @@ class PodcastListComponentController {
       e.stopPropagation();
       const
         episodeId = playBtnEl.dataset.playPodcastEpisodeId,
-        podcastId = playBtnEl.dataset.playPodcastShowId;
+        podcastId = playBtnEl.dataset.playPodcastShowId,
+        action = playBtnEl.classList.contains('show__pause') ? 'pause' : 'play';
+
+      let options = {
+        playbackStatus: action
+      };
+
+      if (action === 'play') {
+        options = {  ...options, stationId: null, podcastId, episodeId
+        };
+      }
 
       clientCommunicationBridge
         .sendMessage(
           'SpaPlayerInterfacePlaybackStatus',
-          { stationId: null, playbackStatus: 'play', podcastId, episodeId }
+          options
         );
     }
   }
