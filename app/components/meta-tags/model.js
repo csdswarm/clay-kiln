@@ -65,7 +65,7 @@ module.exports.render = async (ref, data, locals) => {
     //   figuring out nmc's author value
     nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author'),
     ROBOTS = 'robots',
-    editorialTagItems = _get(data, 'contentTagItems', []).map(tag => tag.slug).join(' ,');
+    editorialTagItems = _get(data, 'contentTagItems', []).map(tag => tag.text).join(' ,');
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
