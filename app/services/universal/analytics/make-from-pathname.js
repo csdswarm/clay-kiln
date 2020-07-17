@@ -19,12 +19,11 @@ const _get = require('lodash/get'),
     pageTypeTagStationsDirectory
   } = require('./shared-tracking-vars'),
   pageTypeHomepage = 'homepage',
-  pageTypeSectionFrontTag = 'sectionfront',
   pageTypeTagAuthor = 'authors',
   pageTypeTagTag = 'tag',
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
-  ContentPages = new Set(['article', 'vgallery', 'events', 'contests']),
+  contentPages = new Set(['article', 'vgallery', 'events', 'contests']),
   homepageOrStationFront = new Set(['homepage', 'stationFront']),
   rdcOrStationSectionFront = new Set(['sectionFront', 'stationSectionFront']),
   /**
@@ -153,8 +152,8 @@ module.exports = ({ pathname, url } = {}) => {
       if (homepageOrStationFront.has(page)) {
         pageId = pageTypeHomepage;
       } else if (rdcOrStationSectionFront.has(page)) {
-        pageId = pageTypeSectionFrontTag + '_' + pageName;
-      } else if (ContentPages.has(page)) {
+        pageId = pageTypeTagSection + '_' + pageName;
+      } else if (contentPages.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
@@ -190,7 +189,7 @@ module.exports = ({ pathname, url } = {}) => {
           return [pageTypeTagSection, pageTypeHomepage];
         case 'sectionFront':
         case 'stationSectionFront':
-          return ['sectionfront', ...pageName.split('_')];
+          return [pageTypeTagSection, ...pageName.split('_')];
         case 'stationsDirectory':
           return [pageTypeTagStationsDirectory, pageName];
         case 'stationDetail':
