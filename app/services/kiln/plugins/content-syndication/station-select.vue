@@ -21,6 +21,7 @@
           <ui-select
                   :placeholder="'Primary Section Front'"
                   :hasSearch="true"
+                  :invalid="!isPrimarySectionFrontValid(slug, sectionFronts.selectedPrimary)"
                   :options="sectionFronts.primaryOptions"
                   :value="sectionFronts.selectedPrimary"
                   @input="updateSectionFront(slug, 'selectedPrimary', ...arguments)"/>
@@ -39,6 +40,7 @@
   import _ from 'lodash';
   const { retrieveList } = require('../../../../services/client/lists');
   const { setImmutable, updateImmutable } = require('../../../../services/universal/utils');
+  const { DEFAULT_STATION } = require('../../../../services/universal/constants');
 
   const UiSelect = window.kiln.utils.components.UiSelect;
 
@@ -71,25 +73,32 @@
        * Called to transform our saved data into usable data for this component.
        */
       transformFromSaveData() {
-        return (this.data || [])
-          .map(syndication => {
-            const station = Object.values(window.kiln.locals.stationsIHaveAccessTo).find(station => station.callsign === syndication.callsign);
+        const syndicatedStations = (this.data || [])
+          .filter(syndication => syndication.source === 'manual syndication');
 
-            if (station) {
-              const option = {
-                label: `${station.name} | ${station.callsign}`,
-                value: station.slug
-              };
+        return syndicatedStations.map(syndication => {
+          const station = Object.values(window.kiln.locals.stationsIHaveAccessTo)
+            .find(station => station.callsign === syndication.callsign);
 
-              // load section front info
-              this.renderSectionFronts(station.slug, option.label, syndication.sectionFront, syndication.secondarySectionFront);
+          if (station) {
+            const option = {
+              label: `${station.name} | ${station.callsign}`,
+              value: station.slug
+            };
 
-              return option;
-            } else {
-              // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
-              return syndication;
-            }
-          });
+            // load section front info
+            this.renderSectionFronts(station.slug, option.label, syndication.sectionFront, syndication.secondarySectionFront);
+
+            return option;
+          } else {
+            // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
+            // show station callsign as the label to prevent seeing an [Object object] value on station syndication selector
+            return {
+              label: syndication.callsign,
+              value: syndication
+            };
+          }
+        });
       },
       /**
        * Called to transform our component's data in order to be properly saved.
@@ -101,12 +110,13 @@
 
             if (station) {
               const sectionFront = this.stationSectionFronts[value];
-
               return {
                 stationSlug: value,
+                stationName: station.name,
                 callsign: station.callsign,
                 sectionFront: _.get(sectionFront, 'selectedPrimary.value'),
-                secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value')
+                secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value'),
+                source: 'manual syndication'
               };
             } else {
               // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
@@ -115,7 +125,16 @@
           });
       },
       /**
-       *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
+       * Tests if a primary section front input is valid.
+       * @param {string} slug
+       * @param {object} value
+       */
+      isPrimarySectionFrontValid(slug, value) {
+        // if national, primary section front is required
+        return slug !== DEFAULT_STATION.site_slug || value;
+      },
+      /**
+       * Called when a station is selected from the dropdown. Sets it as currently selected.
        * @param {Array<Object>} input
        */
       updateSelectedStation(input) {
@@ -164,9 +183,15 @@
         }));
         const findSectionFrontOption = (value, options) => options.find(o => o.value === value);
 
+        let listPrefix = '';
+
+        if (slug !== DEFAULT_STATION.site_slug) {
+          listPrefix = `${slug}-`;
+        }
+
         const [primarySectionFronts, secondarySectionFronts] = await Promise.all([
-          retrieveList(`${slug}-primary-section-fronts`),
-          retrieveList(`${slug}-secondary-section-fronts`),
+          retrieveList(`${listPrefix}primary-section-fronts`, true),
+          retrieveList(`${listPrefix}secondary-section-fronts`, true),
         ]);
 
         if (this.isStationSelected(slug)) {

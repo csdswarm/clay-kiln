@@ -4,13 +4,16 @@
 
 .has-fullpage-ad .component--topic-page-header {
   background: $white;
+  h1 {
+    padding-top: em(20, 35);
+  }
 }
 
 .component--topic-page-header {
   h1 {
     @mixin topic-page-header-font2;
     z-index: 2;
-    margin:0 auto em(30, 35) auto;
+    margin:0 auto;
     text-transform: capitalize;
     display: table;
     white-space: nowrap;
@@ -35,7 +38,7 @@
   }
 
   &:after {
-     border-top: em(1, 35) solid $parisM;
+     border-top: em(1, 35) solid theme(primaryColor, $parisM);
      content: '';
      display: table-cell;
      position: relative;

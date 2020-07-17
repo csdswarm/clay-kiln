@@ -5,7 +5,7 @@
         {{#if nowPlaying }}
           <li>
             <h3>now playing</h3>
-            <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
+            <div data-play-station="{{ _computed.station.id }}" class="{{ playingClass }}">
               <img src="{{ nowPlaying.imageUrl }}width=100&height=100&crop=1:1,offset-y0" alt="{{ nowPlaying.title }}">
               <div>
                 <h3>{{ nowPlaying.title }}</h3>
@@ -17,7 +17,7 @@
         {{#if onAir }}
           <li>
             <h3>on-air</h3>
-            <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
+            <div data-play-station="{{ _computed.station.id }}" class="{{ playingClass }}">
               <img src="{{ onAir.image }}width=100&height=100&crop=1:1,offset-y0" alt="{{ onAir.name }}">
               <div>
                 <h3>{{ onAir.name }}</h3>
@@ -32,10 +32,10 @@
   <section class="drawer__audio">
     <ul>
       <li>
-        <h3>audio from {{ station.name }}</h3>
+        <h3>audio from {{ _computed.station.name }}</h3>
         <ul>
           <li>
-            <span data-play-station="{{ station.id }}" class="{{ playingClass }}">Live</span>
+            <span data-play-station="{{ _computed.station.id }}" class="{{ playingClass }}">Live</span>
           </li>
           <li>
             <a href="/audio">
@@ -44,21 +44,19 @@
           </li>
         </ul>
       </li>
-      {{#if station.phonetic_name }}
+      {{#if _computed.station.phonetic_name }}
         <li class="drawer__smart-speaker">
           <span>Ask your smart speaker to play</span>
-          <h3>{{ station.phonetic_name }}</h3>
+          <h3>{{ _computed.station.phonetic_name }}</h3>
         </li>
       {{/if }}
-      <div class="drawer__social">
-        {{#each socialButtons as |button|}}
+      <li class="drawer__social">
+        {{#each _computed.socialButtons as |button|}}
           <a href="{{button.url}}" title="{{ button.url }}">
-            <object type="image/svg+xml" data="/media/components/station-listen-nav/{{ button.type }}.svg">
-              <img src="/media/components/station-listen-nav/{{ button.type }}.svg">
-            </object>
+            {{{ read (concat 'components/station-listen-nav/media/' button.type '.svg') }}}
           </a>
         {{/each}}
-      </div>
+      </li>
     </ul>
   </section>
   <section class="drawer__featured">

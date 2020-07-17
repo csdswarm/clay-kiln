@@ -1,6 +1,9 @@
 'use strict';
 
 const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  __ = {
+    retrieveList
+  },
   _isPlainObject = require('lodash/isPlainObject');
 
 /**
@@ -136,7 +139,7 @@ async function retrieveSectionFrontLists(props, locals) {
 
   await Promise.all(Object.keys(lists).map(listProp => {
     if (props.includes(listProp)) {
-      return retrieveList(lists[listProp], locals)
+      return __.retrieveList(lists[listProp], { locals })
         .then(list => lists[listProp] = list);
     }
   }));
@@ -145,6 +148,7 @@ async function retrieveSectionFrontLists(props, locals) {
 }
 
 module.exports = {
+  _internals: __,
   /**
    * Automatically creates links based on data in the provided list of
    * properties on the data context
@@ -157,12 +161,50 @@ module.exports = {
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop] || prop.text && prop.slug,
+    const existingProp = (prop, dataObj) => dataObj[prop] || prop.text && prop.slug,
       lists = await retrieveSectionFrontLists(props, locals);
+    let breadcrumbItems = props
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists)),
+      breadcrumbProps = props;
 
-    data.breadcrumbs = props
-      .filter(onlyExistingItems)
-      .map(useDisplayName(data, lists))
+    const { station = {} } = locals;
+
+    if (station.site_slug && station.name) {
+      breadcrumbProps = [
+        { slug: station.site_slug, text: station.name },
+        ...props
+      ];
+      breadcrumbItems = breadcrumbProps
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists));
+
+      // When content is imported/created directly in a station and then syndicated to another without setting the section fronts
+      // the primary and secondary sections front should be removing from the breadcrumbs to avoid using the original ones.
+      if (data.stationSlug !== station.site_slug) {
+        breadcrumbItems.splice(1);
+      }
+    }
+
+    if (station.site_slug && data.stationSyndication) {
+      const syndication = data.stationSyndication.find(
+        item => item.callsign === station.callsign
+      );
+
+      // SectionFront must be taken into account since is been used to complete the breadcrumbs
+      // when a content is imported only the callsign is been set in the process.
+      if (syndication && syndication.sectionFront) {
+        breadcrumbProps = [
+          { slug: syndication.stationSlug, text: syndication.stationName },
+          ...props
+        ];
+        breadcrumbItems = breadcrumbProps
+          .filter(prop => existingProp(prop, syndication))
+          .map(useDisplayName(syndication, lists));
+      }
+    }
+
+    data.breadcrumbs = breadcrumbItems
       .map(toLinkSegments())
       .map(toFullLinks(locals));
 

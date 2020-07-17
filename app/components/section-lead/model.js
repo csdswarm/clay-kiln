@@ -1,6 +1,6 @@
 'use strict';
 
-const { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const { recirculationData, sectionOrTagCondition } = require('../../services/universal/recirc/recirculation'),
   { toPlainText } = require('../../services/universal/sanitize'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
@@ -45,8 +45,12 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: (uri, data) => ({
-    maxItems: getMaxItems(data)
+  mapDataToFilters: (uri, data, locals) => ({
+    maxItems: getMaxItems(data),
+    filters: {
+      includeSyndicated: false,
+      sectionFronts: sectionOrTagCondition(data.populateFrom, locals.sectionFront)
+    }
   }),
 
   /**
@@ -56,7 +60,8 @@ module.exports = recirculationData({
    * @returns {object}
    */
   mapResultsToTemplate: async (locals, result, item = {}) => {
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals }),
+      label = getSectionFrontName(result.syndicatedLabel || result.sectionFront, primarySectionFronts);
 
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
@@ -69,7 +74,7 @@ module.exports = recirculationData({
       urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
-      label: result.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
+      label: result.overrideLabel || label,
       plaintextTitle: toPlainText(result.title)
     };
   },

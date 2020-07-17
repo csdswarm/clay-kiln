@@ -17,11 +17,11 @@ pipelines:
         - step:
             name: Lint Clay App
             script:
-              - cd app && npm run eslint
+              - npm run --silent lint:app:js
         - step:
             name: Lint SPA
             script:
-              - cd spa && npm run lint -- --no-fix
+              - npm run --silent lint:spa:js
         - step:
             name: Tests
             script:

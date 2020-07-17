@@ -1,15 +1,21 @@
 'use strict';
 
 const { join } = require('path'),
-  { lstatSync, readdirSync } = require('fs'),
-  { isComponent } = require('clayutils'),
+  { lstatSync, readdirSync, existsSync } = require('fs'),
+  { isComponent, isPage } = require('clayutils'),
   _get = require('lodash/get'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   getSlugFrom = require('./get-slug-from'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
-  getDirectories = source =>
-    readdirSync(source).map(name => join(source, name)).filter(isDirectory),
+  getDirectories = source => {
+    if (existsSync(source)) {
+      return readdirSync(source).map(name => join(source, name)).filter(isDirectory);
+    } else {
+      console.log('Warning, directory not found');
+      return [];
+    }
+  },
   publicDirs = getDirectories('./public/').map(dir => dir.replace('public', '')),
   rdcSlug = DEFAULT_STATION.site_slug,
   /**
@@ -84,10 +90,11 @@ const { join } = require('path'),
    *
    * @param {object} locals
    * @param {object} req
+   * @param {object} res
    * @param {object} allStations
    * @return {object}
    */
-  assignStationsToLocals = async (locals, req, allStations) => {
+  assignStationsToLocals = async (locals, req, res, allStations) => {
     if (!validPath(req)) {
       Object.assign(locals, {
         station: {},
@@ -107,21 +114,27 @@ const { join } = require('path'),
           getSlugFrom.pageUri,
           getSlugFrom.contentComponent,
           getSlugFrom.publishedUri,
-          getSlugFrom.rdcRoute
+          getSlugFrom.rdcRoute,
+          getSlugFrom.cookie
         ]
       ),
       // this ternary accounts for the unlikely scenario 'null' is a
       //   station slug
       station = stationSlug.forCommonUse
         ? _get(allStations, `bySlug[${stationSlug.forCommonUse}]`, DEFAULT_STATION)
-        : DEFAULT_STATION;
+        : DEFAULT_STATION,
+      { forPermissions: permissionSlug } = stationSlug;
 
     let stationForPermissions = null;
 
-    if (stationSlug.forPermissions) {
-      stationForPermissions = allStations.bySlug[stationSlug.forPermissions];
-    } else if (stationSlug.forPermissions === rdcSlug) {
+    if (isPage(url) && typeof permissionSlug === 'string') {
+      res.cookie('station', permissionSlug, { sameSite: 'strict' });
+    }
+
+    if (permissionSlug === rdcSlug) {
       stationForPermissions = DEFAULT_STATION;
+    } else if (permissionSlug) {
+      stationForPermissions = allStations.bySlug[permissionSlug];
     }
 
     Object.assign(locals, {

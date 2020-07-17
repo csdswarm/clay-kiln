@@ -1,9 +1,12 @@
 'use strict';
-const queryService = require('../../services/server/query'),
-  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+const
   contentTypeService = require('../../services/universal/content-type'),
+  queryService = require('../../services/server/query'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+  { getStationSlug, makeSubscriptionsQuery } = require('../../services/universal/recirc/recirculation'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-content',
+
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -11,6 +14,7 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType'
   ],
+  elasticIndex = 'published-content',
   maxItems = 3;
 
 /**
@@ -82,7 +86,8 @@ module.exports.render = async function (ref, data, locals) {
       continue;
     }
 
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals),
+      station_slug = locals.station.site_slug || '';
 
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });
@@ -93,6 +98,13 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
+    
+
+    if (station_slug === DEFAULT_STATION.site_slug) {
+      queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    } else {
+      queryService.addMust(query, { match: { stationSlug: station_slug } });
+    }
 
     // Filter out the following tags
     if (data.filterTags) {
@@ -104,12 +116,21 @@ module.exports.render = async function (ref, data, locals) {
     // Filter out the following secondary article type
     if (data.filterSecondarySectionFronts) {
       Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-        const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+        const [secondarySectionFrontFilter, filterOut] = secondarySectionFront;
 
         if (filterOut) {
           queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
         }
       });
+    }
+
+    if (data.excludeSubscriptions) {
+      const stationSlug = getStationSlug(locals);
+
+      queryService.addMustNot(query, makeSubscriptionsQuery({
+        stationSlug,
+        subscriptions: ['national subscription']
+      }));
     }
 
     // exclude the current page in results

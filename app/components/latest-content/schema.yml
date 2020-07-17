@@ -29,6 +29,14 @@ contentType:
     options:
       - article
       - gallery
+  _reveal:
+    field: hasCustomColumns
+    operator: falsy
+
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
 
 sportsItems:
   _label: Sports Articles
@@ -166,6 +174,9 @@ filterTags:
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags
+  _reveal:
+    field: hasCustomColumns
+    operator: falsy
 
 filterSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -174,15 +185,21 @@ filterSecondarySectionFronts:
     search: true
     multiple: true
     list: secondary-section-fronts
+  _reveal:
+    field: hasCustomColumns
+    operator: falsy
+
 
 _groups:
   settings:
     fields:
       - componentTitle
       - componentTitleVisible
+      - hasCustomColumns
       - contentType
       - filterTags
       - filterSecondarySectionFronts
+      - excludeSubscriptions
   musicItems:
     fields:
       - musicItems
@@ -192,3 +209,49 @@ _groups:
   sportsItems:
     fields:
       - sportsItems
+
+hasCustomColumns:
+  _label: Allow Custom Columns
+  _has:
+    input: checkbox
+    help: This option enables advanced customization options for each column 
+
+firstColumn:
+  _placeholder:
+    height: 168px
+  _componentList:
+    renderOrder: 1
+    include:
+      - latest-content-column
+    validate:
+      max: 1
+      required:
+        field: hasCustomColumns
+        operator: truthy
+
+secondColumn:
+  _placeholder:
+    height: 168px
+  _componentList:
+    renderOrder: 2
+    include:
+      - latest-content-column
+    validate:
+      max: 1
+      required:
+        field: hasCustomColumns
+        operator: truthy
+
+thirdColumn:
+  _placeholder:
+    height: 168px
+  _componentList:
+    renderOrder: 3
+    include:
+      - latest-content-column
+    validate:
+      max: 1
+      required:
+        field: hasCustomColumns
+        operator: truthy
+      

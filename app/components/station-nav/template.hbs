@@ -1,7 +1,7 @@
 {{#if _computed.renderForStation }}
-  <div class="component component--station-nav" 
+  <div class="component component--station-nav"
     data-uri="{{ default _ref _self }}"
-    data-station-id="{{ station.id }}">
+    data-station-id="{{ _computed.station.id }}">
     <nav class="station-nav__fixed-container">
       <div class="station-nav__menu menu">
         <div class="menu__mobile-toggle">
@@ -21,7 +21,9 @@
             </div>
           {{/if}}
         {{ else }}
-          <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
+          <a href="/{{ @root.locals.station.site_slug }}" class="menu__image-anchor">
+            <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
+          </a>
         {{/if}}
         {{#if primaryLinks.length }}
           <ul class="menu__navigation navigation">
@@ -44,7 +46,7 @@
           </ul>
         {{/if }}
         <div class="menu__listen listen">
-          <button class="listen__button button {{ playingClass }}" data-play-station="{{ station.id }}">
+          <button class="listen__button button {{ _computed.playingClass }}" data-play-station="{{ _computed.station.id }}">
             <div class="button__icon">
               {{!-- stays static --}}
               {{{ read 'components/station-nav/media/play_button.svg' }}}
@@ -83,9 +85,11 @@
               <li class="drawer__item item item--{{ kebabCase text }}">
                 <div class="item__label label">
                   {{#ifAll drawer secondaryLinks.length }}
-                  <button>
-                    <span>{{ text }}</span>
-                  </button>
+                  <a href="{{ url }}">
+                    <button>
+                      <span>{{ text }}</span>
+                    </button>
+                  </a>
                   <div class="label__menu-toggle">
                     <button class="menu-toggle--closed">
                       {{{ read 'components/station-nav/media/chevron_down.svg' }}}

@@ -56,11 +56,12 @@ describe('cognito tests', () => {
         }));
 
         expect(result).to.eql({
-          refreshToken,
+          accessToken: authResults.AuthenticationResult.AccessToken,
           deviceKey,
-          token: authResults.AuthenticationResult.AccessToken,
           expires: fakeDate.now + 3600000,
-          lastUpdated: fakeDate.now
+          idToken: authResults.AuthenticationResult.id_token,
+          lastUpdated: fakeDate.now,
+          refreshToken
         });
       } finally {
         if (clock) {
@@ -106,47 +107,6 @@ describe('cognito tests', () => {
       assert(logSpy.calledWith(
         'error',
         'There was an error attempting to refresh the cognito access token',
-        error));
-    });
-  });
-
-  describe('getUser', () => {
-    it('retrieves additional user information from cognito', async () => {
-      const
-        userData = {
-          UserAttributes: [
-            { Name: 'email', Value: 'joe.schmoe@idaho.gov' },
-            { Name: 'address', Value: '1234 Potato Ln' },
-            { Name: 'city', Value: 'Boise' },
-            { Name: 'state', Value: 'ID' }]
-        },
-        spy = sinon.stub().callsArgWith(1, undefined, userData),
-        accessToken = 'HI, THIS IS JOE. GO GET SOME INFO ABOUT ME.',
-        cognito = requireCognitoStandard({ getUser: spy }),
-        result = await cognito.getUser(accessToken);
-
-      assert(spy.calledWithMatch({ AccessToken: accessToken }));
-      expect(result).to.eql({
-        email: 'joe.schmoe@idaho.gov',
-        address: '1234 Potato Ln',
-        city: 'Boise',
-        state: 'ID'
-      });
-    });
-
-    it('handles errors', async () => {
-      const
-        error = 'Umm... Who is That?',
-        getUser = sinon.stub().callsArgWith(1, error),
-        logSpy = sinon.spy(),
-        cognito = requireCognitoStandard({ getUser, log: logSpy }),
-        accessToken = 'Some person trying to dupe the system';
-
-      await cognito.getUser(accessToken);
-
-      assert(logSpy.calledWith(
-        'error',
-        'There was an error trying to get information about the cognito user',
         error));
     });
   });

@@ -1,7 +1,10 @@
 <nav class="component component--breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
   <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
     <a itemprop="item" href="{{ @root.locals.site.protocol }}://{{ @root.locals.site.host }}"
-       class="breadcrumbs__link breadcrumbs__link--home">{{{ read "components/breadcrumbs/media/radiocom-purple-monogram.svg" }}}<span class="link--home__label" itemprop="name">Home</span></a>
+      class="breadcrumbs__link breadcrumbs__link--home">
+      {{{ read "components/breadcrumbs/media/radiocom-purple-monogram.svg" }}}
+      <span class="link--home__label" itemprop="name">Home</span>
+    </a>
     <meta itemprop="position" content="1" />
   </span>
   {{#each breadcrumbs}}

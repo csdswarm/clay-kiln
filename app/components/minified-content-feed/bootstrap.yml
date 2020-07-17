@@ -7,6 +7,7 @@ _components:
       gallery: true
     excludeSecondarySectionFronts: []
     excludeSectionFronts: []
+    excludeSubscriptions: false
     excludeTags: []
     items: []
     locationOfContentFeed: 'homepage'
@@ -18,3 +19,23 @@ _components:
     sectionFrontManual: ''
     tag: ''
     tagManual: ''
+    instances:
+      new:
+        componentTitle: 'TOP STORIES'
+        componentTitleVisible: true
+        contentType:
+          article: true
+          gallery: true
+        excludeSecondarySectionFronts: []
+        excludeSectionFronts: []
+        excludeTags: []
+        items: []
+        locationOfContentFeed: 'homepage'
+        pageSize: 6
+        populateFrom: 'all-content'
+        secondarySectionFront: ''
+        secondarySectionFrontManual: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        tag: ''
+        tagManual: ''
