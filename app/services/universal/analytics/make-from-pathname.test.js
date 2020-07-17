@@ -49,10 +49,9 @@ describe('universal', () => {
 
         expect(fromPathname.getTags({ page: 'article', pageName : 'this-page-name' }, ['tag1', 'tag2', 'tag3'])).to.eql(['this-page-name', ...['tag1', 'tag2', 'tag3']]);
         expect(fromPathname.getTags({ page: 'vgallery', pageName : 'this-page-name' }, ['tag1', 'tag2', 'tag3'])).to.eql(['this-page-name', ...['tag1', 'tag2', 'tag3']]);
-        expect(fromPathname.getTags({ page: 'contests', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['page-name-defined']);
       });
 
-      it('should return an array with pageName for events and contests', () => {
+      it('should return an array that includes pagename for events and contests', () => {
         const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
 
         expect(fromPathname.getTags({ page: 'contests', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['page-name-defined']);
