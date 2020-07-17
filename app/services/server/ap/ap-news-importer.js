@@ -7,7 +7,7 @@ const
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
-  { del: dbDel, get: dbGet, put: dbPut, raw: dbRaw } = require('../db'),
+  { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { inspect } = require('util'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
@@ -28,6 +28,7 @@ const
     assignDimensionsAndFileSize,
     dbDel,
     dbGet,
+    dbPost,
     dbPut,
     dbRaw,
     getAllStations,
@@ -68,9 +69,10 @@ async function findExistingArticle({ itemid } = {}) {
   try {
     const [existing] = await searchByQuery(query, null, { includeIdInResult: true }),
       { rows: [data] = [] } = existing && await dbRaw(`
-        SELECT data 
-        FROM pages, jsonb_array_elements_text(data->\'main\') article_id
-        WHERE article_id = ?`,
+          SELECT data
+          FROM pages,
+               jsonb_array_elements_text(data -> \'main\') article_id
+          WHERE article_id = ?`,
       existing._id) || {};
 
     return data;
@@ -107,15 +109,16 @@ async function createNewArticle(stationMappings, locals) {
 async function getArticleData({ head, main }) {
   const
     { dbGet } = __,
+    articleRef = main.find(text => text.includes('_components/article')),
     [
       article,
-      [ metaDescription, metaImage, metaTags, metaTitle ]
+      [metaDescription, metaImage, metaTags, metaTitle]
     ] = [
-      await dbGet(main.find(text => text.includes('_components/article'))),
+      { _ref: articleRef, ...await dbGet(articleRef) },
       await Promise.all(head
         .filter(text => ['description', 'image', 'tags', 'title'].some(name => text.includes('meta-' + name)))
         .sort()
-        .map(dbGet))
+        .map(_ref => ({ _ref, ...dbGet(_ref) })))
     ];
 
   return {
@@ -177,10 +180,10 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
   const
     { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
     { article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, inspect, log, saveApPicture } = __,
+    { assignDimensionsAndFileSize, dbDel, dbGet, dbPost, dbPut, getApArticleBody, inspect, log, saveApPicture } = __,
     { itemid } = altids;
-  
-  if ( !associations ) {
+
+  if (!associations) {
     log(
       'error',
       'missing image data',
@@ -188,7 +191,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     );
     return {};
   }
-  
+
   const
     apImageInfo = Object.values(associations).find(({ type }) => type === 'picture'),
     [feedImg, image, lead, sideShare, tags] = [
@@ -200,6 +203,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     ],
     tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
+      .filter(({ creator }) => creator === 'Machine')
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
     newArticleData = {
       article: {
@@ -209,11 +213,6 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
           etag: altids.etag,
           version,
           ednote
-        },
-        feedImg: {
-          ...feedImg,
-          url: image.url,
-          alt: image.headline
         },
         feedImgUrl: image.url,
         headline,
@@ -227,25 +226,15 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
         seoDescription: headline_extended,
         seoHeadline: headline,
         shortHeadline: headline,
-        sideShare: {
-          _ref: article.sideShare._ref,
-          ...sideShare,
-          pinImage: image.url,
-          shortTitle: headline,
-          title: headline
-        },
-        slug: slugifyService(headline),
-        tags: {
-          items: [
-            ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' }],
-            ...tags.items,
-            ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
-          ]
-        }
+        slug: slugifyService(headline)
       },
       metaDescription: {
         ...metaDescription,
         description: headline_extended
+      },
+      metaImage: {
+        ...metaImage,
+        imageUrl: image.url
       },
       metaTitle: {
         ...metaTitle,
@@ -253,14 +242,28 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
         ogTitle: headline,
         title: headline,
         twitterTitle: headline
-      },
-      metaImage: {
-        ...metaImage,
-        imageUrl: image.url
       }
     },
-  
-    newFeedImage = _get(newArticleData, 'article.feedImg', {});
+    newFeedImage = {
+      ...feedImg,
+      url: image.url,
+      alt: image.headline
+    },
+    newSideShare = {
+      _ref: article.sideShare._ref,
+      ...sideShare,
+      pinImage: image.url,
+      shortTitle: headline,
+      title: headline
+    },
+    newArticleTags = {
+      _ref: article.tags._ref,
+      items: [
+        ...tagSlugs.includes('ap-news') ? [] : [{ text: 'AP News', slug: 'ap-news' }],
+        ...tags.items,
+        ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
+      ]
+    };
 
   await assignDimensionsAndFileSize(image.url, newFeedImage);
 
@@ -293,33 +296,52 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     INNER_TEXT_TYPES = 'bq fn hl2 note p media'.split(/ /g),
     OUTER_TEXT_TYPES = 'dl pre table'.split(/ /g),
     LIST_TYPES = 'ol ul'.split(/ /g),
-    { block: apContent } = await getApArticleBody(renditions.nitf.href);
+    { block: apContent } = await getApArticleBody(renditions.nitf.href),
+    newArticleContent = await Promise.all(Array.from(_get(apContent, 'children', []))
+      .filter(el => TYPES[el.localName.toLowerCase()])
+      .map(async (el, index) => {
+        const
+          instanceId = `${itemid}-${index + 1}`,
+          name = el.localName.toLowerCase(),
+          componentName = TYPES[name] || 'html-embed',
+          data = { ...await getNewComponent(componentName, locals) };
+
+        data._ref = `${locals.site.host}/_components/${componentName}/instances/ap-${instanceId}`;
+
+        if (INNER_TEXT_TYPES.includes(name)) {
+          data.text = el.innerHTML;
+        } else if (OUTER_TEXT_TYPES.includes(name)) {
+          data.text = el.outerHTML;
+        } else if (LIST_TYPES.includes(name)) {
+          data.text = Array.from(el.querySelectorAll('li'))
+            .map((item, idx) => `${el.localName === 'ol' ? idx + 1 + '.' : '•'} ${item.innerHTML}`)
+            .join('<br>/n');
+        }
+
+        return data;
+      }));
 
   article.content.map(({ _ref }) => _ref).forEach(dbDel);
 
-  newArticleData.article.content = await Promise.all(Array.from(_get(apContent, 'children', []))
-    .filter(el => TYPES[el.localName.toLowerCase()])
-    .map(async (el, index) => {
-      const
-        instanceId = `${itemid}-${index + 1}`,
-        name = el.localName.toLowerCase(),
-        componentName = TYPES[name] || 'html-embed',
-        data = { ...await getNewComponent(componentName, locals) };
+  // save parts
+  newArticleContent.forEach(({ _ref, ...props }) => dbPost(_ref, { ...props }));
+  [
+    newArticleTags,
+    newArticleData.metaDescription,
+    newArticleData.metaImage,
+    newArticleData.metaTitle,
+    newFeedImage,
+    newSideShare
+  ]
+    .forEach(({ _ref, ...props }) => dbPut(_ref, { ...props }));
 
-      data._ref = `${locals.site.host}/_components/${componentName}/instances/ap-${instanceId}`;
-
-      if (INNER_TEXT_TYPES.includes(name)) {
-        data.text = el.innerHTML;
-      } else if (OUTER_TEXT_TYPES.includes(name)) {
-        data.text = el.outerHTML;
-      } else if (LIST_TYPES.includes(name)) {
-        data.text = Array.from(el.querySelectorAll('li'))
-          .map((item, idx) => `${el.localName === 'ol' ? idx + 1 + '.' : '•'} ${item.innerHTML}`)
-          .join('<br>/n');
-      }
-
-      return data;
-    }));
+  // compose whole
+  Object.assign(newArticleData.article, {
+    content: newArticleContent,
+    feedImg: newFeedImage,
+    sideShare: newSideShare,
+    tags: newArticleTags
+  });
 
   return newArticleData;
 }
