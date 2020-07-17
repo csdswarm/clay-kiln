@@ -84,8 +84,18 @@
     @mixin podcast-episode-list-font1;
     width: em(32);
     height: em(32);
-    .svg-play-symbol {
+    .wplyr-cntrl-symbol {
       fill: theme(primaryColor, $purple);
+    }
+    &.show__play {
+      .pause {
+        display: none;
+      }
+    }
+    &.show__pause {
+      .play {
+        display: none;
+      }
     }
   }
 
