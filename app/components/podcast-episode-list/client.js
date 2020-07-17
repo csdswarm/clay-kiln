@@ -285,7 +285,11 @@ class PodcastListComponentController {
     this.view.elements.sortDropdown.removeEventListener('change' , this.onChange);
     doc.removeEventListener(`${componentName}-mount`, this.onMount);
   }
-
+  /**
+   * handler for when the web player playback state changes
+   *
+   * @param {Event} e
+   */
   onPlaybackStateChange(e) {
     const
       { podcastEpisodeId, playerState } = e.detail,
