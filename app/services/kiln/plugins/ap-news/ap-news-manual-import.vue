@@ -77,7 +77,8 @@ const {
 import axios from 'axios';
 import moment from 'moment';
 
-const API_URL = "/rdc/ap-subscriptions/search";
+const AP_MEDIA_API_SEARCH = "/rdc/ap-subscriptions/search";
+const AP_MEDIA_API_IMPORT = "/rdc/ap-subscriptions/manual-import";
 
 export default {
   name: 'ap-media-manual-import-import',
@@ -133,6 +134,7 @@ export default {
   methods: {
     selectArticle(article) {
       this.article = article;
+      
     },
     clearSelections() {
       this.filter = "";
@@ -185,7 +187,7 @@ export default {
       this.sectionFronts.secondarySectionFronts = [];
       this.$refs.primarySectionFrontSelect ? this.$refs.primarySectionFrontSelect.reset() : null;
       this.$refs.secondarySectionFrontSelect ? this.$refs.secondarySectionFrontSelect.reset() : null;
-      
+
       try {
         const primarySectionFronts = await this.getList(`${stationSlug}primary-section-fronts`);
         const secondarySectionFronts = await this.getList(`${stationSlug}secondary-section-fronts`);
@@ -210,7 +212,7 @@ export default {
         `${this.filter ? `headline:${this.filter}` : ""}`,
       ].filter((item) => item).join(' AND ');
 
-      const response = await axios.get(API_URL, {
+      const response = await axios.get(AP_MEDIA_API_SEARCH, {
         params: {
           q: filterConditions,
         },
@@ -223,12 +225,40 @@ export default {
       }
       
     },
-    // Fake API Call.
-    importContent(){
-      this.isSubmitting = true;
-      setTimeout(() => {
-        this.isSubmitting = false;
-      }, 3000);
+
+    async importContent(){
+      const payload = {
+        apMeta: this.article,
+        stationMappings : {
+          [this.station.value] : {
+            sectionFront: this.primarySectionFront.value,
+            secondarySectionFront: this.secondarySectionFront.value
+          }
+        },
+        locals: window.kiln.locals
+      }
+      try {
+        this.isSubmitting = true;
+        const response = await axios.post(
+          AP_MEDIA_API_IMPORT, {
+            apMeta: this.article,
+            stationMappings : {
+              [this.station.value] : {
+                sectionFront: this.primarySectionFront.value,
+                secondarySectionFront: this.secondarySectionFront.value
+              }
+            },
+            locals: window.kiln.locals
+          }
+        );
+        console.log('DEBUG:::::::::::::::::::::: apMeta', this.article);
+        console.log('DEBUG:::::::::::::::::::::: response', response);
+      } catch (err) {
+        console.log(`Something happened while saving`, err);
+        return [];
+      } finally {
+         this.isSubmitting = false;
+      }
     }
   },
 };

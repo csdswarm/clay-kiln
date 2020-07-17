@@ -5,14 +5,18 @@ const db = require('../../services/server/db'),
   { ensureRecordExists, getAll, save } = require('../../services/server/ap/ap-subscriptions'),
   { STATUS_CODE } = require('../../services/universal/constants'),
   { searchAp } = require('../../services/server/ap/ap-media'),
+  { importArticle } = require('../../services/server/ap/ap-news-importer'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   __ = {
     dbGet: db.get,
     dbDel: db.del,
     ensureRecordExists,
     getAll,
+    importArticle,
     log,
-    save
+    save,
+    searchAp,
+    wrapInTryCatch
   },
   /**
    * Add routes for ap-subscriptions
@@ -22,18 +26,36 @@ const db = require('../../services/server/db'),
     /**
     * Search for ap media information
     */
-    router.get('/rdc/ap-subscriptions/search', wrapInTryCatch(async (req, res) => {
+    router.get('/rdc/ap-subscriptions/search', __.wrapInTryCatch(async (req, res) => {
       const { q } = req.query;
-      
+
       if (!q) {
         res.status(400).send("query param 'q' is required");
         return;
       }
-      res.send(await searchAp(q));
+      res.send(await __.searchAp(q));
     }));
+
+    /**
+    * Create a new article from ap media information
+    */
+    router.post('/rdc/ap-subscriptions/manual-import', __.wrapInTryCatch(async (req, res) => {
+      const { apMeta, stationMappings } = req.body,
+        requestLocals = res.locals;
+
+      if (!apMeta || !stationMappings) {
+        res.status(400).send('apMedia and stationMappings are required');
+        return;
+      }
+      console.log('DEBUG:::::::::::::::::::::: apMeta', apMeta);
+      console.log('DEBUG:::::::::::::::::::::: stationMappings', stationMappings);
+      res.send(await __.importArticle(apMeta, stationMappings, requestLocals));
+    }));
+    
     /**
      * Get all ap-subscriptions
      */
+
     router.get('/rdc/ap-subscriptions', async (req, res) => {
       try {
         const data = await __.getAll();
