@@ -1,2 +1,5 @@
+_permission:
+  update: station-navigation
+
 featuredLinks:
   _subscribe: featuredLinks

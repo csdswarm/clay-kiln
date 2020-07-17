@@ -1,5 +1,6 @@
 _components:
   latest-videos:
+    excludeSubscriptions: false
     items: []
     filterTags: []
     filterSecondarySectionFronts: []

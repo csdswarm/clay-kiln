@@ -210,9 +210,10 @@ module.exports['8.0'] = async function (uri, data) {
 module.exports['9.0'] = function (uri, data) {
   const newData = Object.assign({}, data);
 
-  newData.secondarySectionFront = data.secondaryArticleType || '';
-
-  delete newData.secondaryArticleType;
+  if (data.secondaryArticleType) {
+    newData.secondarySectionFront = data.secondaryArticleType || '';
+    delete newData.secondaryArticleType;
+  }
 
   return newData;
 };
@@ -245,4 +246,10 @@ module.exports['13.0'] = (uri, data) => {
   return data;
 };
 
-module.exports['14.0'] = addTextTags;
+module.exports['14.0'] = (uri, data) => {
+  data.stationSyndication.map(syndication => syndication.source = syndication.source || 'manual syndication');
+
+  return data;
+};
+
+module.exports['15.0'] = addTextTags;

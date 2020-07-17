@@ -23,7 +23,12 @@ const _noop = require('lodash/noop'),
           });
       }
     },
-    './apply-national-subscriptions': _noop
+    './apply-national-subscriptions': _noop,
+    '../editorial-feed-syndication': {
+      addStationsByEditorialGroup: () => {
+        mockData.data.stationSyndication = [];
+      }
+    }
   }),
   mockData = {
     data: {
@@ -96,9 +101,6 @@ const _noop = require('lodash/noop'),
           name: 'New York, NY'
         },
         category: ''
-      },
-      lytics: {
-        uid: '1234'
       },
       user: {
         auth: 'admin',

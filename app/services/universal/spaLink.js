@@ -30,7 +30,9 @@ function addEventListeners(anchorTagsContainer) {
           event.preventDefault();
           anchor.removeEventListener('click', anchor.fn, false);
 
-          navigateTo(URL(link).pathname);
+          const hash = URL(link).hash || '';
+
+          navigateTo(`${URL(link).pathname}${hash}`);
         });
       }
     });
@@ -51,13 +53,13 @@ function navigateTo(path) {
 /**
  * returns boolean of whether it is a link within the SPA
  * return true if link is on current URL host or
- * starts with '/' and is not '/audio'
+ * starts with '/' and is not '/audio' and do not includes /media/podcast/
  *
  * @param {string} uri
  * @returns {boolean}
  */
 function isSpaLink(uri) {
-  return spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' );
+  return spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' && !uri.includes('/media/podcast/') && !uri.startsWith('/audio-channel') );
 }
 
 /**
