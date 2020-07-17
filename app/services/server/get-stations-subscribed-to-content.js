@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
-  getNationalSubscriptions = require('./get-national-subscriptions'),
+  getContentSubscriptions = require('./get-content-subscriptions'),
   stationUtils = require('./station-utils'),
   { includesAny } = require('../universal/utils'),
   { DEFAULT_STATION } = require('../universal/constants'),
@@ -10,7 +10,7 @@ const _ = require('lodash'),
   stationPropsForSyndication = ['callsign', 'name', 'site_slug'];
 
 /**
- * returns the stations which have national subscriptions matching the content
+ * returns the stations which have content subscriptions matching the content
  *
  * @param {object} data
  * @param {object} locals
@@ -19,15 +19,15 @@ const _ = require('lodash'),
 const getStationsSubscribedToContent = async (data, locals) => {
   // unable to declare 'let' and 'const' in parallel
   // eslint-disable-next-line prefer-const
-  let [nationalSubscriptions, allStations] = await Promise.all([
-    getNationalSubscriptions({ shouldOrder: false }),
+  let [contentSubscriptions, allStations] = await Promise.all([
+    getContentSubscriptions({ shouldOrder: false }),
     stationUtils.getAllStations({ locals })
   ]);
 
-  nationalSubscriptions = _.groupBy(nationalSubscriptions, 'station_slug');
+  contentSubscriptions = _.groupBy(contentSubscriptions, 'station_slug');
 
   const isSubscribed = makeIsSubscribed(data),
-    subscribedStations = _.chain(nationalSubscriptions)
+    subscribedStations = _.chain(contentSubscriptions)
       .pick(Object.keys(allStations.bySlug))
       .pickBy(isSubscribed)
       .keys()

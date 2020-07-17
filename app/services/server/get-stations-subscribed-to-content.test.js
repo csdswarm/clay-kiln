@@ -17,7 +17,7 @@ const _noop = require('lodash/noop'),
   makeFn = mock =>
     proxyquire('./get-stations-subscribed-to-content', {
       './amphora-storage-postgres': _noop,
-      './get-national-subscriptions': () => mock,
+      './get-content-subscriptions': () => mock,
       './station-utils': {
         getAllStations: () => ({
           bySlug: {

@@ -4,16 +4,16 @@ const _reject = require('lodash/reject'),
   getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
 
 /**
- * Add syndication entries for national subscriptions
+ * Add syndication entries for content subscriptions
  * @param {Object} data
  * @param {Object} locals
  */
-async function applyNationalSubscriptions(data, locals) {
+async function applyContentSubscriptions(data, locals) {
   if (['article', 'gallery'].includes(data.contentType)) {
     const stationsSubscribed = await getStationsSubscribed(data, locals),
       syndicatedStations = _reject(
         data.stationSyndication,
-        { source: 'national subscription' }
+        { source: 'content subscription' }
       );
 
     data.stationSyndication = syndicatedStations.concat(
@@ -41,9 +41,9 @@ async function getStationsSubscribed(data, locals) {
       stationSlug,
       ...sectionFront && { sectionFront },
       ...secondarySectionFront && { secondarySectionFront },
-      source: 'national subscription'
+      source: 'content subscription'
     };
   });
 }
 
-module.exports = applyNationalSubscriptions;
+module.exports = applyContentSubscriptions;
