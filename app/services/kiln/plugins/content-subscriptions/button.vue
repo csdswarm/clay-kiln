@@ -1,7 +1,7 @@
 <!-- Station Theme Manager Button -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer" style="text-align: left">
-        <span>National Subscriptions</span>
+        <span>Subscriptions</span>
     </nav-menu-button>
 </template>
 
@@ -11,7 +11,7 @@ const navMenuButton = window.kiln.utils.components.navMenuButton;
 export default {
     data() {
         return {
-            id: 'national-subscriptions'
+            id: 'content-subscriptions'
         }
     },
     methods: {

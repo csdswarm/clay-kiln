@@ -2,7 +2,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.national-subscriptions {
+.content-subscriptions {
   min-width: calc(100vw - 200px);
   padding: 1em;
   overflow-y: auto;
@@ -19,6 +19,7 @@
         padding: 0.5em 1em;
         &.filter, &.description {
           width: 35%;
+          text-align: left;
         }
         &.actions, &.slug {
           width: 5%;
@@ -57,5 +58,9 @@
       justify-content: center;
       align-items: center;
     }
+  }
+  .from-station-slug {
+    background: rgba(96, 125, 139, .125);
+    padding: 1em;
   }
 }

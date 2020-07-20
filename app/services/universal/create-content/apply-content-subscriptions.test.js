@@ -4,7 +4,7 @@ const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   proxyquire = require('proxyquire'),
-  applyNationalSubscriptions = proxyquire('./apply-national-subscriptions', {
+  applyContentSubscriptions = proxyquire('./apply-content-subscriptions', {
     '../../server/get-stations-subscribed-to-content': () => Promise.resolve(mockData.stationsSubscribedToContent)
   }),
   mockData = {
@@ -167,20 +167,20 @@ const expect = require('chai').expect,
   };
 
 describe(`${dirname}/${filename}`, () => {
-  describe('apply national subscriptions scenarios', () => {
+  describe('apply content subscriptions scenarios', () => {
     it('add subscribed stations to stationSyndication list', async () => {
       const { data, locals } = mockData;
 
-      await applyNationalSubscriptions(data, locals);
+      await applyContentSubscriptions(data, locals);
       expect(data.stationSyndication).to.have.lengthOf(5);
     });
 
-    it('previous syndications from national subscriptions should be removed', async () => {
+    it('previous syndications from content subscriptions should be removed', async () => {
       const data = {
         ...mockData.data,
         stationSyndication: [
           {
-            source: 'national subscription',
+            source: 'content subscription',
             callsign: 'WROQFM',
             stationName: 'Classic Rock 101.1',
             stationSlug: 'classicrock1011',
@@ -189,7 +189,7 @@ describe(`${dirname}/${filename}`, () => {
         ]
       };
 
-      await applyNationalSubscriptions(data, mockData.locals);
+      await applyContentSubscriptions(data, mockData.locals);
 
       expect(data.stationSyndication).to.have.lengthOf(5);
       expect(data.stationSyndication[0].stationName).to.eql('93XRT');
@@ -202,7 +202,7 @@ describe(`${dirname}/${filename}`, () => {
         secondarySectionFront: 'rock'
       };
 
-      await applyNationalSubscriptions(data, mockData.locals);
+      await applyContentSubscriptions(data, mockData.locals);
 
       expect(data.stationSyndication).to.have.lengthOf(5);
       expect(data.stationSyndication[0].sectionFront).to.eql('music');

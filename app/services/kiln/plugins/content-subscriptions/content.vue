@@ -1,7 +1,7 @@
 <template>
-  <div class="national-subscriptions">
+  <div class="content-subscriptions">
     <h1>
-      {{stationName}} NATIONAL SUBSCRIPTIONS:
+      {{stationName}} SUBSCRIPTIONS:
     <hr>
     <ui-button class="add-subscription-btn" color="primary" @click="onCreate" icon="add" :loading="isLoading" size="large">Add Subscription</ui-button>
     </h1>
@@ -26,8 +26,18 @@
     <template v-if="!subscriptions.length">
       <p>There are currently no subscriptions. Click the Add Subscription button to make one.</p>
     </template>
-    <ui-modal ref="subscriptionModal" title="New National Subscription">
+    <ui-modal ref="subscriptionModal" title="New Subscription">
         <form action="">
+          <ui-select
+            class="from-station-slug"
+            has-search
+            label="From Station"
+            placeholder="Radio.com (NATL-RC)"
+
+            :options="stations"
+
+            v-model="workingSubscription.from_station_slug"
+          ></ui-select>
           <ui-textbox
               error="The short description may not be more than 50 characters"
               help="Write a short description not more than 50 characters"
@@ -146,7 +156,7 @@
   const _set = require('lodash/set')
   const _upperFirst = require('lodash/upperFirst')
   const SimpleList = window.kiln.inputs['simple-list']
-  const SubscriptionRow = require('./national-subscriptions-row.vue')
+  const SubscriptionRow = require('./subscription-row.vue')
   const startCase = require('lodash/startCase')
   const axios = require('axios')
   const PAGE_TYPES = require('../../../universal/constants').PAGE_TYPES
@@ -159,8 +169,8 @@
       dataType: Number
     },
     {
-      key: 'station_slug',
-      display: 'slug',
+      key: 'from_station_slug',
+      display: 'from station',
       isHeader: true,
       isDataProp: true,
       dataType: String
@@ -170,6 +180,13 @@
       display: 'description',
       isHeader: true,
       isDataProp: true,
+      dataType: String
+    },
+    {
+      key: 'station_slug',
+      display: 'to station',
+      isHeader: false,
+      isDataProp: false,
       dataType: String
     },
     {
@@ -207,12 +224,13 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
   }
 })
 
-  class NationalSubscription {
+  class ContentSubscription {
     constructor (options = {
+      from_station_slug: { label: 'Radio.com (NATL-RC)', value: ''},
       station_slug: window.kiln.locals.station.site_slug,
       short_desc: '',
       filter: {
-        // as currently described in get-national-subscriptions.js
+        // as currently described in get-content-subscriptions.js
         populateFrom: 'all-content', // {string}
         contentType: [PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY], // {string[]}
         sectionFront: '', // {string}
@@ -224,6 +242,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     }) {
       this.id = '#'
+      this.from_station_slug = options.from_station_slug
       this.last_updated_utc = 'N/A'
       this.station_slug = options.station_slug
       this.short_desc = options.short_desc
@@ -238,8 +257,8 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       } = window.kiln.locals
 
       return {
-        subscriptions: [...window.kiln.locals.nationalSubscriptions],
-        workingSubscription: new NationalSubscription(),
+        subscriptions: [...window.kiln.locals.contentSubscriptions],
+        workingSubscription: new ContentSubscription(),
         workingTags: [],
         workingExcludeTags: [],
         workingSectionFront: '',
@@ -283,15 +302,16 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
+          fromStationSlug: this.workingSubscription.from_station_slug.value,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
         }
-        axios.post(`/rdc/national-subscription`, newSub)
+        axios.post(`/rdc/content-subscription`, newSub)
           .then(response => {
             this.subscriptions.push(response.data)
             this.showSnack('Subscription Added')
-            this.workingSubscription = new NationalSubscription()
+            this.workingSubscription = new ContentSubscription()
             this.closeModal('subscriptionModal')
           })
           .catch(this.handleError)
@@ -301,11 +321,12 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
+          fromStationSlug: this.workingSubscription.from_station_slug.value || '',
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
         }
-        axios.put(`/rdc/national-subscription/${this.workingSubscription.id}`, updatedSub)
+        axios.put(`/rdc/content-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
               if (sub.id === response.data.id) {
@@ -323,7 +344,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       deleteSubscription (id) {
         if (this.isLoading) return
         this.isLoading = true
-        axios.delete(`/rdc/national-subscription/${id}`)
+        axios.delete(`/rdc/content-subscription/${id}`)
           .then(response => {
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
             this.showSnack('Subscription Deleted')
@@ -333,7 +354,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       },
       onCreate () {
         this.modalMode = 'new'
-        this.workingSubscription = new NationalSubscription()
+        this.workingSubscription = new ContentSubscription()
         this.workingTags = []
         this.workingExcludeTags = []
         this.openModal('subscriptionModal')
@@ -455,6 +476,11 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
             allowCreate: false
           }
         }
+      },
+      stations () {
+        return Object.values(window.kiln.locals.stationsIHaveAccessTo).map(station => {
+          return { label: `${station.name} (${station.callsign})`, value: station.slug }
+        })
       }
     },
     components: {

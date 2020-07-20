@@ -2,7 +2,7 @@
 
 const
   _get = require('lodash/get'),
-  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
   circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
@@ -662,7 +662,8 @@ async function save(uri, data, locals) {
 
   // we need to get stations by editorial feeds before creating slugs for syndicated content
   await addStationsByEditorialGroup(data, locals);
-  await applyNationalSubscriptions(data, locals);
+  // we need apply content subscriptions before creating slugs for syndicated content
+  await applyContentSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
