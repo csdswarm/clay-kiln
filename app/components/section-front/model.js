@@ -1,7 +1,8 @@
 'use strict';
 const { unityComponent } = require('../../services/universal/amphora'),
   { assignStationInfo } = require('../../services/universal/create-content'),
-  _get = require('lodash/get');
+  _get = require('lodash/get'),
+  { COLORS } = require('../../services/universal/constants');
 
 /**
  * adds the primaryColor to _computed if a primary section front
@@ -17,16 +18,16 @@ function addPrimaryColorToPrimarySectionFronts(data, locals) {
 
   switch (_get(locals,'sectionFront', '').toLowerCase()) {
     case 'music':
-      primaryColor = '#FF4940';
+      primaryColor = COLORS.sunsetOrange;
       break;
     case 'news':
-      primaryColor = '#FEC517';
+      primaryColor = COLORS.lightningYellow;
       break;
     case 'sports':
-      primaryColor = '#0099FF';
+      primaryColor = COLORS.azureRadience;
       break;
     case 'audio':
-      primaryColor = '#00CCB7';
+      primaryColor = COLORS.robinsEggBlue;
       break;
     default:
       break;
