@@ -1,13 +1,14 @@
 'use strict';
 
-const expect = require('chai').expect,
+const _noop = require('lodash/noop'),
+  expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   uri = 'clay.radio.com/_components/article/instances/cjzbandlv000f3klg5krzbyyx',
   proxyquire = require('proxyquire'),
-  { save } = proxyquire('./create-content', {
-    '../../services/universal/url-exists': () => false,
-    './rest': {
+  { save } = proxyquire('./index', {
+    '../url-exists': () => false,
+    '../rest': {
       get: (uri) => {
         const isPublishedRequest = /@published/.test(uri);
 
@@ -20,6 +21,12 @@ const expect = require('chai').expect,
             slug: '',
             seoHeadline: ''
           });
+      }
+    },
+    './apply-national-subscriptions': _noop,
+    '../editorial-feed-syndication': {
+      addStationsByEditorialGroup: () => {
+        mockData.data.stationSyndication = [];
       }
     }
   }),

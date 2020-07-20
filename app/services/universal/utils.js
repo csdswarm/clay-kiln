@@ -473,6 +473,15 @@ function updateImmutable(object, path, updater) {
 }
 
 /**
+ * Maps a key: bool object into an array, returning truthy keys only
+ * @param {Object} object
+ * @returns {array}
+ */
+function boolObjectToArray(object) {
+  return Object.entries(object || {}).map(([key, bool]) => bool && key).filter(value => value);
+}
+
+/**
  * When on the server, pushes an time entry onto locals.amphoraRenderTimes
  *
  * @param {object} locals
@@ -500,10 +509,30 @@ function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
   }
 }
 
+/**
+ * like _includes except tests whether any elements are included
+ *
+ * @param {*} iterable1
+ * @param {*} iterable2
+ * @returns {bool}
+ */
+function includesAny(iterable1, iterable2) {
+  const setOfElements = new Set(iterable1);
+
+  for (const el of iterable2) {
+    if (setOfElements.has(el)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
   boolKeys,
+  boolObjectToArray,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
@@ -513,6 +542,7 @@ module.exports = {
   getFullOriginalUrl,
   getSiteBaseUrl,
   has,
+  includesAny,
   isContentComponent,
   isFieldEmpty,
   isInstance,

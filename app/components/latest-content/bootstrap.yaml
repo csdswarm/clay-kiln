@@ -3,6 +3,7 @@ _components:
     componentTitle: 'LATEST from RADIO.COM'
     componentTitleVisible: true
     contentType: { article: true, gallery: true }
+    excludeSubscriptions: false
     sectionFronts:
       - 'music'
       - 'sports'
@@ -11,3 +12,7 @@ _components:
     musicItems: []
     sportsItems: []
     newsItems: []
+    hasCustomColumns: false
+    firstColumn: []
+    secondColumn: []
+    thirdColumn: []

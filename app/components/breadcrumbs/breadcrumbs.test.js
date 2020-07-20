@@ -45,7 +45,7 @@ describe(dirname, function () {
         ]);
     });
 
-    it('should create breadcrumb based on the station slug', async () => {
+    it('should create breadcrumb based on locals station slug', async () => {
       const { autoLink, __ } = setup_autoLink(),
         data = {
           stationSlug: 'stationx',
@@ -74,6 +74,36 @@ describe(dirname, function () {
         { text: 'Station X', url: '//somehost.com/stationx', hidden: false },
         { text: 'Modern', url: '//somehost.com/stationx/modern', hidden: false },
         { text: 'Fashion', url: '//somehost.com/stationx/modern/fashion', hidden: false }
+      ]);
+    });
+
+    it('should create breadcrumb based on locals station slug, removing sectionFront and secondarySectionFront from breadcrumbs when data.stationSlug does not match locals.station.site_slug', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'modern',
+          secondarySectionFront: 'fashion'
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Modern', value: 'modern' },
+        { name: 'Fashion', value: 'fashion' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'localsstationx',
+        callsign: 'localsstationx',
+        name: 'Locals Station X'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Locals Station X', url: '//somehost.com/localsstationx', hidden: false }
       ]);
     });
 
