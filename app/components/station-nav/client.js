@@ -15,6 +15,7 @@ let desktopNavItems,
   lastTarget,
   isMobile = false;
 
+
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
@@ -238,7 +239,6 @@ const { getComponentInstance } = require('clayutils'),
     }
     drawerItem.classList.toggle(active);
   },
-
   /**
    * Add event listeners to nav elements to toggle drawers & carets.
    *
@@ -286,6 +286,7 @@ const { getComponentInstance } = require('clayutils'),
         }
       }
     });
+
   };
 
 // mount listener for vue (optional)
@@ -305,6 +306,7 @@ document.addEventListener('station-nav-mount', function () {
   listenNavComponent = document.querySelector('.component--station-listen-nav');
   stationId = stationNav.dataset.stationId;
   stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
+
 
   addEventListeners();
 });
