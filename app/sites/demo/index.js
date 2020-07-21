@@ -1,6 +1,7 @@
 'use strict';
 
-const publishing = require('../../services/publishing'),
+const middleware = require('./middleware'),
+  publishing = require('../../services/publishing'),
   mainComponentRefs = [
     '/_components/article/instances',
     '/_components/gallery/instances',
@@ -44,10 +45,10 @@ module.exports.routes = [
   { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
-  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show' },
-  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show' },
-  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode' },
-  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode' },
+  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
+  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },

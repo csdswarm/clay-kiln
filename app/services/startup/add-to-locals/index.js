@@ -7,6 +7,5 @@
  */
 
 module.exports = {
-  loadedIds: require('./loaded-ids'),
-  podcast: require('./podcast')
+  loadedIds: require('./loaded-ids')
 };
