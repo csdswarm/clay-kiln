@@ -62,15 +62,15 @@
 @define-mixin themed-tag-list $class, $color: $purple {
   .tags$(class) {
     .tags__link {
-      border: em(2, 14) solid $color;
-      color: $color;
+      border: em(2, 14) solid theme(primaryColor, $color);
+      color: theme(primaryColor, $color);
 
       &:after {
         display: none;
       }
 
       &:hover {
-        background: $color;
+        background: theme(primaryColor, $color);
         color: $white;
       }
     }

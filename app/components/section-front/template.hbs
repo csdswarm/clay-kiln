@@ -1,23 +1,36 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section-front{{ if @root.locals.edit ' editing' }}">
+<section role="main"
+  data-track-type="section"
+  data-uri="{{ default _ref _self }}"
+  class="component component--section-front{{ if @root.locals.edit ' editing' }}"
+  data-station-slug="{{ stationSlug }}">
+
   {{#if @root.locals.edit }}
     <div class="section-front__settings" data-editable="settings">
       <h1>Section Front Settings:</h1>
-      <span>Is this a primary section front? : {{if primary 'Yes' else='No'}}</span>
+      {{#unless stationFront}}
+        <span>Is this a primary section front? : {{if primary 'Yes' else='No'}}</span>
+      {{/unless}}
       {{#unless primary}}
         <span>Primary section front <span class="warn">*required</span> : {{ primarySectionFront }}</span>
       {{/unless}}
-      <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
+      {{#unless stationFront}}
+        <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
+      {{/unless}}
+      {{#if stationFront}}<span>Site Slug <span class="warn">*required</span> : {{ default stationSlug 'No Slug Set' }}</span>{{/if}}
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
-      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
   {{/if}}
-  {{> section-lead sectionLead }}
-  <div class="stations-carousel-container" data-editable="stationsCarousel">
-    {{> component-list stationsCarousel }}
+  <div class="section-front__main-content" data-editable="mainContent">
+    {{> component-list mainContent }}
   </div>
-  {{> google-ad-manager googleAdUnderStationsModule}}
+  {{#if googleAdUnderStationsModule }}
+    {{> google-ad-manager googleAdUnderStationsModule }}
+  {{/if}}
   {{#if includePodcastModule }}
     {{> podcast-list podcastList }}
   {{/if}}
+  <div class="divider-container" data-editable="dividerContainer">
+    {{> component-list dividerContainer}}
+  </div>
   {{> two-column-component twoColumnComponent }}
 </section>
