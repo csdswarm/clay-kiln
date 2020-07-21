@@ -9,7 +9,7 @@
 }
 
 .manage-syndicated-content {
-  min-width: 920px;
+  min-width: 980px;
   overflow-y: auto;
   padding: 10px;
 
@@ -38,7 +38,7 @@
 
   .page-list-headers {
     &__title {
-      flex: 1 1 400px;
+      flex: 1 1 450px;
     }
     &__station, &__status {
       flex: 0 1 150px;
@@ -52,7 +52,7 @@
   
   .page-list-item {
     &__title {
-      flex: 1 1 400px;
+      flex: 1 1 450px;
     }
     &__station {
       flex: 0 1 150px;
@@ -91,12 +91,6 @@
   }
 
   .syndication-modal {
-    .ui-modal-container {
-      height: 400px;
-    }
-    .ui-modal-body {
-      height: inherit;
-    }
     &__title {
       margin: 12px 0;
       font-size: 16px;
