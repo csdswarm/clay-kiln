@@ -313,7 +313,7 @@ class SpaPlayerInterface {
     if (episodeDetailData && episodeDetailData.episode && episodeDetailData.podcast) {
       return { podcastId: episodeDetailData.podcast.id, episodeId: episodeDetailData.episode.id }
     } else {
-      return null
+      return {}
     }
   }
 }
