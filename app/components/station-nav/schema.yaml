@@ -162,6 +162,19 @@ featuredLinks:
           validate:
             required: true
 
+hidePodcastsLink:
+  _publish: hidePodcastsLink
+  _label: Should hide the podcast link?
+  _has: checkbox
+
+podcastsUrl:
+  _publish: listenNavPodcastUrl
+  _label: Listen Nav - Podcasts Custom URL
+  _has:
+    input: text
+    type: url
+    help: /audio or /<stationSlug>/podcasts
+
 listenNav:
   _component:
     include:
@@ -172,4 +185,6 @@ _groups:
     fields:
       - stationLogo (Main Nav & Drawer)
       - primaryLinks (Main Nav & Drawer)
+      - hidePodcastsLink (Listen Nav Drawer)
+      - podcastsUrl (Listen Nav Drawer)
       - featuredLinks (Listen Nav Drawer)
