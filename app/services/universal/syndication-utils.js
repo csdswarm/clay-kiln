@@ -30,8 +30,8 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   return article => {
     const item = { ...article };
 
-    if (!isRdcContent && !isInStation(item)) {
-      if (noContent(item.stationSyndication)) {
+    if (!isInStation(item)) {
+      if (!isRdcContent && noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
         const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
