@@ -127,6 +127,8 @@ describe('server', () => {
             'createPage',
             'dbDel',
             'dbGet',
+            'dbPost',
+            'dbPut',
             'dbRaw',
             'getApArticleBody',
             'log',
@@ -162,7 +164,7 @@ describe('server', () => {
         ].forEach(item => stubs.dbGet.withArgs(item._ref).resolves(item));
 
         stubs.dbRaw
-          .withArgs(sinon.match('jsonb_array_elements_text(data->\'main\')'), EXISTING.ARTICLE.ID)
+          .withArgs(sinon.match('jsonb_array_elements_text(data'), EXISTING.ARTICLE.ID)
           .resolves({ rows: [EXISTING.PAGE_DATA] });
 
         stubs.getApArticleBody.resolves({ block: {} });
@@ -174,7 +176,14 @@ describe('server', () => {
         if (options.saveApPicture) {
           stubs.saveApPicture
             .withArgs(options.saveApPicture.args)
-            .resolves(options.saveApPicture.resolves);
+            .resolves({
+              pubstatus: 'usable',
+              itemid: 'abcdef123456780',
+              etag: 'someEtag',
+              headline: 'some picture headline',
+              url: 'https://api.ap.org/media/v/content/0123456789abcdef?qt=queryid&et=etag&ai=altid',
+              ...options.saveApPicture.resolves
+            });
         }
 
         stubs.searchByQuery.resolves([]);
@@ -303,8 +312,21 @@ describe('server', () => {
       describe('modified by AP', () => {
         async function setup_modifiedByAP(options = {}) {
           const
+            NITF_REF = 'https://api.ap.org/media/v/content/c116ac3656f240238ee7529720e4a4b8/download?type=text&format=NITF',
+            P_TEXT = 'basic paragraph text',
             setup = await setup_importArticle({
               ...options,
+              apBodyContent: options.apBodyContent || [
+                {
+                  args: [NITF_REF], resolves: {
+                    block: {
+                      children: [
+                        { localName: 'p', innerHTML: options.nitfPara || P_TEXT }
+                      ]
+                    }
+                  }
+                }
+              ],
               apMeta: {
                 altids: {
                   itemid: 'xyz123',
@@ -329,17 +351,12 @@ describe('server', () => {
                 },
                 renditions: {
                   nitf: {
-                    href: 'https://api.ap.org/media/v/content/c116ac3656f240238ee7529720e4a4b8/download?type=text&format=NITF'
+                    href: NITF_REF
                   }
                 },
                 ...options.apMeta
               }
-            }),
-            { __, stubs } = setup;
-
-          stubs.dbPut = sinon.stub();
-
-          __.dbPut = stubs.dbPut;
+            });
 
           return { ...setup };
         }
@@ -377,8 +394,8 @@ describe('server', () => {
           });
 
           expect(article.sideShare).to.deep.include({
-            title: expectedTitle,
-            shortTitle: expectedTitle
+            shortTitle: expectedTitle,
+            title: expectedTitle
           });
 
           expect(article.tags).to.deep.include({
@@ -426,9 +443,6 @@ describe('server', () => {
               saveApPicture: {
                 args: apUri,
                 resolves: {
-                  pubstatus: 'usable',
-                  itemid: 'abcdef123456780',
-                  etag: 'someEtag',
                   headline: imageTitle,
                   url: newImageUrl
                 }
@@ -545,6 +559,80 @@ describe('server', () => {
             { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-7`, text: PRE_TEXT },
             { _ref: `${HOST}/_components/html-embed/instances/ap-${ITEM_ID}-8`, text: TABLE_TEXT },
             { _ref: `${HOST}/_components/paragraph/instances/ap-${ITEM_ID}-9`, text: '• Some text<br>\n• More Text' }
+          );
+        });
+
+        it('saves all mapped data to the db', async () => {
+          const
+            AP_URL = 'https://api.ap.org/media/v/content/save-image?qt=id&et=tag&ai=altId',
+            IMG_URL = 'some-host/aiu-images/some-image.jpg',
+            IMG_TEXT = 'Some stuff happened',
+            TITLE = 'Sometimes stuff happens',
+            DESCRIPTION = 'When bad stuff happens, we all suffer, but when good things happen, we are happy.',
+            P_TEXT = 'Plain old paragraph',
+            { __ } = await setup_modifiedByAP({
+              apMeta: {
+                headline: TITLE,
+                headline_extended: DESCRIPTION,
+                associations: {
+                  1: {
+                    uri: AP_URL,
+                    type: 'picture',
+                    headline: IMG_TEXT
+                  }
+                },
+                subject: [
+                  { name: 'I do not care', creator: 'Editorial' },
+                  { name: 'Stuff', creator: 'Machine' },
+                  { name: 'Things', creator: 'Machine' }
+                ]
+              },
+              nitfPara: P_TEXT,
+              saveApPicture: {
+                args: AP_URL,
+                resolves: {
+                  headline: IMG_TEXT,
+                  url: IMG_URL
+                }
+              }
+            });
+
+          expect(__.dbPost).to.have.been.calledWith(
+            sinon.match('_components/paragraph'),
+            sinon.match.has('text', P_TEXT)
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/feed-image'),
+            sinon.match.has('alt', IMG_TEXT).and(sinon.match.has('url', IMG_URL))
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/meta-description'),
+            sinon.match.has('description', sinon.match(DESCRIPTION))
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/meta-image'),
+            sinon.match.has('imageUrl', IMG_URL)
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/meta-title'),
+            sinon.match.has('title', TITLE)
+              .and(sinon.match.has('kilnTitle', TITLE))
+              .and(sinon.match.has('ogTitle', TITLE))
+              .and(sinon.match.has('twitterTitle', TITLE))
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/share'),
+            sinon.match.has('pinImage', IMG_URL)
+              .and(sinon.match.has('shortTitle', TITLE))
+              .and(sinon.match.has('title', TITLE))
+          );
+          expect(__.dbPut).to.have.been.calledWith(
+            sinon.match('_components/tags'),
+            sinon.match.has('items', [
+              { slug: 'ap-news', text: 'AP News' },
+              { slug: 'stuff', text: 'Stuff' },
+              { slug: 'things', text: 'Things' }
+            ])
           );
         });
       });
