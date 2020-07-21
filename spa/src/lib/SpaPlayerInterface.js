@@ -22,6 +22,7 @@ class SpaPlayerInterface {
 
     // Attach event listeners to DOM
     ClientPlayerInterface().addEventListener(this.spa.$el)
+    ClientPlayerInterface().addEventListenerEpisode(this.spa.$el)
 
     /**
      * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
@@ -42,11 +43,17 @@ class SpaPlayerInterface {
     if (!this.playerBooted() && this.autoBootPlayer(this.spa.$route.path)) {
       await this.bootPlayer()
 
-      // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationId = this.extractStationIdFromSpaPayload() || this.playerSession.id
+      const { podcastId, episodeId } = this.extractPodcastEpisodeIdFromSpaPayload()
 
-      if (stationId) {
-        await this.loadStation(stationId)
+      if (podcastId && episodeId) {
+        await this.loadEpisode(podcastId, episodeId)
+      } else {
+        // If appropriate, pop the player bar onto the screen by loading a station.
+        const stationId = this.extractStationIdFromSpaPayload() || this.playerSession.id
+
+        if (stationId) {
+          await this.loadStation(stationId)
+        }
       }
     }
   }
@@ -70,7 +77,7 @@ class SpaPlayerInterface {
    * @returns {boolean} - whether or not to automatically boot the player.
    */
   autoBootPlayer (path) {
-    const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
+    const matchedStationDetailRoute = path.match(/^\/podcasts\/(.+)\/(.+)$/) || path.match(/^\/(.+)\/listen$/)
     const playerWasActive = this.playerSession.playerState === 'play'
 
     if (matchedStationDetailRoute || playerWasActive) {
@@ -170,9 +177,11 @@ class SpaPlayerInterface {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
       spaCommunicationBridge.subscribe('SpaPlayerInterfacePlaybackStatus', async (payload) => {
-        const { stationId, playbackStatus } = payload
+        const { stationId, playbackStatus, podcastId, episodeId } = payload
 
-        if (stationId) {
+        if (podcastId && episodeId) {
+          await this.play(null, podcastId, episodeId)
+        } else if (stationId) {
           await this.play(stationId)
         } else {
           await this[playbackStatus]()
@@ -191,8 +200,10 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Play radio station stream.
+   * Play radio station / podcast episode stream.
    *
+   * If playPodcast is passed, player will play podcast
+   * If podcastId and episodeId is passed, player will load that episodeId
    * If stationId is passed, player will load that station and then play.
    * Otherwise player will play the station that is currently loaded.
    *
@@ -200,23 +211,27 @@ class SpaPlayerInterface {
    * See: https://entercomdigitalservices.atlassian.net/browse/ON-133?focusedCommentId=75260&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-75260
    *
    */
-  async play (stationId = null) {
+  async play (stationId = null, podcastId = null, episodeId = null) {
     // Verify player is booted first.
     if (!this.playerBooted()) {
       await this.bootPlayer()
     }
 
-    const currentStation = this.getCurrentStation()
+    if (podcastId && episodeId) {
+      await this.loadEpisode(podcastId, episodeId)
+    } else {
+      const currentStation = this.getCurrentStation()
 
-    // If stationId wasn't passed in, pull currently playing
-    // station from player to set stationId.
-    if (!stationId && currentStation) {
-      stationId = currentStation.id
-    }
+      // If stationId wasn't passed in, pull currently playing
+      // station from player to set stationId.
+      if (!stationId && currentStation) {
+        stationId = currentStation.id
+      }
 
-    // Set station.
-    if (stationId && (!currentStation || currentStation.id !== stationId)) {
-      await this.loadStation(stationId)
+      // Set station.
+      if (stationId && (!currentStation || currentStation.id !== stationId)) {
+        await this.loadStation(stationId)
+      }
     }
   }
 
@@ -263,6 +278,17 @@ class SpaPlayerInterface {
 
   /**
    *
+   * Load a episode into the player. Must be called before play().
+   *
+   * @param {number} podcastId - id of podcast of load.
+   * @param {number} episodeId - id of episode of load.
+   */
+  async loadEpisode (podcastId, episodeId) {
+    await this.spa.$store.state.radioPlayer.launchPodcastsOrClips([podcastId], [episodeId])
+  }
+
+  /**
+   *
    * Attempt to get a station ID from a station detail page SPA payload.
    *
    */
@@ -271,6 +297,21 @@ class SpaPlayerInterface {
 
     if (stationDetailData && stationDetailData.station) {
       return stationDetailData.station.id
+    } else {
+      return null
+    }
+  }
+
+  /**
+   *
+   * Attempt to get a episode ID from a podcast episode page SPA payload.
+   *
+   */
+  extractPodcastEpisodeIdFromSpaPayload () {
+    const episodeDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'podcast-episode-page')
+
+    if (episodeDetailData && episodeDetailData.episode && episodeDetailData.podcast) {
+      return { podcastId: episodeDetailData.podcast.id, episodeId: episodeDetailData.episode.id }
     } else {
       return null
     }
