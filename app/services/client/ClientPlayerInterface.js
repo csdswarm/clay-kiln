@@ -66,7 +66,6 @@ class ClientPlayerInterface {
         event.stopPropagation();
         const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
 
-        console.log('playbackStatus', playbackStatus);
         this[playbackStatus](null, element.dataset.playPodcast, element.dataset.playEpisode, true);
       });
     });
