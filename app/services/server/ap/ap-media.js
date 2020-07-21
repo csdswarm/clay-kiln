@@ -3,6 +3,7 @@
 const cache = require ('../cache'),
   domUtils = require('../dom-utils'),
   { getAll } = require('./ap-subscriptions'),
+  { importArticle } = require('./ap-news-importer'),
   logger = require('../../universal/log'),
   rest = require('../../universal/rest'),
   { retrieveList } = require('../lists'),
@@ -14,6 +15,7 @@ const cache = require ('../cache'),
   __ = {
     cache,
     getAll,
+    importArticle,
     log,
     rest,
     retrieveList,
@@ -146,19 +148,20 @@ const cache = require ('../cache'),
   },
 
   /**
-   * Retrieves the latest feed info from ap-media
+   * Import an articles from the AP media api
    * @param {object} locals
    * @return {array}
    */
   importApSubscription = async (locals) => {
     try {
       const apFeed = await getApFeed(locals),
-        apSubscriptions = await __.getAll();
+        apSubscriptions = await __.getAll(),
+        returnData = [];
 
-      apFeed.forEach( feed => {
+      for (const feed of apFeed) {
         let apImportData = '{';
 
-        feed.meta.products.forEach(product => {
+        feed.products.forEach(product => {
           apSubscriptions.forEach(subscription => {
             subscription.data.entitlements.forEach(entitlement => {
               if (product.id === entitlement.id) {
@@ -172,13 +175,22 @@ const cache = require ('../cache'),
 
         if (apImportData.length > 1) {
           apImportData = apImportData.slice(0, -1) + '}';
-        }
-      });
 
-      return true;
+          try {
+            const data = await __.importArticle(feed.item, JSON.parse(apImportData), locals);
+
+            returnData.push(data);
+          } catch (error) {
+            __.log('error', 'Bad request importing articles from ap-media', error);
+          }
+
+        }
+      };
+
+      return returnData;
 
     } catch (e) {
-      __.log('error', 'Bad request importing ap feed from ap-media', e);
+      __.log('error', 'Bad request importing articles from ap-media', e);
       return [];
     }
   };

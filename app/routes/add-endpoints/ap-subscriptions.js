@@ -108,7 +108,7 @@ const db = require('../../services/server/db'),
         return res.status(STATUS_CODE.CREATED).send(data);
       } catch (e) {
         __.log('error', e.message);
-        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error importing the supscriptions' });
+        return res.status(STATUS_CODE.SERVER_ERROR).send({ message: 'There was an error importing the subscriptions' });
       }
     });
   };
