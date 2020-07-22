@@ -3,15 +3,19 @@
 const db = require('amphora-storage-postgres'),
   redis = require('./redis');
 
-const redisKey = 'national-subscriptions',
+// we need oldRedisKey for blue-green compatibility.  Once content-subscriptions
+//   is fully rolled out, we can remove this.
+const oldRedisKey = 'national-subscriptions',
+  redisKey = 'content-subscriptions',
 
   /**
-   * @typedef NationalSubscription
+   * @typedef ContentSubscription
    * @property id {number}
    * @property short_desc {string}
    * @property station_slug {string}
    * @property last_updated_utc {date}
    * @property filter {object}
+   * @property from_station_slug {string}
    *
    * the filter object's schema should be in sync with recirculation.js'
    *   properties, but at the moment its properties are
@@ -29,13 +33,13 @@ const redisKey = 'national-subscriptions',
    */
 
   /**
-   * returns all rows from public.national_subscriptions sorted by
+   * returns all rows from public.content_subscriptions sorted by
    *   last_updated_utc descending
    *
    * @param {bool} shouldOrder
-   * @returns {NationalSubscription[]}
+   * @returns {ContentSubscription[]}
    */
-  getNationalSubscriptions = async ({ shouldOrder = true } = {}) => {
+  getContentSubscriptions = async ({ shouldOrder = true } = {}) => {
     try {
       let subscriptions = await redis.get(redisKey);
 
@@ -47,12 +51,17 @@ const redisKey = 'national-subscriptions',
         subscriptions = (
           await db.raw(`
             select *
-            from national_subscriptions
+            from content_subscriptions
             ${orderClause}
           `)
         ).rows;
 
-        await redis.set(redisKey, JSON.stringify(subscriptions));
+        const redisVal = JSON.stringify(subscriptions);
+
+        await Promise.all([
+          redis.set(oldRedisKey, redisVal),
+          redis.set(redisKey, redisVal)
+        ]);
       } else {
         subscriptions = JSON.parse(subscriptions)
           .map(sub => {
@@ -65,10 +74,10 @@ const redisKey = 'national-subscriptions',
       return subscriptions;
     } catch (err) {
       // without this, make bootstrap fails locally on a lot of content-related
-      //   operations since 'national_subscriptions' doesn't exist yet
+      //   operations since 'content_subscriptions' doesn't exist yet
       if (
         process.env.NODE_ENV === 'local'
-        && err.message.includes('relation "national_subscriptions" does not exist')
+        && err.message.includes('relation "content_subscriptions" does not exist')
       ) {
         return [];
       }
@@ -87,13 +96,16 @@ const redisKey = 'national-subscriptions',
  *   a result of these subscriptions.
  *
  * @param {string} slug
- * @returns {NationalSubscription[]}
+ * @returns {ContentSubscription[]}
  */
-getNationalSubscriptions.byStationSlug = async slug => {
-  return (await getNationalSubscriptions())
+getContentSubscriptions.byStationSlug = async slug => {
+  return (await getContentSubscriptions())
     .filter(sub => sub.station_slug === slug);
 };
 
-getNationalSubscriptions.redisKey = redisKey;
+Object.assign(getContentSubscriptions, {
+  oldRedisKey,
+  redisKey
+});
 
-module.exports = getNationalSubscriptions;
+module.exports = getContentSubscriptions;

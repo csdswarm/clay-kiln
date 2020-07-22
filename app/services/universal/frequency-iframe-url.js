@@ -14,7 +14,7 @@ const url = require('url'),
         'dev-clay.radio.com': 'dev-radio-drupal.com',
         'stg-clay.radio.com': 'stg-radio-drupal.com',
         'preprod-clay.radio.com': 'prd-radio-drupal.com',
-        'radio.com': 'prd-radio-drupal.com'
+        'www.radio.com': 'prd-radio-drupal.com'
       },
       host = endpoints[hostname] || 'dev-radio-drupal.com',
       queryString = '?theme=radiocom',

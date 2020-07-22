@@ -65,7 +65,8 @@ module.exports = recirculationData({
   mapDataToFilters: async (uri, data, locals) => {
     return {
       curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
-      maxItems: getMaxItems(data)
+      maxItems: getMaxItems(data),
+      isRdcContent: !(locals.station.id && locals.station.website)
     };
   },
   render,

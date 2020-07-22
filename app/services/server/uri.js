@@ -57,10 +57,29 @@ const db = require('./db'),
     } catch (e) {
       log('error', `There was a problem updating ${key}`, e);
     }
+  },
+  /**
+   * Gets the list of available uri records by url
+   *
+   * @param {any} val
+   * @returns {Promise}
+   */
+  getByUrl = async val => {
+    try {
+      const { rows } = await db.raw(`
+      SELECT * FROM uris
+      WHERE url = ?
+      `, [val]);
+
+      return rows;
+    } catch (error) {
+      log('error', `There was a problem updating ${val}`, error);
+    }
   };
   
 module.exports = {
   getCanonicalRedirect,
   getUri,
-  setUri
+  setUri,
+  getByUrl
 };
