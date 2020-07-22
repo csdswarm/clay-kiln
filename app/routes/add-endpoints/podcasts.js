@@ -12,8 +12,8 @@ const { updatePodcasts } = require('../../services/server/podcasts'),
  * @param {function} checkAuth
  */
 module.exports = (router, checkAuth) => {
-  router.post('/update-db-podcasts', checkAuth, wrapInTryCatch(async (req, res) => {
-    await updatePodcasts();
+  router.post('/update-db-podcast-data', checkAuth, wrapInTryCatch(async (req, res) => {
+    await updatePodcasts(res.locals);
     res.status(200).send('podcasts in DB updated');
   }));
 };

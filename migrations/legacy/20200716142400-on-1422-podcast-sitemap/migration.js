@@ -6,43 +6,58 @@ const {
     usingDb,
     DEFAULT_HEADERS,
   } = require('../migration-utils').v1,
-  axios = require('axios'),
+  axios = require('../../../app/node_modules/axios'),
 
   divider = '\n' + '-'.repeat(80) + '\n',
   host = process.argv[2],
-  {url, message} = parseHost(host); // should happen after migration-utils is imported
+  {url} = parseHost(host); // should happen after migration-utils is imported
 
 const logHeading = text => console.log(`\n${divider}${text}${divider}`);
+
+const loadingDots = () => {
+  const P = [".   ", "..  ", "... ", "...."];
+  let x = 0;
+  const timer = setInterval(function() {
+    process.stdout.write("\r" + P[x++]);
+    x &= 3;
+  }, 250);
+  return()=>{
+    clearTimeout(timer)
+    console.log('\n');
+  }
+};
 
 const start = async () => {
 
   logHeading('Ensuring \'podcasts\' table exists')
 
   await usingDb(async db => {
-    const result = await db.raw(`
-            CREATE TABLE podcasts IF NOT EXISTS (
+    await db.query(`
+            CREATE TABLE IF NOT EXISTS podcasts (
               id text PRIMARY KEY,
               data jsonb
             )
             `);
-    console.log(result);
   });
 
   console.log('podcasts table exists');
 
   logHeading('Updating podcasts in db')
 
-  const results = await axios.post(url + '/update-db-podcasts', {}, {
+  const endDots = loadingDots();
+
+
+  await axios.post(url + '/update-db-podcast-data', {}, {
     headers: DEFAULT_HEADERS
-  });
+  }).catch((e)=>{
+    console.log('\nError updating podcasts:',e.message);
+  })
 
-  if(results.status>=400){
-    console.error('Error updating podcasts db',results)
-  } else {
-    console.log('podcasts updated');
-  }
+  endDots()
 
-  logHeading('  Creating materialized view for podcasts sitemap.');
+  console.log('Podcasts updated.');
+
+  logHeading('Creating materialized view for podcasts sitemap.');
   const podcastSql = await getFileText(`${__dirname}/sql/sitemap_podcasts.sql`)
   await executeSQL(podcastSql);
   console.log('Script Executed.\nFinished creating materialized view for podcasts.');
@@ -53,6 +68,6 @@ const start = async () => {
 
 start()
   .catch(error => console.error(
-    'An unexpected problem occurred when updating topic/author sitemaps.',
+    'An unexpected problem occurred when updating podcasts sitemap.',
     error
   ));
