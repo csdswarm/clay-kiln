@@ -10,7 +10,7 @@ const _snakeCase = require('lodash/snakeCase'),
     'sitemap_section_fronts_and_homepage',
     'sitemap_authors',
     'sitemap_topics',
-    'sitemap_podcasts' // TODO: fastly must be updated for this route
+    'sitemap_podcasts'
   ]),
   query = {
     sitemapIndex: getSitemapIndexQuery(sitemapViews),
