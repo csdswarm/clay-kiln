@@ -80,52 +80,43 @@ module.exports.routes = [
   { path: '/:year/:month/:day/:name' },
 
   // Station listen path
-  withMiddleware(async (req, res ) => {
+  {
+    path: '/:dynamicStation/listen',
+    middleware: async (req, res ) => {
+      try {
+        // Retrieve all listen only stations from the database,
+        // filter the results, and return the correct page reference as page.
+        const page = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
+          .then((response) => {
+            const listenOnlyStationSlugs = response.data.map((station) => {
+              return station.siteSlug;
+            });
 
-    try {
-      // Retrieve all listen only stations from the database,
-      // filter the results, and return the correct page reference as page.
-      const page = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
-        .then((response) => {
-          const listenOnlyStationSlugs = response.data.map((station) => {
-            return station.siteSlug;
+            if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
+              return 'station-detail-listen-only';
+            } else {
+              return 'station';
+            };
           });
 
-          if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
-            return 'station-detail-listen-only';
-          } else {
-            return 'station';
-          };
-        });
+        // It is not possible to modify dynamicPage through amphora's middleware property
+        // as the dynamicPage is already defined on the route when the route is added through amphora.
+        // Refer to: app/node_modules/amphora/lib/services/attachRoutes.js line 91. parseHandler().
+        // We directly use amphora's renderPage() to correctly render the corresponding page reference.
+        // Refer to: app/node_modules/amphora/lib/render.js line 111. renderPage().
+        amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}`, req, res, process.hrtime());
 
-      // It is not possible to modify dynamicPage through amphora's middleware property
-      // as the dynamicPage is already defined on the route when the route is added through amphora.
-      // Refer to: app/node_modules/amphora/lib/services/attachRoutes.js line 91. parseHandler().
-      // We directly use amphora's renderPage() to correctly render the corresponding page reference.
-      // Refer to: app/node_modules/amphora/lib/render.js line 111. renderPage().
-      amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}`, req, res, process.hrtime());
+      } catch (error) {
+        log('An error occured getting the listen only station style list. \n ERROR: ', error);
 
-    } catch (error) {
-      log('An error occured getting the listen only station style list. \n ERROR: ', error);
+        res.status(404);
+        res.send('Could not render dynamic page.');
+      };
 
-      res.status(404);
-      res.send('Could not render dynamic page.');
-    };
-
-  }, {
-    path: '/:dynamicStation/listen',
-    dynamicPage: ''
-  })
-];
-
-function withMiddleware(middlewareFn, routeObject) {
-  const wrappedMiddleware = (req, res, routeObject) => {
-    middlewareFn(req, res, routeObject);
-  };
+    }
+  }
   
-  routeObject.middleware = wrappedMiddleware;
-  return routeObject;
-};
+];
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [
