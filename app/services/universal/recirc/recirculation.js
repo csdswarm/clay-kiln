@@ -24,6 +24,7 @@ const
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
   _pick = require('lodash/pick'),
+  _split = require('lodash/split'),
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
@@ -347,14 +348,12 @@ const
     // normalize tag array (based on simple list input)
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
+    } else {
+      // split comma separated tags (for load-more get queries)
+      tags = _split(tags, ',');
+      // retain the correct formatting for updating the tags for kiln's UI
+      data.tag = tags.map(tag => ({ text: tag }));
     }
-
-    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
-      tags = tags.split(',');
-    }
-
-    // split comma separated tags (for load-more get queries)
-    data.tag = tags;
 
     if (tags === '') {
       return [];

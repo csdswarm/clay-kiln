@@ -105,6 +105,15 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
   render = async function (ref, data, locals) {
     data._computed.isMultiColumn = isMultiColumn(data);
 
+    // Account for inccorrect formatting of data.tag in the database for previously created content.
+    // Instances of data.tag that do not return an empty array, or properly formatted tag array will break the kiln UI.
+    // e.g. tag array: data.tag: [] || data.tag: [{ text: 'tag' }].
+    if (data.tag.length === 0) {
+      data.tag = [];
+    } else if (Array.isArray(data.tag)) {
+      data.tag = data.tag.map((tag) => typeof tag === 'string' ? { text: tag } : tag);
+    }
+
     if (data.populateFrom === 'station' && locals.params) {
       data._computed.station = locals.station.name;
       if (!data._computed.isMigrated) {
