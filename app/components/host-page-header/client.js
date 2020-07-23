@@ -3,7 +3,7 @@
 const getRightRail = (el) => {
   const layoutPageHeader = document.querySelector('.layout__page-header'),
     rightColumn = document.querySelector('.two-column-component__column--2'),
-    hostPageHeaderRightRail = el.querySelector('.host-page__right-content');
+    hostPageHeaderRightRail = el.querySelector('.host-page-header__right-content');
 
   if (hostPageHeaderRightRail && rightColumn) {
     layoutPageHeader.style['z-index'] = 4;

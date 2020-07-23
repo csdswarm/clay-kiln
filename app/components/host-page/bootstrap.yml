@@ -1,11 +1,4 @@
 _components:
   host-page:
-    host: ''
-    profileImage: ''
-    scheduleTime: ''
-    bio: ''
-    facebook: ''
-    twitter: ''
-    youtube: ''
-    instagram: ''
-    email: ''
+    twoColumnComponent:
+      _ref: /_components/two-column-component/instances/host-page
