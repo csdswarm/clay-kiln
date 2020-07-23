@@ -39,3 +39,6 @@ featureRubric:
   _has:
     input: description
     value: Field used by model.js to inform the article/gallery feature rubric
+
+textTags:
+  _publish: textTags

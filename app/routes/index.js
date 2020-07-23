@@ -160,8 +160,10 @@ module.exports = router => {
   addEndpoints.alerts(router);
   addEndpoints.createPage(router);
   addEndpoints.imageInfo(router, checkAuth);
+  addEndpoints.contentSubscription(router);
   ensureStationOnCustomUrl(router);
   addEndpoints.syndicatedContent(router);
   addEndpoints.validSource(router);
   addEndpoints.signOut(router);
+  addEndpoints.getStationsSubscribedToContent(router);
 };
