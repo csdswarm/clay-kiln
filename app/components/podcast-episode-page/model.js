@@ -11,9 +11,8 @@ async function addBreadcrumbs(data, locals) {
   const { podcast, episode } = locals;
 
   if (_get(podcast,'attributes') && _get(episode,'attributes')) {
-    const { site_slug, title, station } = podcast.attributes,
+    const { site_slug, title } = podcast.attributes,
       breadcrumbs = [
-        { slug: data._computed.stationSlug, text: station.length ? station[0].name : null },
         { slug: 'podcasts', text: 'podcasts' },
         { slug: site_slug, text: title }
       ];
