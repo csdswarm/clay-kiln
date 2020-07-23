@@ -26,10 +26,9 @@ function getPodcastShow(locals) {
  */
 async function addBreadcrumbs(data, locals) {
   if (locals.podcast.attributes) {
-    const { site_slug, title, station } = locals.podcast.attributes;
+    const { site_slug, title } = locals.podcast.attributes;
 
     await autoLink(data, [
-      { slug: data.stationSlug, text: station.length ? station[0].name : null },
       { slug: 'podcasts', text: 'podcasts' },
       { slug: site_slug, text: title }
     ], locals);
