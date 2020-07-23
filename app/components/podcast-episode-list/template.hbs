@@ -54,9 +54,7 @@
       {{> podcastListItem podcast.attributes podcastId=podcast.id }}
     {{/each}}
   </ol>
-  {{#if _computed.loadMoreEnabled}}
-    <div class="podcast-episode-list__load-more">
-      <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
-    </div>
-  {{/if}}
+  <div class="podcast-episode-list__load-more">
+    <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
+  </div>
 </div>
