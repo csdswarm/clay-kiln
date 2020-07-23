@@ -1,6 +1,6 @@
 'use strict';
 
-const makeHttpEs = require('../make-http-es'),
+const makeHttpEs = require('./make-http-es'),
   {
     getMappings,
     getRecentAndNewIndexes,

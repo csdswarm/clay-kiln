@@ -5,7 +5,7 @@
  *   version bumpts
  */
 
-const { _identity: isTruthy, prettyJSON } = require('./base');
+const { _identity: isTruthy, prettyJSON } = require('../base');
 
 /**
  * Ensures the currentIndex follows the naming convention '{alias}_v#'

@@ -1,9 +1,9 @@
 'use strict';
 
-const axios = require('../../app/node_modules/axios'),
-  ensureStartsWith = require('./ensure-starts-with').v1,
-  httpGet = require('./http-get').v1,
-  httpRequest = require('./http-request').v1;
+const ensureStartsWith = require('../ensure-starts-with').v1,
+  httpGet = require('../http-get').v1,
+  httpRequest = require('../http-request').v1,
+  { axios } = require('../base');
 
 /**
  * Returns a readable helper to avoid constructing the requests manually
@@ -102,7 +102,7 @@ const makeHttpEs_v1 = parsedHost => {
 };
 
 /**
- * This function is expected to work in the same way the previous version does, but now 
+ * This function is expected to work in the same way the previous version does, but now
  * is using axios for handling the different requests made to elasticsearch endpoints.
  *
  * @param {object} parsedHost - should be passed only the es server info so that hostname,
