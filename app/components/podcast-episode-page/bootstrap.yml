@@ -1,0 +1,7 @@
+_components:
+  podcast-episode-page:
+    allowed: true
+    instances:
+      default:
+        allowed: true
+

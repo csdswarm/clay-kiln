@@ -1,0 +1,6 @@
+_components:
+  podcast-trending:
+    curatedItems: []
+    instances:
+      default:
+        curatedItems: []

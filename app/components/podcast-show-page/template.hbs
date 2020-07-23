@@ -1,0 +1,25 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
+  class="component component--podcast-show-page podcast-show-page
+  {{ if @root.locals.edit ' editing' }}"
+>
+  {{> breadcrumbs this }}
+
+  {{> podcast-lead podcastLead }}
+  <div class="podcast-show-page-body">
+    <ul class="tabs">
+      {{!-- @TODO: ON-1398 Tabbing --}}
+      <!-- add tab for each component here -->
+    </ul>
+    <div class="tabbed-content">
+      {{!-- @TODO: ON-1398 Tabbing --}}
+
+      <div class="tabbed-content-episodes">
+        {{> podcast-episode-list episodeList }}
+      </div>
+      <div class="tabbed-content-discover">
+        {{!-- @TODO: ON-1359 ON-1382 Podcast Discover --}}
+        {{!-- add component partial here --}}
+      </div>
+    </div>
+  </div>
+</section>
