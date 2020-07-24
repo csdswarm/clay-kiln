@@ -40,16 +40,14 @@ const db = require('../../services/server/db'),
     * Create a new article from ap media information
     */
     router.post('/rdc/ap-subscriptions/manual-import', __.wrapInTryCatch(async (req, res) => {
-      const { apMeta, stationMappings } = req.body,
-        requestLocals = res.locals;
+      const { apMeta, stationMappings, locals } = req.body;
 
       if (!apMeta || !stationMappings) {
         res.status(400).send('apMedia and stationMappings are required');
         return;
       }
-      console.log('DEBUG:::::::::::::::::::::: apMeta', apMeta);
-      console.log('DEBUG:::::::::::::::::::::: stationMappings', stationMappings);
-      res.send(await __.importArticle(apMeta, stationMappings, requestLocals));
+
+      res.send(await __.importArticle(apMeta, stationMappings, locals));
     }));
     
     /**
