@@ -21,6 +21,9 @@ describe('server', () => {
           bySlug: {
             'station-1': {
               site_slug: 'station-1'
+            },
+            'kabc-usa' : {
+              site_slug: 'kabc-usa'
             }
           }
         },
@@ -144,13 +147,14 @@ describe('server', () => {
             createPage,
             getAllStations,
             getMeta,
+            HOST,
             LOCALS,
             NEW_PAGE_DATA,
             NEW_PAGE_REF,
             PAGE_DATA,
             PAGES_URI
           } = setup_createPage(),
-          result = await createPage(PAGE_DATA, '', LOCALS);
+          result = await createPage(HOST + '/_pages/', PAGE_DATA, '', LOCALS);
 
         expect(getAllStations).not.to.have.been.called;
         expect(createAmphoraPage).to.have.been.calledOnceWith(PAGES_URI, PAGE_DATA, LOCALS);
@@ -166,18 +170,19 @@ describe('server', () => {
             createAmphoraPage,
             createPage,
             elasticPut,
-            PAGE_DATA,
-            GENERIC_STATION_SLUG,
             getAllStations,
             getMeta,
+            putMeta,
+            GENERIC_STATION_SLUG,
+            HOST,
             LOCALS,
             NEW_META,
             NEW_PAGE_DATA,
             NEW_PAGE_REF,
             PAGES_URI,
-            putMeta
+            PAGE_DATA
           } = setup_createPage(),
-          result = await createPage(PAGE_DATA, GENERIC_STATION_SLUG, LOCALS);
+          result = await createPage(HOST + '/_pages/', PAGE_DATA, GENERIC_STATION_SLUG, LOCALS);
 
         expect(getAllStations).to.have.been.calledOnceWith({ locals: LOCALS });
         expect(createAmphoraPage).to.have.been.calledOnceWith(PAGES_URI, PAGE_DATA, LOCALS);
@@ -185,6 +190,7 @@ describe('server', () => {
         expect(getMeta).to.have.been.calledOnceWith(NEW_PAGE_REF);
         expect(putMeta).to.have.been.calledOnceWith(NEW_PAGE_REF, NEW_META);
         expect(elasticPut).to.have.been.calledOnceWith('pages', NEW_PAGE_REF, NEW_META);
+        expect(LOCALS).to.have.property('newPageStation').that.eqls({ site_slug: 'kabc-usa' });
 
         expect(result).to.eql(NEW_PAGE_DATA);
       });

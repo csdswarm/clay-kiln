@@ -13,8 +13,14 @@ _components:
     secondarySectionFront: ''
     excludeSectionFronts: ''
     excludeSecondarySectionFronts: ''
+    excludeSubscriptions: false
     excludeTags: ''
     instances:
+      national-contest:
+        items: []
+        tag: ''
+        populateBy: all-content
+        contentType: {article: true, gallery: true}
       new:
         _version: 5
         items: []

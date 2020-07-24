@@ -1,22 +1,31 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  circulationService = require('./circulation'),
+const
+  _get = require('lodash/get'),
+  applyContentSubscriptions = require('./apply-content-subscriptions'),
+  articleOrGallery = new Set(['article', 'gallery']),
+  circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  mediaplay = require('./media-play'),
-  promises = require('./promises'),
-  rest = require('./rest'),
-  sanitize = require('./sanitize'),
+  mediaplay = require('../media-play'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  sanitize = require('../sanitize'),
   striptags = require('striptags'),
-  urlExists = require('./url-exists'),
-  { DEFAULT_STATION, PAGE_TYPES } = require('./constants'),
-  { generateSyndicationSlug } = require('./syndication-utils'),
+  urlExists = require('../url-exists'),
+  { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
+  { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
-  { has, isFieldEmpty, replaceVersion, textToEncodedSlug, uriToUrl } = require('./utils'),
-  { urlToElasticSearch } = require('./utils'),
-
-  articleOrGallery = new Set(['article', 'gallery']);
+  {
+    has,
+    isFieldEmpty,
+    replaceVersion,
+    textToEncodedSlug,
+    uriToUrl,
+    urlToElasticSearch
+  } = require('../utils'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -302,6 +311,31 @@ function setSlugAndLock(data, prevData, publishedData) {
 }
 
 /**
+ * Ensure required data exists on certain page types
+ *
+ * @param {object} data
+ * @param {string} componentName
+ */
+function standardizePageData(data, componentName) {
+  switch (componentName) {
+    case PAGE_TYPES.AUTHOR:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
+      data.slug = sanitize.cleanSlug(data.author);
+      break;
+    case PAGE_TYPES.CONTENT_COLLECTION:
+      data.feedImgUrl = data.image;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
+      data.slug = sanitize.cleanSlug(data.tag);
+      break;
+    case PAGE_TYPES.STATIC_PAGES:
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
+      break;
+    default:
+  }
+}
+
+/**
  * Remove width, height, cropping, and resolution from silo image url.
  * @param  {object} data
  */
@@ -503,7 +537,10 @@ function addTwitterHandle(data, locals) {
  * @param {Object} data
  */
 function renderStationSyndication(data) {
-  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+  const syndicatedStations = (data.stationSyndication || [])
+    .filter(syndication => syndication.source === 'manual syndication');
+
+  data._computed.stationSyndicationCallsigns = syndicatedStations
     .map(station => station.callsign)
     .sort()
     .join(', ');
@@ -592,7 +629,8 @@ function assignStationInfo(uri, data, locals) {
 }
 
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined';
+  const isClient = typeof window !== 'undefined',
+    componentName = getComponentName(uri);
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
@@ -606,6 +644,7 @@ async function save(uri, data, locals) {
   // sanitizing inputs, setting fields, etc
   assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
+  standardizePageData(data, componentName);
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
@@ -615,6 +654,11 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need to get stations by editorial feeds before creating slugs for syndicated content
+  await addStationsByEditorialGroup(data, locals);
+  // we need apply content subscriptions before creating slugs for syndicated content
+  await applyContentSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
@@ -629,9 +673,11 @@ async function save(uri, data, locals) {
   });
 }
 
-module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
-module.exports.updateStationSyndicationType = updateStationSyndicationType;
-
-module.exports.render = render;
-module.exports.save = save;
-module.exports.assignStationInfo = assignStationInfo;
+module.exports = {
+  addStationSyndicationSlugs,
+  assignStationInfo,
+  render,
+  save,
+  setNoIndexNoFollow,
+  updateStationSyndicationType
+};

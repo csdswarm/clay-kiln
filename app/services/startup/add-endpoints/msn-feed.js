@@ -4,7 +4,57 @@ const parseHttpDate = require('parsehttpdate'),
   axios = require('axios'),
   { removeEtag, wrapInTryCatch } = require('../middleware-utils'),
   redis = require('../../server/redis'),
-  { redisKey } = require('../../universal/msn-feed-utils'),
+  url = require('url'),
+  parseString = require('xml2js').parseStringPromise,
+  _get = require('lodash/get'),
+  _isEqual = require('lodash/isEqual'),
+  /**
+   * Parsing the values from Redis key
+   * this will return and object with two properties
+   * lastModified: a date in string
+   * feed: MSN Feed data as XML
+   *
+   * @param {string} redisData MSN Feed Data
+   * @return {Object}
+   */
+  parseOldModifiedFeed = redisData => JSON.parse(redisData),
+
+  /**
+   * Getting pubDates and links from the XML
+   * This will return an array with 2 properties
+   * [
+   *  {
+   *    link: http://radio.com/music/pop/demi-lovato-hints-at-new-music-in-tease-y-instagram-post,
+   *    pubDate: Thu, 28 May 2020 18:05:49 +0000
+   *  },
+   * ...
+   * ]
+   *
+   * @param {string} feed XML MSN feed
+   * @return {Array}
+   */
+  getXMLItems = async feed => {
+    const json =  await parseString(feed, { explicitArray : false }),
+      items = _get(json.rss.channel, 'item');
+      
+    if (!items) {
+      return;
+    }
+    return items.map(item => ({
+      link: item.link,
+      pubDate: item.pubDate
+    }));
+  },
+  /**
+   * Compares two arrays and determines if they are the same or not
+   * This will return true or false
+   *
+   * @param {Array} oldFeed
+   * @param {Array} newFeed
+   * @return {bool}
+   */
+
+  areEqual = (oldFeed, newFeed) => _isEqual(oldFeed, newFeed),
   {
     CLAY_SITE_PROTOCOL: protocol,
     CLAY_SITE_HOST: host
@@ -32,20 +82,36 @@ module.exports = router => {
     //   implement last-modified
     removeEtag(res);
 
-    const ifModifiedSinceStr = req.get('if-modified-since');
+    const endpoint = `${protocol}://${host}/_components/feeds/instances/msn.msn`;
 
-    let lastModifiedStr = await redis.get(redisKey.lastModified),
-      lastModifiedDate;
+    let query = url.parse(req.url).query,
+      lastModifiedStr,
+      oldFeedData;
 
-    // if the value isn't in redis for some reason (value gets removed from the
-    //   cache or on server initialization), then just set it to the
-    //   current time.
-    if (!lastModifiedStr) {
-      lastModifiedDate = new Date();
-      lastModifiedStr = lastModifiedDate.toUTCString();
-      redis.set(redisKey.lastModified, lastModifiedStr);
-    } else {
-      lastModifiedDate = new Date(lastModifiedStr);
+    query = query
+      ? `?${query}`
+      : '';
+    
+    const ifModifiedSinceStr = req.get('if-modified-since'),
+      [oldFeedResult, newFeedResult] = await Promise.all([
+        redis.get(`msn-feed:${query}`),
+        axios.get(endpoint + query)
+      ]),
+      newFeedData = await getXMLItems(newFeedResult.data);
+
+    if (oldFeedResult) {
+      const { lastModified, feed } = parseOldModifiedFeed(oldFeedResult);
+      
+      oldFeedData = JSON.parse(feed);
+      lastModifiedStr = lastModified;
+    }
+    
+    if (!areEqual(oldFeedData, newFeedData)) {
+      lastModifiedStr = new Date().toUTCString();
+      redis.set(`msn-feed:${query}`, JSON.stringify({
+        lastModified: lastModifiedStr,
+        feed: JSON.stringify(newFeedData)
+      }));
     }
 
     res.set('Last-Modified', lastModifiedStr);
@@ -58,7 +124,8 @@ module.exports = router => {
       //
       //   If MSN sends us dates in those formats then we'll have to find
       //   another solution
-      const ifModifiedSinceDate = parseHttpDate(ifModifiedSinceStr);
+      const ifModifiedSinceDate = parseHttpDate(ifModifiedSinceStr),
+        lastModifiedDate = new Date(lastModifiedStr);
 
       if (lastModifiedDate <= ifModifiedSinceDate) {
         res.status(304).end();
@@ -66,8 +133,6 @@ module.exports = router => {
       }
     }
 
-    const resp = await axios.get(`${protocol}://${host}/_components/feeds/instances/msn.msn`);
-
-    res.send(resp.data);
+    res.send(newFeedResult.data);
   }));
 };

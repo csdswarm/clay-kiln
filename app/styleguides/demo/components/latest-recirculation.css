@@ -109,7 +109,6 @@
 				height: 100%;
 				display: flex;
 				text-decoration: none;
-				text-transform: capitalize;
 				.link__thumb {
 					height: 100%;
           flex: 0 0 em(70);

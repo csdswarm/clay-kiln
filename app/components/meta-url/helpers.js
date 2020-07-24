@@ -5,8 +5,8 @@
  * @param {object} data
  */
 function fixHttpUrl(data) {
-  if (data.url) {
-    data.url = data.url.replace('http://', 'https://');
+  if (data.defaultUrl) {
+    data.defaultUrl = data.defaultUrl.replace('http://', 'https://');
   }
 }
 
@@ -17,12 +17,12 @@ function fixHttpUrl(data) {
  * @param {object} data
  */
 function fixSyndicatedUrl(data) {
-  if (data.syndicatedUrl) {
-    data.syndicatedUrl = data.syndicatedUrl.replace('http://', 'https://');
+  if (data.defaultSyndicatedUrl) {
+    data.defaultSyndicatedUrl = data.defaultSyndicatedUrl.replace('http://', 'https://');
   }
-  if (data.syndicatedUrl &&
-    data.syndicatedUrl.indexOf('.com/api/v1.0') !== -1) {
-    data.syndicatedUrl = null;
+  if (data.defaultSyndicatedUrl &&
+    data.defaultSyndicatedUrl.indexOf('.com/api/v1.0') !== -1) {
+    data.defaultSyndicatedUrl = null;
   }
 }
 
@@ -33,11 +33,11 @@ function fixSyndicatedUrl(data) {
  */
 function setFromLocals(data, locals) {
   if (locals && locals.publishUrl) {
-    data.url = locals.publishUrl;
+    data.defaultUrl = locals.publishUrl;
   }
 
   if (locals && locals.date) {
-    data.date = locals.date;
+    data.defaultDate = locals.date;
   }
 }
 

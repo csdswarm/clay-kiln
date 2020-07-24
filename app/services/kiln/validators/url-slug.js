@@ -19,12 +19,13 @@ const { getComponentName } = require('clayutils'),
    * @returns {Boolean}
    */
   isSlugChanged = (state, data) => {
-    const {
-        page: {
-          state: { url: pageUrl }
-        }
-      } = state,
-      publishedSlug = pageUrl.split('/').slice(-1)[0];
+    const pageUrl = state.page.state.url;
+
+    if (!pageUrl) {
+      return false;
+    }
+
+    const publishedSlug = pageUrl.split('/').slice(-1)[0];
 
     return publishedSlug !== data.slug;
   },

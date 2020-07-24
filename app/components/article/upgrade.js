@@ -2,6 +2,7 @@
 
 const _get = require('lodash/get'),
   addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
+  addTextTags = require('../../services/server/component-upgrades/add-text-tags'),
   updateStationSyndication = require('../../services/server/component-upgrades/update-stationsyndication-type'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content'),
@@ -168,9 +169,10 @@ module.exports['7.0'] = async function (uri, data) {
 module.exports['8.0'] = function (uri, data) {
   const newData = Object.assign({}, data);
 
-  newData.secondarySectionFront = data.secondaryArticleType || '';
-
-  delete newData.secondaryArticleType;
+  if (data.secondaryArticleType) {
+    newData.secondarySectionFront = data.secondaryArticleType || '';
+    delete newData.secondaryArticleType;
+  }
 
   return newData;
 };
@@ -208,3 +210,12 @@ module.exports['13.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['14.0'] = (uri, data) => {
+  data.stationSyndication.map(syndication => syndication.source = syndication.source || 'manual syndication');
+
+  return data;
+};
+
+module.exports['15.0'] = addTextTags;
+

@@ -1,9 +1,12 @@
 'use strict';
 
-const _get = require('lodash/get'),
+const
+  _get = require('lodash/get'),
+  createContent = require('../../services/universal/create-content'),
+  { assignStationInfo } = require('../../services/universal/create-content'),
   { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
-  { assignStationInfo } = require('../../services/universal/create-content'),
+
   _capitalize = (str) => {
     return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
   },
@@ -54,3 +57,5 @@ module.exports = unityComponent({
     return data;
   }
 });
+
+module.exports.save = (ref, data, locals) => createContent.save(ref, data, locals);
