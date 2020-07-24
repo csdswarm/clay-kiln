@@ -1,0 +1,15 @@
+_pages:
+  # Host Profile Page
+  host-profile:
+    head:
+      - /_components/dynamic-meta-title/instances/host-profile
+      - /_components/dynamic-meta-description/instances/host-profile
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/host-page-header/instances/new
+    main:
+      - /_components/host-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general

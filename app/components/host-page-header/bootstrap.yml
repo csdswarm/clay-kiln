@@ -1,0 +1,11 @@
+_components:
+  host-page-header:
+    host: ''
+    profileImage: ''
+    scheduleTime: ''
+    bio: ''
+    facebook: ''
+    twitter: ''
+    youtube: ''
+    instagram: ''
+    email: ''

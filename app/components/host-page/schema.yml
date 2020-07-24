@@ -1,0 +1,19 @@
+_version: 1.0
+_description: |
+  A dynamically created page containing a list of articles by host.
+
+_confirmRemoval: true
+
+twoColumnComponent:
+  _component:
+    include:
+      - two-column-component
+
+_groups:
+  settings:
+    fields:
+    - host
+    _placeholder:
+      ifEmpty: host
+      height: 100px
+      text: Host Page

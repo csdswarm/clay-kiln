@@ -6,6 +6,7 @@ const publishing = require('../../services/publishing'),
     '/_components/gallery/instances',
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
+    '/_components/host-page-header/instances',
     '/_components/contest/instances',
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
@@ -42,6 +43,8 @@ module.exports.routes = [
   { path: '/small-business-pulse/:year/:month/:day/:name' },
   { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
   { path: '/events/:slug' },
+  { path: '/hosts/:host' },
+  { path: '/:stationSlug/hosts/:host' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -71,6 +74,8 @@ module.exports.routes = [
   { path: '/contests/:slug' },
   { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
   { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
+  { path: '/hosts/:host', dynamicPage: 'host' },
+  { path: '/:stationSlug/hosts/:host', dynamicPage: 'host' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
@@ -88,7 +93,8 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getHostPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [

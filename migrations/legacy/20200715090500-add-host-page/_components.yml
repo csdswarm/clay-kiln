@@ -1,0 +1,31 @@
+_components:
+  more-content-feed:
+    instances:
+      host-page:
+        items: []
+        host: ''
+        hostInfo: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        populateFrom: host
+        locationOfContentFeed: host-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        introComponents: []
+
+  host-page:
+    instances:
+      new:
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/host-page
+  dynamic-meta-title:
+    instances:
+      host:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+
+  dynamic-meta-description:
+    instances:
+      host:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'

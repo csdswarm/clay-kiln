@@ -1,0 +1,24 @@
+_components:
+  host-page-header:
+    instances:
+      new:
+        host: ''
+        profileImage: ''
+        scheduleTime: ''
+        bio: ''
+        facebook: ''
+        twitter: ''
+        youtube: ''
+        instagram: ''
+        email: ''
+  dynamic-meta-title:
+    instances:
+      host-profile:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+
+  dynamic-meta-description:
+    instances:
+      host-profile:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'
