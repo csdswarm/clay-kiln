@@ -28,7 +28,7 @@ contentTypes.delete('more-content-feed');
  */
 async function addStationSyndicationToPagesIndex(ops) {
   try {
-    const contentData = _get(ops.find(isContentOp), 'value'),
+    const contentData = JSON.parse(_get(ops.find(isContentOp), 'value', '{}')),
       pageId = _get(ops.find(isPageOp), 'key', ''),
       wasContentPagePublished = contentData && pageId && isPublished(pageId);
 
