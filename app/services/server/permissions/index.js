@@ -130,6 +130,8 @@ function userPermissionRouter() {
   //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
 
+  addToLocals.contentSubscriptions(userPermissionRouter);
+
   return userPermissionRouter;
 }
 
@@ -238,7 +240,6 @@ async function checkUserPermissions(uri, req, locals, db) {
     if (!locals.stationsIHaveAccessTo[site_slug]) {
       return false;
     }
-
     if (isComponent(uri)) {
       await checkComponentPermission(uri, req, locals, db);
     }
@@ -266,7 +267,6 @@ async function checkUserPermissions(uri, req, locals, db) {
         return false;
       }
     }
-
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),

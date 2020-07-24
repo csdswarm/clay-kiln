@@ -7,7 +7,8 @@ const { defer } = require('../../../services/universal/promises'),
   Video = require('./Video'),
   clientCommunicationBridge = require('../../../services/client/ClientCommunicationBridge')(),
   scriptLoadedPromises = [],
-  loadedPlayers = [];
+  loadedPlayers = [],
+  { DEFAULT_STATION } = require('../../../services/universal/constants');
 
 class BrightcoveVideo extends Video {
   /**
@@ -16,7 +17,8 @@ class BrightcoveVideo extends Video {
   constructor(brightcoveComponent) {
     const videoPlayer = brightcoveComponent.querySelector('video-js'),
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
-      brightcovePlayerId = videoPlayer.getAttribute('data-player');
+      brightcovePlayerId = videoPlayer.getAttribute('data-player'),
+      videoPlayerCloseBtn = brightcoveComponent.querySelector('.player__video-close-btn');
 
     super(brightcoveComponent, {
       script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`,
@@ -50,6 +52,9 @@ class BrightcoveVideo extends Video {
         this.hideStickyPlayer();
       }
     });
+
+    // add handler for closing the stick player
+    videoPlayerCloseBtn.addEventListener('click', () => this.onCloseStickyPlayer());
   }
   /**
    * @override
@@ -81,6 +86,7 @@ class BrightcoveVideo extends Video {
     });
     // add overlay
     this.addOverlay();
+    this.addStationIma3ServeUrl();
   }
   /**
    * @override
@@ -243,6 +249,30 @@ class BrightcoveVideo extends Video {
         }
       });
     });
+  }
+
+  addStationIma3ServeUrl() {
+    videojs.getPlayer(this.id).ready( function () {
+      const myPlayer = this,
+        { stationDbcBannertag } = myPlayer.el().dataset;
+      let serverUrl = myPlayer.ima3.settings.serverUrl;
+
+      if (stationDbcBannertag) {
+        serverUrl = serverUrl.replace(
+          DEFAULT_STATION.national_doubleclick_bannertag,
+          stationDbcBannertag
+        );
+        myPlayer.ima3.settings.serverUrl = serverUrl;
+      }
+    });
+  }
+
+  /**
+   * handler for closing the sticky player
+   * @function
+   */
+  onCloseStickyPlayer() {
+    this.pause();
   }
 }
 

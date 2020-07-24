@@ -7,8 +7,7 @@ const
   _unset = require('lodash/unset'),
   db = require('./db'),
   logger = require('../universal/log'),
-  { addAmphoraRenderTime } = require('../universal/utils'),
-  { addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
+  { addAmphoraRenderTime, addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
   { STATION_LISTS } = require('../universal/constants'),
 
   HOUR_IN_SECONDS = 3600,
@@ -58,13 +57,11 @@ async function saveList(name, data, options) {
       saveToDb(list, data, host),
       saveToCache(list, data)
     ]);
-  } catch (error) {
-    log('error', `There was a problem trying to save the list ${name}`, error);
+    return data;
+  } catch (e) {
+    log('error', `There was a problem trying to save the list ${name}`, e);
   }
-
-  return data;
 }
-
 
 /**
    * Adds a new list item to a list if it's not already there.
@@ -139,6 +136,8 @@ function getSectionFrontName(slug, data) {
    * @param {object} options
    * @param {object} [options.locals] the locals object
    * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @param {boolean} [options.shouldAddAmphoraTimings]
+   * @param {string} [options.amphoraTimingLabelPrefix]
    * @returns {Promise<any[]>}
    */
 async function retrieveList(name, options) {

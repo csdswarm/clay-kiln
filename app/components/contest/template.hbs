@@ -1,0 +1,151 @@
+<article role="main"
+  data-uri="{{ default _ref _self }}"
+  class="component component--contest{{ if @root.locals.edit ' editing' }}"
+  itemscope itemtype="http://schema.org/Article"
+  data-headline="{{ striptags headline }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}"
+  data-station-slug="{{ stationSlug }}"
+>
+  {{> breadcrumbs this }}
+  <header class="contest__header">
+    {{! article microdata }}
+    <meta itemprop="url" content="{{ @root.locals.url }}" />
+    <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+        <meta itemprop="height" content="60" />
+        <meta itemprop="width" content="600" />
+      </div>
+    </div>
+    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+      <meta itemprop="url" content="{{ feedImgUrl }}" />
+      <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+      <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+    </div>
+    <meta itemprop="dateModified" content="{{ dateModified }}" />
+
+    {{! title }}
+    <h1 class="header__primary" data-editable="headline" itemprop="headline">
+      {{{ headline }}}
+    </h1>
+    {{! subtitle }}
+    {{#ifAny @root.locals.edit subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">
+        {{{ subHeadline }}}
+      </span>
+    {{/ifAny}}
+    {{! lede }}
+    <div class="lead" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  </header>
+
+  <section class="contest__body">
+    <div class="body__info">
+      {{! Social Share Buttons }}
+      {{> share sideShare }}
+    </div>
+    <div class="body__content">
+      {{!-- Paragraph(s) for Contest Description --}}
+      <div data-editable="description">
+        {{> component-list description }}
+      </div>
+
+      {{!-- Second Street Embed --}}
+      {{> html-embed embed }}
+
+      <div class="body__contest-dates">
+        <h3>Contest Dates:</h3>
+        <span data-editable="dates">
+          {{ formatDateTimeRange
+            dateFrom=startDateTime
+            dateTo=endDateTime
+            format=(concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]")
+          }}
+        </span>
+      </div>
+
+      {{!-- Contest Rules --}}
+      {{> contest-rules this }}
+
+      {{! Tags }}
+      {{> tags tags}}
+
+      {{! Ad Tags }}
+      {{> ad-tags adTags}}
+
+      {{! circulation area }}
+      {{#if @root.locals.edit }}
+        {{ set 'empty' '<span class="circulation--empty">None</span>' }}
+        <section class="body__circulation">
+          <h2 class="circulation__title">Content Circulation Settings</h2>
+
+          <section class="circulation__section" data-editable="circHeadlines">
+            <h3 class="subtitle circ-edit">Headlines and Teasers</h3>
+            <ul class="items">
+              <li class="item">
+                <h4 class="item-title required">Facebook Headline</h4>
+                <p class="item-data">{{{ default primaryHeadline empty }}}</p>
+              </li>
+              <li class="item">
+                <h4 class="item-title required">Twitter/Short Headline</h4>
+                <p class="item-data">{{{ default shortHeadline empty }}}</p>
+              </li>
+              <li class="item">
+                <h4 class="item-title required">Teaser</h4>
+                <p class="item-data">{{{ default teaser empty }}}</p>
+              </li>
+              <li class="item">
+                <h4 class="item-title required">SEO Headline</h4>
+                <p class="item-data">{{{ default seoHeadline empty }}}</p>
+              </li>
+              <li class="item">
+                <h4 class="item-title required">SEO Description</h4>
+                <p class="item-data">{{{ default seoDescription empty }}}</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="circulation__section" data-editable="circSlug">
+            {{#if slugLock}}
+              <div class="alert alert-warning">
+                <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+
+                Article Slug is locked. Unlock in Article Settings.
+              </div>
+            {{/if}}
+            <h3 class="subtitle circ-edit">Slug and URL</h3>
+            <ul class="items">
+              <li class="item">
+                <h4 class="item-title required">Article Slug</h4>
+                <p class="item-data">
+                  {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
+                </p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="circulation__section" data-editable="circFeeds">
+            <h3 class="subtitle circ-edit">Recirculation:</h3>
+            <ul class="items">
+              <li class="item">
+                <h4 class="item-title required">Recirculation Image</h4>
+              <p class="item-data">
+                {{#if feedImgUrl}}
+                  <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
+                {{else}}
+                  <div class="empty-feedimg"></div>
+                {{/if}}
+                </p>
+              </li>
+            </ul>
+          </section>
+        </section>
+      {{/if}}
+    </div>
+  </section>
+</article>

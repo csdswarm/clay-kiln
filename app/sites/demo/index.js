@@ -6,12 +6,16 @@ const publishing = require('../../services/publishing'),
     '/_components/gallery/instances',
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
+    '/_components/contest/instances',
+    '/_components/event/instances',
+    '/_components/events-listing-page/instances',
     '/_components/station-front/instances'
   ];
 
 module.exports.routes = [
   // Partially static
   { path: '/authors/:author' },
+  { path: '/:stationSlug/authors/:author' },
   { path: '/blogs/:author/:title' }, // Frequency URL pattern
   { path: '/blogs/:title' }, // Frequency URL pattern
   { path: '/articles/:author/:title' }, // Frequency URL pattern
@@ -36,6 +40,8 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
+  { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
+  { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -56,8 +62,16 @@ module.exports.routes = [
   { path: '/music/:dynamicTag', dynamicPage: 'topic' },
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
-  { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
+  { path: '/authors/:author', dynamicPage: 'author' },
+  { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
+  { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
+  { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
+  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
+
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
@@ -69,7 +83,10 @@ module.exports.routes = [
 module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventsListingUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];

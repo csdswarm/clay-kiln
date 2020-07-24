@@ -305,6 +305,28 @@ function postfix(value, suffix) {
 }
 
 /**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+  return list;
+}
+
+/**
  * prepends left to right
  *
  * meant to be used in a mapper function e.g.
@@ -326,7 +348,7 @@ function prepend(left) {
   return right => left + right;
 }
 
-/*
+/**
  * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
  *   begin with the prefix.
  *
@@ -419,29 +441,6 @@ function getDomainFromHostname(hostname) {
 }
 
 /**
- * can be used to get all _ref objects within an object.
- * Copied from amphora.references and modified for unity environment.
- * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
- * @param {object} obj
- * @param {Function|string} [filter=_identity]  Optional filter
- * @returns {array}
- */
-function listDeepObjects(obj, filter) {
-  let cursor, items,
-    list = [],
-    queue = [obj];
-
-  while (queue.length) {
-    cursor = queue.pop();
-    items = _filter(cursor, _isObject);
-    list = list.concat(_filter(items, filter || _identity));
-    queue = queue.concat(items);
-  }
-
-  return list;
-}
-
-/**
  * Url queries to elastic search need to be `http` since that is
  * how it is indexed as.
  * @param {string} url
@@ -474,6 +473,15 @@ function updateImmutable(object, path, updater) {
 }
 
 /**
+ * Maps a key: bool object into an array, returning truthy keys only
+ * @param {Object} object
+ * @returns {array}
+ */
+function boolObjectToArray(object) {
+  return Object.entries(object || {}).map(([key, bool]) => bool && key).filter(value => value);
+}
+
+/**
  * When on the server, pushes an time entry onto locals.amphoraRenderTimes
  *
  * @param {object} locals
@@ -501,10 +509,30 @@ function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
   }
 }
 
+/**
+ * like _includes except tests whether any elements are included
+ *
+ * @param {*} iterable1
+ * @param {*} iterable2
+ * @returns {bool}
+ */
+function includesAny(iterable1, iterable2) {
+  const setOfElements = new Set(iterable1);
+
+  for (const el of iterable2) {
+    if (setOfElements.has(el)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
   boolKeys,
+  boolObjectToArray,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
@@ -514,6 +542,7 @@ module.exports = {
   getFullOriginalUrl,
   getSiteBaseUrl,
   has,
+  includesAny,
   isContentComponent,
   isFieldEmpty,
   isInstance,

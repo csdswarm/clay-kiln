@@ -25,3 +25,15 @@ module.exports['1.0'] = async function (uri, data) {
     return data;
   }
 };
+
+module.exports['2.0'] = (uri, data) => {
+  data.imageUrl = data.imageUrl || '';
+
+  return data;
+};
+
+module.exports['3.0'] = (uri, data) => {
+  data.defaultImageUrl = data.imageUrl || '';
+
+  return data;
+};

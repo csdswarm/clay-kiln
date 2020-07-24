@@ -89,6 +89,11 @@ excludeSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 tag:
   _label: Filter by Tag
   _subscribe: tag
@@ -110,6 +115,7 @@ _groups:
     - items
     - excludeTags
     - excludeSecondarySectionFronts
+    - excludeSubscriptions
     _placeholder:
       ifEmpty: contentType
       height: 400px

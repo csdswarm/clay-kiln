@@ -3,21 +3,24 @@ col1:
   _placeholder:
     height: 150px
   _componentList:
+    renderOrder: 1
     include:
-      - section-lead # TODO: modify section-lead to be in multi-col component
+      - section-lead
 
 col2:
   _placeholder:
     height: 150px
   _componentList:
+    renderOrder: 2
     include:
-      - latest-recirculation # TODO: modify latest-recirc to handle being on homepage
+      - latest-recirculation
 
 col3:
   _placeholder:
     height: 150px
   _componentList:
     fuzzy: true
+    renderOrder: 3
     include:
       - minified-content-feed
 

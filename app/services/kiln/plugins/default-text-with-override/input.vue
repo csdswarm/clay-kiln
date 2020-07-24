@@ -27,24 +27,29 @@
   <div class="default-text-with-override">
     <h4 class="default-text-with-override__label">{{ schema._label }}</h4>
     <div class="default-text-with-override__value">{{ data }}</div>
+    <div class="ui-textbox__feedback" v-if="help">
+      <div class="ui-textbox__feedback-text">{{ help }}</div>
+    </div>
 
-    <ui-checkbox v-model="shouldOverride"
+    <ui-checkbox v-if="canOverride"
+      v-model="shouldOverride"
       class="default-text-with-override__should-override"
       color="accent"
       label="Override the default?"
       :value="shouldOverride"
       @input="updateShouldOverride"
     />
-    <div class="ui-textbox__feedback" v-if="overrideHelp">
+    <div class="ui-textbox__feedback" v-if="canOverride && overrideHelp">
       <div class="ui-textbox__feedback-text">{{ overrideHelp }}</div>
     </div>
 
-    <ui-textbox v-if="shouldOverride"
+    <ui-textbox v-if="canOverride && shouldOverride"
       class="default-text-with-override__custom-text"
       :floatingLabel="true"
       :help="customTextHelp"
       :label="customTextLabel"
       :invalid="isInvalid"
+      :type="type"
       :value="customText"
       @input="updateCustomText"
       @keydown-enter="closeFormOnEnter"
@@ -70,24 +75,25 @@
     name: 'default-text-with-override',
     props: ['name', 'data', 'schema', 'args'],
     data() {
-      const { min, max, pattern } = this.args.validate,
-        validate = Object.assign(
-          {
-            requiredMessage: 'A value is required',
-            minMessage: `The value must be at least ${min} characters`,
-            maxMessage: `The value must be at most ${max} characters`,
-            patternMessage: `The value must match the pattern "/${pattern}/ig`
-          },
-          this.args.validate
-        );
-
       return {
         customText: this.getInternalState('customText', this.getDefaultText()),
-        shouldOverride: this.getInternalState('shouldOverride', false),
-        validate
+        help: this.args.help,
+        shouldOverride: this.getInternalState('shouldOverride', false)
       };
     },
     computed: {
+      canOverride() {
+        const { permissionToOverride } = this.args;
+
+        if (!permissionToOverride) {
+          return true;
+        }
+
+        const { user } = window.kiln.locals,
+          [action, target] = Object.entries(permissionToOverride)[0];
+
+        return user.can(action, target).value;
+      },
       closeFormOnEnter(e) {
         if (e.metaKey || e.ctrlKey) {
           // close form when hitting enter in text fields
@@ -113,7 +119,33 @@
       },
       overrideHelp() {
         return _get(this.args, 'overrideCheckbox.help');
-      }
+      },
+      type() {
+        const { type } = this.args;
+
+        return !type || type === 'multi-line'
+          ? 'text'
+          : type;
+      },
+      validate() {
+        const { validate } = this.args;
+
+        if (!validate) {
+          return {};
+        }
+
+        const { min, max, pattern } = validate;
+
+        return Object.assign(
+          {
+            requiredMessage: 'A value is required',
+            minMessage: `The value must be at least ${min} characters`,
+            maxMessage: `The value must be at most ${max} characters`,
+            patternMessage: `The value must match the pattern "/${pattern}/ig`
+          },
+          validate
+        );
+      },
     },
     methods: {
       getCurrentText() {

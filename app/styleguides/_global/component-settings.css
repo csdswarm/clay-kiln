@@ -85,3 +85,76 @@
 
 
   }
+/* ^^ */
+/* The above css will need to be removed */
+/* here and in the gallery css once the  */
+/* global comp settings partial is implemented */
+
+
+.component-settings {
+  background: $wildSand;
+  clear: both;
+  margin: em(20) 0;
+  width: 100%;
+  &__title {
+    @mixin component-settings-font-2;
+    margin: 0;
+    padding: em(15, 24) em(20, 24);
+  }
+  &__section {
+    border-top: em(1) solid $91gray;
+    padding: em(15) em(20);
+  }
+  &__section-title {
+    @mixin component-settings-font-3
+    margin: 0;
+    padding: 0 0 em(10);
+    &:after {
+      content: 'Edit';
+      @mixin component-settings-font-4;
+      margin: 0 0 0 em(15);
+    }
+  }
+  &__properties {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  &__property + &__property {
+    margin-top: em(20);
+  }
+  &__property-title {
+    @mixin component-settings-font-5
+    margin: 0;
+    padding: 0 0 em(5, 12);
+    text-transform: uppercase;
+    &--required:after {
+      content: 'required';
+      @mixin component-settings-font-6;
+      margin: 0 0 0 em(15, 12);
+      text-transform: lowercase;
+    }
+  }
+  &__property-data {
+    @mixin component-settings-font-7
+    margin: 0;
+    padding: 0;
+  }
+  &__property-data-empty {
+    @mixin component-settings-font-1;
+  }
+  &__property-data-feed-img {
+    height: auto;
+    width: em(200);
+  }
+  &__property-data-feed-img-empty {
+    background-color: $alto;
+    border: em(1) dashed $60gray;
+    height: em(150);
+    width: em(200);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $dustyGray;
+  }
+}

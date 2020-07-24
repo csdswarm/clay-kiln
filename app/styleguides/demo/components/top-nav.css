@@ -1,5 +1,6 @@
 /* stylelint-disable */
 @import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 @import "_global/fonts";
 
@@ -489,7 +490,7 @@ $drawerSelector: nav-drawer;
 
   .radium {
     &__text {
-     @mixin radium-font1;
+      @mixin radium-font1;
     }
 
     &__link--signed-out {
@@ -551,6 +552,12 @@ $drawerSelector: nav-drawer;
 
 .kiln-wrapper.view-mode {
   top: $default-nav-height !important;
+  button.view-new-button {
+    visibility: hidden;
+  }
+  button.view-menu-button {
+    visibility: hidden;
+  }
 }
 
 .kiln-edit-mode {
@@ -776,4 +783,9 @@ $drawerSelector: nav-drawer;
   .radiocom-nav {
     top: 76px;
   }
+}
+
+/*  Reset behavior of radioCom top nav bar */
+.radiocom-nav.reset-radiocom-top-nav {
+  position: unset;
 }
