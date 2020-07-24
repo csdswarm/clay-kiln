@@ -12,7 +12,7 @@ describe('getPermissions', () => {
   const mockUrpsPermissions = [{ some: 'permission' }],
     getFromUrps = sinon.spy(() => ({ data: mockUrpsPermissions })),
     createUnityPermissions = sinon.spy(),
-    jwt = 'jwt',
+    idToken = 'idToken',
     stationDomainNames = [rdcDomainName],
     getPermissions = proxyquire('./get-permissions', {
       './get-from-urps': getFromUrps,
@@ -25,18 +25,18 @@ describe('getPermissions', () => {
   });
 
   it('getFromUrps is called with the correct arguments', async () => {
-    await getPermissions(jwt, stationDomainNames);
+    await getPermissions(idToken, stationDomainNames);
 
     expect(getFromUrps.calledOnce).to.be.true;
     expect(getFromUrps.firstCall.args).to.deep.equal([
       '/permissions/by-domain',
       { domains: [unityAppDomainName, ...stationDomainNames] },
-      jwt
+      idToken
     ]);
   });
 
   it('createUnityPermissions is called with the correct arguments', async () => {
-    await getPermissions(jwt, stationDomainNames);
+    await getPermissions(idToken, stationDomainNames);
 
     expect(createUnityPermissions.calledOnce).to.be.true;
     expect(createUnityPermissions.firstCall.args).to.deep.equal([

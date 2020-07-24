@@ -35,11 +35,10 @@ const __ = {
  * @param {object} locals
  * @returns {Promise<object>}
  */
-async function createPage(pageBody, stationSlug, locals) {
+async function createPage(pagesUri, pageBody, stationSlug, locals) {
   // pagesUri is required for the amphora.pages.create call
   const
-    { addStationSlug, createAmphoraPage, getAllStations } = __,
-    pagesUri = `${locals.site.host}/_pages/`;
+    { addStationSlug, createAmphoraPage, getAllStations } = __;
 
   // stationSlug is valid due to a check in
   // app/services/server/permissions/has-permissions/create-page.js

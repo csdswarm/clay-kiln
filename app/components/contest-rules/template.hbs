@@ -22,7 +22,11 @@
             </h2>
             <div class="contest-rules__date-range">
                 <p class="paragraph">
-                    Contest Date Range: {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}
+                    <strong>Contest Date Range: </strong>{{ formatDateTimeRange
+                        dateFrom=startDateTime
+                        dateTo=endDateTime
+                        format=(concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]")
+                    }}
                 </p>
             </div>
         </div>

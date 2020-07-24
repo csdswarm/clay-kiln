@@ -24,4 +24,17 @@ api.hasClass = className => element => {
   return classList && classList.contains(className);
 };
 
+/**
+ * A function which returns a string with first char capitalized
+ *
+ * @param {string} str
+ * @returns {string}
+ * @example
+ *   capitalize('foo') // Foo
+ */
+api.capitalize = (str) => {
+  if (typeof str !== 'string') return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 module.exports = api;

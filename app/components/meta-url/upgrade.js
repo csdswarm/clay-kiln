@@ -7,3 +7,11 @@ module.exports['1.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['2.0'] = (uri, data) => {
+  return Object.assign(data, {
+    defaultDate: data.date,
+    defaultSyndicatedUrl: data.syndicatedUrl,
+    defaultUrl: data.url
+  });
+};

@@ -1,13 +1,12 @@
 'use strict';
 
-const expect = require('chai').expect,
-  dirname = __dirname.split('/').pop(),
-  filename = __filename.split('/').pop().split('.').shift(),
+const _noop = require('lodash/noop'),
+  expect = require('chai').expect,
   uri = 'clay.radio.com/_components/article/instances/cjzbandlv000f3klg5krzbyyx',
   proxyquire = require('proxyquire'),
-  { save } = proxyquire('./create-content', {
-    '../../services/universal/url-exists': () => false,
-    './rest': {
+  { save } = proxyquire('./index', {
+    '../url-exists': () => false,
+    '../rest': {
       get: (uri) => {
         const isPublishedRequest = /@published/.test(uri);
 
@@ -20,6 +19,12 @@ const expect = require('chai').expect,
             slug: '',
             seoHeadline: ''
           });
+      }
+    },
+    './apply-content-subscriptions': _noop,
+    '../editorial-feed-syndication': {
+      addStationsByEditorialGroup: () => {
+        mockData.data.stationSyndication = [];
       }
     }
   }),
@@ -95,9 +100,6 @@ const expect = require('chai').expect,
         },
         category: ''
       },
-      lytics: {
-        uid: '1234'
-      },
       user: {
         auth: 'admin',
         name: 'joe schmoe',
@@ -152,7 +154,7 @@ const expect = require('chai').expect,
     }
   };
 
-describe(`${dirname}/${filename}`, () => {
+describe('universal/create-content', () => {
   const seoHeadline = 'bar';
 
   it('syncs slug to seo headline', async () => {

@@ -1,5 +1,6 @@
 /* stylelint-disable */
 @import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 @import "_global/fonts";
 
@@ -782,4 +783,9 @@ $drawerSelector: nav-drawer;
   .radiocom-nav {
     top: 76px;
   }
+}
+
+/*  Reset behavior of radioCom top nav bar */
+.radiocom-nav.reset-radiocom-top-nav {
+  position: unset;
 }

@@ -3,17 +3,17 @@ const
   _get = require('lodash/get'),
   _memoize = require('lodash/memoize'),
   _set = require('lodash/set'),
-  logger = require('../../universal/log'),
+  cheerio = require('cheerio'),
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
-  { inspect } = require('util'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
+  { put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
+  { DEFAULT_STATION } = require('../../universal/constants'),
 
-  log = logger.setup({ file: __filename }),
   QUERY_TEMPLATE = {
     index: 'published-content',
     type: '_doc',
@@ -33,16 +33,16 @@ const
     dbRaw,
     getAllStations,
     getApArticleBody,
-    inspect,
-    log,
+    restPut,
     saveApPicture,
     searchByQuery
   },
 
-  getNewComponent = _memoize((name, { site: { host } }) => __.dbGet(`${host}/_components/${name}`));
+  getComponentBase = _memoize((name, { site: { host } }) => __.dbGet(`${host}/_components/${name}`)),
+  getNewComponent = (name, locals) => ({ ... getComponentBase(name, locals) });
 
 // createPage imports hierarchy makes an immediate call to redis, which causes issues in tests, so lazy load only.
-addLazyLoadProperty(__, 'createPage', require('../page-utils').createPage);
+addLazyLoadProperty(__, 'createPage', () => require('../page-utils').createPage);
 
 /**
  * Checks to see if the AP Content is publishable
@@ -51,7 +51,7 @@ addLazyLoadProperty(__, 'createPage', require('../page-utils').createPage);
  * @param {string} pubstatus
  * @returns {boolean}
  */
-function checkApPublishable({ editorialtypes, pubstatus, signals }) {
+function checkApPublishable({ editorialtypes = '', pubstatus, signals = '' }) {
   return signals.includes('newscontent') && pubstatus === 'usable' && !editorialtypes.includes('Kill');
 }
 
@@ -68,14 +68,17 @@ async function findExistingArticle({ itemid } = {}) {
 
   try {
     const [existing] = await searchByQuery(query, null, { includeIdInResult: true }),
-      { rows: [data] = [] } = existing && await dbRaw(`
-          SELECT data
+      { rows: [info] = [] } = existing && await dbRaw(`
+          SELECT id, data
           FROM pages,
                jsonb_array_elements_text(data -> \'main\') article_id
           WHERE article_id = ?`,
-      existing._id) || {};
+      existing._id) || {},
+      { id, data } = info || {};
 
-    return data;
+    if (id) {
+      return { _ref: id, ...data };
+    }
 
   } catch (error) {
     log('error', 'Problem getting existing data from elastic', error);
@@ -102,13 +105,12 @@ async function createNewArticle(stationMappings, locals) {
  * Gets all necessary info to handle updating the page, including the
  * article, meta-title, meta-description, meta-image, meta-tags and tags
  * @param {object} pageData
- * @param {string[]} pageData.head
- * @param {string[]} pageData.main
  * @returns {Promise<object>}
  */
-async function getArticleData({ head, main }) {
+async function getArticleData(pageData) {
   const
     { dbGet } = __,
+    { head, main } = pageData,
     articleRef = main.find(text => text.includes('_components/article')),
     [
       article,
@@ -126,7 +128,8 @@ async function getArticleData({ head, main }) {
     metaDescription,
     metaImage,
     metaTags,
-    metaTitle
+    metaTitle,
+    pageData
   };
 }
 
@@ -155,7 +158,10 @@ async function getNewStations(article, stationMappings, locals) {
       : stationEntries;
 
   return newStations.map(([stationSlug, data]) => {
-    const { callsign, name } = stationsBySlug[stationSlug];
+
+    const { callsign, name } = stationSlug === DEFAULT_STATION.site_slug
+      ? DEFAULT_STATION
+      : stationsBySlug[stationSlug];
 
     return {
       ...data,
@@ -179,24 +185,15 @@ async function getNewStations(article, stationMappings, locals) {
 async function mapApDataToArticle(apMeta, articleData, locals) {
   const
     { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
-    { article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbDel, dbGet, dbPost, dbPut, getApArticleBody, inspect, log, saveApPicture } = __,
-    { itemid } = altids;
+    { pageData, article, metaDescription, metaImage, metaTitle } = articleData,
+    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, restPut, saveApPicture } = __,
+    { itemid } = altids,
 
-  if (!associations) {
-    log(
-      'error',
-      'missing image data',
-      new Error(`cannot find associations${inspect({ apMeta }, { depth: 20 })}`)
-    );
-    return {};
-  }
-
-  const
-    apImageInfo = Object.values(associations).find(({ type }) => type === 'picture'),
-    [feedImg, image, lead, sideShare, tags] = [
+    image = associations
+      ? await saveApPicture((Object.values(associations).find(({ type }) => type === 'picture') || {}).uri)
+      : { headline: 'placeholder', url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg' },
+    [feedImg, lead, sideShare, tags] = [
       await dbGet(article.feedImg._ref),
-      await saveApPicture(apImageInfo.uri),
       await Promise.all(article.lead.map(dbGet)),
       await dbGet(article.sideShare._ref),
       await dbGet(article.tags._ref)
@@ -214,6 +211,15 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
           version,
           ednote
         },
+        byline: [
+          {
+            names: [],
+            prefix: 'by',
+            sources: [
+              { text: 'The Associated Press', slug: 'the-associated-press' }
+            ]
+          }
+        ],
         feedImgUrl: image.url,
         headline,
         lead,
@@ -245,6 +251,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
       }
     },
     newFeedImage = {
+      _ref: article.feedImg._ref,
       ...feedImg,
       url: image.url,
       alt: image.headline
@@ -296,52 +303,49 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     INNER_TEXT_TYPES = 'bq fn hl2 note p media'.split(/ /g),
     OUTER_TEXT_TYPES = 'dl pre table'.split(/ /g),
     LIST_TYPES = 'ol ul'.split(/ /g),
-    { block: apContent } = await getApArticleBody(renditions.nitf.href),
-    newArticleContent = await Promise.all(Array.from(_get(apContent, 'children', []))
-      .filter(el => TYPES[el.localName.toLowerCase()])
-      .map(async (el, index) => {
+    doc = renditions && cheerio.load(await getApArticleBody(renditions.nitf.href)),
+    newArticleContent = doc && await Promise.all(doc('block').children()
+      .filter(Object.keys(TYPES).join(','))
+      .map(async (index, el) => {
         const
           instanceId = `${itemid}-${index + 1}`,
-          name = el.localName.toLowerCase(),
+          name = el.tagName.toLowerCase(),
           componentName = TYPES[name] || 'html-embed',
-          data = { ...await getNewComponent(componentName, locals) };
+          data = await getNewComponent(componentName, locals);
 
         data._ref = `${locals.site.host}/_components/${componentName}/instances/ap-${instanceId}`;
 
         if (INNER_TEXT_TYPES.includes(name)) {
-          data.text = el.innerHTML;
+          data.text = doc(el).html();
         } else if (OUTER_TEXT_TYPES.includes(name)) {
-          data.text = el.outerHTML;
+          data.text = doc.html(el);
         } else if (LIST_TYPES.includes(name)) {
-          data.text = Array.from(el.querySelectorAll('li'))
-            .map((item, idx) => `${el.localName === 'ol' ? idx + 1 + '.' : '•'} ${item.innerHTML}`)
-            .join('<br>/n');
+          data.text = doc(el).find('> li')
+            .map((idx, item) => `${el.tagName.toLowerCase() === 'ol' ? idx + 1 + '.' : '•'} ${doc(item).html()}`)
+            .get()
+            .join('<br>\n');
         }
 
         return data;
-      }));
+      }).get());
 
   article.content.map(({ _ref }) => _ref).forEach(dbDel);
 
-  // save parts
-  newArticleContent.forEach(({ _ref, ...props }) => dbPost(_ref, { ...props }));
-  [
-    newArticleTags,
-    newArticleData.metaDescription,
-    newArticleData.metaImage,
-    newArticleData.metaTitle,
-    newFeedImage,
-    newSideShare
-  ]
-    .forEach(({ _ref, ...props }) => dbPut(_ref, { ...props }));
-
   // compose whole
   Object.assign(newArticleData.article, {
-    content: newArticleContent,
+    content: newArticleContent || [],
     feedImg: newFeedImage,
     sideShare: newSideShare,
     tags: newArticleTags
   });
+
+  const { _ref: articleRef, ...newArticleInfo } = newArticleData.article;
+
+  await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${articleRef}`, newArticleInfo, true);
+
+  const { _ref: pageRef = '', ...pageInfo } = pageData;
+
+  await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);
 
   return newArticleData;
 }
