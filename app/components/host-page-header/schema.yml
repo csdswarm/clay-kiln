@@ -16,6 +16,7 @@ hosts:
       allowCreate: false
     validate:
       max: 1
+      required: true
 
 host:
   _has:

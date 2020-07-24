@@ -18,3 +18,14 @@ _components:
       new:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/host-page
+  dynamic-meta-title:
+    instances:
+      host:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+
+  dynamic-meta-description:
+    instances:
+      host:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'

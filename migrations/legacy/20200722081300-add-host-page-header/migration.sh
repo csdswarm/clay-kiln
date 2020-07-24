@@ -38,15 +38,4 @@ printf "\n\nCreating Host Page Header...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 cat ./_pages.yml | clay import -k demo -y -p $1
 
-hostPage="_pages/host"
-
-printf "\nUpdating Current Host Page...\n"
-
-curl -X GET -H "Accept: application/json" $http://$1/$hostPage > ./hostPage.json
-
-node updateHostPage.js $1/_components/host-page-header/instances/new
-
-curl -X PUT $http://$1/$hostPage -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./hostPage.json -o /dev/null -s
-curl -X PUT $http://$1/$hostPage@published -H 'Authorization: token accesskey' -o /dev/null -s
-
-rm hostPage.json
+printf "\n\n\n\n"

@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- *  - This file creates a new list for the AP Media Entitlement.
+ *  - This file creates a new list for hosts.
  */
 
 const { clayImport } = require('../migration-utils').v1,
