@@ -8,10 +8,10 @@ const migrationUtils = require('../migration-utils'),
   index = 'pages',
   pathToStationSyndication = '_doc.properties.stationSyndication',
   pathToStationAnalyzer = 'analysis.analyzer.station_analyzer',
-  shouldUpdate = (currentMappings, currentSettings) => {
+  shouldUpdate = (currentMappings, curSettings) => {
     return !(
       _get(currentMappings, pathToStationSyndication)
-      && _get(currentSettings, pathToStationAnalyzer)
+      && _get(curSettings, pathToStationAnalyzer)
     );
   },
   addStationSyndication = currentMappings => {
@@ -48,14 +48,9 @@ const migrationUtils = require('../migration-utils'),
       }
     });
   },
-  addStationAnalyzer = currentSettings => {
-    const filter = {
-        my_ascii_folding: {
-          type: 'asciifolding',
-          preserve_original: 'true'
-        }
-      },
-      charFilter = {
+  addStationAnalyzer = curSettings => {
+    const analysis = curSettings.analysis || {},
+      char_filter = {
         remove_whitespace: {
           pattern: '\\s+',
           type: 'pattern_replace',
@@ -67,34 +62,29 @@ const migrationUtils = require('../migration-utils'),
           replacement: ''
         }
       },
-      stationAnalyzer = {
-        station_analyzer: {
-          filter: [
-            'standard',
-            'my_ascii_folding',
-            'lowercase'
-          ],
-          char_filter: [
-            'remove_whitespace',
-            'remove_punctuation'
-          ],
-          tokenizer: 'standard'
+      filter = {
+        my_ascii_folding: {
+          type: 'asciifolding',
+          preserve_original: 'true'
         }
+      },
+      station_analyzer = {
+        filter: [
+          'standard',
+          'my_ascii_folding',
+          'lowercase'
+        ],
+        char_filter: [
+          'remove_whitespace',
+          'remove_punctuation'
+        ],
+        tokenizer: 'standard'
       };
 
-    // adding settings for station_analyzer and the custom filters it depends on
-    return {
-      ...currentSettings,
-      analysis: {
-        ...currentSettings.analysis,
-        analyzer: {
-          ...(currentSettings.analysis && currentSettings.analysis.analyzer),
-          ...stationAnalyzer
-        },
-        char_filter: charFilter,
-        filter
-      }
-    };
+    _set(analysis, 'analyzer.station_analyzer', station_analyzer);
+    _set(analysis, 'filter.my_ascii_folding', filter.my_ascii_folding);
+    _set(analysis, 'char_filter.remove_whitespace', char_filter.remove_whitespace);
+    _set(analysis, 'char_filter.filter.remove_punctuation', char_filter.remove_punctuation);
   };
 
 (async function() {
