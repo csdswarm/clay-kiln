@@ -4,6 +4,11 @@
 </docs>
 <template>
     <div class="content-search">
+        <station-select
+          class="content-search__station-select"
+          :initialSelectedSlug="currentStation"
+          :onChange="stationChanged"
+        />
         <ui-textbox
                 floating-label
                 :label="schema._label"
@@ -40,6 +45,9 @@
   import { isUrl } from '../../../../services/universal/utils';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
+  import stationSelect from '../../shared-vue-components/station-select'
+  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
+  import { mapGetters } from 'vuex';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -57,33 +65,12 @@
       }
     },
     { match: { stationSlug: nationalStationSlug } }
+  ]
+  const ELASTIC_FIELDS = [
+    'date',
+    'canonicalUrl',
+    'seoHeadline',
   ];
-
-  /**
-   * returns an array which will be put into an elasticsearch `should` array
-   *   meant to match any station we have access to.
-   *
-   * I'm pretty sure this needs to be a function because window.kiln.locals is
-   *
-   * @returns {object}
-   */
-  const getMatchStationsIHaveAccessTo = () => {
-    const { locals } = window.kiln;
-
-    const matchStations = _.chain(locals.stationsIHaveAccessTo)
-      // omit the national
-      .omit(nationalStationSlug)
-      .map(station => ({ match: { stationSlug: station.slug } }))
-      .value();
-
-    if (locals.stationsIHaveAccessTo[nationalStationSlug]) {
-      matchStations.push(...matchNationalStation)
-    }
-
-    return matchStations;
-  };
-
-  const matchStationsIHaveAccessTo = getMatchStationsIHaveAccessTo();
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -91,7 +78,8 @@
       return {
         searchResults: [],
         loading: false,
-        searchText: this.data || ''
+        searchText: this.data || '',
+        currentStation: '',
       };
     },
     watch: {
@@ -101,7 +89,8 @@
       }
     },
     computed: {
-      showResults: function () {
+      ...mapGetters(stationSelect.storeNs, ['selectedStation']),
+      showResults() {
         return this.loading || this.searchResults.length !== 0;
       }
     },
@@ -109,11 +98,29 @@
      * lifecycle method that will populate the results from an existing url or display the most recent 10 items published
      */
     created() {
-        this.performSearch();
+      this.currentStation = window.kiln.locals.station.site_slug;
+      this.performSearch();
     },
     methods: {
+      setStationFilter(stationSlug) {
+        if (!stationSlug) { // RDC
+          return matchNationalStation;
+        } else {
+          return [
+            {
+              match: {
+                stationSlug,
+              },
+            },
+          ];
+        }
+      },
+      stationChanged() {
+        this.currentStation = this.selectedStation.slug
+        this.performSearch();
+      },
       commitFormData() {
-          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
+        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
       },
       /**
        * search the published_content index the search string
@@ -127,7 +134,7 @@
             searchString = this.searchText || '*';
 
         queryService.addSize(query, 10);
-        queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
+        queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
         queryService.addFilter(query, {
           bool: {
             must: [{
@@ -136,10 +143,10 @@
                 fields: ["authors", "canonicalUrl", "tags", "teaser"]
               }
             }],
-            should: matchStationsIHaveAccessTo
+            should: this.setStationFilter(this.currentStation)
           }
         });
-        queryService.addSort(query, { date: { order: 'desc'} });
+        queryService.addSort(query, { date: { order: 'desc' } });
 
         const results = await queryService.searchByQuery(
           query,
@@ -165,7 +172,7 @@
 
         this.loading = false;
         if (!this.searchResults.length) {
-            this.commitFormData();
+          this.commitFormData();
         }
       },
       /**
@@ -178,7 +185,7 @@
       inputOnchange() {
         if (this.searchTextparams === '' || !this.searchText || this.searchText.length > 2) {
           if(isUrl(this.searchText)){
-              this.commitFormData();
+            this.commitFormData();
           }
           this.debouncePerformSearch();
         } else {
@@ -200,7 +207,8 @@
     components: {
       UiButton,
       UiProgressCircular,
-      UiTextbox
+      UiTextbox,
+      'station-select': StationSelectInput
     }
   }
 </script>
