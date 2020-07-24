@@ -199,6 +199,7 @@ module.exports = {
   getMappings,
   getRecentAndNewIndexes,
   getSettings,
+  OuterError,
   reindex,
   updateAlias
 };

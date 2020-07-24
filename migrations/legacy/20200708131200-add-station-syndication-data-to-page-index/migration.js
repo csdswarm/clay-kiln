@@ -1,7 +1,7 @@
 'use strict';
 
 const migrationUtils = require('../migration-utils'),
-  { _get, _set } = migrationUtils.v1,
+  { _get, _set, formatAxiosError } = migrationUtils.v1,
   { elasticsearch, parseHost } = migrationUtils.v2,
   host = process.argv[2] || 'clay.radio.com',
   envInfo = parseHost(host),
@@ -84,7 +84,9 @@ const migrationUtils = require('../migration-utils'),
     _set(analysis, 'analyzer.station_analyzer', station_analyzer);
     _set(analysis, 'filter.my_ascii_folding', filter.my_ascii_folding);
     _set(analysis, 'char_filter.remove_whitespace', char_filter.remove_whitespace);
-    _set(analysis, 'char_filter.filter.remove_punctuation', char_filter.remove_punctuation);
+    _set(analysis, 'char_filter.remove_punctuation', char_filter.remove_punctuation);
+
+    return Object.assign(curSettings, { analysis });
   };
 
 (async function() {
@@ -107,7 +109,7 @@ const migrationUtils = require('../migration-utils'),
       console.log(`stationSyndication mapping was already added, no index was created`);
     }
   } catch (e) {
-    console.error(`Unable to update ES mappings for stationSyndication in '${index}' index`);
-    console.error(e);
+    console.error(`Unable to update ES mappings for stationSyndication in '${index}' index\n`);
+    console.error(formatAxiosError(e, { shouldTruncate: false }));
   }
 })();

@@ -50,20 +50,27 @@ const getCurrentIndex = async (httpEs, alias, indexConventionRe) => {
  * @param {string} newIndex
  * @param {*} body
  */
-const createNewElasticsearchIndex = async (httpEs, newIndex, body) => {
-  console.log(`Creating new elasticsearch index '${newIndex}'`);
+const createNewElasticsearchIndex = {
+  v1: async (httpEs, newIndex, body) => {
+    console.log(`Creating new elasticsearch index '${newIndex}'`);
 
-  try {
-    await httpEs.put({
-      restOfUrl: newIndex,
-      body
-    });
-  } catch (innerErr) {
-    throw new OuterError(
-      `There was an error creating the elasticsearch index '${newIndex}'`
-      + `\nbody: ${prettyJSON(body)}`,
-      innerErr
-    );
+    try {
+      await httpEs.put({
+        restOfUrl: newIndex,
+        body
+      });
+    } catch (innerErr) {
+      throw new OuterError(
+        `There was an error creating the elasticsearch index '${newIndex}'`
+        + `\nbody: ${prettyJSON(body)}`,
+        innerErr
+      );
+    }
+  },
+  v2: (httpEs, newIndex, body) => {
+    console.log(`Creating new elasticsearch index '${newIndex}'`);
+
+    return httpEs.put({ restOfUrl: newIndex, body });
   }
 };
 
@@ -125,7 +132,7 @@ const assertFnsIsValid = fns => {
  * @param {string} [reindexScript]
  * @returns {undefined|string} - if updated, the new index
  */
-const makeUpdateIndex = makeHttpEs => async (parsedHost, alias, fns = {}, reindexScript) => {
+const makeUpdateIndex = version => async (parsedHost, alias, fns = {}, reindexScript) => {
   assertFnsIsValid(fns);
 
   _defaults(fns, {
@@ -133,7 +140,7 @@ const makeUpdateIndex = makeHttpEs => async (parsedHost, alias, fns = {}, reinde
     updateSettings: _identity
   });
 
-  const httpEs = makeHttpEs(parsedHost),
+  const httpEs = makeHttpEs[version](parsedHost),
     indexConventionRe = new RegExp(`^${alias}_v(\\d+)$`),
     currentIndex = await getCurrentIndex(httpEs, alias, indexConventionRe),
     { latestIndex, newIndex } = await getRecentAndNewIndexes(httpEs, alias, indexConventionRe),
@@ -144,7 +151,7 @@ const makeUpdateIndex = makeHttpEs => async (parsedHost, alias, fns = {}, reinde
     return;
   }
 
-  await createNewElasticsearchIndex(httpEs, newIndex, {
+  await createNewElasticsearchIndex[version](httpEs, newIndex, {
     mappings: fns.updateMappings(mappings),
     settings: fns.updateSettings(settings)
   });
@@ -154,6 +161,6 @@ const makeUpdateIndex = makeHttpEs => async (parsedHost, alias, fns = {}, reinde
 };
 
 module.exports = {
-  v1: makeUpdateIndex(makeHttpEs.v1),
-  v2: makeUpdateIndex(makeHttpEs.v2)
+  v1: makeUpdateIndex('v1'),
+  v2: makeUpdateIndex('v2')
 };
