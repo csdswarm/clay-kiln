@@ -1,14 +1,16 @@
 'use strict';
 
-const cache = require ('../cache'),
-  domUtils = require('../dom-utils'),
-  logger = require('../../universal/log'),
-  rest = require('../../universal/rest'),
+const
   { retrieveList } = require('../lists'),
   { uploadImage } = require('../s3'),
+  { DAY } = require('../../universal/constants'),
+  cache = require('../cache'),
+  logger = require('../../universal/log'),
+  rest = require('../../universal/rest'),
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
+  MAX_CACHE_AP_IN_SECONDS = 3 * DAY / 1000,
 
   __ = {
     cache,
@@ -23,7 +25,7 @@ const cache = require ('../cache'),
    * @param {string} filterConditions
    * @return {array}
    */
-  searchAp = async ( filterConditions ) => {
+  searchAp = async (filterConditions) => {
     if (typeof filterConditions !== 'string' || filterConditions === '') {
       __.log('error', 'filterConditions must be a string or have a value');
       return null;
@@ -56,21 +58,23 @@ const cache = require ('../cache'),
       let endpoint;
 
       if (next_page) {
-        endpoint = next_page.split('&').length === 1 ?
-          `${next_page}&apikey=${apMediaKey}` :
-          `${next_page}?apikey=${apMediaKey}`;
+        endpoint = next_page.includes('?')
+          ? `${next_page}&apikey=${apMediaKey}`
+          : `${next_page}?apikey=${apMediaKey}`;
       } else {
         const entitlements = await __.retrieveList('ap-media-entitlements', Object.assign({ locals }, null)),
           entitlementsStr = entitlements.map(e => e.value).join(' OR '),
           includes = 'associations,headline_extended,meta.products,renditions.nitf,subject';
-        
-        endpoint = `${ apFeedUrl }?q=productid%3A(${ entitlementsStr })&page_size=${ pageSize }&include=${ includes }&apikey=${ apMediaKey }`;
+
+        endpoint = `${apFeedUrl}?q=productid%3A(${entitlementsStr})&page_size=${pageSize}&include=${includes}&apikey=${apMediaKey}`;
       }
-      const response = await __.rest.get(endpoint),
-        items = response.data.items;
-      
-      return items.map(({ item, meta }) => {
-        return { item, products: meta.products };
+
+      const { data: { items, next_page: nextPage } } = await __.rest.get(endpoint);
+
+      await __.cache.set('ap-subscriptions-url', nextPage, MAX_CACHE_AP_IN_SECONDS);
+
+      return items.map(({ item, meta: { products } }) => {
+        return { item, products };
       });
     } catch (e) {
       __.log('error', 'Bad request getting ap feed from ap-media', e);
@@ -83,19 +87,22 @@ const cache = require ('../cache'),
    * @param {string} pictureEndpoint
    * @return {object}
    */
-  saveApPicture = async ( pictureEndpoint ) => {
+  saveApPicture = async (pictureEndpoint) => {
     try {
       if (!pictureEndpoint) {
         __.log('error', 'Missing pictureEndpoint');
         return null;
       }
-      const endpoint = pictureEndpoint.split('&').length === 1 ?
+
+      const endpoint = pictureEndpoint.includes('?') ?
           `${pictureEndpoint}&apikey=${apMediaKey}` :
           `${pictureEndpoint}?apikey=${apMediaKey}`,
         response = await __.rest.get(endpoint),
         item = response.data.item,
-        url = await __.uploadImage(item.renditions.main.href),
-        { pubstatus, altids, headline } = item;
+        { pubstatus, altids, headline } = item,
+        alternateFileName = `ap-${altids.etag}-${item.renditions.main.originalfilename}`,
+        imageUrl = `${item.renditions.main.href}&apikey=${apMediaKey}`,
+        url = await __.uploadImage(imageUrl, { alternateFileName, noWait: false });
 
       return {
         pubstatus,
@@ -108,35 +115,26 @@ const cache = require ('../cache'),
       __.log('error', 'Bad request saving ap picture', e);
       return {};
     }
-    
+
   },
 
   /**
-   * Make a request to get the article body and return the hedline and block portions
+   * Make a request to return the article body
    * @param {string} nitfUrl
    * @return {object}
    */
-  getApArticleBody = async ( nitfUrl ) => {
+  getApArticleBody = async (nitfUrl) => {
     try {
       if (!nitfUrl) {
         __.log('error', 'Not niftUrl was passed');
         return null;
       }
-    
-      const endpoint = nitfUrl.split('&').length === 1 ?
-          `${nitfUrl}&apikey=${apMediaKey}` :
-          `${nitfUrl}?apikey=${apMediaKey}`,
 
-        response = await __.rest.getHTML(endpoint),
-        doc = new domUtils.DOMParser().parseFromString(response, 'text/html'),
-        hedline = doc.getElementsByTagName('hedline'),
-        block = doc.getElementsByTagName('block');
-    
-      if (hedline.length > 0 && block.length > 0) {
-        return { hedline: hedline[0], block: block[0] };
-      } else {
-        return {};
-      }
+      const endpoint = nitfUrl.includes('?')
+        ? `${nitfUrl}&apikey=${apMediaKey}`
+        : `${nitfUrl}?apikey=${apMediaKey}`;
+      
+      return await __.rest.getHTML(endpoint);
     } catch (e) {
       __.log('error', 'Bad request getting article body', e);
       return {};
