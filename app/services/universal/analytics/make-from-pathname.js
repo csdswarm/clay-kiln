@@ -18,11 +18,13 @@ const _get = require('lodash/get'),
     pageTypeTagStationDetail,
     pageTypeTagStationsDirectory
   } = require('./shared-tracking-vars'),
+  pageTypeHomepage = 'homepage',
   pageTypeTagAuthor = 'authors',
   pageTypeTagTag = 'tag',
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
   articleOrGalleryPage = new Set(['article', 'vgallery']),
+  homepageOrSectionFront = new Set(['homepage', 'sectionFront']),
   /**
    * stationsDirectory utilities assume the pathname passes `isStationsDirectory`
    */
@@ -146,8 +148,8 @@ module.exports = ({ pathname, url } = {}) => {
       const { page, pageName } = pageData;
       let pageId = pageName;
 
-      if (page === 'homepage') {
-        pageId = page;
+      if (homepageOrSectionFront.has(page)) {
+        pageId = pageTypeHomepage;
       } else if (articleOrGalleryPage.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
@@ -177,9 +179,8 @@ module.exports = ({ pathname, url } = {}) => {
         case 'vgallery':
           return [pageName, ...contentTags];
         case 'homepage':
-          return [pageTypeTagSection, page];
         case 'sectionFront':
-          return [pageTypeTagSection, pageName];
+          return [pageTypeTagSection, pageTypeHomepage];
         case 'stationsDirectory':
           return [pageTypeTagStationsDirectory, pageName];
         case 'stationDetail':
