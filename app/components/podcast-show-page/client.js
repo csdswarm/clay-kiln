@@ -1,11 +1,12 @@
 'use strict';
 
-const { fetchDOM } = require('../../services/client/radioApi');
-// @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
-// podcastEpisodeFactory = require('../podcast-episode-list/client'),
+const { fetchDOM } = require('../../services/client/radioApi'),
+  _bindAll = require('lodash/bindAll'),
+  podcastEpisodeFactory = require('../podcast-episode-list/client');
 // @TODO: UNDO COMMENTS when merging to envs that have ON-1359 ON-1382
 // podcastDiscoverFactory = require('../podcast-discover/client'),
 // podcastSetFactory = require('../podcast-set/client');
+
 let lastUpdated, updates;
 
 /**
@@ -51,8 +52,7 @@ async function updateTab(content, podcastSiteSlug) {
 async function updateEpisodes(content, podcastSiteSlug) {
   await updateTab(content, podcastSiteSlug);
 
-  // @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
-  // podcastEpisodeFactory(content.querySelector('.component--podcast-episode-list'));
+  podcastEpisodeFactory(content.querySelector('.component--podcast-episode-list'));
 }
 
 /**
@@ -115,45 +115,54 @@ async function activateTab(e, tabs, content, useHash) {
 
 class PodcastShowPage {
   constructor() {
-    document.addEventListener('podcast-show-page-mount', (e) => {
-      const podcastShowPage = e.target.querySelector('.component--podcast-show-page'),
-        sidebar = e.target.querySelector('.content__sidebar'),
-        tabs = podcastShowPage.querySelectorAll('.tabs-tab'),
-        contentContainer = podcastShowPage.querySelector('.tabbed-content'),
-        content = podcastShowPage.querySelectorAll('.tabbed-content-container'),
-        firstTab = tabs[0].className.replace('tabs-tab tabs-tab--', ''),
-        podcastSiteSlug = podcastShowPage.getAttribute('data-podcast-site-slug'),
-        hash = window.location.hash.replace('#', '');
+    _bindAll(this, 'onMount', 'onDismount');
+    document.addEventListener('podcast-show-page-mount', this.onMount);
+    document.addEventListener('podcast-show-page-dismount', this.onDismount);
+  }
 
-      updates = {
-        episodes: () => updateEpisodes(contentContainer, podcastSiteSlug),
-        discover: () => updateDiscover(contentContainer, podcastSiteSlug)
-      };
-      sidebar.style.visibility = 'visible';
-      addTabNavigationListeners(tabs, content);
-      for (const tab of tabs) {
-        tab.querySelector('a').addEventListener('click', e => e.preventDefault());
-      }
+  onMount(e) {
+    const podcastShowPage = e.target.querySelector('.component--podcast-show-page'),
+      sidebar = e.target.querySelector('.content__sidebar'),
+      tabs = podcastShowPage.querySelectorAll('.tabs-tab'),
+      contentContainer = podcastShowPage.querySelector('.tabbed-content'),
+      content = podcastShowPage.querySelectorAll('.tabbed-content-container'),
+      firstTab = tabs[0].className.replace('tabs-tab tabs-tab--', ''),
+      podcastSiteSlug = podcastShowPage.getAttribute('data-podcast-site-slug'),
+      hash = window.location.hash.replace('#', '');
 
-      if (hash) {
-        lastUpdated = hash;
+    updates = {
+      episodes: () => updateEpisodes(contentContainer, podcastSiteSlug),
+      discover: () => updateDiscover(contentContainer, podcastSiteSlug)
+    };
+    sidebar.style.visibility = 'visible';
+    addTabNavigationListeners(tabs, content);
+    for (const tab of tabs) {
+      tab.querySelector('a').addEventListener('click', e => e.preventDefault());
+    }
+
+    if (hash) {
+      lastUpdated = hash;
+      activateTab(lastUpdated, tabs, content, true);
+      window.scrollTo(0, document.querySelector('.podcast-show-page-body').offsetTop);
+    } else {
+      lastUpdated = firstTab;
+      activateTab(lastUpdated, tabs, content);
+    }
+
+    window.onpopstate = () => {
+      if (window.location.hash) {
+        lastUpdated = window.location.hash.replace('#', '');
         activateTab(lastUpdated, tabs, content, true);
-        window.scrollTo(0, document.querySelector('.podcast-show-page-body').offsetTop);
       } else {
         lastUpdated = firstTab;
         activateTab(lastUpdated, tabs, content);
       }
+    };
+  }
 
-      window.onpopstate = () => {
-        if (window.location.hash) {
-          lastUpdated = window.location.hash.replace('#', '');
-          activateTab(lastUpdated, tabs, content, true);
-        } else {
-          lastUpdated = firstTab;
-          activateTab(lastUpdated, tabs, content);
-        }
-      };
-    });
+  onDismount() {
+    document.removeEventListener('podcast-show-page-mount', this.onMount);
+    document.removeEventListener('podcast-show-page-mount', this.onDismount);
   }
 }
 
