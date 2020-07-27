@@ -6,7 +6,7 @@
     <div class="content-search">
         <station-select
           class="content-search__station-select"
-          :initialSelectedSlug="currentStation"
+          :initialSelectedSlug="initialStationSlug"
           :onChange="stationChanged"
         />
         <ui-textbox
@@ -79,7 +79,7 @@
         searchResults: [],
         loading: false,
         searchText: this.data || '',
-        currentStation: '',
+        initialStationSlug: '',
       };
     },
     watch: {
@@ -90,6 +90,14 @@
     },
     computed: {
       ...mapGetters(stationSelect.storeNs, ['selectedStation']),
+      isNationalSelected() {
+        return !!this.selectedStation.slug;
+      },
+      getStationFilter() {
+        return this.isNationalSelected 
+          ? matchNationalStation
+          : [{ match: { stationSlug: this.selectedStation.slug } }];
+      },
       showResults() {
         return this.loading || this.searchResults.length !== 0;
       }
@@ -98,25 +106,11 @@
      * lifecycle method that will populate the results from an existing url or display the most recent 10 items published
      */
     created() {
-      this.currentStation = window.kiln.locals.station.site_slug;
+      this.initialStationSlug = window.kiln.locals.station.site_slug;
       this.performSearch();
     },
     methods: {
-      setStationFilter(stationSlug) {
-        if (!stationSlug) { // RDC
-          return matchNationalStation;
-        } else {
-          return [
-            {
-              match: {
-                stationSlug,
-              },
-            },
-          ];
-        }
-      },
       stationChanged() {
-        this.currentStation = this.selectedStation.slug
         this.performSearch();
       },
       commitFormData() {
@@ -143,7 +137,7 @@
                 fields: ["authors", "canonicalUrl", "tags", "teaser"]
               }
             }],
-            should: this.setStationFilter(this.currentStation)
+            should: this.getStationFilter
           }
         });
         queryService.addSort(query, { date: { order: 'desc' } });
