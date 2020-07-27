@@ -20,13 +20,12 @@
   margin-bottom: em(50);
 }
 .component--google-ad-manager {
-  &.sticky,
-  &.sticky--station-front {
+  &.sticky {
     position: -webkit-sticky;
     position: sticky;
     top: em(100);
     z-index: 2;
-    &--station-front {
+    &--has-station-nav {
       top: em(170);
     }
   }

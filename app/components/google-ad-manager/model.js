@@ -14,7 +14,7 @@ module.exports = unityComponent({
         : locals.station.doubleclick_bannertag,
       environment: process.env.NODE_ENV,
       adRefreshInterval: process.env.GOOGLE_AD_REFRESH_INTERVAL,
-      hasStationFront: locals.station && locals.station.id
+      hasStationNav: locals.station && locals.station.id
     };
   }
 });
