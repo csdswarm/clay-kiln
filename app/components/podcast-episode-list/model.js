@@ -83,18 +83,27 @@ function getEpisodesInShow(locals) {
     });
 }
 
-// NOTE: do js doc
+/**
+ * generates link for episode detail page
+ *
+ * National podcast episode URL structure:
+ *  /podcasts/[podcast show title]/[podcast-episode-title]
+ * Station podcast episode URL structure:
+ *  /[site_slug]/podcasts/[podcast show title]/[podcast-episode-title]
+ *
+ * @param {object} episode - object containing episode data
+ * @param {object} locals - data that has been attached to express locals for the current page request
+ *
+ * @returns {string}
+ */
 function buildEpisodeDetailLink(episode, locals) {
   const {
-      site: { host, protocol },
-      query: {
-        'station-site-slug': stationSiteSlug,
-        'podcast-site-slug': podcastSiteSlug
-      }
-    } = locals,
+      'station-site-slug': stationSiteSlug,
+      'podcast-site-slug': podcastSiteSlug
+    } = _get(locals, 'query', {}),
     station = stationSiteSlug || _get(locals, 'params.stationSlug'),
     podcast = podcastSiteSlug || _get(locals, 'params.dynamicSlug');
-  let url = `${protocol}://${host}`;
+  let url = '';
 
   if (station) {
     url += `/${station}`;
@@ -132,7 +141,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: async (uri, data, locals) => {
-    if (!locals || !locals.query) {
+    if (!locals) {
       return data;
     }
 
