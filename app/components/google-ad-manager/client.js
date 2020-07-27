@@ -388,7 +388,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
+      targetingTags : getMetaTagContent('name',  NMC.tag)
     });
   } else {
     Object.assign(adTargetingData, {

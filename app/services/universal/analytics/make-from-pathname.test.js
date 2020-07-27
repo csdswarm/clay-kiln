@@ -37,6 +37,7 @@ describe('universal', () => {
         expect(fromPathname.getPageId({ page: 'sectionFront', pageName : 'should-return-with-sectionfront' })).to.equal('sectionfront_should-return-with-sectionfront');
         expect(fromPathname.getPageId({ page: 'stationSectionFront', pageName : 'should-return-with-sectionfront' })).to.equal('sectionfront_should-return-with-sectionfront');
         expect(fromPathname.getPageId({ page: 'topicPage', pageName : 'should-return-with-tag' })).to.equal('tag_should-return-with-tag');
+        expect(fromPathname.getPageId({ page: 'authorPage', pageName : 'should-return-with-defined-page-name' })).to.equal('should-return-with-defined-page-name');
 
         expect(fromPathname.getPageId({ page: 'article', pageName : 'articles' })).to.equal('articles_billie-eilish-on-why-its-a-great-time-to-be-vegan');
         expect(fromPathname.getPageId({ page: 'vgallery', pageName : 'galleries' })).to.equal('galleries_billie-eilish-on-why-its-a-great-time-to-be-vegan');
