@@ -38,7 +38,7 @@ function complexByline(opts) {
   const bylines = _.get(opts.hash, 'bylines', []),
     options = _.pick(opts.hash, ['showSocial', 'authorHost', 'linkClass', 'nameClass', 'hideLinks', 'simpleList', 'stationSlug']);
 
-  let names;
+  let names, hosts;
 
   if (options.simpleList) {
     return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatNumAuthors(bylines, options);
@@ -46,9 +46,14 @@ function complexByline(opts) {
 
   return _.join(_.reduce(bylines, (acc, byline, idx) => {
     names = _.get(byline, 'names', []);
+    hosts = _.get(byline, 'hosts', []);
 
     if (names.length > 0) {
       acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatNumAuthors(names, options)}`);
+    }
+
+    if (hosts.length > 0) {
+      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(hosts) : socialsByline.formatNumHosts(hosts, options)}`);
     }
 
     return acc;
