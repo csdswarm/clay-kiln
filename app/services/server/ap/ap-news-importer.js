@@ -173,6 +173,26 @@ async function getNewStations(article, stationMappings, locals) {
 }
 
 /**
+ * If AP provides associations with a picture, this gets the first image and saves it and returns the new URI of
+ * the image that is saved to AWS. Otherwise, default image information is returned.
+ *
+ * @param {{ type: string, uri: string }[]} associations
+ * @returns {Promise<{ headline: string, url: string }>}
+ */
+function resolveImage(associations = []) {
+  const
+    { saveApPicture } = __,
+    apRef = Object.values(associations).find(({ type }) => type === 'picture');
+
+  return apRef
+    ?  saveApPicture(apRef.uri)
+    : Promise.resolve({
+      headline: 'RADIO.COM - Associated Press',
+      url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg'
+    });
+}
+
+/**
  * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
@@ -186,22 +206,25 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
   const
     { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
     { pageData, article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, restPut, saveApPicture } = __,
+    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, restPut } = __,
     { itemid } = altids,
 
-    image = associations
-      ? await saveApPicture((Object.values(associations).find(({ type }) => type === 'picture') || {}).uri)
-      : { headline: 'placeholder', url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg' },
-    [feedImg, lead, sideShare, tags] = [
+    // getSubcomponents (if possible determine which ones are actually needed)
+    [image, feedImg, lead, sideShare, tags] = [
+      await resolveImage(associations),
       await dbGet(article.feedImg._ref),
       await Promise.all(article.lead.map(dbGet)),
       await dbGet(article.sideShare._ref),
       await dbGet(article.tags._ref)
     ],
+
+    // updateTags
     tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
       .filter(({ creator }) => creator === 'Machine')
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
+
+    // setMainArticleData
     newArticleData = {
       article: {
         ...article,
@@ -271,9 +294,10 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
         ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
       ]
     };
-
+  
+  // set subArticleData
   await assignDimensionsAndFileSize(image.url, newFeedImage);
-
+  
   const { _ref, ...props } = newFeedImage,
     imgRef = _ref.replace(/feed\-image/, 'image');
 
@@ -285,6 +309,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     Object.assign(existing, { _ref: imgRef, ...existing, ...props });
   }
 
+  // mapContentToArticle
   const
     TYPES = {
       bq: 'blockquote',
@@ -339,10 +364,12 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     tags: newArticleTags
   });
 
+  // saveArticle
   const { _ref: articleRef, ...newArticleInfo } = newArticleData.article;
 
   await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${articleRef}`, newArticleInfo, true);
 
+  // publishArticle
   const { _ref: pageRef = '', ...pageInfo } = pageData;
 
   await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);
