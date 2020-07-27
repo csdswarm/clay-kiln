@@ -193,6 +193,30 @@ function resolveImage(associations = []) {
 }
 
 /**
+ * Gets all subcomponents of the article so that they can be updated appropriately
+ * @param {{ feedImg: {_ref: string}, lead: string[], sideShare: {_ref: string}, tags: { _ref: string } }} article
+ * @returns {Promise<object | object[]>[]}
+ */
+function resolveArticleSubComponents(article) {
+  const
+    { dbGet } = __,
+    {
+      feedImg,
+      lead,
+      sideShare,
+      tags
+    } = article;
+  
+  return Promise.all([
+    dbGet(feedImg._ref),
+    Promise.all(lead.map(dbGet)),
+    dbGet(sideShare._ref),
+    dbGet(tags._ref)
+  ]);
+
+}
+
+/**
  * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
@@ -206,18 +230,22 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
   const
     { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
     { pageData, article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, restPut } = __,
+    { assignDimensionsAndFileSize, dbDel, getApArticleBody, restPut } = __,
     { itemid } = altids,
 
-    // getSubcomponents (if possible determine which ones are actually needed)
-    [image, feedImg, lead, sideShare, tags] = [
+    [
+      image,
+      [
+        feedImg,
+        lead,
+        sideShare,
+        tags
+      ]
+    ] = [
       await resolveImage(associations),
-      await dbGet(article.feedImg._ref),
-      await Promise.all(article.lead.map(dbGet)),
-      await dbGet(article.sideShare._ref),
-      await dbGet(article.tags._ref)
+      await resolveArticleSubComponents(article)
     ],
-
+  
     // updateTags
     tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
