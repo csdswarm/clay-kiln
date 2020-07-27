@@ -217,6 +217,74 @@ function resolveArticleSubComponents(article) {
 }
 
 /**
+ * Given existing article data and ap meta data, maps any updated values to the article data and returns the
+ * new article data.
+ * (NOTE: does not map external items at this time)
+ * @param {object} apMeta
+ * @param {object} lead
+ * @param {object} image
+ * @param {string} image.url
+ * @param {object} articleData
+ * @param {object} articleData.article
+ * @param {object} articleData.metaDescription
+ * @param {object} articleData.metaTitle
+ * @returns {object}
+ */
+function mapMainArticleData(apMeta, lead,{ url: imageUrl }, { article, metaDescription, metaImage, metaTitle }) {
+  const { altids, ednote, headline, headline_extended, version } = apMeta,
+    { etag, itemid } = altids;
+    
+  return {
+    article: {
+      ...article,
+      ap: {
+        itemid,
+        etag,
+        version,
+        ednote
+      },
+      byline: [
+        {
+          names: [],
+          prefix: 'by',
+          sources: [
+            { text: 'The Associated Press', slug: 'the-associated-press' }
+          ]
+        }
+      ],
+      feedImgUrl: imageUrl,
+      headline,
+      lead,
+      msnTitle: headline,
+      pageDescription: headline_extended,
+      pageTitle: headline,
+      plainTextPrimaryHeadline: headline,
+      plainTextShortHeadline: headline,
+      primaryHeadline: headline,
+      seoDescription: headline_extended,
+      seoHeadline: headline,
+      shortHeadline: headline,
+      slug: slugifyService(headline)
+    },
+    metaDescription: {
+      ...metaDescription,
+      description: headline_extended
+    },
+    metaImage: {
+      ...metaImage,
+      imageUrl
+    },
+    metaTitle: {
+      ...metaTitle,
+      kilnTitle: headline,
+      ogTitle: headline,
+      title: headline,
+      twitterTitle: headline
+    }
+  };
+}
+
+/**
  * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
@@ -228,8 +296,8 @@ function resolveArticleSubComponents(article) {
  */
 async function mapApDataToArticle(apMeta, articleData, locals) {
   const
-    { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
-    { pageData, article, metaDescription, metaImage, metaTitle } = articleData,
+    { altids, associations, headline, renditions } = apMeta,
+    { pageData, article } = articleData,
     { assignDimensionsAndFileSize, dbDel, getApArticleBody, restPut } = __,
     { itemid } = altids,
 
@@ -253,54 +321,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
 
     // setMainArticleData
-    newArticleData = {
-      article: {
-        ...article,
-        ap: {
-          itemid,
-          etag: altids.etag,
-          version,
-          ednote
-        },
-        byline: [
-          {
-            names: [],
-            prefix: 'by',
-            sources: [
-              { text: 'The Associated Press', slug: 'the-associated-press' }
-            ]
-          }
-        ],
-        feedImgUrl: image.url,
-        headline,
-        lead,
-        msnTitle: headline,
-        pageDescription: headline_extended,
-        pageTitle: headline,
-        plainTextPrimaryHeadline: headline,
-        plainTextShortHeadline: headline,
-        primaryHeadline: headline,
-        seoDescription: headline_extended,
-        seoHeadline: headline,
-        shortHeadline: headline,
-        slug: slugifyService(headline)
-      },
-      metaDescription: {
-        ...metaDescription,
-        description: headline_extended
-      },
-      metaImage: {
-        ...metaImage,
-        imageUrl: image.url
-      },
-      metaTitle: {
-        ...metaTitle,
-        kilnTitle: headline,
-        ogTitle: headline,
-        title: headline,
-        twitterTitle: headline
-      }
-    },
+    newArticleData = mapMainArticleData(apMeta, lead, image, articleData),
     newFeedImage = {
       _ref: article.feedImg._ref,
       ...feedImg,
