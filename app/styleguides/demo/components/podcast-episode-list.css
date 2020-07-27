@@ -55,6 +55,7 @@
   }
   &__title {
     @mixin podcast-episode-list-font1;
+    text-decoration: none;
   }
   &__description {
     @mixin podcast-episode-list-font2;
