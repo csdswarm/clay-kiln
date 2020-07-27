@@ -106,6 +106,7 @@ class PodcastListComponentView {
       episodesContainer: $one(`.${componentClassName}__episodes`),
       loadMoreBtn: $one(`.${componentClassName}__load-more-btn`)
     };
+    // TODO: ON-2216 refactor to use fetchDom
     this.itemTemplate = this.getHtmlTemplateFromClone();
   }
   /**
@@ -113,6 +114,7 @@ class PodcastListComponentView {
    * @return {Function} // function that will except episode data
    */
   getHtmlTemplateFromClone() {
+    if (!this.elements.episodesContainer.children[0]) return;
     const
       clone = this.elements.episodesContainer.children[0].cloneNode(true),
       cloneElements = {
@@ -139,15 +141,18 @@ class PodcastListComponentView {
               element.setAttribute('href', data.attributes.audio_url);
               break;
             case 'playBtn':
-              element.setAttribute('href', '#');
+              element.setAttribute('href', data.attributes.episode_detail_url);
               // setting for player needs
               element.dataset.playPodcastEpisodeId = data.id,
               element.dataset.playPodcastShowId = data.attributes.podcast[0].id;
               break;
+            case 'title':
+              element.setAttribute('href', data.attributes.episode_detail_url);
+              element.innerText = utils.truncate(data.attributes.title, 52, { useSuffix: true });
+              break;
             default:
               let value = data.attributes[key];
 
-              if (key === 'title') value = utils.truncate(value, 52, { useSuffix: true });
               if (key === 'description') value = utils.truncate(value, 210, { useSuffix: true });
               element.innerText = value;
               break;
@@ -262,6 +267,13 @@ class PodcastListComponentController {
           'SpaPlayerInterfacePlaybackStatus',
           options
         );
+    }
+
+    // if anchor link
+    if (e.target.classList.contains('podcast-episode-list__title')) {
+      e.preventDefault();
+      e.stopPropagation();
+      vueApp.$router.push(e.target.getAttribute('href'));
     }
   }
   /**
