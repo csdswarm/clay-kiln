@@ -1,4 +1,4 @@
-_version: 15.0
+_version: 16.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -136,6 +136,7 @@ byline:
         prop: hosts
         _label: Hosts
         _has:
+          help: Press TAB or , after each name to save
           input: simple-list
           autocomplete:
             list: hosts
