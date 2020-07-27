@@ -7,7 +7,6 @@ const { retrieveList } = require('../lists'),
   logger = require('../../universal/log'),
   rest = require('../../universal/rest'),
   { getAll } = require('./ap-subscriptions'),
-  { importArticle } = require('./ap-news-importer'),
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
@@ -16,7 +15,6 @@ const { retrieveList } = require('../lists'),
   __ = {
     cache,
     getAll,
-    importArticle,
     log,
     rest,
     retrieveList,
@@ -142,63 +140,12 @@ const { retrieveList } = require('../lists'),
       __.log('error', 'Bad request getting article body', e);
       return {};
     }
-  },
-
-  /**
-   * Import an articles from the AP media api
-   * @param {object} locals
-   * @return {array}
-   */
-  importApSubscription = async (locals) => {
-    try {
-      const apFeed = await getApFeed(locals),
-        apSubscriptions = await __.getAll(),
-        returnData = [];
-
-      for (const feed of apFeed) {
-        let apImportData = '{';
-
-        feed.products.forEach(product => {
-          apSubscriptions.forEach(subscription => {
-            subscription.data.entitlements.forEach(entitlement => {
-              if (product.id === entitlement.id) {
-                if (!apImportData.includes(subscription.data.stationSlug)) {
-                  apImportData += `"${subscription.data.stationSlug}" : ${JSON.stringify(subscription.data.mappings[0])},`;
-                }
-              }
-            });
-          });
-        });
-
-        if (apImportData.length > 1) {
-          apImportData = apImportData.slice(0, -1) + '}';
-
-          try {
-            const data = await __.importArticle(feed.item, JSON.parse(apImportData), locals);
-
-            returnData.push(data);
-          } catch (error) {
-            __.log('error', 'Bad request importing articles from ap-media', error);
-          }
-
-        }
-      };
-
-      return returnData;
-
-    } catch (e) {
-      __.log('error', 'Bad request importing articles from ap-media', e);
-      return [];
-    }
   };
-
-  
 
 module.exports = {
   _internals: __,
   getApArticleBody,
   getApFeed,
-  importApSubscription,
   saveApPicture,
   searchAp
 };

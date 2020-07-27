@@ -1,9 +1,8 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  { importApSubscription } = require('../../services/server/ap/ap-media'),
   log = require('../../services/universal/log').setup({ file: __filename }),
-  { ensureRecordExists, getAll, save } = require('../../services/server/ap/ap-subscriptions'),
+  { ensureRecordExists, getAll, importApSubscription, save } = require('../../services/server/ap/ap-subscriptions'),
   { STATUS_CODE } = require('../../services/universal/constants'),
   __ = {
     dbGet: db.get,
