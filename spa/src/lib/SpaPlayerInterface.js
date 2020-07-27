@@ -108,7 +108,7 @@ class SpaPlayerInterface {
    * @return {string}
    */
   getPlayState (current) {
-    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive
+    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive || window.RadioPlayer.streamType
 
     if (current === 'play') {
       return interactive ? 'pause' : 'stop'
@@ -144,6 +144,10 @@ class SpaPlayerInterface {
 
       window.addEventListener('stationIdClick', e => {
         this.redirectToSDP(e.detail.siteSlug, e.detail.id, e.detail.callsign)
+      })
+
+      window.addEventListener('goToPodcastPage', e => {
+        this.redirectToPodcast(e.detail.podcastSiteSlug)
       })
 
       return true
@@ -244,6 +248,16 @@ class SpaPlayerInterface {
   redirectToSDP (siteSlug, id, callsign) {
     const value = siteSlug || callsign || id
     this.spa.$router.push(`/${value}/listen`)
+  }
+
+  /**
+   * Redirect to Podcast Page by using podcastSiteSlug
+   * @param { podcastSiteSlug } siteSlug
+   */
+  redirectToPodcast (podcastSiteSlug) {
+    const route = `/podcasts/${podcastSiteSlug}`
+    if (window.location.pathname === route) return
+    this.spa.$router.push(route)
   }
 
   /**
