@@ -1,0 +1,8 @@
+_components:
+  podcast-episode-page:
+    podcastEpisodeLead:
+      _ref: /_components/podcast-lead/instances/default
+    instances:
+      default:
+        podcastEpisodeLead:
+          _ref: /_components/podcast-lead/instances/default

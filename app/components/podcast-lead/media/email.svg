@@ -1,9 +1,51 @@
-
-<svg viewBox="0 0 36 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="email" fill-rule="nonzero">
-            <rect id="Rectangle" fill="#1F055E" x="0.8" y="0.8" width="34.4" height="24.3"></rect>
-            <path d="M22.7485692,12.7608719 L31.6467907,4.78037507 C32.0608365,4.40393654 32.0984771,3.76399104 31.7220718,3.34237988 C31.3456665,2.9282975 30.7057774,2.89065365 30.2842035,3.26709218 L18.0133905,14.2816836 L15.6194527,12.1435128 C15.6119246,12.135984 15.6043965,12.1284552 15.6043965,12.1209264 C15.5516997,12.068225 15.499003,12.0230524 15.4387781,11.9778798 L5.69740877,3.25956341 C5.27583483,2.88312488 4.63594581,2.92076873 4.2595405,3.34237988 C3.88313519,3.76399104 3.92077572,4.40393654 4.34234967,4.78037507 L13.3459646,12.8286309 L4.3799902,21.2232101 C3.97347246,21.6071774 3.95088815,22.2471229 4.33482156,22.6612053 C4.53808043,22.8720109 4.80909225,22.9849425 5.08010407,22.9849425 C5.32853157,22.9849425 5.57695908,22.8945972 5.77268984,22.7139067 L14.8741702,14.1988671 L17.343389,16.4047969 C17.5391198,16.5779587 17.7800192,16.6607751 18.0209186,16.6607751 C18.261818,16.6607751 18.5102455,16.5704299 18.6984481,16.3972682 L21.2354199,14.1235794 L30.2842035,22.7214355 C30.4799342,22.9096548 30.7358899,23 30.9843174,23 C31.2553292,23 31.5188129,22.8945972 31.7220718,22.6837916 C32.1060052,22.277238 32.090949,21.6297637 31.6844312,21.2457964 L22.7485692,12.7608719 Z" id="Path" fill="#FFFFFF"></path>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" class="share__email" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 30 19.9" style="enable-background:new 0 0 30 19.9;" xml:space="preserve">
+<style type="text/css">
+	.share__email .st0{clip-path:url(#SVGID_2_);}
+	.share__email .st1{clip-path:url(#SVGID_4_);fill:#1F055E;}
+	.share__email .st2{clip-path:url(#SVGID_6_);}
+	.share__email .st3{clip-path:url(#SVGID_8_);fill:#FFFFFF;}
+</style>
+<g>
+	<g>
+		<defs>
+			<path id="SVGID_1_" d="M30,17.4c0,1.3-1.2,2.5-2.5,2.5h-25c-1.3,0-2.5-1.2-2.5-2.5V2.5C0,1.2,1.2,0,2.5,0h25
+				C28.8,0,30,1.2,30,2.5V17.4z"></path>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"></use>
+		</clipPath>
+		<g class="st0">
+			<defs>
+				<rect id="SVGID_3_" x="-400.1" y="-268.3" width="847.1" height="1206.2"></rect>
+			</defs>
+			<clipPath id="SVGID_4_">
+				<use xlink:href="#SVGID_3_"  style="overflow:visible;"></use>
+			</clipPath>
+			<rect x="-2.2" y="-2.2" class="st1" width="34.4" height="24.3"></rect>
+		</g>
+	</g>
+	<g>
+		<defs>
+			<path id="SVGID_5_" d="M27.2,15.1c0.4,0.3,0.4,0.8,0.1,1.2c-0.2,0.2-0.4,0.3-0.7,0.3c-0.2,0-0.4-0.1-0.5-0.2l-7.9-6.3l-2.8,2.2
+				c-0.2,0.1-0.3,0.2-0.5,0.2s-0.4-0.1-0.5-0.2l-2.8-2.2l-7.9,6.3c-0.2,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.5-0.1-0.7-0.3
+				c-0.3-0.4-0.2-0.9,0.1-1.2l7.6-6.1L2.8,3.1C2.5,2.9,2.4,2.3,2.7,2C3,1.6,3.5,1.6,3.8,1.8L15,10.6l11.2-8.7
+				C26.5,1.6,27,1.6,27.3,2c0.3,0.4,0.2,0.9-0.1,1.2l-7.6,5.9L27.2,15.1z"></path>
+		</defs>
+		<clipPath id="SVGID_6_">
+			<use xlink:href="#SVGID_5_"  style="overflow:visible;"></use>
+		</clipPath>
+		<g class="st2">
+			<defs>
+				<rect id="SVGID_7_" x="-400.1" y="-268.3" width="847.1" height="1206.2"></rect>
+			</defs>
+			<clipPath id="SVGID_8_">
+				<use xlink:href="#SVGID_7_"  style="overflow:visible;"></use>
+			</clipPath>
+			<rect x="0.3" y="-0.5" class="st3" width="29.4" height="19.4"></rect>
+		</g>
+	</g>
+</g>
 </svg>
