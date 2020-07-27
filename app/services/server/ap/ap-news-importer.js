@@ -173,6 +173,118 @@ async function getNewStations(article, stationMappings, locals) {
 }
 
 /**
+ * If AP provides associations with a picture, this gets the first image and saves it and returns the new URI of
+ * the image that is saved to AWS. Otherwise, default image information is returned.
+ *
+ * @param {{ type: string, uri: string }[]} associations
+ * @returns {Promise<{ headline: string, url: string }>}
+ */
+function resolveImage(associations = []) {
+  const
+    { saveApPicture } = __,
+    apRef = Object.values(associations).find(({ type }) => type === 'picture');
+
+  return apRef
+    ?  saveApPicture(apRef.uri)
+    : Promise.resolve({
+      headline: 'RADIO.COM - Associated Press',
+      url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg'
+    });
+}
+
+/**
+ * Gets all subcomponents of the article so that they can be updated appropriately
+ * @param {{ feedImg: {_ref: string}, lead: string[], sideShare: {_ref: string}, tags: { _ref: string } }} article
+ * @returns {Promise<object | object[]>[]}
+ */
+function resolveArticleSubComponents(article) {
+  const
+    { dbGet } = __,
+    {
+      feedImg,
+      lead,
+      sideShare,
+      tags
+    } = article;
+  
+  return Promise.all([
+    dbGet(feedImg._ref),
+    Promise.all(lead.map(dbGet)),
+    dbGet(sideShare._ref),
+    dbGet(tags._ref)
+  ]);
+
+}
+
+/**
+ * Given existing article data and ap meta data, maps any updated values to the article data and returns the
+ * new article data.
+ * (NOTE: does not map external items at this time)
+ * @param {object} apMeta
+ * @param {object} lead
+ * @param {object} image
+ * @param {string} image.url
+ * @param {object} articleData
+ * @param {object} articleData.article
+ * @param {object} articleData.metaDescription
+ * @param {object} articleData.metaTitle
+ * @returns {object}
+ */
+function mapMainArticleData(apMeta, lead,{ url: imageUrl }, { article, metaDescription, metaImage, metaTitle }) {
+  const { altids, ednote, headline, headline_extended, version } = apMeta,
+    { etag, itemid } = altids;
+    
+  return {
+    article: {
+      ...article,
+      ap: {
+        itemid,
+        etag,
+        version,
+        ednote
+      },
+      byline: [
+        {
+          names: [],
+          prefix: 'by',
+          sources: [
+            { text: 'The Associated Press', slug: 'the-associated-press' }
+          ]
+        }
+      ],
+      feedImgUrl: imageUrl,
+      headline,
+      lead,
+      msnTitle: headline,
+      pageDescription: headline_extended,
+      pageTitle: headline,
+      plainTextPrimaryHeadline: headline,
+      plainTextShortHeadline: headline,
+      primaryHeadline: headline,
+      seoDescription: headline_extended,
+      seoHeadline: headline,
+      shortHeadline: headline,
+      slug: slugifyService(headline)
+    },
+    metaDescription: {
+      ...metaDescription,
+      description: headline_extended
+    },
+    metaImage: {
+      ...metaImage,
+      imageUrl
+    },
+    metaTitle: {
+      ...metaTitle,
+      kilnTitle: headline,
+      ogTitle: headline,
+      title: headline,
+      twitterTitle: headline
+    }
+  };
+}
+
+/**
  * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
@@ -184,72 +296,32 @@ async function getNewStations(article, stationMappings, locals) {
  */
 async function mapApDataToArticle(apMeta, articleData, locals) {
   const
-    { altids, associations, ednote, headline, headline_extended, renditions, version } = apMeta,
-    { pageData, article, metaDescription, metaImage, metaTitle } = articleData,
-    { assignDimensionsAndFileSize, dbDel, dbGet, getApArticleBody, restPut, saveApPicture } = __,
+    { altids, associations, headline, renditions } = apMeta,
+    { pageData, article } = articleData,
+    { assignDimensionsAndFileSize, dbDel, getApArticleBody, restPut } = __,
     { itemid } = altids,
 
-    image = associations
-      ? await saveApPicture((Object.values(associations).find(({ type }) => type === 'picture') || {}).uri)
-      : { headline: 'placeholder', url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg' },
-    [feedImg, lead, sideShare, tags] = [
-      await dbGet(article.feedImg._ref),
-      await Promise.all(article.lead.map(dbGet)),
-      await dbGet(article.sideShare._ref),
-      await dbGet(article.tags._ref)
+    [
+      image,
+      [
+        feedImg,
+        lead,
+        sideShare,
+        tags
+      ]
+    ] = [
+      await resolveImage(associations),
+      await resolveArticleSubComponents(article)
     ],
+  
+    // updateTags
     tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
       .filter(({ creator }) => creator === 'Machine')
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
-    newArticleData = {
-      article: {
-        ...article,
-        ap: {
-          itemid,
-          etag: altids.etag,
-          version,
-          ednote
-        },
-        byline: [
-          {
-            names: [],
-            prefix: 'by',
-            sources: [
-              { text: 'The Associated Press', slug: 'the-associated-press' }
-            ]
-          }
-        ],
-        feedImgUrl: image.url,
-        headline,
-        lead,
-        msnTitle: headline,
-        pageDescription: headline_extended,
-        pageTitle: headline,
-        plainTextPrimaryHeadline: headline,
-        plainTextShortHeadline: headline,
-        primaryHeadline: headline,
-        seoDescription: headline_extended,
-        seoHeadline: headline,
-        shortHeadline: headline,
-        slug: slugifyService(headline)
-      },
-      metaDescription: {
-        ...metaDescription,
-        description: headline_extended
-      },
-      metaImage: {
-        ...metaImage,
-        imageUrl: image.url
-      },
-      metaTitle: {
-        ...metaTitle,
-        kilnTitle: headline,
-        ogTitle: headline,
-        title: headline,
-        twitterTitle: headline
-      }
-    },
+
+    // setMainArticleData
+    newArticleData = mapMainArticleData(apMeta, lead, image, articleData),
     newFeedImage = {
       _ref: article.feedImg._ref,
       ...feedImg,
@@ -271,9 +343,10 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
         ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
       ]
     };
-
+  
+  // set subArticleData
   await assignDimensionsAndFileSize(image.url, newFeedImage);
-
+  
   const { _ref, ...props } = newFeedImage,
     imgRef = _ref.replace(/feed\-image/, 'image');
 
@@ -285,6 +358,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     Object.assign(existing, { _ref: imgRef, ...existing, ...props });
   }
 
+  // mapContentToArticle
   const
     TYPES = {
       bq: 'blockquote',
@@ -339,10 +413,12 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
     tags: newArticleTags
   });
 
+  // saveArticle
   const { _ref: articleRef, ...newArticleInfo } = newArticleData.article;
 
   await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${articleRef}`, newArticleInfo, true);
 
+  // publishArticle
   const { _ref: pageRef = '', ...pageInfo } = pageData;
 
   await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);

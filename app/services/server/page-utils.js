@@ -6,6 +6,12 @@ const
   { get: dbGet } = require('./db'),
   { getAllStations } = require('./station-utils');
 
+/**
+ * Adds a stationSlug to elastic for the page uri given
+ * @param {string} uri
+ * @param {string} stationSlug
+ * @returns {Promise<*>}
+ */
 async function addStationSlug(uri, stationSlug) {
   const { elasticPut, amphoraDb } = __;
   
@@ -30,6 +36,7 @@ const __ = {
 
 /**
  * Creates a new page from a template, and adds the station slug to it.
+ * @param {string} pagesUri
  * @param {object} pageBody
  * @param {string} stationSlug
  * @param {object} locals
