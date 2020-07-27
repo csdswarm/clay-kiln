@@ -21,7 +21,22 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\n\nCreating Host Page...\n\n\n"
+node migration.js $*
+
+newPageList="_lists/new-pages"
+
+printf "\nUpdating General Content pages list...\n"
+
+curl -X GET -H "Accept: application/json" $http://$1/$newPageList > ./newPageList.json
+
+node updateNewPageList.js
+
+curl -X PUT $http://$1/$newPageList -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./newPageList.json -o /dev/null -s
+curl -X PUT $http://$1/$newPageList@published -H 'Authorization: token accesskey' -o /dev/null -s
+
+rm newPageList.json
+
+printf "\n\nCreating Host Pages...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 cat ./_pages.yml | clay import -k demo -y -p $1
 
