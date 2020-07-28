@@ -325,13 +325,12 @@ describe('server', () => {
               ...options,
               apBodyContent: options.apBodyContent || [
                 {
-                  args: [NITF_REF], resolves: {
-                    block: {
-                      children: [
-                        { localName: 'p', innerHTML: options.nitfPara || P_TEXT }
-                      ]
-                    }
-                  }
+                  args: [NITF_REF], resolves: `
+                    <nitf>
+                      <block>: {
+                        <p>${options.nitfPara || P_TEXT }</p>
+                      </block>
+                    </nitf>`
                 }
               ],
               apMeta: {
@@ -568,8 +567,7 @@ describe('server', () => {
           );
         });
 
-        it.skip('saves all mapped data to the db', async () => {
-          // TODO: no longer works this way, rewrite test to handle restPut of article instead
+        it('saves all mapped data to the db', async () => {
           const
             AP_URL = 'https://api.ap.org/media/v/content/save-image?qt=id&et=tag&ai=altId',
             IMG_URL = 'some-host/aiu-images/some-image.jpg',
@@ -594,6 +592,14 @@ describe('server', () => {
                   { name: 'Things', creator: 'Machine' }
                 ]
               },
+              stationsBySlug: {
+                abc: {},
+                def: { callsign: 'KDEF', name: 'Alphabet Soup' }
+              },
+              stationMappings: {
+                abc: { sectionFront: 'music', secondarySectionFront: 'hip-hop' },
+                def: { sectionFront: 'news' }
+              },
               nitfPara: P_TEXT,
               saveApPicture: {
                 args: AP_URL,
@@ -605,47 +611,21 @@ describe('server', () => {
             });
 
           expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/paragraph'),
-            sinon.match.has('text', P_TEXT),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/feed-image'),
-            sinon.match.has('alt', IMG_TEXT).and(sinon.match.has('url', IMG_URL)),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/meta-description'),
-            sinon.match.has('description', sinon.match(DESCRIPTION)),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/meta-image'),
-            sinon.match.has('imageUrl', IMG_URL),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/meta-title'),
-            sinon.match.has('title', TITLE)
-              .and(sinon.match.has('kilnTitle', TITLE))
-              .and(sinon.match.has('ogTitle', TITLE))
-              .and(sinon.match.has('twitterTitle', TITLE)),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/share'),
-            sinon.match.has('pinImage', IMG_URL)
-              .and(sinon.match.has('shortTitle', TITLE))
-              .and(sinon.match.has('title', TITLE)),
-            true
-          );
-          expect(__.restPut).to.have.been.calledWith(
-            sinon.match('_components/tags'),
-            sinon.match.has('items', [
-              { slug: 'ap-news', text: 'AP News' },
-              { slug: 'stuff', text: 'Stuff' },
-              { slug: 'things', text: 'Things' }
-            ]),
+            sinon.match('_components/article'),
+            sinon.match.has('feedImgUrl', IMG_URL)
+              .and(sinon.match.hasNested('feedImg.alt', IMG_TEXT))
+              .and(sinon.match.hasNested('lead.0.alt', IMG_TEXT))
+              .and(sinon.match.has('sectionFront', 'music'))
+              .and(sinon.match.has('secondarySectionFront', 'hip-hop'))
+              .and(sinon.match.has('stationSlug', 'abc'))
+              .and(sinon.match.has('headline', TITLE))
+              .and(sinon.match.has('pageDescription', DESCRIPTION))
+              .and(sinon.match.has('stationSyndication'))
+              .and(sinon.match.hasNested('stationSyndication.0.callsign', 'KDEF'))
+              .and(sinon.match.hasNested('stationSyndication.0.sectionFront', 'news'))
+              .and(sinon.match.hasNested('content.0.text', P_TEXT))
+              .and(sinon.match.hasNested('tags.items.0.text', 'AP News'))
+              .and(sinon.match.hasNested('tags.items.2.text', 'Things')),
             true
           );
         });
@@ -674,6 +654,7 @@ describe('server', () => {
           callsign: 'STA',
           sectionFront: 'music',
           secondarySectionFront: 'urban',
+          source: 'ap feed',
           stationName: 'Station A',
           stationSlug: 'stationA'
         }]);
@@ -715,6 +696,7 @@ describe('server', () => {
           callsign: 'STC',
           sectionFront: 'music',
           secondarySectionFront: 'pop',
+          source: 'ap feed',
           stationName: 'Station C',
           stationSlug: 'stationC'
         }]);
