@@ -84,7 +84,7 @@ describe('universal', () => {
           pageData = getPageData(pathname, contentType, site_slug);
           
         expect(pageData.page).to.equal('authorPage');
-        expect(pageData.pageName).to.equal('authors_some-author');
+        expect(pageData.pageName).to.equal('authors');
       });
 
       it('should return station section front page', () => {
