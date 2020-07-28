@@ -1,3 +1,5 @@
+@import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 @import "_global/fonts";
 
@@ -9,6 +11,10 @@
       width: 100%;
       height: auto;
     }
+  }
+
+  .player__video-close-btn {
+    display: none;
   }
 
   .gallery__body & .video__preview,
@@ -96,7 +102,7 @@
       left: -100%;
       transition: left 100ms ease-in;
       /* needed to override BC important */
-      display: block !important; 
+      display: block !important;
       .rdc-overlay__close {
         display: none;
       }
@@ -128,6 +134,23 @@
 
       &.web-player-exists{
         bottom: em(78);
+      }
+
+      .player__video-close-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        position: absolute;
+        width: em(40);
+        height: em(40);
+        right: em(-1);
+        top: em(-40);
+        background: $white;
+        border: 1px solid $mercury;
+        svg {
+          flex: 0 0 em(20);
+        }
       }
     }
   }

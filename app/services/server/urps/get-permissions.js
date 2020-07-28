@@ -15,7 +15,7 @@ const formatPossibleAxiosError = require('../../universal/format-possible-axios-
  *  removes unnecessary information, such as ids and other extraneous information that are not necessary for
  *  permissions checking, which will simultaneously reduce overall bandwidth, while improving security
  *
- * @param {string} jwt the jwt Token of the authenticated user to authorizations for
+ * @param {string} idToken the jwt Token of the authenticated user to authorizations for
  * @param {string[]} stationDomainNames
  * @returns {Promise<Object>}
  *
@@ -26,7 +26,7 @@ const formatPossibleAxiosError = require('../../universal/format-possible-axios-
  * //       action will be what can be done, like import, publish, update, etc
  * //       targetType will be the type of target, if any, such as station
  * //       target will be that actual target, such as a station callsign
- * const hasPermission = getAllPermissions(token);
+ * const hasPermission = getAllPermissions(idToken);
  * if(hasPermission.article.publish.station[station.callsign]) {
  *   ...
  * }
@@ -35,16 +35,16 @@ const formatPossibleAxiosError = require('../../universal/format-possible-axios-
  *   ...
  * }
  */
-module.exports = async (jwt, stationDomainNames) => {
+module.exports = async (idToken, stationDomainNames) => {
   try {
-    if (!jwt) {
-      throw new Error('jwt is a required parameter');
+    if (!idToken) {
+      throw new Error('idToken is a required parameter');
     }
 
     const { data: permissionsList } = await getFromUrps(
       '/permissions/by-domain',
       { domains: [unityAppDomainName, ...stationDomainNames] },
-      jwt
+      idToken
     );
 
     return createUnityPermissions(permissionsList);
@@ -53,7 +53,7 @@ module.exports = async (jwt, stationDomainNames) => {
       'error',
       'There was a problem trying to get URPS permissions for the user'
       + `\n\n${formatPossibleAxiosError(error)}`,
-      { jwt }
+      { idToken }
     );
 
     return {};

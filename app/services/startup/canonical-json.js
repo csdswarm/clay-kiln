@@ -131,6 +131,18 @@ const routes = [
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
+  // `{stationSlug}/shows/show-schedule`
+  {
+    testPath: req => req.path.includes('/shows/show-schedule'),
+    getParams: () => {},
+    getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
+  },
+  // `{stationSlug}/stats/mlb/scores`
+  {
+    testPath: req => req.path.includes('/stats'),
+    getParams: () => {},
+    getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
+  },
   // [default route handler] resolve the uri and page instance
   {
     testPath: () => true,
@@ -187,7 +199,9 @@ function middleware(req, res, next) {
       .then(pageKey => {
         // Curated page found. Serve content collection.
         // Extract param keyword and set it to correct params key appropriately.
-        params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
+        if (routeParamKey === 'author') {
+          params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
+        }
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {

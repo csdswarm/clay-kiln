@@ -3,57 +3,17 @@
 const
   _get = require('lodash/get'),
   db = require('../../server/db'),
-  msnFeedUtils = require('../../universal/msn-feed-utils'),
-  redis = require('../../server/redis'),
   { deleteListItem, updateListItem } = require('../../server/lists'),
-  { filters, subscribe } = require('amphora-search'),
+  { subscribe } = require('amphora-search'),
   { postfix } = require('../../universal/utils'),
 
   log = require('../../universal/log').setup({ file: __filename }),
 
   onlySectionFronts = page => _get(page, 'data.main[0]', '').includes('/_components/section-front/instances/'),
-  onlyPublishedArticles = op => filters.isPublished(op) && op.key.includes('/article/instances'),
   listName = (station, { primary }) => `${postfix(station, '-')}${primary ? 'primary' : 'secondary'}-section-fronts`,
   publishSectionFront = stream => stream.filter(onlySectionFronts).each(handlePublishSectionFront),
   unpublishSectionFront = stream => stream.filter(onlySectionFronts).each(handleUnpublishSectionFront),
   updateTitleLock = (ref, data, titleLocked) => db.put(ref, JSON.stringify({ ...data, titleLocked }));
-
-
-/**
- * for now this just sets the redis key 'msn-feed:last-modified' to the current
- *   timestamp if the saved page is an article.
- *
- * @param {object} stream
- */
-function handleMsnFeed(stream) {
-  const {
-    articleWillShowOnMsnFeed,
-    redisKey
-  } = msnFeedUtils;
-
-  stream.each(innerStream => innerStream.toArray(async ops => {
-    const publishedArticleStr = _get(ops.find(onlyPublishedArticles), 'value');
-
-    if (!publishedArticleStr) {
-      return;
-    }
-
-    const publishedArticleObj = JSON.parse(publishedArticleStr),
-      urlsLastQueriedStr = await redis.get(redisKey.urlsLastQueried),
-      urlsLastQueriedSet = new Set(
-        urlsLastQueriedStr
-          ? JSON.parse(urlsLastQueriedStr)
-          : []
-      );
-
-    if (
-      urlsLastQueriedSet.has(publishedArticleObj.canonicalUrl)
-      || articleWillShowOnMsnFeed(publishedArticleObj)
-    ) {
-      redis.set(redisKey.lastModified, new Date().toUTCString());
-    }
-  }));
-}
 
 /**
  * Upon publish, add new section front title to primary or secondary
@@ -113,5 +73,4 @@ async function handleUnpublishSectionFront(page) {
 module.exports = () => {
   subscribe('publishPage').through(publishSectionFront);
   subscribe('unpublishPage').through(unpublishSectionFront);
-  subscribe('save').through(handleMsnFeed);
 };

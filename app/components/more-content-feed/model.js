@@ -1,6 +1,7 @@
 'use strict';
 const _get = require('lodash/get'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
+  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   { sendError } = require('../../services/universal/cmpt-error'),
   { DEFAULT_STATION } = require('../../services/universal/constants'),
   maxItems = 10,
@@ -52,7 +53,10 @@ module.exports = recirculationData({
       page: _get(locals, 'page')
     }
   }),
-  mapResultsToTemplate: (locals, result, item = {}) => {
+  mapResultsToTemplate: async (locals, result, item = {}) => {
+    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals }),
+      label = getSectionFrontName(result.syndicatedLabel || result.sectionFront, primarySectionFronts);
+
     return Object.assign(item, {
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       subHeadline: item.overrideSubHeadline || result.subHeadline,
@@ -60,6 +64,7 @@ module.exports = recirculationData({
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label,
       sectionFront: item.overrideSectionFront || result.sectionFront,
       date: item.overrideDate || result.date,
       lead: item.overrideContentType || getLeadComponentName(result.lead)

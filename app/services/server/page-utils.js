@@ -6,6 +6,12 @@ const
   { get: dbGet } = require('./db'),
   { getAllStations } = require('./station-utils');
 
+/**
+ * Adds a stationSlug to elastic for the page uri given
+ * @param {string} uri
+ * @param {string} stationSlug
+ * @returns {Promise<*>}
+ */
 async function addStationSlug(uri, stationSlug) {
   const { elasticPut, amphoraDb } = __;
   
@@ -30,16 +36,16 @@ const __ = {
 
 /**
  * Creates a new page from a template, and adds the station slug to it.
+ * @param {string} pagesUri
  * @param {object} pageBody
  * @param {string} stationSlug
  * @param {object} locals
  * @returns {Promise<object>}
  */
-async function createPage(pageBody, stationSlug, locals) {
+async function createPage(pagesUri, pageBody, stationSlug, locals) {
   // pagesUri is required for the amphora.pages.create call
   const
-    { addStationSlug, createAmphoraPage, getAllStations } = __,
-    pagesUri = `${locals.site.host}/_pages/`;
+    { addStationSlug, createAmphoraPage, getAllStations } = __;
 
   // stationSlug is valid due to a check in
   // app/services/server/permissions/has-permissions/create-page.js

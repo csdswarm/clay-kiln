@@ -1,40 +1,68 @@
-_version: 1.1
+_version: 1.0
 
 _description: |
   Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
 
+defaultTitle:
+  _subscribe: pageTitle
+
+defaultOgTitle:
+  _subscribe: ogTitle
+
+defaultTwitterTitle:
+  _subscribe: twitterTitle
+
+defaultKilnTitle:
+  _subscribe: pageListTitle
+
 title:
   _label: Title
-  _subscribe: pageTitle
   _has:
-    input: text
+    input: default-text-with-override
+    defaultField: defaultTitle
+    permissionToOverride:
+      update: meta-tags
     validate:
       required: true
-    help: Page title, used to populate all tags if ogTitle and twitterTitle don't exist. For articles, this is generated from the primary headline.
+    help: >-
+      This will vary based off content type.  For instance in an article this
+      will be the seo, short or primary headlines.
 
 ogTitle:
   _label: Open Graph Title
-  _subscribe: ogTitle
   _has:
-    input: text
-    help: og:title, will fall back to regular title if it doesn't exist. For articles, this is generated from the SEO headline.
+    input: default-text-with-override
+    defaultField: defaultOgTitle
+    permissionToOverride:
+      update: meta-tags
+    help: >-
+      This value will vary based off content type.  For instance in an article
+      this will be the primary headline.
 
 twitterTitle:
   _label: Twitter Title
-  _subscribe: twitterTitle
   _has:
-    input: text
-    help: twitter:title, will fall back to regular title if it doesn't exist. For articles, this is generated from the SEO headline.
+    input: default-text-with-override
+    defaultField: defaultTwitterTitle
+    permissionToOverride:
+      update: meta-tags
+    help: >-
+      This value will vary based off content type.  For instance in an article
+      this will be the short headline.
 
 kilnTitle:
   _label: Kiln Title
-  _subscribe: pageListTitle
   _publish: kilnTitle # set title of page in page list
   _has:
-    input: text
+    input: default-text-with-override
+    defaultField: defaultKilnTitle
+    permissionToOverride:
+      update: meta-tags
     validate:
       required: true
-    help: Value is pulled from ogTitle but can be set manually or published too
+    help: >-
+      This value will vary based off content type.  For instance in an article
+      this will be the primary headline.
 
 _groups:
   settings:

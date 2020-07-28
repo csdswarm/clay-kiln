@@ -52,8 +52,7 @@ describe('server', () => {
               _ref: `${HOST}/_components/feed-image/instances/${NEW_ID}`,
               alt: '',
               url: ''
-            },
-            ...options.feedImages || []
+            }
           ],
           DEFAULT_SIDE_SHARES = [
             {
@@ -63,8 +62,7 @@ describe('server', () => {
               domain: HOST,
               pinImage: '',
               description: ''
-            },
-            ...options.sideShares || []
+            }
           ],
           DEFAULT_TAGS = [
             {
@@ -278,7 +276,8 @@ describe('server', () => {
             locals,
             result,
             stationMappings,
-            stubs
+            stubs,
+            HOST
           } = await setup_importArticle({
             stationsBySlug: {
               'test-station': {},
@@ -296,7 +295,7 @@ describe('server', () => {
 
         expect(result.preExistingArticle).to.be.undefined;
         expect(result).to.have.property('article');
-        expect(stubs.createPage).to.have.been.calledOnceWith(sinon.match.object, stationSlug, locals);
+        expect(stubs.createPage).to.have.been.calledOnceWith(`${HOST}/_pages/`, sinon.match.object, stationSlug, locals);
         expect(stubs.dbGet).to.have.been.calledWith(sinon.match('_pages/new-two-col'));
       });
 

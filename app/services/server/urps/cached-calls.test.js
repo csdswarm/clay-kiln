@@ -21,7 +21,7 @@ describe('cachedCalls', () => {
       const { urlPath, urpsReqBody } = aCachedCall.metaData,
         mockToken = '';
 
-      await aCachedCall({ token: mockToken });
+      await aCachedCall({ idToken: mockToken });
 
       expect(getFromUrps.calledTwice).to.be.true;
       expect(getFromUrps.firstCall.args).to.deep.equal([

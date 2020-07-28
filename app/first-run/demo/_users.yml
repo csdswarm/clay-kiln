@@ -148,11 +148,11 @@ _users:
     provider: google
     auth: admin
   -
-    username: kyle.mccann@entercom.com
-    provider: google
+    username: kurtis.moffett@entercom.com
+    provider: cognito
     auth: admin
   -
-    username: moffkr91@gmail.com
+    username: kyle.mccann@entercom.com
     provider: google
     auth: admin
   -
@@ -209,6 +209,10 @@ _users:
     auth: admin
   -
     username: michael.cerio@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: moffkr91@gmail.com
     provider: google
     auth: admin
   -

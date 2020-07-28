@@ -7,7 +7,6 @@ module.exports = async function (uri, data) {
     googleAdUnderStationsModule,
     podcastList,
     sectionLead,
-    stationsCarousel,
     twoColumnComponent,
     includePodcastModule,
     ...restOfData
@@ -27,7 +26,6 @@ module.exports = async function (uri, data) {
   return {
     mainContent: [
       sectionLead,
-      ...stationsCarousel,
       googleAdUnderStationsModule,
       ...includePodcastModule ? [podcastList] : [],
       twoColumnComponent

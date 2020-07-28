@@ -28,7 +28,9 @@ const _snakeCase = require('lodash/snakeCase'),
     let result = xmlIndexHeader;
 
     for (const { last_updated, sitemap_id } of rows) {
-      result += `<sitemap><loc>${protocolAndHost}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
+      req.params.stationSlug
+        ? result += `<sitemap><loc>${protocolAndHost}/${req.params.stationSlug}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`
+        : result += `<sitemap><loc>${protocolAndHost}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
     }
 
     result += '</sitemapindex>';
@@ -98,6 +100,43 @@ module.exports = router => {
 
     res.set('Content-Type', 'application/xml');
     res.send(getIndexXml(req, result.rows));
+  }));
+
+  router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
+    const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
+      result = await db.raw(`
+      SELECT data
+      FROM ${viewName}
+      WHERE id = '${req.params.stationSlug}-${req.params.id}'
+    `);
+
+    if (!result.rows.length) {
+      return next();
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(result.rows[0].data);
+  }));
+
+  router.get('/:stationSlug/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
+    const result = await db.raw(`
+      SELECT 'sitemap-section-fronts-and-homepage' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+      FROM sitemap_station_section_fronts_and_homepage
+      WHERE id ~ '${req.params.stationSlug}'
+  
+      UNION
+
+      SELECT 'sitemap-articles-and-galleries' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+      FROM sitemap_station_articles_and_galleries
+      WHERE id ~ '${req.params.stationSlug}';
+    `);
+
+    if (!result.rows.length) {
+      return next();
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(res.send(getIndexXml(req, result.rows)));
   }));
 
   router.post('/update-sitemaps', wrapInTryCatch(async (req, res) => {
