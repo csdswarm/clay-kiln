@@ -94,26 +94,26 @@ const {
   UiProgressCircular,
   UiButton,
 } = window.kiln.utils.components;
-import axios from "axios";
-import moment from "moment";
+import axios from 'axios';
+import moment from 'moment';
 
-const AP_MEDIA_API_SEARCH = "/rdc/ap-subscriptions/search";
-const AP_MEDIA_API_IMPORT = "/rdc/ap-subscriptions/manual-import";
+const AP_MEDIA_API_SEARCH = '/rdc/ap-subscriptions/search';
+const AP_MEDIA_API_IMPORT = '/rdc/ap-subscriptions/manual-import';
 
 export default {
-  name: "ap-media-manual-import-import",
-  props: ["entitlements"],
+  name: 'ap-media-manual-import-import',
+  props: ['entitlements'],
   data() {
     return {
       isLoading: false,
       isSubmitting: false,
-      filter: "",
+      filter: '',
       selectedEntitlements: [],
       items: [],
-      article: "",
-      station: "",
-      primarySectionFront: "",
-      secondarySectionFront: "",
+      article: '',
+      station: '',
+      primarySectionFront: '',
+      secondarySectionFront: '',
       sectionFronts: {
         primarySectionFronts: [],
         secondarySectionFronts: [],
@@ -156,15 +156,15 @@ export default {
       this.article = article;
     },
     clearSelections() {
-      this.filter = "";
-      this.article = "";
+      this.filter = '';
+      this.article = '';
       this.$refs.checkboxGroup.reset();
       this.$refs.primarySectionFrontSelect.reset();
       this.$refs.secondarySectionFrontSelect.reset();
       this.items = [];
-      this.station = "";
-      this.primarySectionFront = "";
-      this.secondarySectionFront = "";
+      this.station = '';
+      this.primarySectionFront = '';
+      this.secondarySectionFront = '';
     },
     stations() {
       return Object.values(window.kiln.locals.stationsIHaveAccessTo).map(
@@ -197,7 +197,7 @@ export default {
       }
     },
     async fetchStationFronts(station) {
-      const stationSlug = station.value ? `${station.value}-` : "";
+      const stationSlug = station.value ? `${station.value}-` : '';
 
       // Reset selectors and state.
       this.sectionFronts.primarySectionFronts = [];
@@ -238,9 +238,9 @@ export default {
           `${
             this.selectedEntitlements.length
               ? `productid:(${this.selectedEntitlements.join(" OR ")})`
-              : ""
+              : ''
           }`,
-          `${this.filter ? `headline:${this.filter}` : ""}`,
+          `${this.filter ? `headline:${this.filter}` : ''}`,
         ]
           .filter((item) => item)
           .join(" AND ");
@@ -282,20 +282,20 @@ export default {
           locals: window.kiln.locals,
         });
 
-        this.$store.dispatch("showSnackbar", {
-          message: "Article Imported",
+        this.$store.dispatch('showSnackbar', {
+          message: 'Article Imported',
           duration: 5000,
-          position: "left",
+          position: 'left',
           queueSnackbars: true,
-          transition: "fade",
+          transition: 'fade',
         });
       } catch (err) {
-         this.$store.dispatch("showSnackbar", {
-          message: "Failed Importing Article",
+        this.$store.dispatch('showSnackbar', {
+          message: 'Failed Importing Article',
           duration: 5000,
-          position: "left",
+          position: 'left',
           queueSnackbars: true,
-          transition: "fade",
+          transition: 'fade',
         });
         return [];
       } finally {
