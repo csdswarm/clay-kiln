@@ -69,7 +69,7 @@ async function findExistingArticle({ itemid } = {}) {
     query = _set({ ...QUERY_TEMPLATE }, 'body.query.term[\'ap.itemid\']', itemid);
 
   try {
-    const [existing] = await searchByQuery(query, null, { includeIdInResult: true }),
+    const [existing] = await searchByQuery(query, null, { includeIdInResult: true, shouldDedupeContent: false }),
       { rows: [info] = [] } = existing && await dbRaw(`
           SELECT id, data
           FROM pages,
