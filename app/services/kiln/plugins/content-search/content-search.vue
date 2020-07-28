@@ -91,12 +91,22 @@
     computed: {
       ...mapGetters(stationSelect.storeNs, ['selectedStation']),
       isNationalSelected() {
-        return !!this.selectedStation.slug;
+        return !(this.selectedStation
+          ? this.selectedStation.slug
+          : this.initialStationSlug);
       },
       getStationFilter() {
-        return this.isNationalSelected 
+        return this.isNationalSelected
           ? matchNationalStation
-          : [{ match: { stationSlug: this.selectedStation.slug } }];
+          : [
+              {
+                match: {
+                  stationSlug: this.selectedStation
+                    ? this.selectedStation.slug
+                    : this.initialStationSlug,
+                },
+              },
+            ];
       },
       showResults() {
         return this.loading || this.searchResults.length !== 0;
