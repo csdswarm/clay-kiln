@@ -46,7 +46,7 @@ module.exports = (pathname, contentType, site_slug) => {
     pageName = innerPathname.replace(/[^\/]+\//g, '');
   } else if (fromPathname.isAuthorPage()) {
     page = 'authorPage';
-    pageName = innerPathname.replace('/', '_');
+    pageName = 'authors';
   } else if (site_slug && isAStationSectionFront) {
     page = 'stationSectionFront';
     pageName = innerPathname.split('/').slice(1).join('_');

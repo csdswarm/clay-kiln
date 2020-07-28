@@ -13,7 +13,6 @@ const _get = require('lodash/get'),
   urlParse = require('url-parse'),
   { stripOuterSlashes } = require('../pathname-utils'),
   {
-    pageTypeTagArticle,
     pageTypeTagSection,
     pageTypeTagStationDetail,
     pageTypeTagStationsDirectory
@@ -157,6 +156,8 @@ module.exports = ({ pathname, url } = {}) => {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
+      } else if (page === 'authorPage') {
+        pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       }
 
       return pageId;
@@ -197,7 +198,7 @@ module.exports = ({ pathname, url } = {}) => {
         case 'topicPage':
           return [pageTypeTagTag, pageTypeTagSection, pageName];
         case 'authorPage':
-          return [pageTypeTagArticle, pageTypeTagAuthor];
+          return [pageTypeTagAuthor];
         default:
           return [];
       }
@@ -207,7 +208,8 @@ module.exports = ({ pathname, url } = {}) => {
      */
     isAuthorPage: () => {
       // matches paths found on 'sites/demo/index.js'
-      return /^\/authors\/.+$/.test(pathname);
+      // Updated pattern to validate /<stationSlug>/authors/author-name
+      return /^\/(.*\/)?authors\/.+$/.test(pathname);
     },
     /**
      * @returns {boolean}

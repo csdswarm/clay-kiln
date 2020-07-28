@@ -37,12 +37,12 @@ describe('universal', () => {
         expect(fromPathname.getPageId({ page: 'sectionFront', pageName : 'should-return-with-sectionfront' })).to.equal('sectionfront_should-return-with-sectionfront');
         expect(fromPathname.getPageId({ page: 'stationSectionFront', pageName : 'should-return-with-sectionfront' })).to.equal('sectionfront_should-return-with-sectionfront');
         expect(fromPathname.getPageId({ page: 'topicPage', pageName : 'should-return-with-tag' })).to.equal('tag_should-return-with-tag');
-        expect(fromPathname.getPageId({ page: 'authorPage', pageName : 'should-return-with-defined-page-name' })).to.equal('should-return-with-defined-page-name');
 
         expect(fromPathname.getPageId({ page: 'article', pageName : 'articles' })).to.equal('articles_billie-eilish-on-why-its-a-great-time-to-be-vegan');
         expect(fromPathname.getPageId({ page: 'vgallery', pageName : 'galleries' })).to.equal('galleries_billie-eilish-on-why-its-a-great-time-to-be-vegan');
         expect(fromPathname.getPageId({ page: 'events', pageName : 'events' })).to.equal('events_billie-eilish-on-why-its-a-great-time-to-be-vegan');
         expect(fromPathname.getPageId({ page: 'contests', pageName : 'contests' })).to.equal('contests_billie-eilish-on-why-its-a-great-time-to-be-vegan');
+        expect(fromPathname.getPageId({ page: 'authorPage', pageName : 'authors' })).to.equal('authors_billie-eilish-on-why-its-a-great-time-to-be-vegan');
       });
 
       it('should return an array of tags based on pageData and contentTags for articles and galleries', () => {
@@ -52,7 +52,7 @@ describe('universal', () => {
         expect(fromPathname.getTags({ page: 'vgallery', pageName : 'this-page-name' }, ['tag1', 'tag2', 'tag3'])).to.eql(['this-page-name', ...['tag1', 'tag2', 'tag3']]);
       });
 
-      it('should return an array that includes pagename for events and contests', () => {
+      it('should return an array that includes pagename for events or contests', () => {
         const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
 
         expect(fromPathname.getTags({ page: 'contests', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['page-name-defined']);
@@ -91,10 +91,10 @@ describe('universal', () => {
         expect(fromPathname.getTags({ page: 'topicPage', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['tag', 'sectionfront', 'page-name-defined']);
       });
 
-      it('should return an array that includes tag article and authors', () => {
+      it('should return an array that includes authors', () => {
         const fromPathname = makeFromPathname({ pathname: '/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan' });
 
-        expect(fromPathname.getTags({ page: 'authorPage', pageName : 'page-name-defined' }, ['tag1', 'tag2', 'tag3'])).to.eql(['article', 'authors']);
+        expect(fromPathname.getTags({ page: 'authorPage', pageName : 'authors' }, ['tag1', 'tag2', 'tag3'])).to.eql(['authors']);
       });
     });
   });
