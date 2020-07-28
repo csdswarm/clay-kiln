@@ -281,7 +281,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           isHidden,
           isSponsored,
           tags: { _ref: tagsRef },
-          noIndexNoFollow
+          noIndexNoFollow,
+          feeds: { 'apple-news': includeInAppleNewsFeed }
         },
         articleANF ] = await Promise.all([
           getCompInstanceData(articleRef),
@@ -307,7 +308,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         validAppleNews = async () => {
           const { items: tagsItems } = await getCompInstanceData(tagsRef);
 
-          return sectionLink
+          return includeInAppleNewsFeed
+            && sectionLink
             && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
             && !noIndexNoFollow;
         };

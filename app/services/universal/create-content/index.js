@@ -572,6 +572,15 @@ function addStationSyndicationSlugs(data) {
     });
 }
 
+function doNotPublishToANF(data) {
+  if (data.feeds && (data.stationSlug || data.isCloned)) {
+    data.feeds = {
+      ...data.feeds,
+      'apple-news': false
+    };
+  }
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
@@ -579,6 +588,7 @@ function render(ref, data, locals) {
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
   renderStationSyndication(data);
+  doNotPublishToANF(data);
 
   if (locals && !locals.edit) {
     return data;
