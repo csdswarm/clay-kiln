@@ -52,8 +52,7 @@ describe('server', () => {
               _ref: `${HOST}/_components/feed-image/instances/${NEW_ID}`,
               alt: '',
               url: ''
-            },
-            ...options.feedImages || []
+            }
           ],
           DEFAULT_SIDE_SHARES = [
             {
@@ -63,8 +62,7 @@ describe('server', () => {
               domain: HOST,
               pinImage: '',
               description: ''
-            },
-            ...options.sideShares || []
+            }
           ],
           DEFAULT_TAGS = [
             {
@@ -569,7 +567,7 @@ describe('server', () => {
           );
         });
 
-        it.skip('saves all mapped data to the db', async () => {
+        it('saves all mapped data to the db', async () => {
           // TODO: no longer works this way, rewrite test to handle restPut of article instead
           const
             AP_URL = 'https://api.ap.org/media/v/content/save-image?qt=id&et=tag&ai=altId',
