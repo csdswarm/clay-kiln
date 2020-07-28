@@ -33,7 +33,7 @@ function rendererPipeline(ref, data, locals, prefix) {
     .catch(errorHandler);
 }
 
-function makeGenerateLink({ isStationFeed, station }) {
+function makeGenerateLink({ isStationFeed, station = '' }) {
   const stationCallsign = station.toLowerCase();
 
   return entry => {
