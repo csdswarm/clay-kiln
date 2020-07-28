@@ -46,7 +46,7 @@ module.exports = unityComponent({
 
     data._computed.dynamic = getComponentInstance(ref) === 'new';
     if (!data._computed.dynamic) {
-      data.host = _get('data.hosts', [0].text);
+      data.host = _get(data, 'hosts[0].text');
     }
     data._computed.socialLinks = socialLinks.map(link => {
       const handle = data[link.type];
