@@ -4,6 +4,7 @@ const
   _memoize = require('lodash/memoize'),
   _set = require('lodash/set'),
   cheerio = require('cheerio'),
+  logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
@@ -14,8 +15,8 @@ const
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
+  log = logger.setup({ file: __filename }),
   PROTOCOL = _get(process, 'env.CLAY_SITE_PROTOCOL', 'https'),
-
   QUERY_TEMPLATE = {
     index: 'published-content',
     type: '_doc',
@@ -35,6 +36,7 @@ const
     dbRaw,
     getAllStations,
     getApArticleBody,
+    log,
     restPut,
     saveApPicture,
     searchByQuery
@@ -453,6 +455,10 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
 async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
     preExistingArticle = await findExistingArticle(apMeta.altids);
+
+  if ( !stationMappings || stationMappings === {}) {
+    return { message: 'no subscribers' };
+  }
 
   if (!isApContentPublishable && preExistingArticle) {
     // TODO: unpublish
