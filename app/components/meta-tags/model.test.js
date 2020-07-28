@@ -13,7 +13,11 @@ describe('meta-tags', function () {
 
   function setup_model() {
     const { render } = metaTags,
-      mockLocals = { },
+      mockLocals = {
+        station: {
+          site_slug: 'siteslug'
+        }
+      },
       mockData = {
         contentTagItems: [
           { slug: 'one', text: 'One' },
