@@ -14,6 +14,8 @@ const
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
+  PROTOCOL = _get(process, 'env.CLAY_SITE_PROTOCOL', 'https'),
+
   QUERY_TEMPLATE = {
     index: 'published-content',
     type: '_doc',
@@ -95,6 +97,7 @@ async function createNewArticle(stationMappings, locals) {
   const { createPage, dbGet } = __;
 
   return createPage(
+    `${locals.site.host}/_pages/`,
     await dbGet(`${locals.site.host}/_pages/new-two-col`),
     Object.keys(stationMappings)[0] || '',
     locals
@@ -416,12 +419,12 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
   // saveArticle
   const { _ref: articleRef, ...newArticleInfo } = newArticleData.article;
 
-  await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${articleRef}`, newArticleInfo, true);
+  await restPut(`${PROTOCOL}://${articleRef}`, newArticleInfo, true);
 
   // publishArticle
   const { _ref: pageRef = '', ...pageInfo } = pageData;
 
-  await restPut(`${process.env.CLAY_SITE_PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);
+  await restPut(`${PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);
 
   return newArticleData;
 }
