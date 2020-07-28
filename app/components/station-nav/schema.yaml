@@ -165,16 +165,20 @@ featuredLinks:
 
 hidePodcastsLink:
   _publish: hidePodcastsLink
-  _label: Should hide the podcast link?
+  _label: HIDE PODCAST LINK
   _has: checkbox
 
 podcastsUrl:
   _publish: listenNavPodcastUrl
-  _label: Listen Nav - Podcasts Custom URL
+  _label: PODCAST LINK OVERRIDE - Enter a Custom Podcast URL Here
+  _reveal:
+    field: hidePodcastsLink
+    operator: ===
+    value: false
   _has:
     input: text
     type: url
-    help: /audio or /<stationSlug>/podcasts
+    help: Default PODCASTS link is radio.com/audio. Enter a custom URL to override
 
 listenNav:
   _component:
