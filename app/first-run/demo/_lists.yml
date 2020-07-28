@@ -3,10 +3,64 @@ _lists:
   authors: []
   sources: []
   bookmarks: []
+  filterTag: []
+  entercom-domains:
+    - 1thingus.com
+    - entercom.com
+    - culinarykitchenchicago.com
+    - dfwrestaurantweek.com
+    - musictowndetroit.com
+    - mensroomlive.com
+    - jimrome.com
+    - radio.com
+  freq_editorial_feeds:
+    - AC
+    - Adult Hits
+    - Alternative
+    - CHR / Top 40
+    - Classic Hits
+    - Classic Rock
+    - Country
+    - Hip Hop
+    - Hot AC
+    - Hot AC / Top 40 / CHR
+    - News/Talk
+    - R and B
+    - Rock
+    - Sports
+    - Throwbacks
+    - Trending
+    - Urban
+  corporate_websites:
+    - ImListening
+    - 1Thing
   new-pages:
-    -
-      id: new-two-col
-      title: New Article
-    -
-      id: curated-topic
-      title: Content Collection
+    - id: General-content
+      title: 1. General Content
+      children:
+        - id: new-two-col
+          title: Article
+        - id: curated-topic
+          title: New Curated Page
+        - id: gallery
+          title: Gallery
+        - id: new-static-page
+          title: New Static Page
+        - id: author-profile
+          title: Author Page
+        - id: contest
+          title: Contest
+        - id: event
+          title: Event
+        - id: events-listing
+          title: Events Listing
+    - id: section-front
+      title: 2. Section Front
+      children:
+        - id: section-front
+          title: Section Front
+    - id: station-front
+      title: 3. Station Front
+      children:
+        - id: station-front
+          title: Station Front

@@ -103,3 +103,19 @@ _pages:
     main:
       - /_components/author-page/instances/new
     layout: /_layouts/one-column-layout/instances/general
+  # Gallery Page
+  gallery:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/gallery/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    layout: /_layouts/two-column-layout/instances/article
