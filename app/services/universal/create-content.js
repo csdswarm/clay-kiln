@@ -324,6 +324,11 @@ function standardizePageData(data, componentName) {
     case PAGE_TYPES.STATIC_PAGES:
       data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
       break;
+    case PAGE_TYPES.HOST:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.host;
+      data.slug = sanitize.cleanSlug(data.host);
+      break;
     default:
   }
 }
@@ -360,9 +365,9 @@ function sanitizeByline(data) {
  * @param {object} data
  */
 function bylineOperations(data) {
-  const authors = [], sources = [];
+  const authors = [], sources = [], hosts = [];
 
-  for (const { names, sources: bylineSources } of data.byline || []) {
+  for (const { names, sources: bylineSources, hosts: bylineHosts } of data.byline || []) {
     /*
       Originally a NYMag legacy thing, since we converted the original
       `authors` array into a more complex `byline` structure,
@@ -375,14 +380,18 @@ function bylineOperations(data) {
       author.slug = textToEncodedSlug(author.text);
       authors.push(author);
     }
+    for (const host of bylineHosts || []) {
+      delete host.count;
+      host.slug = textToEncodedSlug(host.text);
+      hosts.push(host);
+    }
     // do sources too
     for (const source of bylineSources || []) {
       delete source.count;
       sources.push(source);
     }
   }
-
-  Object.assign(data, { authors, sources });
+  Object.assign(data, { authors, sources, hosts });
   sanitizeByline(data);
 }
 

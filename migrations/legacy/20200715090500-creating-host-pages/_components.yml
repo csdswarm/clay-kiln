@@ -1,9 +1,8 @@
 _components:
-  two-column-component:
+  more-content-feed:
     instances:
       host-page:
         items: []
-        host: ''
         hostInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
@@ -12,6 +11,17 @@ _components:
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
+
+  two-column-component:
+    instances:
+      host-page:
+        col1: [
+          _ref: /_components/more-content-feed/instances/host-page
+        ]
+        col2: [
+          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship,
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        ]
 
   host-page-header:
     instances:
