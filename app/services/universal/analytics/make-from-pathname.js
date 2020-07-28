@@ -22,7 +22,7 @@ const _get = require('lodash/get'),
   pageTypeTagTag = 'tag',
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
-  contentPages = new Set(['article', 'vgallery', 'events', 'contests']),
+  contentPages = new Set(['article', 'vgallery', 'events', 'contests', 'authorPage']),
   homepageOrStationFront = new Set(['homepage', 'stationFront']),
   rdcOrStationSectionFront = new Set(['sectionFront', 'stationSectionFront']),
   /**
@@ -156,8 +156,6 @@ module.exports = ({ pathname, url } = {}) => {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
-      } else if (page === 'authorPage') {
-        pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       }
 
       return pageId;
