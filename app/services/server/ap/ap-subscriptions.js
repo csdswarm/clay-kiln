@@ -2,6 +2,7 @@
 
 const db = require('../db'),
   uuidV4 = require('uuid/v4'),
+  Promise = require('bluebird'),
   { getApFeed } = require('./ap-media'),
   { importArticle } = require('./ap-news-importer'),
   logger = require('../../universal/log'),
@@ -65,20 +66,21 @@ const db = require('../db'),
       const apFeed = await __.getApFeed(locals),
         apSubscriptions = await __.getAll();
 
-      return await Promise.all(apFeed.map(item => {
+      return await Promise.map(apFeed, feed => {
         const stationMappings = apSubscriptions
           .filter(({ data }) => data.entitlements
-            .some(entitlement => item.products
+            .some(entitlement => feed.products
               .some(product => product.id === entitlement.id)))
+          .filter(subscription => !console.dir({ subscription }, { depth: 20, colors: true } ))
           .reduce((acc, { data }) => {
             if (!acc[data.stationSlug]) {
               acc[data.stationSlug] = data.mappings;
             }
             return acc;
           }, {});
-        
-        return __.importArticle(item, stationMappings, locals);
-      }));
+
+        return __.importArticle(feed.item, stationMappings, locals);
+      }, { concurrency: 5 });
 
     } catch (e) {
       __.log('error', 'Bad request importing articles from ap-subscription', e);
