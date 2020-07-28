@@ -63,39 +63,22 @@ const db = require('../db'),
   importApSubscription = async (locals) => {
     try {
       const apFeed = await __.getApFeed(locals),
-        apSubscriptions = await __.getAll(),
-        returnData = [];
+        apSubscriptions = await __.getAll();
 
-      for (const feed of apFeed) {
-        let apImportData = '{';
-
-        feed.products.forEach(product => {
-          apSubscriptions.forEach(subscription => {
-            subscription.data.entitlements.forEach(entitlement => {
-              if (product.id === entitlement.id) {
-                if (!apImportData.includes(subscription.data.stationSlug)) {
-                  apImportData += `"${subscription.data.stationSlug}" : ${JSON.stringify(subscription.data.mappings[0])},`;
-                }
-              }
-            });
-          });
-        });
-
-        if (apImportData.length > 1) {
-          apImportData = apImportData.slice(0, -1) + '}';
-
-          try {
-            const data = await __.importArticle(feed.item, JSON.parse(apImportData), locals);
-
-            returnData.push(data);
-          } catch (error) {
-            __.log('error', 'Bad request importing articles from ap-subscription', error);
-          }
-
-        }
-      };
-
-      return returnData;
+      return await Promise.all(apFeed.map(item => {
+        const stationMappings = apSubscriptions
+          .filter(({ data }) => data.entitlements
+            .some(entitlement => item.products
+              .some(product => product.id === entitlement.id)))
+          .reduce((acc, { data }) => {
+            if (!acc[data.stationSlug]) {
+              acc[data.stationSlug] = data.mappings;
+            }
+            return acc;
+          }, {});
+        
+        return __.importArticle(item, stationMappings, locals);
+      }));
 
     } catch (e) {
       __.log('error', 'Bad request importing articles from ap-subscription', e);
