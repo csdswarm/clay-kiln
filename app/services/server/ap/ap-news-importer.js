@@ -97,6 +97,7 @@ async function createNewArticle(stationMappings, locals) {
   const { createPage, dbGet } = __;
 
   return createPage(
+    `${locals.site.host}/_pages/`,
     await dbGet(`${locals.site.host}/_pages/new-two-col`),
     Object.keys(stationMappings)[0] || '',
     locals
