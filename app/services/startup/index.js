@@ -124,8 +124,6 @@ function setupApp(app) {
   app.use(locals);
 
   addToLocals.loadedIds(app);
-
-  addToLocals.podcast(app);
   
   addInterceptor.loadedIds(app);
 
