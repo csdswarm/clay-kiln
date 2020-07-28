@@ -8,6 +8,7 @@
 
 const
   _get = require('lodash/get'),
+  isEmpty = require('lodash/isEmpty'),
   { retrieveList } = require('./lists'),
 
   /**
@@ -32,9 +33,10 @@ const
         });
       },
       isPodcast = _get(locals, 'podcast'),
-      isStation = _get(locals, 'station.slug', 'www') !== 'www',
       // https://regex101.com/r/SyxFxE/1
       isStationDetailPage = new RegExp(/\/.+\/*listen\/?$/).test(locals.url),
+      episode = _get(locals, 'episode'),
+      isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
       timestamp = _get(locals, 'query.t');
 
     // primary section front
@@ -93,6 +95,13 @@ const
       addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
       addTag('podcast_category', _get(locals, 'podcast.attributes.category[0].name'));
       addTag('podcast_logo', _get(locals, 'podcast.attributes.image'));
+    }
+
+    // podcast episode page
+    if (episode) {
+      addTag('podcast_type', episode.type);
+      addTag('episode_id', episode.id);
+      addTag('episode_title', _get(episode, 'attributes.title'));
     }
 
     // timestamp
