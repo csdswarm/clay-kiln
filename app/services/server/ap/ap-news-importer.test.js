@@ -638,18 +638,20 @@ describe('server', () => {
 
           expect(__.restPut).to.have.been.calledWith(
             sinon.match('_components/article'),
-            sinon.match.has('feedImgUrl', IMG_URL)
-              .and(sinon.match.hasNested('feedImg.alt', IMG_TEXT))
-              .and(sinon.match.hasNested('lead.0.alt', IMG_TEXT))
-              .and(sinon.match.has('sectionFront', 'music'))
-              .and(sinon.match.has('secondarySectionFront', 'hip-hop'))
-              .and(sinon.match.has('stationSlug', 'abc'))
-              .and(sinon.match.has('headline', TITLE))
-              .and(sinon.match.has('pageDescription', DESCRIPTION))
+            sinon.match({
+              feedImgUrl: IMG_URL,
+              feedImg: { alt: IMG_TEXT },
+              sectionFront: 'music',
+              secondarySectionFront: 'hip-hop',
+              stationSlug: 'abc',
+              headline: TITLE,
+              pageDescription: DESCRIPTION
+            })
               .and(sinon.match.has('stationSyndication'))
+              .and(sinon.match.hasNested('content.0.text', P_TEXT))
+              .and(sinon.match.hasNested('lead.0.alt', IMG_TEXT))
               .and(sinon.match.hasNested('stationSyndication.0.callsign', 'KDEF'))
               .and(sinon.match.hasNested('stationSyndication.0.sectionFront', 'news'))
-              .and(sinon.match.hasNested('content.0.text', P_TEXT))
               .and(sinon.match.hasNested('tags.items.0.text', 'AP News'))
               .and(sinon.match.hasNested('tags.items.2.text', 'Things')),
             true
@@ -710,6 +712,7 @@ describe('server', () => {
               {
                 callsign: 'STB',
                 sectionFront: 'news',
+                source: 'ap feed',
                 stationName: 'Station B',
                 stationSlug: 'stationB',
                 syndicatedArticleSlug: '/stationB/news/some-news-slug'
