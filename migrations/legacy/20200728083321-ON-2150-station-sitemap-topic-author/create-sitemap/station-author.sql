@@ -12,18 +12,15 @@ _components AS (
   SELECT id, data->>'stationSlug' AS station_slug
   FROM components."section-front"
 
--- SELECT id, data ->>'stationSlug' AS stationSlug, data from components."author-page"
--- WHERE data->>'stationSlug' IS NOT NULL
-
--- SELECT id, data ->>'stationSlug' AS station_slug, jsonb_array_elements(data -> 'authors') AS authors
--- FROM components.article a
--- WHERE a.data ->> 'noIndexNoFollow' != 'true'
-
--- UNION
-
--- SELECT id, data ->>'stationSlug' AS station_slug, jsonb_array_elements(data -> 'authors') AS authors
--- FROM components.gallery g
--- WHERE g.data ->> 'noIndexNoFollow' != 'true'
+-- SELECT 
+--   id, 
+--   d ->>'slug' AS author_slug, 
+--   data ->>'stationSlug' AS station_slug
+-- FROM
+--   components.article a,
+--   jsonb_array_elements(a.data -> 'authors') d
+-- WHERE
+--   a.data ->> 'noIndexNoFollow' != 'true'
   
   UNION 
   
