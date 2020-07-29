@@ -13,8 +13,9 @@ describe(dirname, function () {
         mockLocals = { site: { slug: 'www.radio.com' } };
 
       it('should set data.host to the first item in the hosts array', function () {
-        const hosts = [{ text: 'some_host' }],
-          data = method('some_ref', { hosts }, mockLocals);
+        const _computed = { dynamic: false },
+          hosts = [{ text: 'some_host' }],
+          data = method('some_ref', { hosts, _computed }, mockLocals);
 
         expect(data.host).that.equal('some_host');
         expect(data.host).to.be.a('string');

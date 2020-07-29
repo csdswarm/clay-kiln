@@ -7,6 +7,9 @@ const
   { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
 
+  _capitalize = (str) => {
+    return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
+  },
   socialLinks = [
     {
       type: 'facebook',
@@ -37,8 +40,14 @@ const
 
 module.exports = unityComponent({
   render: (ref, data, locals) => {
-    data.host = _get(data, 'hosts[0].text');
+    if (_get(locals, 'params.host')) {
+      data.host = _capitalize(locals.params.host.replace(/-/g, ' ').replace(/\//g,''));
+    }
+
     data._computed.dynamic = getComponentInstance(ref) === 'new';
+    if (!data._computed.dynamic) {
+      data.host = _get(data, 'hosts[0].text');
+    }
     data._computed.socialLinks = socialLinks.map(link => {
       const handle = data[link.type];
 
