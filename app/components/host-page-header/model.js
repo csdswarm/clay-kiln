@@ -57,9 +57,13 @@ module.exports = unityComponent({
     }).filter(updatedLink => updatedLink);
 
     assignStationInfo(ref, data, locals);
-
     return data;
   }
 });
 
-module.exports.save = (ref, data, locals) => createContent.save(ref, data, locals);
+module.exports.save = (ref, data, locals) => {
+  if (!data.host) {
+    data.host = _get(data, 'hosts[0].text', '');
+  }
+  return createContent.save(ref, data, locals);
+};
