@@ -71,7 +71,6 @@ const db = require('../db'),
           .filter(({ data }) => data.entitlements
             .some(entitlement => feed.products
               .some(product => product.id === entitlement.id)))
-          .filter(subscription => !console.dir({ subscription }, { depth: 20, colors: true } ))
           .reduce((acc, { data }) => {
             if (!acc[data.stationSlug]) {
               acc[data.stationSlug] = data.mappings;
