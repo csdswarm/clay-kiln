@@ -1,6 +1,7 @@
 'use strict';
 
 const _concat = require('lodash/concat'),
+  _flatten = require('lodash/flatten'),
   {
     CLAY_SITE_PROTOCOL: protocol,
     CLAY_SITE_HOST: host
@@ -33,9 +34,9 @@ const _concat = require('lodash/concat'),
         { ttl: 0 }, // disable redis cache - it takes a long time, and we don't need to call this route very often.
         locals);
 
-    return next ?
-      getPodcastsFromAPI(locals, _concat(collected, data), page + 1) :
-      _concat(collected, data);
+    return next
+      ? getPodcastsFromAPI(locals, _concat(collected, data), page + 1)
+      : _concat(collected, data);
   },
 
   /**
@@ -44,31 +45,27 @@ const _concat = require('lodash/concat'),
    */
   storePodcastsFromAPItoDB = async (locals) => {
     const podcasts = await getPodcastsFromAPI(locals),
-      stationsById = stationUtils.getAllStations.byId({ locals });
+      stationsById = await stationUtils.getAllStations.byId({ locals });
 
     if (podcasts.length) {
-      const podcastsSQL = [],
-        podcastsSQLValues = [];
+      const values = _flatten(podcasts.map(podcast => {
+          const station = stationsById[podcastUtils.getStationIdForPodcast(podcast)],
+            path = podcastUtils.createUrl(podcast, station),
+            id = `${host}/_podcasts/${podcast.id}`;
 
-      podcasts.forEach(podcast => {
-        const station = stationsById[podcastUtils.getStationIdForPodcast(podcast)],
-          path = podcastUtils.createUrl(podcast, station),
-          url = `${protocol}://${host}${path}`,
-          id = `${host}/_podcasts/${podcast.id}`;
+          podcast.url = `${protocol}://${host}${path}`;
+          podcast.updated = new Date().toISOString();
 
-        podcast.url = url;
-        podcast.updated = new Date().toISOString();
-
-        podcastsSQL.push('(?, ?)');
-        podcastsSQLValues.push(id);
-        podcastsSQLValues.push(podcast);
-      });
-      await db.raw('DELETE FROM podcasts');
-      await db.raw(`
+          return [id, podcast];
+        })),
+        insertSql = `
         INSERT INTO podcasts (id, data)
         VALUES
-        ${ podcastsSQL.join(',\n') }
-      `, podcastsSQLValues);
+        ${'(?,?),'.repeat(values.length / 2).slice(0, -1)}
+      `;
+
+      await db.raw('DELETE FROM podcasts');
+      await db.raw(insertSql, values);
     }
   },
   /**
@@ -82,11 +79,11 @@ const _concat = require('lodash/concat'),
         ORDER BY data->>id
         LIMIT 1
       `,
-      { rows: podcastsResults } = await db.raw(queryForOnePodcast);
+      { rows: [podcastResult] } = await db.raw(queryForOnePodcast);
 
     // Check when podcasts were last updated
     // fetch from API & update DB if more than a day old or not in DB
-    if (!podcastsResults.length || moment(new Date()).isAfter(podcastsResults[0].updated, 'day')) {
+    if (!podcastResult || moment().isAfter(podcastResult.data.updated, 'day')) {
       await storePodcastsFromAPItoDB(locals);
     }
   };
