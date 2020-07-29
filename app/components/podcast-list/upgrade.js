@@ -29,7 +29,7 @@ module.exports['3.0'] = async (uri, data, locals) => {
   await Promise.all(items.map(async (item) => {
     const { title } = item.podcast,
       params = {
-        q: title
+        q: encodeURIComponent(title)
       },
       { data: [podcast] } = await radioApiService.get('podcasts', params, null, {}, locals);
 
