@@ -113,13 +113,28 @@ async function activateTab(e, tabs, content, useHash) {
   }
 }
 
+/**
+ *
+ *
+ * @class PodcastShowPage
+ */
 class PodcastShowPage {
+  /**
+   * Creates an instance of PodcastShowPage and binds mounting events
+   * @memberof PodcastShowPage
+   */
   constructor() {
     _bindAll(this, 'onMount', 'onDismount');
     document.addEventListener('podcast-show-page-mount', this.onMount);
     document.addEventListener('podcast-show-page-dismount', this.onDismount);
   }
 
+  /**
+   * add refs and setup tabs
+   *
+   * @param {Event} e
+   * @memberof PodcastShowPage
+   */
   onMount(e) {
     const podcastShowPage = e.target.querySelector('.component--podcast-show-page'),
       sidebar = e.target.querySelector('.content__sidebar'),
@@ -160,6 +175,11 @@ class PodcastShowPage {
     };
   }
 
+  /**
+   * Remove the added listeners that won't be destroyed
+   *
+   * @memberof PodcastShowPage
+   */
   onDismount() {
     document.removeEventListener('podcast-show-page-mount', this.onMount);
     document.removeEventListener('podcast-show-page-mount', this.onDismount);
