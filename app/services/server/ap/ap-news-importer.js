@@ -1,21 +1,23 @@
 'use strict';
 const
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   _memoize = require('lodash/memoize'),
   _set = require('lodash/set'),
   cheerio = require('cheerio'),
+  logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
   { addLazyLoadProperty } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
-  { put: restPut } = require('../../universal/rest'),
+  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
+  log = logger.setup({ file: __filename }),
   PROTOCOL = _get(process, 'env.CLAY_SITE_PROTOCOL', 'https'),
-
   QUERY_TEMPLATE = {
     index: 'published-content',
     type: '_doc',
@@ -35,6 +37,8 @@ const
     dbRaw,
     getAllStations,
     getApArticleBody,
+    log,
+    restDel,
     restPut,
     saveApPicture,
     searchByQuery
@@ -76,7 +80,7 @@ async function findExistingArticle({ itemid } = {}) {
                jsonb_array_elements_text(data -> \'main\') article_id
           WHERE article_id = ?`,
       existing._id) || {},
-      { id, data } = info || {};
+      { data, id } = info || {};
 
     if (id) {
       return { _ref: id, ...data };
@@ -138,7 +142,7 @@ async function getArticleData(pageData) {
 
 /**
  * Determines which stationMappings have been added to the article since the last time
- * If the article was just created, then all station mappings will be incuded and
+ * If the article was just created, then all station mappings will be included and
  * merged with correct station info
  * @param {object} article
  * @param {object[]} stationMappings
@@ -171,7 +175,8 @@ async function getNewStations(article, stationMappings, locals) {
       ...data,
       callsign,
       stationName: name,
-      stationSlug
+      stationSlug,
+      source: 'ap feed'
     };
   });
 }
@@ -227,17 +232,25 @@ function resolveArticleSubComponents(article) {
  * @param {object} apMeta
  * @param {object} lead
  * @param {object} image
- * @param {string} image.url
  * @param {object} articleData
- * @param {object} articleData.article
- * @param {object} articleData.metaDescription
- * @param {object} articleData.metaTitle
+ * @param {object[]} newStations
  * @returns {object}
  */
-function mapMainArticleData(apMeta, lead,{ url: imageUrl }, { article, metaDescription, metaImage, metaTitle }) {
-  const { altids, ednote, headline, headline_extended, version } = apMeta,
+function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
+  const
+    { url: imageUrl } = image,
+    { article, metaDescription, metaImage, metaTitle } = articleData,
+    { altids, ednote, headline, headline_extended, version } = apMeta,
     { etag, itemid } = altids;
-    
+
+  let { stationSlug, sectionFront, secondarySectionFront, stationSyndication } = article;
+
+  if (stationSlug) {
+    stationSyndication = (stationSyndication || []).concat(newStations);
+  } else {
+    [{ stationSlug, sectionFront, secondarySectionFront } = {}, ...stationSyndication] = newStations || [];
+  }
+
   return {
     article: {
       ...article,
@@ -265,10 +278,14 @@ function mapMainArticleData(apMeta, lead,{ url: imageUrl }, { article, metaDescr
       plainTextPrimaryHeadline: headline,
       plainTextShortHeadline: headline,
       primaryHeadline: headline,
+      secondarySectionFront,
+      sectionFront,
       seoDescription: headline_extended,
       seoHeadline: headline,
       shortHeadline: headline,
-      slug: slugifyService(headline)
+      slug: slugifyService(headline),
+      stationSlug,
+      stationSyndication
     },
     metaDescription: {
       ...metaDescription,
@@ -295,10 +312,11 @@ function mapMainArticleData(apMeta, lead,{ url: imageUrl }, { article, metaDescr
  * @param {object} articleData.article
  * @param {object} articleData.metaTitle
  * @param {object} articleData.metaDescription
+ * @param {object[]} newStations
  * @param {object} locals
  * @returns {object}
  */
-async function mapApDataToArticle(apMeta, articleData, locals) {
+async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   const
     { altids, associations, headline, renditions } = apMeta,
     { pageData, article } = articleData,
@@ -325,7 +343,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
 
     // setMainArticleData
-    newArticleData = mapMainArticleData(apMeta, lead, image, articleData),
+    newArticleData = mapMainArticleData({ apMeta, lead, image, articleData, newStations }),
     newFeedImage = {
       _ref: article.feedImg._ref,
       ...feedImg,
@@ -352,7 +370,7 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
   await assignDimensionsAndFileSize(image.url, newFeedImage);
   
   const { _ref, ...props } = newFeedImage,
-    imgRef = _ref.replace(/feed\-image/, 'image');
+    imgRef = _ref.replace(/feed-image/, 'image');
 
   if (!lead.length) {
     lead.push({ _ref: imgRef, ...props });
@@ -431,7 +449,20 @@ async function mapApDataToArticle(apMeta, articleData, locals) {
 }
 
 /**
- * Handles the logic needed to import or update an artice from the AP media api
+ * Determines the published uri from the page ref and deletes it.
+ * @param {string} pageRef
+ * @returns {Promise<void>}
+ */
+async function unpublishArticle({ _ref: pageRef }) {
+  const { dbRaw, restDel } = __,
+    { rows: [{ id } = {}] = [] } = await dbRaw('SELECT id FROM uris WHERE data = ?', [pageRef]);
+
+  // TODO: see if this needs to unpublish syndicated items
+  await restDel(`${PROTOCOL}://${id}`, null, true);
+}
+
+/**
+ * Handles the logic needed to import or update an article from the AP media api
  * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
  * @param {object} locals
@@ -441,22 +472,26 @@ async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
     preExistingArticle = await findExistingArticle(apMeta.altids);
 
+  if ( !stationMappings || _isEmpty(stationMappings)) {
+    return { message: 'no subscribers' };
+  }
+
   if (!isApContentPublishable && preExistingArticle) {
-    // TODO: unpublish
+    await unpublishArticle(preExistingArticle);
     return { isApContentPublishable, preExistingArticle };
   }
 
   const
     articleData = await getArticleData(preExistingArticle || await createNewArticle(stationMappings, locals)),
-    isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
     newStations = await getNewStations(articleData.article, stationMappings),
+    isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
     {
       article,
       metaDescription,
       metaImage,
       metaTitle
-    } = isModifiedByAP
-      ? await mapApDataToArticle(apMeta, articleData, locals)
+    } = isModifiedByAP || newStations
+      ? await mapApDataToArticle(apMeta, articleData, newStations, locals)
       : articleData;
 
   return {
