@@ -257,7 +257,7 @@ class SpaPlayerInterface {
    */
   redirectToPodcast (podcastSiteSlug) {
     const route = `/podcasts/${podcastSiteSlug}`
-    // Short circuit If the route is he same as current
+    // Short circuit If the route is the same as current
     if (window.location.pathname === route) return
     this.spa.$router.push(route)
   }
