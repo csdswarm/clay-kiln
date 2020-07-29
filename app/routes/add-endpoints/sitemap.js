@@ -128,6 +128,18 @@ module.exports = router => {
 
       SELECT 'sitemap-articles-and-galleries' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
       FROM sitemap_station_articles_and_galleries
+      WHERE id ~ '${req.params.stationSlug}'
+
+      UNION
+      
+      SELECT 'sitemap-topics' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+      FROM sitemap_station_topics
+      WHERE id ~ '${req.params.stationSlug}'
+  
+      UNION
+      
+      SELECT 'sitemap-authors' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+      FROM sitemap_station_authors
       WHERE id ~ '${req.params.stationSlug}';
     `);
 
