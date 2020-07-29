@@ -8,18 +8,21 @@ const _ = require('lodash'),
  * or simple-list objects
  *
  * @param  {Array} authorsList
+ * @param  {Array} hostsList
  * @return {String}
  */
-function formatSimpleByline(authorsList) {
-  var authors = _.map(authorsList, (author) => _.isObject(author) ? author.text : author);
+function formatSimpleByline(authorsList, hostsList) {
+  const authors = _.map(authorsList, (author) => _.isObject(author) ? author.text : author),
+    hosts = _.map(hostsList, (host) => _.isObject(host) ? host.text : host),
+    list = [...authors, hosts];
 
-  if (authors.length === 1) {
-    return '<span>' + authors[0] + '</span>';
-  } else if (authors.length === 2) {
-    return '<span>' + authors[0] + '</span><span class="and"> and </span><span>' + authors[1] + '</span>';
+  if (list.length === 1) {
+    return '<span>' + list[0] + '</span>';
+  } else if (list.length === 2) {
+    return '<span>' + list[0] + '</span><span class="and"> and </span><span>' + list[1] + '</span>';
   } else {
-    return _.join(_.map(authors, function (author, idx) {
-      if (idx < authors.length - 1) {
+    return _.join(_.map(list, function (author, idx) {
+      if (idx < list.length - 1) {
         return '<span>' + author + ', </span>';
       } else {
         return '<span class="and">and </span><span>' + author + '</span>';
@@ -41,19 +44,16 @@ function complexByline(opts) {
   let names, hosts;
 
   if (options.simpleList) {
-    return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatNumAuthors(bylines, options);
+    return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatNumAuthorsHosts(bylines, options);
   }
 
   return _.join(_.reduce(bylines, (acc, byline, idx) => {
     names = _.get(byline, 'names', []);
     hosts = _.get(byline, 'hosts', []);
+    hosts = _.map(hosts, (host) => ({ ...host, isHost: true }));
 
     if (names.length > 0) {
-      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatNumAuthors(names, options)}`);
-    }
-
-    if (hosts.length > 0) {
-      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(hosts) : socialsByline.formatNumHosts(hosts, options)}`);
+      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names, hosts) : socialsByline.formatNumAuthorsHosts(names, hosts, options)}`);
     }
 
     return acc;
