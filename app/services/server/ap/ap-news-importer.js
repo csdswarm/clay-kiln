@@ -1,6 +1,7 @@
 'use strict';
 const
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   _memoize = require('lodash/memoize'),
   _set = require('lodash/set'),
   cheerio = require('cheerio'),
@@ -11,7 +12,7 @@ const
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
-  { put: restPut } = require('../../universal/rest'),
+  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
@@ -37,6 +38,7 @@ const
     getAllStations,
     getApArticleBody,
     log,
+    restDel,
     restPut,
     saveApPicture,
     searchByQuery
@@ -446,6 +448,19 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
 }
 
 /**
+ * Determines the published uri from the page ref and deletes it.
+ * @param {string} pageRef
+ * @returns {Promise<void>}
+ */
+async function unpublishArticle({ _ref: pageRef }) {
+  const { dbRaw, restDel } = __,
+    { rows: [{ id } = {}] = [] } = await dbRaw('SELECT id FROM uris WHERE data = ?', [pageRef]);
+
+  // TODO: see if this needs to unpublish syndicated items
+  await restDel(`${PROTOCOL}://${id}`, null, true);
+}
+
+/**
  * Handles the logic needed to import or update an artice from the AP media api
  * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
@@ -456,12 +471,12 @@ async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
     preExistingArticle = await findExistingArticle(apMeta.altids);
 
-  if ( !stationMappings || stationMappings === {}) {
+  if ( !stationMappings || _isEmpty(stationMappings)) {
     return { message: 'no subscribers' };
   }
 
   if (!isApContentPublishable && preExistingArticle) {
-    // TODO: unpublish
+    await unpublishArticle(preExistingArticle);
     return { isApContentPublishable, preExistingArticle };
   }
 

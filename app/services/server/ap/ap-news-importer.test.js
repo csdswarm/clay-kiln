@@ -125,7 +125,12 @@ describe('server', () => {
           ELASTIC_AP_ID_PATH = 'body.query.term[\'ap.itemid\']',
           apMeta = { ...DEFAULT_AP_META, ...options.apMeta },
           locals = { ...LOCALS, ...options.locals },
-          stationMappings = options.stationMappings || {},
+          stationMappings = options.hasOwnProperty('stationMappings')
+            ? options.stationMappings
+            : { xyz: {} },
+          stationsBySlug = options.hasOwnProperty('stationsBySlug')
+            ? options.stationsBySlug
+            : { xyz: {} },
           stubs = [
             'assignDimensionsAndFileSize',
             'bySlug',
@@ -137,6 +142,7 @@ describe('server', () => {
             'dbRaw',
             'getApArticleBody',
             'log',
+            'restDel',
             'restPut',
             'saveApPicture',
             'searchByQuery'
@@ -153,9 +159,9 @@ describe('server', () => {
           });
         });
 
-        stubs.bySlug.resolves(options.stationsBySlug || {});
+        stubs.bySlug.resolves(stationsBySlug);
 
-        stubs.createPage.resolves({ ...NEW.PAGE_DATA, stationSlug: Object.keys(stationMappings)[0] });
+        stubs.createPage.resolves({ ...NEW.PAGE_DATA, stationSlug: Object.keys(stationMappings || {})[0] });
 
         stubs.dbGet.resolves({});
         [
@@ -169,9 +175,17 @@ describe('server', () => {
           ...DEFAULT_TAGS
         ].forEach(item => stubs.dbGet.withArgs(item._ref).resolves(item));
 
-        stubs.dbRaw
-          .withArgs(sinon.match('jsonb_array_elements_text(data'), EXISTING.ARTICLE.ID)
-          .resolves({ rows: [{ id:EXISTING.ARTICLE.ID, data: EXISTING.PAGE_DATA }] });
+        [
+          {
+            args: [sinon.match('jsonb_array_elements_text(data'), EXISTING.ARTICLE.ID],
+            resolves: { rows: [{ id:EXISTING.ARTICLE.ID, data: EXISTING.PAGE_DATA }] }
+          },
+          {
+            args: ['SELECT id FROM uris WHERE data = ?'],
+            resolves: { rows: [{ id: `${HOST}/_uris/c29tZS5yYWRpby5jb20vc29tZS91cmk=` }] }
+          }
+        ].forEach(
+          ({ args, resolves }) => stubs.dbRaw.withArgs(...args).resolves(resolves));
 
         stubs.getApArticleBody.resolves({ block: {} });
         if (options.apBodyContent) {
@@ -269,6 +283,18 @@ describe('server', () => {
         expect(result.preExistingArticle).to.deep.include({
           ...EXISTING.PAGE_DATA
         });
+      });
+
+      it('notifies caller when there are no mappings', async () => {
+        const { result } = await setup_importArticle({ stationMappings: null });
+
+        expect(result).to.include({ message: 'no subscribers' });
+      });
+
+      it('notifies caller when there are no subscribers', async () => {
+        const { result } = await setup_importArticle({ stationMappings: {} });
+
+        expect(result).to.include({ message: 'no subscribers' });
       });
 
       it('creates a new article if one does not already exist', async () => {
