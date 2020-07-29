@@ -142,7 +142,7 @@ async function getArticleData(pageData) {
 
 /**
  * Determines which stationMappings have been added to the article since the last time
- * If the article was just created, then all station mappings will be incuded and
+ * If the article was just created, then all station mappings will be included and
  * merged with correct station info
  * @param {object} article
  * @param {object[]} stationMappings
@@ -369,7 +369,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   await assignDimensionsAndFileSize(image.url, newFeedImage);
   
   const { _ref, ...props } = newFeedImage,
-    imgRef = _ref.replace(/feed\-image/, 'image');
+    imgRef = _ref.replace(/feed-image/, 'image');
 
   if (!lead.length) {
     lead.push({ _ref: imgRef, ...props });
@@ -461,7 +461,7 @@ async function unpublishArticle({ _ref: pageRef }) {
 }
 
 /**
- * Handles the logic needed to import or update an artice from the AP media api
+ * Handles the logic needed to import or update an article from the AP media api
  * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
  * @param {object} locals
