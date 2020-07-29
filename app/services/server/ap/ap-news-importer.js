@@ -1,17 +1,18 @@
 'use strict';
 const
+
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   _memoize = require('lodash/memoize'),
-  _set = require('lodash/set'),
   cheerio = require('cheerio'),
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
-  { addLazyLoadProperty } = require('../../universal/utils'),
+  { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
-  { put: restPut } = require('../../universal/rest'),
+  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
@@ -37,6 +38,7 @@ const
     getAllStations,
     getApArticleBody,
     log,
+    restDel,
     restPut,
     saveApPicture,
     searchByQuery
@@ -68,7 +70,7 @@ function checkApPublishable({ editorialtypes = '', pubstatus, signals = '' }) {
 async function findExistingArticle({ itemid } = {}) {
   const
     { dbRaw, log, searchByQuery } = __,
-    query = _set({ ...QUERY_TEMPLATE }, 'body.query.term[\'ap.itemid\']', itemid);
+    query = setImmutable(QUERY_TEMPLATE, 'body.query.term[\'ap.itemid\']', itemid);
 
   try {
     const [existing] = await searchByQuery(query, null, { includeIdInResult: true, shouldDedupeContent: false }),
@@ -140,7 +142,7 @@ async function getArticleData(pageData) {
 
 /**
  * Determines which stationMappings have been added to the article since the last time
- * If the article was just created, then all station mappings will be incuded and
+ * If the article was just created, then all station mappings will be included and
  * merged with correct station info
  * @param {object} article
  * @param {object[]} stationMappings
@@ -155,7 +157,7 @@ async function getNewStations(article, stationMappings, locals) {
       stationSlug,
       stationSyndication
     } = article,
-    syndicated = stationSyndication.map(({ stationSlug }) => stationSlug),
+    syndicated = stationSyndication.filter(({ source }) => source === 'ap feed').map(({ stationSlug }) => stationSlug),
     stationEntries = Object.entries(stationMappings),
     stationsBySlug = await getAllStations.bySlug({ locals }),
     newStations = sectionFront
@@ -185,7 +187,7 @@ async function getNewStations(article, stationMappings, locals) {
  * @param {{ type: string, uri: string }[]} associations
  * @returns {Promise<{ headline: string, url: string }>}
  */
-function resolveImage(associations = []) {
+function resolveImage(associations = {}) {
   const
     { saveApPicture } = __,
     apRef = Object.values(associations).find(({ type }) => type === 'picture');
@@ -223,6 +225,31 @@ function resolveArticleSubComponents(article) {
 }
 
 /**
+ * Determines if the article has already had stations applied to it and if so, concatenates the new ones
+ * otherwise, it separates the first one and uses that for the main station and syndicates the rest
+ * @param {object} article
+ * @param {object[]} newStations
+ * @returns {object}
+ */
+function integrateArticleStations(article, newStations) {
+  const { stationSlug } = article;
+
+  if (stationSlug) {
+    return {
+      ...article,
+      stationSyndication: article.stationSyndication.concat(newStations)
+    };
+  } else {
+    const [firstStation = {}, ...stationSyndication] = newStations;
+    
+    return {
+      ...firstStation,
+      stationSyndication
+    };
+  }
+}
+
+/**
  * Given existing article data and ap meta data, maps any updated values to the article data and returns the
  * new article data.
  * (NOTE: does not map external items at this time)
@@ -235,18 +262,16 @@ function resolveArticleSubComponents(article) {
  */
 function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
   const
-    { url: imageUrl } = image,
-    { article, metaDescription, metaImage, metaTitle } = articleData,
     { altids, ednote, headline, headline_extended, version } = apMeta,
-    { etag, itemid } = altids;
-
-  let { stationSlug, sectionFront, secondarySectionFront, stationSyndication } = article;
-
-  if (stationSlug) {
-    stationSyndication = (stationSyndication || []).concat(newStations);
-  } else {
-    [{ stationSlug, sectionFront, secondarySectionFront } = {}, ...stationSyndication] = newStations || [];
-  }
+    { article, metaDescription, metaImage, metaTitle } = articleData,
+    { etag, itemid } = altids,
+    {
+      secondarySectionFront,
+      sectionFront,
+      stationSlug,
+      stationSyndication
+    } = integrateArticleStations(article, newStations),
+    { url: imageUrl } = image;
 
   return {
     article: {
@@ -367,7 +392,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   await assignDimensionsAndFileSize(image.url, newFeedImage);
   
   const { _ref, ...props } = newFeedImage,
-    imgRef = _ref.replace(/feed\-image/, 'image');
+    imgRef = _ref.replace(/feed-image/, 'image');
 
   if (!lead.length) {
     lead.push({ _ref: imgRef, ...props });
@@ -446,7 +471,20 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
 }
 
 /**
- * Handles the logic needed to import or update an artice from the AP media api
+ * Determines the published uri from the page ref and deletes it.
+ * @param {string} pageRef
+ * @returns {Promise<void>}
+ */
+async function unpublishArticle({ _ref: pageRef }) {
+  const { dbRaw, restDel } = __,
+    { rows: [{ id } = {}] = [] } = await dbRaw('SELECT id FROM uris WHERE data = ?', [pageRef]);
+
+  // TODO: see if this needs to unpublish syndicated items
+  await restDel(`${PROTOCOL}://${id}`, null, true);
+}
+
+/**
+ * Handles the logic needed to import or update an article from the AP media api
  * @param {object} apMeta - The data returned from AP Media for a single article (the item property)
  * @param {object} stationMappings - The station mappings that go with this AP Media article
  * @param {object} locals
@@ -456,12 +494,12 @@ async function importArticle(apMeta, stationMappings, locals) {
   const isApContentPublishable = checkApPublishable(apMeta),
     preExistingArticle = await findExistingArticle(apMeta.altids);
 
-  if ( !stationMappings || stationMappings === {}) {
+  if (_isEmpty(stationMappings)) {
     return { message: 'no subscribers' };
   }
 
   if (!isApContentPublishable && preExistingArticle) {
-    // TODO: unpublish
+    await unpublishArticle(preExistingArticle);
     return { isApContentPublishable, preExistingArticle };
   }
 
