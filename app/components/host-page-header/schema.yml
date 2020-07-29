@@ -11,8 +11,8 @@ hosts:
     badge: FR
     autocomplete:
       list: hosts
-      allowRemove: false
-      allowCreate: false
+      allowRemove: true
+      allowCreate: true
     validate:
       max: 1
       required: true
