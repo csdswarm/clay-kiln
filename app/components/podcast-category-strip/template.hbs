@@ -11,7 +11,7 @@
 <ul class="podcast-category-strip__items">
   {{#each _computed.podcasts as |podcast| }}
     <li class="podcast-category-strip__item">
-      <a class="podcast-category-strip__link outbound-link" href="{{ podcast.url }}">
+      <a class="podcast-category-strip__link" href="{{ podcast.url }}">
         <img
           src="{{ podcast.imageUrl }}width=140&crop=1:1,offset-y0"
           srcset="{{ podcast.imageUrl }}width=150&crop=1:1,offset-y0 150w,
