@@ -16,6 +16,9 @@ _components:
     instances:
       new:
         items: []
+      contests:
+        items:
+          - text: 'Contests'
 
   paragraph:
     instances:
@@ -33,7 +36,7 @@ _components:
     instances:
       new:
         title: ''
-        domain: www.radio.com
+        domain: clay.radio.com
         enabled:
           link: true
           email: true
@@ -45,10 +48,10 @@ _components:
           facebook: true
           linkedin: false
           pinterest: false
-        emailUrl: mailto:?subject=&body=https%3A%2F%2Fwww.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Demail%26utm_source%3Dwww.radio.com%26utm_term%3DNATL-RC
+        emailUrl: mailto:?subject=&body=https%3A%2F%2Fclay.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Demail%26utm_source%3Dclay.radio.com%26utm_term%3DNATL-RC
         pinImage: ''
-        twitterUrl: https://twitter.com/share?text=&via=Radiodotcom&url=https%3A%2F%2Fwww.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Dsocial%26utm_source%3Dtwitter.com%26utm_term%3DNATL-RC
-        facebookUrl: http://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Dsocial%26utm_source%3Dfacebook.com%26utm_term%3DNATL-RC
+        twitterUrl: https://twitter.com/share?text=&via=Radiodotcom&url=https%3A%2F%2Fclay.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Dsocial%26utm_source%3Dtwitter.com%26utm_term%3DNATL-RC
+        facebookUrl: http://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fclay.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Dsocial%26utm_source%3Dfacebook.com%26utm_term%3DNATL-RC
         twitterHandle: Radiodotcom
         stationCallSign: NATL-RC
         componentVariation: share
@@ -58,6 +61,10 @@ _components:
       billboardBottom:
         adSize: billboard
         adLocation: btf
+        adPosition: bottom
+      billboardBottomNonLazy:
+        adSize: billboard
+        adLocation: atf
         adPosition: bottom
       billboardGallery:
         adSize: billboard
@@ -149,64 +156,66 @@ _components:
         adPosition: top
 
   article:
-    date: ''
-    lead: []
-    slug: ''
-    tags:
-      _ref: www.radio.com/_components/tags/instances/new
-    feeds:
-      msn: true
-      rss: true
-      newsfeed: true
-      sitemaps: true
-      smartNews: true
-      apple-news: true
-      most-popular: true
-    adTags:
-      _ref: www.radio.com/_components/ad-tags/instances/new
-    byline:
-      - names: []
-        prefix: by
+    instances:
+      new:
+        date: ''
+        lead: []
+        slug: ''
+        tags:
+          _ref: /_components/tags/instances/new
+        feeds:
+          msn: true
+          rss: true
+          newsfeed: true
+          sitemaps: true
+          smartNews: true
+          apple-news: true
+          most-popular: true
+        adTags:
+          _ref: /_components/ad-tags/instances/new
+        byline:
+          - names: []
+            prefix: by
+            sources: []
+        teaser: ''
+        authors: []
+        content:
+          - _ref: /_components/paragraph/instances/new
+        feedImg:
+          _ref: /_components/feed-image/instances/new
         sources: []
-    teaser: ''
-    authors: []
-    content:
-      - _ref: www.radio.com/_components/paragraph/instances/new
-    feedImg:
-      _ref: www.radio.com/_components/feed-image/instances/new
-    sources: []
-    featured: false
-    headline: ''
-    msnTitle: ''
-    textTags: []
-    sideShare:
-      _ref: www.radio.com/_components/share/instances/new
-    feedImgUrl: ''
-    feedLayout: small
-    showSocial: true
-    breadcrumbs: []
-    contentType: article
-    subHeadline: ''
-    dateModified: ''
-    featuredNews: false
-    sectionFront: ''
-    fullWidthLead: false
-    syndicatedUrl: ''
-    featuredSports: false
-    msnTitleLength: 0
-    isContentFromAP: false
-    noIndexNoFollow: false
-    primaryHeadline: ''
-    syndicationStatus: original
-    componentVariation: article
-    stationSyndication: []
-    rollingStandoutCount: 0
-    secondarySectionFront: ''
-    contentPageSponsorLogo:
-      _ref: www.radio.com/_components/google-ad-manager/instances/contentPageLogoSponsorship
-    canBeMarkedGoogleStandout: true
-    availableStandoutArticleInventory: true
-    articleWithinGoogleStandoutPublishDateLimit: true
+        featured: false
+        headline: ''
+        msnTitle: ''
+        textTags: []
+        sideShare:
+          _ref: /_components/share/instances/new
+        feedImgUrl: ''
+        feedLayout: small
+        showSocial: true
+        breadcrumbs: []
+        contentType: article
+        subHeadline: ''
+        dateModified: ''
+        featuredNews: false
+        sectionFront: ''
+        fullWidthLead: false
+        syndicatedUrl: ''
+        featuredSports: false
+        msnTitleLength: 0
+        isContentFromAP: false
+        noIndexNoFollow: false
+        primaryHeadline: ''
+        syndicationStatus: original
+        componentVariation: article
+        stationSyndication: []
+        rollingStandoutCount: 0
+        secondarySectionFront: ''
+        contentPageSponsorLogo:
+          _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
+        canBeMarkedGoogleStandout: true
+        availableStandoutArticleInventory: true
+        articleWithinGoogleStandoutPublishDateLimit: true
 
   more-content-feed:
     instances:
@@ -226,7 +235,7 @@ _components:
         componentTitle: MORE from RADIO.COM
         introComponents: []
         sharethroughTag:
-          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
         enableSharethrough: true
         sectionFrontManual: ''
         componentTitleVisible: false
@@ -251,7 +260,7 @@ _components:
         componentTitle: MORE from RADIO.COM
         introComponents: []
         sharethroughTag:
-          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
         enableSharethrough: true
         sectionFrontManual: ''
         primarySectionFront:
@@ -276,7 +285,7 @@ _components:
         componentTitle: MORE from RADIO.COM
         introComponents: []
         sharethroughTag:
-          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
         enableSharethrough: true
         sectionFrontManual: ''
         componentTitleVisible: false
@@ -300,7 +309,7 @@ _components:
         componentTitle: MORE from RADIO.COM
         introComponents: []
         sharethroughTag:
-          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
         enableSharethrough: true
         sectionFrontManual:
         componentTitleVisible: false
@@ -311,34 +320,34 @@ _components:
     instances:
       author-page:
         col1:
-          - _ref: www.radio.com/_components/more-content-feed/instances/author-page
+          - _ref: /_components/more-content-feed/instances/author-page
         col2:
-          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
       station-front:
         col1:
-          - _ref: www.radio.com/_components/more-content-feed/instances/station-basic-music
+          - _ref: /_components/more-content-feed/instances/station-basic-music
         col2:
-          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
       homepage:
         col1:
-          - _ref: www.radio.com/_components/more-content-feed/instances/homepage
+          - _ref: /_components/more-content-feed/instances/homepage
         col2:
-          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
       topic-page:
         col1:
-          - _ref: www.radio.com/_components/more-content-feed/instances/topic-page
+          - _ref: /_components/more-content-feed/instances/topic-page
         col2:
-          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
 
   author-page:
     instances:
       new:
         twoColumnComponent:
-          _ref: www.radio.com/_components/two-column-component/instances/author-page
+          _ref: /_components/two-column-component/instances/author-page
 
   author-page-header:
     instances:
@@ -382,6 +391,9 @@ _components:
       curated-topic:
         routeParam: 'tag'
         suffix: ' | RADIO.COM'
+      topic:
+        suffix: " | RADIO.COM"
+        routeParam: dynamicTag
       station:
         suffix: " - LISTEN LIVE | RADIO.COM"
         localsKey: station.name
@@ -510,13 +522,13 @@ _components:
         lead: []
         slug: ''
         tags:
-          _ref: www.radio.com/_components/tags/instances/contests
+          _ref: /_components/tags/instances/contests
         embed:
-          _ref: www.radio.com/_components/html-embed/instances/new
+          _ref: /_components/html-embed/instances/new
         rules:
-          _ref: www.radio.com/_components/contest-rules/instances/new
+          _ref: /_components/contest-rules/instances/new
         adTags:
-          _ref: www.radio.com/_components/ad-tags/instances/new
+          _ref: /_components/ad-tags/instances/new
         byline: []
         teaser: ''
         authors: []
@@ -526,17 +538,17 @@ _components:
         headline: ''
         pageTitle: ''
         sideShare:
-          _ref: www.radio.com/_components/share/instances/new
+          _ref: /_components/share/instances/new
         startDate: ''
         startTime: ''
         feedImgUrl: ''
         breadcrumbs:
-          - url: "//www.radio.com/contests"
+          - url: "/contests"
             text: contests
             hidden: false
         contentType: contest
         description:
-          - _ref: www.radio.com/_components/paragraph/instances/new
+          - _ref: /_components/paragraph/instances/new
         subHeadline: ''
         dateModified: ''
         fullWidthLead: false
@@ -661,9 +673,9 @@ _components:
         lead: []
         slug: ''
         tags:
-          _ref: www.radio.com/_components/tags/instances/eventPage
+          _ref: /_components/tags/instances/eventPage
         adTags:
-          _ref: www.radio.com/_components/ad-tags/instances/new
+          _ref: /_components/ad-tags/instances/new
         byline: []
         authors: []
         content: []
@@ -671,7 +683,7 @@ _components:
         headline: ''
         pageTitle: ''
         sideShare:
-          _ref: www.radio.com/_components/share/instances/new
+          _ref: /_components/share/instances/new
         startDate: ''
         startTime: ''
         venueName: ''
@@ -692,10 +704,10 @@ _components:
         lede: {}
         ledeUrl: ''
         description:
-          _ref: www.radio.com/_components/paragraph/instances/new
+          _ref: /_components/paragraph/instances/new
         contentLabel: Featured Event
         googleAdRightRail:
-          _ref: www.radio.com/_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
 
   events-list:
     instances:
@@ -709,9 +721,9 @@ _components:
     instances:
       new:
         eventsLede:
-          _ref: www.radio.com/_components/events-lede/instances/new
+          _ref: /_components/events-lede/instances/new
         eventsList:
-          _ref: www.radio.com/_components/events-list/instances/new
+          _ref: /_components/events-list/instances/new
         pageLength: ''
         pageDescription: ''
 
@@ -729,7 +741,7 @@ _components:
     instances:
       google-news-feed:
         meta:
-          link: https://www.radio.com
+          link: https://clay.radio.com
           title: Radio.com Google News Feed
           renderer: rss
           contentType: rss
@@ -763,7 +775,7 @@ _components:
         transform: article
       msn:
         meta:
-          link: https://www.radio.com
+          link: https://clay.radio.com
           title: Radio.com Msn Rss Feed
           renderer: rss
           contentType: rss
@@ -792,9 +804,9 @@ _components:
         transform: article
       postup:
         attr:
-          xmlns:radio: https://www.radio.com
+          xmlns:radio: https://clay.radio.com
         meta:
-          link: https://www.radio.com
+          link: https://clay.radio.com
           title: Radio.com PostUp Feed
           renderer: rss
           contentType: application/rss+xml
@@ -809,7 +821,7 @@ _components:
         transform: article
       reversechron:
         meta:
-          link: https://www.radio.com
+          link: https://clay.radio.com
           title: Radio.com Reverse Chron Feed
           renderer: rss
           contentType: application/rss+xml
@@ -829,7 +841,7 @@ _components:
           opt:
             - snf:logo:
                 - url: https://images.radio.com/aiu-media/rdclogo290x50-8a7d28ca-8a39-49f5-9c39-97147503755d.png
-          link: https://www.radio.com
+          link: https://clay.radio.com
           title: RADIO.COM
           renderer: rss
           contentType: rss
@@ -902,7 +914,7 @@ _components:
               - url: http://entercom.com/eeo/
                 text: EEO public files
                 newtab: true
-              - url: https://www.radio.com/public-inspection-file-help
+              - url: https://clay.radio.com/public-inspection-file-help
                 text: public file help
                 newtab: true
               - url: http://entercom.com/privacy-policy/
@@ -956,13 +968,13 @@ _components:
       new:
         slug: ''
         tags:
-          _ref: www.radio.com/_components/tags/instances/new
+          _ref: /_components/tags/instances/new
         feeds:
           rss: true
           smartNews: true
           apple-news: true
         adTags:
-          _ref: www.radio.com/_components/ad-tags/instances/new
+          _ref: /_components/ad-tags/instances/new
         byline:
           - names: []
             prefix: by
@@ -970,21 +982,21 @@ _components:
         crumbs: []
         footer: []
         slides:
-          - _ref: www.radio.com/_components/gallery-slide/instances/new
+          - _ref: /_components/gallery-slide/instances/new
         teaser: ''
         authors: []
         content:
-          - _ref: www.radio.com/_components/paragraph/instances/new
+          - _ref: /_components/paragraph/instances/new
         sources: []
         _version: 15
         featured: false
         headline: ''
         inlineAd:
-          _ref: www.radio.com/_components/google-ad-manager/instances/billboardGallery
+          _ref: /_components/google-ad-manager/instances/billboardGallery
         slugLock: false
         textTags: []
         sideShare:
-          _ref: www.radio.com/_components/share/instances/new
+          _ref: /_components/share/instances/new
         feedImgUrl: ''
         showSocial: true
         stationURL: ''
@@ -1008,14 +1020,14 @@ _components:
         includeInlineAds: true
         manualSlugUnlock: false
         rightRailStickyAd:
-          _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottom
+          _ref: /_components/google-ad-manager/instances/halfPageBottom
         syndicationStatus: original
         stationSyndication: []
         secondaryBylineText: Photograph By
         secondaryAttribution: []
         secondarySectionFront: ''
         contentPageSponsorLogo:
-          _ref: www.radio.com/_components/google-ad-manager/instances/contentPageLogoSponsorship
+          _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
         eligibleForGoogleStandout: false
 
   gallery-slide:
@@ -1025,7 +1037,7 @@ _components:
         hashLink: "-new"
         slideEmbed:
         description:
-          - _ref: www.radio.com/_components/description/instances/new
+          - _ref: /_components/description/instances/new
         hashLinkPrefix: ''
         galleryTypeClass: component--gallery-slide__default
 
@@ -1034,14 +1046,14 @@ _components:
       new:
         title: ''
         content:
-          - _ref: www.radio.com/_components/image/instances/new
-          - _ref: www.radio.com/_components/paragraph/instances/new
-          - _ref: www.radio.com/_components/divider/instances/new
-          - _ref: www.radio.com/_components/tweet/instances/new
-          - _ref: www.radio.com/_components/instagram-post/instances/new
-          - _ref: www.radio.com/_components/facebook-post/instances/new
-          - _ref: www.radio.com/_components/blockquote/instances/new
-          - _ref: www.radio.com/_components/subheader/instances/new
+          - _ref: /_components/image/instances/new
+          - _ref: /_components/paragraph/instances/new
+          - _ref: /_components/divider/instances/new
+          - _ref: /_components/tweet/instances/new
+          - _ref: /_components/instagram-post/instances/new
+          - _ref: /_components/facebook-post/instances/new
+          - _ref: /_components/blockquote/instances/new
+          - _ref: /_components/subheader/instances/new
 
   generic-list:
     instances:
@@ -1094,14 +1106,14 @@ _components:
     instances:
       default:
         mainContent:
-          - _ref: www.radio.com/_components/multi-column/instances/home
-          - _ref: www.radio.com/_components/latest-content/instances/default
-          - _ref: www.radio.com/_components/stations-carousel/instances/homepage
-          - _ref: www.radio.com/_components/google-ad-manager/instances/billboardBottom
-          - _ref: www.radio.com/_components/podcast-list/instances/new
-          - _ref: www.radio.com/_components/latest-videos/instances/homepage
-          - _ref: www.radio.com/_components/google-ad-manager/instances/billboardBottom
-          - _ref: www.radio.com/_components/two-column-component/instances/homepage
+          - _ref: /_components/multi-column/instances/home
+          - _ref: /_components/latest-content/instances/default
+          - _ref: /_components/stations-carousel/instances/homepage
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/podcast-list/instances/new
+          - _ref: /_components/latest-videos/instances/homepage
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/two-column-component/instances/homepage
 
   stations-carousel:
     instances:
@@ -1232,6 +1244,15 @@ _components:
         excludeSectionFronts: ''
         secondarySectionFront: ''
         excludeSecondarySectionFronts: ''
+      station:
+        tag: ''
+        items: []
+        _version: 6
+        contentType:
+          article: true
+          gallery: true
+        customTitle: ''
+        populateFrom: station
 
   latest-top-recirc-slider:
     instances:
@@ -1243,6 +1264,10 @@ _components:
     instances:
       general:
         description: ''
+      station-basic-music:
+        description: homepage
+      stations-directory:
+        description: 'Discover top live radio stations from across the country including sports, news, talk and music stations. Keep up with all local and national news, traffic, and weather. Hear exclusive interviews, comedy and commentary.'
 
   meta-image:
     instances:
@@ -1254,6 +1279,10 @@ _components:
       station:
         imageUrl: '${paramValue}'
         localsKey: 'station.square_logo_small'
+      station-front:
+        imageUrl: '${paramValue}'
+        localsKey: 'station.square_logo_small'
+        componentVariation: 'meta-image'
 
   meta-tags:
     instances:
@@ -1273,6 +1302,16 @@ _components:
         twitterTitle: ''
         ogTitle: ''
         kilnTitle: ''
+      station-basic-music:
+        title: RADIO.COM
+        ogTitle: RADIO.COM
+        kilnTitle: RADIO.COM
+        twitterTitle: RADIO.COM
+      stations-directory:
+        title: 'Over 300 radio stations | RADIO.COM'
+        ogTitle: 'Over 300 radio stations | RADIO.COM'
+        kilnTitle: 'Over 300 radio stations | RADIO.COM'
+        twitterTitle: 'Over 300 radio stations | RADIO.COM'
 
   meta-url:
     instances:
@@ -1281,6 +1320,9 @@ _components:
         defaultUrl: ''
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
+      station-basic-music:
+        url: ''
+        defaultUrl: ''
 
   nielsen:
     instances:
@@ -1309,16 +1351,16 @@ _components:
     instances:
       new:
         content:
-          - _ref: www.radio.com/_components/image/instances/new
-          - _ref: www.radio.com/_components/paragraph/instances/new
-          - _ref: www.radio.com/_components/tweet/instances/new
-          - _ref: www.radio.com/_components/instagram-post/instances/new
-          - _ref: www.radio.com/_components/facebook-post/instances/new
-          - _ref: www.radio.com/_components/blockquote/instances/new
+          - _ref: /_components/image/instances/new
+          - _ref: /_components/paragraph/instances/new
+          - _ref: /_components/tweet/instances/new
+          - _ref: /_components/instagram-post/instances/new
+          - _ref: /_components/facebook-post/instances/new
+          - _ref: /_components/blockquote/instances/new
         feedImage: ''
         firstImage: ''
         socialShare:
-          _ref: www.radio.com/_components/share/instances/new
+          _ref: /_components/share/instances/new
 
   presented-by:
     instances:
@@ -1342,12 +1384,27 @@ _components:
         title: ''
         primary: false
         mainContent:
-          - _ref: www.radio.com/_components/multi-column/instances/new
-          - _ref: www.radio.com/_components/google-ad-manager/instances/billboardBottom
-          - _ref: www.radio.com/_components/two-column-component/instances/section-front
+          - _ref: /_components/multi-column/instances/new
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/two-column-component/instances/section-front
         titleLocked: false
         primarySectionFront: ''
         revealSectionFrontControls: true
+      station-basic-music:
+        mainContent:
+          - _ref: /_components/section-lead/instances/new
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/two-column-component/instances/section-front
+        title: ''
+        primary: true
+        _version: 4
+        stationFront: true
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/station-basic-music
+        stationSiteSlug: ''
+        stationsCarousel: []
+        revealStationControls: true
+        revealSectionFrontControls: false
 
   section-lead:
     instances:
@@ -1361,7 +1418,7 @@ _components:
           - text: Radio.com Latino
         sectionFront: ''
         googleAdRightRail:
-          _ref: www.radio.com/_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         primaryStoryLabel: ''
         excludeSecondarySectionFronts: {}
 
@@ -1370,7 +1427,7 @@ _components:
       new:
         byline: []
         content:
-          - _ref: www.radio.com/_components/paragraph/instances/new
+          - _ref: /_components/paragraph/instances/new
         headline: ''
         slugLock: true
         pageTitle: ''
@@ -1382,27 +1439,27 @@ _components:
     instances:
       default:
         discoverComponent:
-          _ref: www.radio.com/_components/station-discover/instances/default
+          _ref: /_components/station-discover/instances/default
         scheduleComponent:
-          _ref: www.radio.com/_components/station-schedule/instances/default
+          _ref: /_components/station-schedule/instances/default
         recentlyPlayedComponent:
-          _ref: www.radio.com/_components/station-recently-played/instances/default
+          _ref: /_components/station-recently-played/instances/default
 
   station-discover:
     instances:
       default:
         genreStations:
-          _ref: www.radio.com/_components/stations-list/instances/genreTruncated
+          _ref: /_components/stations-list/instances/genreTruncated
         marketStations:
-          _ref: www.radio.com/_components/stations-list/instances/marketTruncated
+          _ref: /_components/stations-list/instances/marketTruncated
         recentStations:
-          _ref: www.radio.com/_components/stations-list/instances/recent
+          _ref: /_components/stations-list/instances/recent
 
   station-favorites:
     instances:
       default:
         favoriteStations:
-          _ref: www.radio.com/_components/stations-list/instances/favorites
+          _ref: /_components/stations-list/instances/favorites
 
   station-footer:
     instances:
@@ -1421,7 +1478,7 @@ _components:
       new:
         station: {}
         listenNav:
-          _ref: www.radio.com/_components/station-listen-nav/instances/new
+          _ref: /_components/station-listen-nav/instances/new
         stationLogo: ''
         playingClass: show__play
         primaryLinks: []
@@ -1429,7 +1486,7 @@ _components:
       default:
         station: {}
         listenNav:
-          _ref: www.radio.com/_components/station-listen-nav/instances/new
+          _ref: /_components/station-listen-nav/instances/new
         stationLogo: ''
         playingClass: show__play
         primaryLinks: []
@@ -1563,7 +1620,7 @@ _components:
         content: []
         sectionFront: ''
         twoColumnComponent:
-          _ref: www.radio.com/_components/two-column-component/instances/topic-page
+          _ref: /_components/two-column-component/instances/topic-page
 
   topic-page-header:
     instances:

@@ -224,7 +224,7 @@ _layouts:
         layoutHeader: []
         main: main
         pageHeader:
-          - _ref: /_components/google-ad-manager/instances/cjxkedsw10009r9qkzi0ia5j3
+          - _ref: /_components/google-ad-manager/instances/billboardTop
         sectionHeader: []
         static:
           - _ref: /_components/web-player/instances/default
@@ -235,6 +235,7 @@ _layouts:
           - _ref: /_components/station-nav/instances/default
           - _ref: /_components/latest-top-recirc-slider/instances/default
           - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
+        tertiary: tertiary
       contest:
         banner:
           - _ref: /_components/alert-banner/instances/default
@@ -325,7 +326,7 @@ _layouts:
         layoutHeader: []
         main: main
         pageHeader:
-          - _ref: /_components/google-ad-manager/instances/cjxkedsw10009r9qkzi0ia5j3
+          - _ref: /_components/google-ad-manager/instances/billboardTop
         secondary: []
         sectionHeader: []
         static:

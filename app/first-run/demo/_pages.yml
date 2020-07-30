@@ -6,6 +6,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
     main:
       - /_components/article/instances/new
     layout: /_layouts/one-column-layout/instances/general
@@ -15,42 +16,47 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-    pageHeader:
-      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/meta-tags/instances/general
+      - /_components/branch-io-head/instances/default
     main:
       - /_components/article/instances/new
+    layout: /_layouts/two-column-layout/instances/article
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
       - /_components/google-ad-manager/instances/halfPageBottom
-    layout: /_layouts/two-column-layout/instances/article
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
   section-front:
     head:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
-    pageHeader:
-      - /_components/topic-page-header/instances/new
+      - /_components/meta-tags/instances/general
     main:
       - /_components/section-front/instances/new
     layout: /_layouts/one-column-layout/instances/general
+    pageHeader:
+      - /_components/topic-page-header/instances/new
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
   homepage:
     head:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/meta-tags/instances/general
     main:
       - /_components/homepage/instances/default
     layout: /_layouts/one-column-layout/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
   # Index Page
   index:
     head:
       - /_components/meta-title/instances/general
+      - /_components/meta-tags/instances/general
     main:
       - /_components/generic-list/instances/index
     layout: /_layouts/one-column-layout/instances/bare
@@ -58,6 +64,7 @@ _pages:
   general:
     head:
       - /_components/meta-title/instances/general
+      - /_components/meta-tags/instances/general
     main:
       - /_components/general-content/instances/new
     layout: /_layouts/one-column-layout/instances/general
@@ -68,41 +75,14 @@ _pages:
       - /_components/dynamic-meta-description/instances/curated-topic
       - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
-    pageHeader:
-      - /_components/topic-page-header/instances/new
+      - /_components/meta-tags/instances/general
     main:
       - /_components/topic-page/instances/new
     layout: /_layouts/one-column-layout/instances/general
-  # Topic Page
-  topic:
-    _dynamic: true
-    head:
-      - /_components/dynamic-meta-title/instances/topic
-      - /_components/dynamic-meta-description/instances/topic
-      - /_components/dynamic-meta-url/instances/general
-      - /_components/meta-image/instances/og-logo
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
       - /_components/topic-page-header/instances/new
-    main:
-      - /_components/topic-page/instances/new
-    layout: /_layouts/one-column-layout/instances/general
-  # Author Page
-  author:
-    _dynamic: true
-    head:
-      - /_components/dynamic-meta-title/instances/author
-      - /_components/dynamic-meta-description/instances/author
-      - /_components/dynamic-meta-url/instances/general
-      - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
-    main:
-      - /_components/author-page/instances/new
-    layout: /_layouts/one-column-layout/instances/general
   # Gallery Page
   gallery:
     head:
@@ -110,12 +90,126 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-    pageHeader:
-      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/meta-tags/instances/general
+      - /_components/branch-io-head/instances/default
     main:
       - /_components/gallery/instances/new
+    layout: /_layouts/two-column-layout/instances/article
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
       - /_components/google-ad-manager/instances/halfPageBottom
-    layout: /_layouts/two-column-layout/instances/article
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  station-front:
+    head:
+      - /_components/meta-title/instances/station-basic-music
+      - /_components/meta-description/instances/station-basic-music
+      - /_components/meta-url/instances/station-basic-music
+      - /_components/meta-tags/instances/general
+      - /_components/meta-image/instances/station-front
+    main:
+      - /_components/station-front/instances/new
+    layout: /_layouts/one-column-layout/instances/station-basic-music
+    secondary: []
+    pageHeader: []
+    topSection:
+      - /_components/station-nav/instances/new
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    bottomSection:
+      - /_components/station-footer/instances/new
+  station-basic-music:
+    head:
+      - /_components/meta-title/instances/station-basic-music
+      - /_components/meta-description/instances/station-basic-music
+      - /_components/meta-url/instances/station-basic-music
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/section-front/instances/station-basic-music
+    layout: /_layouts/one-column-layout/instances/station-basic-music
+    secondary: []
+    pageHeader: []
+    topSection:
+      - /_components/station-nav/instances/new
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    bottomSection:
+      - /_components/station-footer/instances/new
+  contest:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+      - /_components/branch-io-head/instances/default
+    main:
+      - /_components/contest/instances/new
+    layout: /_layouts/two-column-layout/instances/contest
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  event:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+      - /_components/branch-io-head/instances/default
+    main:
+      - /_components/event/instances/new
+    layout: /_layouts/two-column-layout/instances/event
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  events-listing:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+    main:
+      - /_components/events-listing-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/page-header/instances/new
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  national-contest:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+      - /_components/branch-io-head/instances/default
+    main:
+      - /_components/contest/instances/new
+    layout: /_layouts/two-column-layout/instances/contest
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/national-contest
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  redirects:
+    head:
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/redirects/instances/default
+    layout: /_layouts/one-column-full-width-layout/instances/bare
+    customUrl: /redirects
+    secondary: []
+    pageHeader: []

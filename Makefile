@@ -50,32 +50,22 @@ nuke:
 	make reset && make clear-app && make clear-spa && make clear-logs
 
 bootstrap:
-	cd ./app && cat ./first-run/**/*.yml | clay import -k demo -y clay.radio.com
+	cd ./app && cat ./first-run/**/_components.yml | clay import -k demo -y clay.radio.com
 	@echo ""
-	curl -X PUT http://clay.radio.com/_layouts/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	cd ./app && cat ./first-run/**/_users.yml | clay import -k demo -y clay.radio.com
 	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_layouts/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	cd ./app && cat ./first-run/**/_lists.yml | clay import -k demo -y clay.radio.com
 	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_layouts/one-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	cd ./app && cat ./first-run/**/_layouts.yml | clay import -k demo -y -p clay.radio.com
 	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_layouts/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	cd ./app && cat ./first-run/**/_pages.yml | clay import -k demo -y clay.radio.com
 	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_pages/author@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_pages/topic@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	cd ./app && cat ./first-run/**/_dynamic_pages.yml | clay import -k demo -y -p clay.radio.com
 	@echo "\r\n\r\n"
 	cd ./app && cat ./first-run/**/initial-pages/* | clay import -k demo -y -p clay.radio.com
 	@echo "\r\n\r\n"
-	cat ./migrations/legacy/**/_components.yml | clay import -k demo -y clay.radio.com
-	@echo "\r\n\r\n"
-	cat ./migrations/legacy/**/_lists.yml | clay import -k demo -y clay.radio.com
-	@echo "\r\n\r\n"
-	cat ./migrations/legacy/**/_pages.yml | clay import -k demo -y -p clay.radio.com
-	@echo "\r\n\r\n"
-	cat ./migrations/legacy/**/_layouts.yml | clay import -k demo -y -p clay.radio.com
-	@echo "\r\n\r\n"
 	@echo ""
-#	./migrations/legacy/run-legacy-scripts.sh
+	./migrations/legacy/run-legacy-scripts.sh
 
 dev-bootstrap:
 	cd ./app && cat ./first-run/**/* | clay import -k demo -y dev-clay.radio.com

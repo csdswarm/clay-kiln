@@ -1,0 +1,65 @@
+_pages:
+  # Author Page
+  author:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/author
+      - /_components/dynamic-meta-description/instances/author
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/author-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general
+  # Topic Page
+  topic:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/topic
+      - /_components/dynamic-meta-description/instances/topic
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/topic-page-header/instances/new
+    main:
+      - /_components/topic-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general
+  station:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/station
+      - /_components/dynamic-meta-description/instances/station
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/station
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/station-detail/instances/default
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
+    layout: /_layouts/two-column-layout/instances/station
+  contest-rules-page:
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    main:
+      - /_components/contest-rules-page/instances/new
+    layout: /_layouts/two-column-layout/instances/contest
+    _dynamic: true
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/contest-rules-page-header/instances/new
+  frequency-iframe-page:
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    main:
+      - /_components/frequency-iframe/instances/default
+    layout: /_layouts/one-column-layout/instances/frequency-iframe
+    _dynamic: true
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
