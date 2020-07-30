@@ -12,6 +12,13 @@ const _snakeCase = require('lodash/snakeCase'),
     'sitemap_topics',
     'sitemap_videos'
   ]),
+  // using stationSitemapViews until stations have video sitemaps added as well
+  stationSitemapViews = new Set([
+    'sitemap_articles_and_galleries',
+    'sitemap_section_fronts_and_homepage',
+    'sitemap_authors',
+    'sitemap_topics'
+  ]),
   query = {
     sitemapIndex: getSitemapIndexQuery(sitemapViews),
     refreshViews: getRefreshViewsQuery(sitemapViews)
@@ -51,6 +58,16 @@ function getSitemapIndexQuery(sitemapViews) {
       SELECT '${_kebabCase(viewName)}-' || id as sitemap_id,
         last_updated
       FROM ${viewName}
+    `)
+    .join('\nUNION\n');
+}
+
+function getStationSitemapIndexQuery(sitemapViews, req) {
+  return Array.from(sitemapViews)
+    .map(viewName => `
+      SELECT '${_kebabCase(viewName)}' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+      FROM sitemap_station_${viewName.slice(8)}
+      WHERE id ~ '${req.params.stationSlug}'
     `)
     .join('\nUNION\n');
 }
@@ -103,30 +120,8 @@ module.exports = router => {
   }));
 
   router.get('/:stationSlug/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
-    console.log('GETTING INDEX');
-    const result = await db.raw(`
-      SELECT 'sitemap-section-fronts-and-homepage' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
-      FROM sitemap_station_section_fronts_and_homepage
-      WHERE id ~ '${req.params.stationSlug}'
-  
-      UNION
-
-      SELECT 'sitemap-articles-and-galleries' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
-      FROM sitemap_station_articles_and_galleries
-      WHERE id ~ '${req.params.stationSlug}'
-
-      UNION
-      
-      SELECT 'sitemap-topics' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
-      FROM sitemap_station_topics
-      WHERE id ~ '${req.params.stationSlug}'
-  
-      UNION
-      
-      SELECT 'sitemap-authors' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
-      FROM sitemap_station_authors
-      WHERE id ~ '${req.params.stationSlug}';
-    `);
+    const query = getStationSitemapIndexQuery(stationSitemapViews, req),
+      result = await db.raw(query);
 
     if (!result.rows.length) {
       return next();

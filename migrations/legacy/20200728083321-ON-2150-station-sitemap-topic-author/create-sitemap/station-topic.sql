@@ -7,7 +7,7 @@ CREATE MATERIALIZED VIEW sitemap_station_topics AS
 SELECT
   a.id,
   a.data ->>'stationSlug' AS station_slug,
-  d ->> 'slug' AS tag_slug
+  d ->> 'slug' AS topic_slug
 FROM
   components.article a
     JOIN components.tags t
@@ -45,7 +45,7 @@ AND
     _page_data AS (
       SELECT
         station_slug,
-        '{{baseUrl}}/' || _c.station_slug || '/topic/' || _c.topic AS loc,
+        '{{baseUrl}}/' || _c.station_slug || '/topic/' || _c.topic_slug AS loc,
         MAX((p.meta ->> 'publishTime')::timestamptz) AS lastmod
         FROM
           public.pages p,
@@ -55,7 +55,7 @@ AND
         WHERE
         p.meta @> '{"published": true}'
       GROUP BY
-        author_slug,
+        topic_slug,
         station_slug
     ),
 
