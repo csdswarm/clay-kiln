@@ -130,6 +130,7 @@ const _get = require('lodash/get'),
   };
 
 module.exports = {
+  COLORS,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
@@ -145,6 +146,5 @@ module.exports = {
   YEAR,
   contentTypes,
   msnFeed,
-  time,
-  COLORS
+  time
 };
