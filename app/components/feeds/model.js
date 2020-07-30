@@ -272,7 +272,6 @@ module.exports.render = async (ref, data, locals) => {
       data.results = results.hits.hits; // Attach results and return data
     } else {
       // Attach results and return data
-      console.log('DEBUG:::::::::::::::::::::: query', JSON.stringify(query));
       data.results = await queryService.searchByQuery(
         query,
         locals,
