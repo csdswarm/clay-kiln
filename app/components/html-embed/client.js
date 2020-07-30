@@ -7,11 +7,10 @@
  * @return {object} a script tag object
  */
 const duplicateScript = (script) => {
-  const newScript = document.createElement('script'),
-    attributes = script.outerHTML.match(/([^\s]+)=/g).map(attr => attr.split('=').shift());
+  const newScript = document.createElement('script');
 
-  attributes.forEach((attribute) => newScript.setAttribute(attribute, script.getAttribute(attribute)));
-  newScript.setAttribute('async', '');
+  Array.from(script.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+  newScript.setAttribute('async','');
 
   return newScript;
 };
@@ -26,6 +25,9 @@ document.addEventListener('html-embed-mount', () => {
     newScript.setAttribute('data-html-id', id);
     document.write = (html) => { document.querySelector(`script[data-html-id="${id}"]`).insertAdjacentHTML('afterend', html); };
 
-    script.replaceWith(newScript);
+    newScript.appendChild(document.createTextNode(script.innerHTML));
+    script.parentNode.replaceChild(newScript, script);
   });
 });
+
+module.exports = duplicateScript;
