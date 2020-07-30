@@ -127,7 +127,7 @@ describe('server', () => {
           locals = { ...LOCALS, ...options.locals },
           stationMappings = options.hasOwnProperty('stationMappings')
             ? options.stationMappings
-            : { xyz: {} },
+            : { xyz: [] },
           stationsBySlug = options.hasOwnProperty('stationsBySlug')
             ? options.stationsBySlug
             : { xyz: {} },
@@ -310,8 +310,8 @@ describe('server', () => {
               'second-station': {}
             },
             stationMappings: {
-              'test-station': {},
-              'second-station': {}
+              'test-station': [],
+              'second-station': []
             },
             apMeta: {
               altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
@@ -623,8 +623,8 @@ describe('server', () => {
                 def: { callsign: 'KDEF', name: 'Alphabet Soup' }
               },
               stationMappings: {
-                abc: { sectionFront: 'music', secondarySectionFront: 'hip-hop' },
-                def: { sectionFront: 'news' }
+                abc: [{ sectionFront: 'music', secondarySectionFront: 'hip-hop' }],
+                def: [{ sectionFront: 'news' }]
               },
               nitfPara: P_TEXT,
               saveApPicture: {
@@ -674,7 +674,7 @@ describe('server', () => {
             altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
           },
           stationMappings: {
-            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' }
+            stationA: [{ sectionFront: 'music', secondarySectionFront: 'urban' }]
           }
         });
 
@@ -699,9 +699,9 @@ describe('server', () => {
             altids: { itemid: 'some-existing-id' }
           },
           stationMappings: {
-            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' },
-            stationB: { sectionFront: 'news' },
-            stationC: { sectionFront: 'music', secondarySectionFront: 'pop' }
+            stationA: [{ sectionFront: 'music', secondarySectionFront: 'urban' }],
+            stationB: [{ sectionFront: 'news' }],
+            stationC: [{ sectionFront: 'music', secondarySectionFront: 'pop' }]
           },
           article: {
             slug: 'some-news-slug',

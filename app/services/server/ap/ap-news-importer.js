@@ -161,10 +161,10 @@ async function getNewStations(article, stationMappings, locals) {
     stationEntries = Object.entries(stationMappings),
     stationsBySlug = await getAllStations.bySlug({ locals }),
     newStations = sectionFront
-      ? stationEntries.filter(([key]) => key !== stationSlug && !syndicated.includes(key))
+      ? stationEntries.filter(([key]) => (sectionFront && key !== stationSlug) && !syndicated.includes(key))
       : stationEntries;
 
-  return newStations.map(([stationSlug, data]) => {
+  return newStations.map(([stationSlug, [data]]) => {
 
     const { callsign, name } = stationSlug === DEFAULT_STATION.site_slug
       ? DEFAULT_STATION
