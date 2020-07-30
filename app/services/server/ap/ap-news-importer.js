@@ -217,7 +217,7 @@ function resolveArticleSubComponents(article) {
   
   return Promise.all([
     dbGet(feedImg._ref),
-    Promise.all(lead.map(dbGet)),
+    Promise.all(lead.map(({ _ref }) => dbGet(_ref))),
     dbGet(sideShare._ref),
     dbGet(tags._ref)
   ]);
