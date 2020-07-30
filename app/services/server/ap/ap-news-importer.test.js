@@ -415,7 +415,8 @@ describe('server', () => {
               seoDescription: 'Something tragic happened on the way to heaven',
               seoHeadline: expectedTitle,
               shortHeadline: expectedTitle,
-              slug: 'something-tragic-happened'
+              slug: 'something-tragic-happened',
+              teaser: expectedTitle
             };
 
           // deep include expects "sub" objects to be identical, so, since we are only checking
@@ -732,7 +733,8 @@ describe('server', () => {
 
       });
 
-      describe('not publishable', () => {
+      describe.skip('not publishable', () => {
+        // TODO: write tests for unpublishable content
         it('unpublishes if the article exists', async () => {
           
         });

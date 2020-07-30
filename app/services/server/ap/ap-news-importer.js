@@ -10,9 +10,9 @@ const
   { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
+  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
-  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
@@ -307,7 +307,8 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       shortHeadline: headline,
       slug: slugifyService(headline),
       stationSlug,
-      stationSyndication
+      stationSyndication,
+      teaser: headline
     },
     metaDescription: {
       ...metaDescription,
