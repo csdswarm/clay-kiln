@@ -102,23 +102,8 @@ module.exports = router => {
     res.send(getIndexXml(req, result.rows));
   }));
 
-  router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
-    const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
-      result = await db.raw(`
-      SELECT data
-      FROM ${viewName}
-      WHERE id = '${req.params.stationSlug}-${req.params.id}'
-    `);
-
-    if (!result.rows.length) {
-      return next();
-    }
-
-    res.set('Content-Type', 'application/xml');
-    res.send(result.rows[0].data);
-  }));
-
   router.get('/:stationSlug/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
+    console.log('GETTING INDEX');
     const result = await db.raw(`
       SELECT 'sitemap-section-fronts-and-homepage' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
       FROM sitemap_station_section_fronts_and_homepage
@@ -149,6 +134,38 @@ module.exports = router => {
 
     res.set('Content-Type', 'application/xml');
     res.send(res.send(getIndexXml(req, result.rows)));
+  }));
+
+  router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
+    const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
+      result = await db.raw(`
+      SELECT data
+      FROM ${viewName}
+      WHERE id = '${req.params.stationSlug}-${req.params.id}'
+    `);
+
+    if (!result.rows.length) {
+      return next();
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(result.rows[0].data);
+  }));
+
+  router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z]).xml', wrapInTryCatch(async (req, res, next) => {
+    const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
+      result = await db.raw(`
+      SELECT data
+      FROM ${viewName}
+      WHERE id = '${req.params.stationSlug}-1'
+    `);
+
+    if (!result.rows.length) {
+      return next();
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(result.rows[0].data);
   }));
 
   router.post('/update-sitemaps', wrapInTryCatch(async (req, res) => {

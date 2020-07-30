@@ -5,16 +5,21 @@ CREATE MATERIALIZED VIEW sitemap_station_authors AS
     -- Get components so that we have access to the authors and can filter out any no-index/no-follow items
     _components AS (
       SELECT 
-        id, d ->>'slug' AS author_slug, data ->>'stationSlug' AS station_slug
+        id,
+        d ->>'slug' AS author_slug,
+        data ->>'stationSlug' AS station_slug
       FROM
-        components.article a, jsonb_array_elements(a.data -> 'authors') d
+        components.article a,
+        jsonb_array_elements(a.data -> 'authors') d
       WHERE
         a.data ->> 'noIndexNoFollow' != 'true'
 
       UNION
 
       SELECT 
-        id, d ->>'slug' AS author_slug, data ->>'stationSlug' AS station_slug
+        id, 
+        d ->>'slug' AS author_slug, 
+        data ->>'stationSlug' AS station_slug
       FROM
         components.gallery g, jsonb_array_elements(g.data -> 'authors') d
       WHERE
