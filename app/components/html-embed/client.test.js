@@ -11,7 +11,7 @@ const expect = require('chai').expect,
 
 global.document = dom.defaultView.document;
 global.DOMParser = dom.defaultView.DOMParser;
-const duplicateScript = require('./client');
+const { duplicateScript } = require('./client');
 
 chai.use(sinonChai);
 
