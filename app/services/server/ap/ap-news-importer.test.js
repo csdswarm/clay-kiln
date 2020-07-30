@@ -360,6 +360,7 @@ describe('server', () => {
                 }
               ],
               apMeta: {
+                uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0',
                 altids: {
                   itemid: 'xyz123',
                   etag: 'xyz123_mod1'
@@ -400,10 +401,11 @@ describe('server', () => {
             expected = {
               ap:
                 {
-                  itemid: 'xyz123',
+                  ednote: 'go ahead and publish, there are no problems here.',
                   etag: 'xyz123_mod1',
-                  version: 1,
-                  ednote: 'go ahead and publish, there are no problems here.'
+                  itemid: 'xyz123',
+                  uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0&include=*',
+                  version: 1
                 },
               headline: expectedTitle,
               msnTitle: expectedTitle,

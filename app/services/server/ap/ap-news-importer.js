@@ -262,7 +262,7 @@ function integrateArticleStations(article, newStations) {
  */
 function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
   const
-    { altids, ednote, headline, headline_extended, version } = apMeta,
+    { altids, ednote, headline, headline_extended, uri, version } = apMeta,
     { article, metaDescription, metaImage, metaTitle } = articleData,
     { etag, itemid } = altids,
     {
@@ -277,10 +277,11 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
     article: {
       ...article,
       ap: {
-        itemid,
+        ednote,
         etag,
-        version,
-        ednote
+        itemid,
+        uri: `${uri}&include=*`,
+        version
       },
       byline: [
         {
