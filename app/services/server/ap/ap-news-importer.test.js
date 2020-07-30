@@ -177,7 +177,7 @@ describe('server', () => {
 
         [
           {
-            args: [sinon.match('jsonb_array_elements_text(data'), EXISTING.ARTICLE.ID],
+            args: [sinon.match('jsonb_array_elements_text(data'), [EXISTING.ARTICLE.ID]],
             resolves: { rows: [{ id:EXISTING.ARTICLE.ID, data: EXISTING.PAGE_DATA }] }
           },
           {
@@ -279,7 +279,7 @@ describe('server', () => {
         expect(result).to.have.property('preExistingArticle');
         expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
         expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
-        expect(stubs.dbRaw).to.have.been.calledOnceWith(sinon.match('article_id = ?'), EXISTING.ARTICLE.ID);
+        expect(stubs.dbRaw).to.have.been.calledOnceWith(sinon.match('article_id = ?'), [EXISTING.ARTICLE.ID]);
         expect(result.preExistingArticle).to.deep.include({
           ...EXISTING.PAGE_DATA
         });
@@ -331,7 +331,7 @@ describe('server', () => {
           { result, stubs } = await setup_importArticle({ apMeta: { altids: { undefined } } });
 
         expect(stubs.searchByQuery).to.have.been.calledWith(noItemId);
-        expect(stubs.log).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
+        expect(stubs.log).to.have.been.calledOnceWith('error', 'Problem getting existing data for article page.');
         expect(result.preExistingArticle).to.be.undefined;
       });
 

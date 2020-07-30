@@ -79,7 +79,7 @@ async function findExistingArticle({ itemid } = {}) {
           FROM pages,
                jsonb_array_elements_text(data -> \'main\') article_id
           WHERE article_id = ?`,
-      existing._id) || {},
+      [existing._id]) || {},
       { data, id } = info || {};
 
     if (id) {
@@ -87,7 +87,7 @@ async function findExistingArticle({ itemid } = {}) {
     }
 
   } catch (error) {
-    log('error', 'Problem getting existing data from elastic', error);
+    log('error', 'Problem getting existing data for article page.', error);
   }
 }
 
