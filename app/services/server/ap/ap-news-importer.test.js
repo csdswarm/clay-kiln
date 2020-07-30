@@ -127,7 +127,7 @@ describe('server', () => {
           locals = { ...LOCALS, ...options.locals },
           stationMappings = options.hasOwnProperty('stationMappings')
             ? options.stationMappings
-            : { xyz: {} },
+            : { xyz: [] },
           stationsBySlug = options.hasOwnProperty('stationsBySlug')
             ? options.stationsBySlug
             : { xyz: {} },
@@ -177,7 +177,7 @@ describe('server', () => {
 
         [
           {
-            args: [sinon.match('jsonb_array_elements_text(data'), EXISTING.ARTICLE.ID],
+            args: [sinon.match('jsonb_array_elements_text(data'), [EXISTING.ARTICLE.ID]],
             resolves: { rows: [{ id:EXISTING.ARTICLE.ID, data: EXISTING.PAGE_DATA }] }
           },
           {
@@ -279,7 +279,7 @@ describe('server', () => {
         expect(result).to.have.property('preExistingArticle');
         expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested('index', 'published-content'));
         expect(stubs.searchByQuery).to.have.been.calledOnceWith(sinon.match.hasNested(ELASTIC_AP_ID_PATH, itemid));
-        expect(stubs.dbRaw).to.have.been.calledOnceWith(sinon.match('article_id = ?'), EXISTING.ARTICLE.ID);
+        expect(stubs.dbRaw).to.have.been.calledOnceWith(sinon.match('article_id = ?'), [EXISTING.ARTICLE.ID]);
         expect(result.preExistingArticle).to.deep.include({
           ...EXISTING.PAGE_DATA
         });
@@ -310,8 +310,8 @@ describe('server', () => {
               'second-station': {}
             },
             stationMappings: {
-              'test-station': {},
-              'second-station': {}
+              'test-station': [],
+              'second-station': []
             },
             apMeta: {
               altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
@@ -331,7 +331,7 @@ describe('server', () => {
           { result, stubs } = await setup_importArticle({ apMeta: { altids: { undefined } } });
 
         expect(stubs.searchByQuery).to.have.been.calledWith(noItemId);
-        expect(stubs.log).to.have.been.calledOnceWith('error', 'Problem getting existing data from elastic');
+        expect(stubs.log).to.have.been.calledOnceWith('error', 'Problem getting existing data for article page.');
         expect(result.preExistingArticle).to.be.undefined;
       });
 
@@ -360,6 +360,7 @@ describe('server', () => {
                 }
               ],
               apMeta: {
+                uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0',
                 altids: {
                   itemid: 'xyz123',
                   etag: 'xyz123_mod1'
@@ -400,10 +401,11 @@ describe('server', () => {
             expected = {
               ap:
                 {
-                  itemid: 'xyz123',
+                  ednote: 'go ahead and publish, there are no problems here.',
                   etag: 'xyz123_mod1',
-                  version: 1,
-                  ednote: 'go ahead and publish, there are no problems here.'
+                  itemid: 'xyz123',
+                  uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0&include=*',
+                  version: 1
                 },
               headline: expectedTitle,
               msnTitle: expectedTitle,
@@ -415,7 +417,8 @@ describe('server', () => {
               seoDescription: 'Something tragic happened on the way to heaven',
               seoHeadline: expectedTitle,
               shortHeadline: expectedTitle,
-              slug: 'something-tragic-happened'
+              slug: 'something-tragic-happened',
+              teaser: expectedTitle
             };
 
           // deep include expects "sub" objects to be identical, so, since we are only checking
@@ -623,8 +626,8 @@ describe('server', () => {
                 def: { callsign: 'KDEF', name: 'Alphabet Soup' }
               },
               stationMappings: {
-                abc: { sectionFront: 'music', secondarySectionFront: 'hip-hop' },
-                def: { sectionFront: 'news' }
+                abc: [{ sectionFront: 'music', secondarySectionFront: 'hip-hop' }],
+                def: [{ sectionFront: 'news' }]
               },
               nitfPara: P_TEXT,
               saveApPicture: {
@@ -674,7 +677,7 @@ describe('server', () => {
             altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
           },
           stationMappings: {
-            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' }
+            stationA: [{ sectionFront: 'music', secondarySectionFront: 'urban' }]
           }
         });
 
@@ -699,9 +702,9 @@ describe('server', () => {
             altids: { itemid: 'some-existing-id' }
           },
           stationMappings: {
-            stationA: { sectionFront: 'music', secondarySectionFront: 'urban' },
-            stationB: { sectionFront: 'news' },
-            stationC: { sectionFront: 'music', secondarySectionFront: 'pop' }
+            stationA: [{ sectionFront: 'music', secondarySectionFront: 'urban' }],
+            stationB: [{ sectionFront: 'news' }],
+            stationC: [{ sectionFront: 'music', secondarySectionFront: 'pop' }]
           },
           article: {
             slug: 'some-news-slug',
@@ -732,7 +735,8 @@ describe('server', () => {
 
       });
 
-      describe('not publishable', () => {
+      describe.skip('not publishable', () => {
+        // TODO: write tests for unpublishable content
         it('unpublishes if the article exists', async () => {
           
         });

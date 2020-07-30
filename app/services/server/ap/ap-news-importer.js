@@ -10,9 +10,9 @@ const
   { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
+  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
-  { delete: restDel, put: restPut } = require('../../universal/rest'),
   { searchByQuery } = require('../query'),
   { DEFAULT_STATION } = require('../../universal/constants'),
 
@@ -79,7 +79,7 @@ async function findExistingArticle({ itemid } = {}) {
           FROM pages,
                jsonb_array_elements_text(data -> \'main\') article_id
           WHERE article_id = ?`,
-      existing._id) || {},
+      [existing._id]) || {},
       { data, id } = info || {};
 
     if (id) {
@@ -87,7 +87,7 @@ async function findExistingArticle({ itemid } = {}) {
     }
 
   } catch (error) {
-    log('error', 'Problem getting existing data from elastic', error);
+    log('error', 'Problem getting existing data for article page.', error);
   }
 }
 
@@ -161,10 +161,10 @@ async function getNewStations(article, stationMappings, locals) {
     stationEntries = Object.entries(stationMappings),
     stationsBySlug = await getAllStations.bySlug({ locals }),
     newStations = sectionFront
-      ? stationEntries.filter(([key]) => key !== stationSlug && !syndicated.includes(key))
+      ? stationEntries.filter(([key]) => (sectionFront && key !== stationSlug) && !syndicated.includes(key))
       : stationEntries;
 
-  return newStations.map(([stationSlug, data]) => {
+  return newStations.map(([stationSlug, [data]]) => {
 
     const { callsign, name } = stationSlug === DEFAULT_STATION.site_slug
       ? DEFAULT_STATION
@@ -217,7 +217,7 @@ function resolveArticleSubComponents(article) {
   
   return Promise.all([
     dbGet(feedImg._ref),
-    Promise.all(lead.map(dbGet)),
+    Promise.all(lead.map(({ _ref }) => dbGet(_ref))),
     dbGet(sideShare._ref),
     dbGet(tags._ref)
   ]);
@@ -262,7 +262,7 @@ function integrateArticleStations(article, newStations) {
  */
 function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
   const
-    { altids, ednote, headline, headline_extended, version } = apMeta,
+    { altids, ednote, headline, headline_extended, uri, version } = apMeta,
     { article, metaDescription, metaImage, metaTitle } = articleData,
     { etag, itemid } = altids,
     {
@@ -277,10 +277,11 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
     article: {
       ...article,
       ap: {
-        itemid,
+        ednote,
         etag,
-        version,
-        ednote
+        itemid,
+        uri: `${uri}&include=*`,
+        version
       },
       byline: [
         {
@@ -307,7 +308,8 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       shortHeadline: headline,
       slug: slugifyService(headline),
       stationSlug,
-      stationSyndication
+      stationSyndication,
+      teaser: headline
     },
     metaDescription: {
       ...metaDescription,
