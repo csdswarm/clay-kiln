@@ -66,7 +66,7 @@ const db = require('../db'),
       const apFeed = await __.getApFeed(locals),
         apSubscriptions = await __.getAll();
 
-      return await Promise.map(apFeed, feed => {
+      return Promise.map(apFeed, feed => {
         const stationMappings = apSubscriptions
           .filter(({ data }) => data.entitlements
             .some(entitlement => feed.products
@@ -78,7 +78,9 @@ const db = require('../db'),
             return acc;
           }, {});
 
-        return __.importArticle(feed.item, stationMappings, locals);
+        __.importArticle(feed.item, stationMappings, locals);
+        
+        return `${feed.item.uri}&include=*`;
       }, { concurrency: 5 });
 
     } catch (e) {

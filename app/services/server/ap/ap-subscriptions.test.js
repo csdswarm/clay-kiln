@@ -56,7 +56,8 @@ describe('apSubscription', () => {
               altids: {
                 etag: 'e0e14b78f5338c3a7674e49868a754b1_0a14aza0c0'
               },
-              headline: 'This news does not real'
+              headline: 'This news does not real',
+              uri: 'https://api.testing/media/v/content/589692882c67650b87daeec5765660c5?qt=ZfXRTOa25F&et=0a1aza0c0'
             },
             products: [
               {
@@ -155,7 +156,7 @@ describe('apSubscription', () => {
       expect(getAllStub).to.have.been.callCount(1);
       expect(getApFeedStub).to.have.been.callCount(1);
       expect(importArticleStub).to.have.been.callCount(1);
-      expect(response[0]).to.have.property('article');
+      expect(response[0]).to.have.include('&include=*');
     });
 
     it('importing an ap-subscription no ap-feed', async () => {
@@ -200,22 +201,6 @@ describe('apSubscription', () => {
       expect(getApFeedStub).to.have.been.callCount(1);
       expect(getAllStub).to.have.been.callCount(0);
       expect(importArticleStub).to.have.been.callCount(0);
-      expect(response).that.eql([]);
-      expect(logStub).to.have.been.calledOnceWith('error', 'Bad request importing articles from ap-subscription');
-    });
-
-    it('importing an ap-subscription fail importArticle', async () => {
-      const {
-        response,
-        getAllStub,
-        getApFeedStub,
-        importArticleStub,
-        logStub
-      } = await setup_importApSubscription({ returns: true, getAllCall: true, getApFeedCall: true, importArticleCall: false });
-
-      expect(getAllStub).to.have.been.callCount(1);
-      expect(getApFeedStub).to.have.been.callCount(1);
-      expect(importArticleStub).to.have.been.callCount(1);
       expect(response).that.eql([]);
       expect(logStub).to.have.been.calledOnceWith('error', 'Bad request importing articles from ap-subscription');
     });
