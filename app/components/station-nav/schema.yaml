@@ -170,7 +170,7 @@ hidePodcastsLink:
 
 podcastsUrl:
   _publish: listenNavPodcastUrl
-  _label: PODCAST LINK OVERRIDE - Enter a Custom Podcast URL Here
+  _label: Enter a custom Podcast link URL here
   _reveal:
     field: hidePodcastsLink
     operator: ===
@@ -178,7 +178,7 @@ podcastsUrl:
   _has:
     input: text
     type: url
-    help: Default PODCASTS link is radio.com/audio. Enter a custom URL to override
+    help: If no custom URL is set, Podcast link will default to /audio
 
 listenNav:
   _component:

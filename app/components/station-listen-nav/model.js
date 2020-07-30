@@ -69,7 +69,8 @@ module.exports = unityComponent({
     }
 
     addSocialButtons(data);
-    if (data.podcastsUrl === '') {
+
+    if (!data.podcastsUrl) {
       data.podcastsUrl = '/audio';
     }
 
