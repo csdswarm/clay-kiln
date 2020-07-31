@@ -3,9 +3,8 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
   _get = require('lodash/get'),
-  _isEmpty = require('lodash/isEmpty'),
   classnames = require('classnames'),
-  radioApiService = require('../../services/server/radioApi');
+  podcasts = require('../../services/server/podcast');
 
 
 async function addBreadcrumbs(data, locals) {
@@ -26,27 +25,6 @@ async function addBreadcrumbs(data, locals) {
   }
 }
 
-async function getPodcastEpisode(locals) {
-  const route = `episodes?filter[episode_site_slug]=${ locals.params.dynamicEpisode }`,
-    { data } = await radioApiService.get(route, {}, null, {}, locals);
-
-  if (_isEmpty(data)) {
-    return {};
-  }
-
-  return data[0];
-}
-
-async function getPodcastShow(locals) {
-  const route = `podcasts?filter[site_slug]=${ locals.params.dynamicSlug }`,
-    { data } = await radioApiService.get(route, {}, null, {}, locals);
-
-  if (_isEmpty(data)) {
-    return {};
-  }
-  return data[0];
-}
-
 module.exports = unityComponent({
   /**
    * Updates the data for the template prior to render
@@ -63,21 +41,16 @@ module.exports = unityComponent({
     }
     
     const componentClass = classnames({
-      editing: locals.edit
-    });
-
-    if (!locals.episode || !locals.podcast) {
-      const [ podcast, episode ] = await Promise.all([
-        getPodcastShow(locals),
-        getPodcastEpisode(locals)
+        editing: locals.edit
+      }),
+      contentType = 'episode',
+      { dynamicSlug, dynamicEpisode } = locals.params,
+      [podcast, episode] = await Promise.all([
+        locals.podcast || podcasts.getPodcastShow(locals, dynamicSlug),
+        locals.episode || podcasts.getPodcastEpisode(locals, dynamicEpisode)
       ]);
-
-      // Setting data to be referenced on podcast lead
-      locals.podcast = podcast;
-      locals.episode = episode;
-    }
-
-    locals.contentType = 'episode';
+    
+    Object.assign(locals, { podcast, episode, contentType });
 
     data._computed = {
       componentClass,

@@ -1,46 +1,23 @@
 'use strict';
-const radioApiService = require('../../../services/server/radioApi'),
-  _isEmpty = require('lodash/isEmpty'),
+const { getPodcastShow } = require('../../../services/server/podcast'),
   { wrapInTryCatch } = require('../../../services/startup/middleware-utils');
 
 /**
-* fetch podcast show data
-* @param {object} locals
-* @param {string} dynamicSlug
+* adds 'podcast' onto locals.
+* @param {object} req
+* @param {object} res
+* @param {object} next
 * @returns {Promise<object>}
 */
-const getPodcastShow = async (locals, dynamicSlug) => {
-    const route = `podcasts?filter[site_slug]=${ dynamicSlug }`,
-      { data } = await radioApiService.get(route, {}, null, {}, locals);
-    
-    if (_isEmpty(data)) {
-      return {};
-    }
-    
-    return data[0];
-  },
-  /**
-  * fetch podcast show data
-  * @param {object} req
-  * @param {object} res
-  * @param {object} next
-  * @returns {Promise<object>}
-  */
-  podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
-    const { dynamicSlug } = req.params,
-      locals = res.locals;
+const podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
+  const { dynamicSlug } = req.params,
+    locals = res.locals;
 
-    res.locals.podcast = await getPodcastShow(locals, dynamicSlug);
+  res.locals.podcast = await getPodcastShow(locals, dynamicSlug);
 
-    next();
-  });
+  next();
+});
 
-/**
- * adds 'podcast' onto locals.
- *
- * @param {object} app - the express app
- */
 module.exports = {
-  podcastMiddleware,
-  getPodcastShow
+  podcastMiddleware
 };
