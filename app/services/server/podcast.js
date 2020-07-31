@@ -1,6 +1,11 @@
 'use strict';
 const radioApiService = require('./radioApi'),
-  _isEmpty = require('lodash/isEmpty');
+  _isEmpty = require('lodash/isEmpty'),
+
+  __ = {
+    radioApiService,
+    _isEmpty
+  }
 /**
   * fetch podcast episode data
   * @param {object} locals
@@ -9,9 +14,9 @@ const radioApiService = require('./radioApi'),
   */
 const getPodcastShow = async (locals, dynamicSlug) => {
     const route = `podcasts?filter[site_slug]=${ dynamicSlug }`,
-      { data } = await radioApiService.get(route, {}, null, {}, locals);
+      { data } = await __.radioApiService.get(route, {}, null, {}, locals);
     
-    if (_isEmpty(data)) {
+    if (__._isEmpty(data)) {
       return {};
     }
     
@@ -26,9 +31,9 @@ const getPodcastShow = async (locals, dynamicSlug) => {
   */
   getPodcastEpisode = async (locals, dynamicEpisode) => {
     const route = `episodes?filter[episode_site_slug]=${ dynamicEpisode }`,
-      { data } = await radioApiService.get(route, {}, null, {}, locals);
+      { data } = await __.radioApiService.get(route, {}, null, {}, locals);
 
-    if (_isEmpty(data)) {
+    if (__._isEmpty(data)) {
       return {};
     }
 
@@ -36,6 +41,7 @@ const getPodcastShow = async (locals, dynamicSlug) => {
   };
 
 module.exports = {
+  getPodcastEpisode,
   getPodcastShow,
-  getPodcastEpisode
+  _internals: __
 };
