@@ -3,7 +3,9 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
   _get = require('lodash/get'),
-  classnames = require('classnames');
+  _isEmpty = require('lodash/isEmpty'),
+  classnames = require('classnames'),
+  radioApiService = require('../../services/server/radioApi');
 
 
 async function addBreadcrumbs(data, locals) {
@@ -24,6 +26,27 @@ async function addBreadcrumbs(data, locals) {
   }
 }
 
+async function getPodcastEpisode(locals) {
+  const route = `episodes?filter[episode_site_slug]=${ locals.params.dynamicEpisode }`,
+    { data } = await radioApiService.get(route, {}, null, {}, locals);
+
+  if (_isEmpty(data)) {
+    return {};
+  }
+
+  return data[0];
+}
+
+async function getPodcastShow(locals) {
+  const route = `podcasts?filter[site_slug]=${ locals.params.dynamicSlug }`,
+    { data } = await radioApiService.get(route, {}, null, {}, locals);
+
+  if (_isEmpty(data)) {
+    return {};
+  }
+  return data[0];
+}
+
 module.exports = unityComponent({
   /**
    * Updates the data for the template prior to render
@@ -38,9 +61,21 @@ module.exports = unityComponent({
     if (!locals || !locals.params) {
       return data;
     }
+    
     const componentClass = classnames({
       editing: locals.edit
     });
+
+    if (!locals.episode || !locals.podcast) {
+      const [ podcast, episode ] = await Promise.all([
+        getPodcastShow(locals),
+        getPodcastEpisode(locals)
+      ]);
+
+      // Setting data to be referenced on podcast lead
+      locals.podcast = podcast;
+      locals.episode = episode;
+    }
 
     locals.contentType = 'episode';
 
