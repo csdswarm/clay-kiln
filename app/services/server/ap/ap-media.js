@@ -31,7 +31,8 @@ const
       return null;
     }
     const searchURL = 'https://api.ap.org/media/v/content/search',
-      API_URL = `${searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100`;
+      sort = 'versioncreated:desc',
+      API_URL = `${searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100&sort=${sort}`;
 
     try {
       const response = await __.rest.get(API_URL),
