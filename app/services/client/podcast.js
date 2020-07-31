@@ -6,7 +6,7 @@ const rest = require('../universal/rest'),
   },
 
   getPodcastEpisode = (locals, dynamicEpisode) => {
-    return rest.get(`/rdc/api/podcast?${dynamicEpisode}`);
+    return rest.get(`/rdc/api/episode?${dynamicEpisode}`);
   };
 
 module.exports = {
