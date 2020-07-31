@@ -30,9 +30,9 @@ const
       __.log('error', 'filterConditions must be a string or have a value');
       return null;
     }
-    const searchURL = 'https://api.ap.org/media/v/content/search',
+    const searchURL = 'https://api.ap.org/media/v/content/search?',
       sort = 'versioncreated:desc',
-      API_URL = `${searchURL}&apikey=${apMediaKey}?q=${filterConditions}&page_size=100&sort=${sort}`;
+      API_URL = `${searchURL}apikey=${apMediaKey}&q=${filterConditions}&page_size=100&sort=${sort}`;
 
     try {
       const response = await __.rest.get(API_URL),
