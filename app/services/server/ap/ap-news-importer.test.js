@@ -143,7 +143,9 @@ describe('server', () => {
             'getApArticleBody',
             'log',
             'restDel',
+            'restGet',
             'restPut',
+            'restReq',
             'saveApPicture',
             'searchByQuery'
           ].reduce((acc, name) => ({ ...acc, [name]: sinon.stub() }), {});
@@ -220,7 +222,9 @@ describe('server', () => {
           .withArgs(sinon.match(value => !value.body.query.term['ap.itemid']))
           .rejects('Error');
 
+        stubs.restGet.resolves({});
         stubs.restPut.resolves({});
+        stubs.restReq.resolves({ status: 200, statusText: 'OK', body: {} });
 
         Object.entries(stubs)
           .filter(([name]) => name !== 'bySlug')
@@ -661,6 +665,19 @@ describe('server', () => {
           );
         });
 
+        it('saves the meta title', async () => {
+          const
+            META_HEADLINE = 'Meta Title Save',
+            NEW_PAGE_REF_MATCH = sinon.match(/^http.*\/_pages\/.*\/meta$/),
+            { __ } = await setup_modifiedByAP({ apMeta: { headline: META_HEADLINE } });
+
+          expect(__.restGet).to.have.been.calledWith(NEW_PAGE_REF_MATCH);
+          expect(__.restReq).to.have.been.calledWith(
+            NEW_PAGE_REF_MATCH,
+            sinon.match.has('body', `{"title":"AP-IMPORT: ${META_HEADLINE}"}`)
+          );
+        });
+
         it('publishes updates', async () => {
           // const { result } = setup_modifiedByAP();
 
@@ -774,6 +791,7 @@ function buildApData(idPostFix, host, data) {
     ARTICLE,
     META,
     PAGE_DATA: {
+      _ref: `${host}/_pages/${INSTANCE_ID}`,
       head: [...Object.values(META)],
       main: [ARTICLE.ID]
     },

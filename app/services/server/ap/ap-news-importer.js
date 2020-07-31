@@ -10,7 +10,7 @@ const
   { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
-  { delete: restDel, put: restPut } = require('../../universal/rest'),
+  { delete: restDel, get: restGet, put: restPut, request: restReq } = require('../../universal/rest'),
   { getAllStations } = require('../station-utils'),
   { getApArticleBody, saveApPicture } = require('./ap-media'),
   { searchByQuery } = require('../query'),
@@ -39,7 +39,9 @@ const
     getApArticleBody,
     log,
     restDel,
+    restGet,
     restPut,
+    restReq,
     saveApPicture,
     searchByQuery
   },
@@ -333,9 +335,6 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
  * Maps data or changes from apMeta to the new or related unity article
  * @param {object} apMeta
  * @param {object} articleData
- * @param {object} articleData.article
- * @param {object} articleData.metaTitle
- * @param {object} articleData.metaDescription
  * @param {object[]} newStations
  * @param {object} locals
  * @returns {object}
@@ -344,7 +343,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   const
     { altids, associations, headline, renditions } = apMeta,
     { pageData, article } = articleData,
-    { assignDimensionsAndFileSize, dbDel, getApArticleBody, restPut } = __,
+    { assignDimensionsAndFileSize, dbDel, getApArticleBody, restGet, restPut, restReq } = __,
     { itemid } = altids,
 
     [
@@ -464,10 +463,22 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
 
   await restPut(`${PROTOCOL}://${articleRef}`, newArticleInfo, true);
 
-  // publishArticle
-  const { _ref: pageRef = '', ...pageInfo } = pageData;
+  // update meta/title and publish
+  const { _ref: pageRef = '', ...pageInfo } = pageData,
+    pageUrl = `${PROTOCOL}://${pageRef.replace(/@published/, '')}`,
+    meta = await restGet(`${pageUrl}/meta`);
 
-  await restPut(`${PROTOCOL}://${pageRef.replace(/@published/, '')}@published`, pageInfo, true);
+  meta.title = `AP-IMPORT: ${headline}`;
+
+  await restReq(`${pageUrl}/meta`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `token ${process.env.CLAY_ACCESS_KEY}`,
+      credentials: 'same-origin'
+    },
+    body: JSON.stringify(meta)
+  });
+  await restPut(`${pageUrl}@published`, pageInfo, true);
 
   return newArticleData;
 }
