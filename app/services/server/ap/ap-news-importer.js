@@ -207,7 +207,7 @@ function resolveImage(associations = {}) {
  * @param {{ feedImg: {_ref: string}, lead: string[], sideShare: {_ref: string}, tags: { _ref: string } }} article
  * @returns {Promise<object | object[]>[]}
  */
-function resolveArticleSubComponents(article) {
+async function resolveArticleSubComponents(article) {
   const
     { dbGet } = __,
     {
@@ -218,12 +218,11 @@ function resolveArticleSubComponents(article) {
     } = article;
   
   return Promise.all([
-    dbGet(feedImg._ref),
-    Promise.all(lead.map(({ _ref }) => dbGet(_ref))),
-    dbGet(sideShare._ref),
-    dbGet(tags._ref)
+    { _ref: feedImg._ref, ...await dbGet(feedImg._ref) },
+    Promise.all(lead.map(async item => ({ _ref: item._ref, ...await dbGet(item._ref) }))),
+    { _ref: sideShare._ref, ... await dbGet(sideShare._ref) },
+    { _ref: tags._ref, ... await dbGet(tags._ref) }
   ]);
-
 }
 
 /**
@@ -243,7 +242,7 @@ function integrateArticleStations(article, newStations) {
     };
   } else {
     const [firstStation = {}, ...stationSyndication] = newStations;
-    
+
     return {
       ...firstStation,
       stationSyndication
@@ -474,7 +473,8 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     method: 'PATCH',
     headers: {
       Authorization: `token ${process.env.CLAY_ACCESS_KEY}`,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
+      'Content-Type': 'application/json; charset=utf-8'
     },
     body: JSON.stringify(meta)
   });
