@@ -354,8 +354,7 @@ const _get = require('lodash/get'),
                   links: body.links,
                   revision: body.revision
                 }
-              },
-              requestURL);
+              });
             res.status(status).send(body.data);
           } else {
             handleReqErr(
