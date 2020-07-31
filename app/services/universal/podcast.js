@@ -1,7 +1,13 @@
 'use strict';
 
-const urlParse = require('url-parse'),
-  querystring = require('query-string');
+const _isEmpty = require('lodash/isEmpty'),
+  querystring = require('query-string'),
+  radioApiService = require('../server/radioApi'),
+  urlParse = require('url-parse'),
+  __ = {
+    radioApiService,
+    _isEmpty
+  };
 
 /**
  * returns a url for a podcast based on the title
@@ -37,3 +43,40 @@ module.exports.createImageUrl = image => {
 
   return `${baseImage.origin}${baseImage.pathname}?${stringParams}&`;
 };
+
+/**
+* fetch podcast episode data
+* @param {object} locals
+* @param {string} dynamicSlug
+* @returns {Promise<object>}
+*/
+module.exports.getPodcastShow = async (locals, dynamicSlug) => {
+  console.log('getPodcastShow');
+  const route = `podcasts?filter[site_slug]=${ dynamicSlug }`,
+    { data } = await __.radioApiService.get(route, {}, null, {}, locals);
+  
+  if (__._isEmpty(data)) {
+    return {};
+  }
+  
+  return data[0];
+};
+
+/**
+* fetch podcast show data
+* @param {object} locals
+* @param {string} dynamicEpisode
+* @returns {Promise<object>}
+*/
+module.exports.getPodcastEpisode = async (locals, dynamicEpisode) => {
+  const route = `episodes?filter[episode_site_slug]=${ dynamicEpisode }`,
+    { data } = await __.radioApiService.get(route, {}, null, {}, locals);
+
+  if (__._isEmpty(data)) {
+    return {};
+  }
+
+  return data[0];
+};
+
+module.exports._internals = __;

@@ -1,5 +1,5 @@
 'use strict';
-const { getPodcastShow } = require('../../../services/server/podcast'),
+const { getPodcastShow } = require('../../../services/universal/podcast'),
   { wrapInTryCatch } = require('../../../services/startup/middleware-utils');
 
 /**

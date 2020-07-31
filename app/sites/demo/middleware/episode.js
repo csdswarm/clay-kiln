@@ -1,6 +1,6 @@
 'use strict';
 const { wrapInTryCatch } = require('../../../services/startup/middleware-utils'),
-  podcasts = require('../../../services/server/podcast');
+  podcasts = require('../../../services/universal/podcast');
 
 /**
   * adds 'episode' and 'podcast' onto locals.

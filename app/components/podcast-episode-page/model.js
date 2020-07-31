@@ -4,7 +4,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
   _get = require('lodash/get'),
   classnames = require('classnames'),
-  podcasts = require('../../services/server/podcast');
+  podcasts = require('../../services/universal/podcast');
 
 
 async function addBreadcrumbs(data, locals) {
