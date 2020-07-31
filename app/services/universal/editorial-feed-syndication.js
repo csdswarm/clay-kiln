@@ -1,8 +1,9 @@
 'use strict';
 
-const { boolObjectToArray } = require('./utils'),
+const
   _intersection = require('lodash/intersection'),
-  filterSelectedStations = (stationSyndication) => stationSyndication.filter( ({ source }) => !source || source === 'manual syndication'),
+  _reject = require('lodash/reject'),
+  { boolObjectToArray } = require('./utils'),
   getEditorialGroups = require('../server/get-editorial-groups');
 
 /**
@@ -12,7 +13,7 @@ const { boolObjectToArray } = require('./utils'),
  */
 async function addStationsByEditorialGroup(data, locals) {
   if (['article', 'gallery'].includes(data.contentType) && locals.station) {
-    const selectedStations = filterSelectedStations(data.stationSyndication || []),
+    const selectedStations = _reject(data.stationSyndication, { source: 'editorial feed' }),
       syndicatedStations = await getSyndicatedStations(data);
 
     data.stationSyndication = [
@@ -35,7 +36,7 @@ async function getSyndicatedStations(data) {
 
   const editorialGroups = await getEditorialGroups();
 
-  return (editorialGroups || []).map(({ data: station }) => {
+  return (editorialGroups || []).map(({ data: station }) => {
     const stationSubscribedToAnyEditorialFeed = _intersection(
       boolObjectToArray(station.feeds),
       boolObjectToArray(data.editorialFeeds)
