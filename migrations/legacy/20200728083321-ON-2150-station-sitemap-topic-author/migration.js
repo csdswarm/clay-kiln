@@ -18,10 +18,10 @@ function transformBaseUrl(query) {
 
 async function run() {
   try {
-    const [stationAuthor, stationTopic] = await Promise.all([
+    const [stationAuthor, stationTopic] = (await Promise.all([
       readFileAsync('./create-sitemap/station-author.sql', 'utf8'),
       readFileAsync('./create-sitemap/station-topic.sql', 'utf8')
-    ]).map(transformBaseUrl);
+    ])).map(transformBaseUrl);
 
     await usingDb(db => Promise.all([
       db.query(stationAuthor),
