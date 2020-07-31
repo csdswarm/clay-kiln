@@ -182,7 +182,6 @@ $latestArticleHeight: em(168);
         @mixin latest-content-font3;
         margin-top: 0;
         padding-left: em(20, 14);
-        @mixin unset-clamp;
 
         @mixin medium-screen {
           @mixin latest-content-font2;
@@ -213,13 +212,11 @@ $latestArticleHeight: em(168);
     flex-direction: column;
     margin-top: em(15, 22);
     width: 100%; /* IE11 */
-    @mixin clamp 2, em(56, 22);
 
     @mixin medium-screen {
       @mixin latest-content-font2;
       padding-left: em(20, 22);
       width: 50%;
-      @mixin unset-clamp;
     }
 
     @mixin medium-small-screen {
