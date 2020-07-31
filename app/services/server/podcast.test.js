@@ -21,21 +21,21 @@ describe('server', () => {
           },
           data: [
             {
-              type: "podcast",
+              type: 'podcast',
               id: 16,
               attributes: {
-                description: "Jerry Coleman",
+                description: 'Jerry Coleman',
                 explicit: null,
-                image: "https://images.radio.com/podcast/466AF0C60FC3CC689050E32913ADBB20.jpg",
+                image: 'https://images.radio.com/podcast/466AF0C60FC3CC689050E32913ADBB20.jpg',
                 keyword: null,
                 popularity: 3,
-                rss_feed: "https://www.omnycontent.com/d/playlist/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/c25707f6-7d06-4f1c-ae5d-a78e00164d58/podcast.rss",
-                title: "Sports With Coleman",
+                rss_feed: 'https://www.omnycontent.com/d/playlist/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/c25707f6-7d06-4f1c-ae5d-a78e00164d58/podcast.rss',
+                title: 'Sports With Coleman',
                 vanity_url: null,
-                site_slug: "sports-with-coleman-16",
+                site_slug: 'sports-with-coleman-16',
                 partner: {
                   id: 1,
-                  name: "Entercom"
+                  name: 'Entercom'
                 },
                 stream_provider: {
                   id: null,
@@ -44,27 +44,27 @@ describe('server', () => {
                 category: [
                   {
                     id: 31,
-                    name: "Sports",
-                    slug: "sports"
+                    name: 'Sports',
+                    slug: 'sports'
                   }
                 ],
                 show: [
                   {
                     id: 2579,
-                    name: "Sports with Coleman"
+                    name: 'Sports with Coleman'
                   }
                 ],
                 station: []
               },
               links: {
-                self: "http://api.radio.com/v1/podcasts/16"
+                self: 'http://api.radio.com/v1/podcasts/16'
               }
             }
           ],
           links: {
-            self: "http://api.radio.com/v1/podcasts?filter[site_slug]=sports-with-coleman-16",
-            last: "http://api.radio.com/v1/podcasts?filter%5Bsite_slug%5D=sports-with-coleman-16&page%5Bnumber%5D=1",
-            first: "http://api.radio.com/v1/podcasts?filter%5Bsite_slug%5D=sports-with-coleman-16&page%5Bnumber%5D=1"
+            self: 'http://api.radio.com/v1/podcasts?filter[site_slug]=sports-with-coleman-16',
+            last: 'http://api.radio.com/v1/podcasts?filter%5Bsite_slug%5D=sports-with-coleman-16&page%5Bnumber%5D=1',
+            first: 'http://api.radio.com/v1/podcasts?filter%5Bsite_slug%5D=sports-with-coleman-16&page%5Bnumber%5D=1'
           }
         },
         DEFAULT_RESULT_EPISODE = {
@@ -73,47 +73,47 @@ describe('server', () => {
           },
           data: [
             {
-              type: "episode",
+              type: 'episode',
               id: 130013,
               attributes: {
-                title: "US Open '92 Winner Tom Kite Joins Jerry Coleman",
-                description: "US Open '92 Winner Tom Kite Joins Jerry Coleman ",
+                title: 'US Open \'92 Winner Tom Kite Joins Jerry Coleman\'',
+                description: 'US Open \'92 Winner Tom Kite Joins Jerry Coleman\'',
                 explicit: null,
                 keyword: null,
-                image_url: "https://www.omnycontent.com/d/clips/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/ea549d23-548f-4cda-a67f-a7b3002b38c9/image.jpg?size=Medium",
-                audio_url: "https://traffic.omny.fm/d/clips/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/ea549d23-548f-4cda-a67f-a7b3002b38c9/audio.mp3",
+                image_url: 'https://www.omnycontent.com/d/clips/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/ea549d23-548f-4cda-a67f-a7b3002b38c9/image.jpg?size=Medium',
+                audio_url: 'https://traffic.omny.fm/d/clips/4b5f9d6d-9214-48cb-8455-a73200038129/51590cea-b0d5-4b0c-a7e5-a78e00164d53/ea549d23-548f-4cda-a67f-a7b3002b38c9/audio.mp3',
                 video_url: null,
-                embed_url: "https://omny.fm/shows/sports-with-coleman/us-open-92-winner-tom-kite-joins-jerry-coleman/embed",
-                duration_seconds: "787.513",
-                publish_state: "Published",
-                published_url: "https://omny.fm/shows/sports-with-coleman/us-open-92-winner-tom-kite-joins-jerry-coleman",
-                published_date: "2017-07-11T13:50:14.000Z",
-                program_id: "51590cea-b0d5-4b0c-a7e5-a78e00164d53",
-                site_slug: "us-open-92-winner-tom-kite-joins-jerry-coleman-130013",
+                embed_url: 'https://omny.fm/shows/sports-with-coleman/us-open-92-winner-tom-kite-joins-jerry-coleman/embed',
+                duration_seconds: '787.513',
+                publish_state: 'Published',
+                published_url: 'https://omny.fm/shows/sports-with-coleman/us-open-92-winner-tom-kite-joins-jerry-coleman',
+                published_date: '2017-07-11T13:50:14.000Z',
+                program_id: '51590cea-b0d5-4b0c-a7e5-a78e00164d53',
+                site_slug: 'us-open-92-winner-tom-kite-joins-jerry-coleman-130013',
                 podcast: [
                   {
                     id: 16,
-                    title: "Sports With Coleman",
-                    description: "Jerry Coleman",
-                    site_slug: "sports-with-coleman-16",
+                    title: 'Sports With Coleman',
+                    description: 'Jerry Coleman',
+                    site_slug: 'sports-with-coleman-16',
                     categories: [
                       {
                         id: 31,
-                        name: "Sports"
+                        name: 'Sports'
                       }
                     ]
                   }
                 ]
               },
               links: {
-                self: "http://api.radio.com/v1/episodes/130013"
+                self: 'http://api.radio.com/v1/episodes/130013'
               }
             }
           ],
           links: {
-            self: "http://api.radio.com/v1/episodes?filter[episode_site_slug]=us-open-92-winner-tom-kite-joins-jerry-coleman-130013",
-            last: "http://api.radio.com/v1/episodes?filter%5Bepisode_site_slug%5D=us-open-92-winner-tom-kite-joins-jerry-coleman-130013&page%5Bnumber%5D=1",
-            first: "http://api.radio.com/v1/episodes?filter%5Bepisode_site_slug%5D=us-open-92-winner-tom-kite-joins-jerry-coleman-130013&page%5Bnumber%5D=1"
+            self: 'http://api.radio.com/v1/episodes?filter[episode_site_slug]=us-open-92-winner-tom-kite-joins-jerry-coleman-130013',
+            last: 'http://api.radio.com/v1/episodes?filter%5Bepisode_site_slug%5D=us-open-92-winner-tom-kite-joins-jerry-coleman-130013&page%5Bnumber%5D=1',
+            first: 'http://api.radio.com/v1/episodes?filter%5Bepisode_site_slug%5D=us-open-92-winner-tom-kite-joins-jerry-coleman-130013&page%5Bnumber%5D=1'
           }
         };
     

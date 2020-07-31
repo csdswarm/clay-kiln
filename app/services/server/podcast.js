@@ -5,7 +5,7 @@ const radioApiService = require('./radioApi'),
   __ = {
     radioApiService,
     _isEmpty
-  }
+  };
 /**
   * fetch podcast episode data
   * @param {object} locals
