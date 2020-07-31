@@ -6,6 +6,7 @@ module.exports = {
   createPage: require('./create-page'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
+  podcast: require('./podcast'),
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),

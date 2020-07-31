@@ -5,8 +5,8 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
 
 module.exports = (router) => {
   router.get('/rdc/api/podcast', async (req, res) => {
-    const { dynamicSlug } = req.params,
-      { locals } = res.locals;
+    const { dynamicSlug } = req.query,
+      { locals } = res;
 
     try {
       res.send(await getPodcastShow(locals, dynamicSlug));
@@ -18,8 +18,8 @@ module.exports = (router) => {
   }),
 
   router.get('/rdc/api/episode', async (req, res) => {
-    const { dynamicEpisode } = req.params,
-      { locals } = res.locals;
+    const { dynamicEpisode } = req.query,
+      { locals } = res;
 
     try {
       res.send(await getPodcastEpisode(locals, dynamicEpisode));
