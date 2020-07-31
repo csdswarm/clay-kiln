@@ -45,13 +45,7 @@ function restrictToRDC(query) {
     bool: {
       should: [
         { match: { stationSlug: '' } },
-        { bool: { must_not: { exists: { field: 'stationSlug' } } } },
-        {
-          nested: {
-            path: 'stationSyndication',
-            query: { match: { 'stationSyndication.stationSlug': '' } }
-          }
-        }
+        { bool: { must_not: { exists: { field: 'stationSlug' } } } }
       ],
       minimum_should_match: 1
     }
