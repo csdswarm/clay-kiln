@@ -254,9 +254,7 @@ async function middleware(req, res, next) {
       fakeLocals(req, res, params);
       return composer.composePage(data, res.locals);
     })
-    .then(composed => {
-      return res.json(composed);
-    })
+    .then(composed => res.json(composed))
     .catch(err => {
       log('error', '404', { stack: err.stack });
       res
