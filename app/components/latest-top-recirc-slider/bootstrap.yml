@@ -1,3 +1,4 @@
 _components:
   latest-top-recirc-slider:
+    excludeSubscriptions: false
     items: []

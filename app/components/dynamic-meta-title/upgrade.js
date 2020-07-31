@@ -18,3 +18,16 @@ module.exports['2.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['3.0'] = (uri, data) => {
+  const isCuratedTopic = uri.endsWith('curated-topic');
+
+  if (isCuratedTopic) {
+    return {
+      ...data,
+      routeParam: ''
+    };
+  }
+
+  return data;
+};

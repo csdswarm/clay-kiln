@@ -12,6 +12,7 @@ configmap:
   data:
     APPLE_NEWS_ENABLED: "TRUE"
     APPLE_NEWS_PREVIEW_ONLY: "TRUE"
+    ARTICLE_AD_INSERT_EVERY: "3"
     AWS_S3_BUCKET: "radioimg"
     AWS_S3_CDN_HOST: "images.radio.com"
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
@@ -43,7 +44,6 @@ configmap:
     INLINE_EDIT_STYLES: "true"
     IP_ADDRESS: "0.0.0.0"
     LOG: "error"
-    LYTICS_API_URL: "https://api.lytics.io/api"
     NODE_ENV: "production"
     PORT: "3001"
     REDIS_HASH: "mydb:h"

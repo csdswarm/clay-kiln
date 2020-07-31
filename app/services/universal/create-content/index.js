@@ -2,22 +2,30 @@
 
 const
   _get = require('lodash/get'),
+  applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
-  circulationService = require('./circulation'),
+  circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  mediaplay = require('./media-play'),
-  promises = require('./promises'),
-  rest = require('./rest'),
-  sanitize = require('./sanitize'),
-  slugify = require('../../services/universal/slugify'),
+  mediaplay = require('../media-play'),
+  promises = require('../promises'),
+  rest = require('../rest'),
+  sanitize = require('../sanitize'),
+  slugify = require('../slugify'),
   striptags = require('striptags'),
-  urlExists = require('../../services/universal/url-exists'),
-  { DEFAULT_STATION } = require('../../services/universal/constants'),
-  { PAGE_TYPES } = require('./../universal/constants'),
+  urlExists = require('../url-exists'),
+  { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants'),
   { getComponentName } = require('clayutils'),
-  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
-  { urlToElasticSearch } = require('../../services/universal/utils');
+  {
+    uriToUrl,
+    replaceVersion,
+    has,
+    isFieldEmpty,
+    textToEncodedSlug,
+    urlToElasticSearch
+  } = require('../utils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -529,7 +537,10 @@ function addTwitterHandle(data, locals) {
  * @param {Object} data
  */
 function renderStationSyndication(data) {
-  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+  const syndicatedStations = (data.stationSyndication || [])
+    .filter(syndication => syndication.source === 'manual syndication');
+
+  data._computed.stationSyndicationCallsigns = syndicatedStations
     .map(station => station.callsign)
     .sort()
     .join(', ');
@@ -552,13 +563,22 @@ function addStationSyndicationSlugs(data) {
           station.stationSlug,
           slugify(station.sectionFront),
           slugify(station.secondarySectionFront),
-          data.slug
+          station.slug || data.slug
         ].filter(Boolean).join('/');
       } else {
         delete station.syndicatedArticleSlug;
       }
       return station;
     });
+}
+
+function doNotPublishToANF(data) {
+  if (data.feeds && (data.stationSlug || data.isCloned)) {
+    data.feeds = {
+      ...data.feeds,
+      'apple-news': false
+    };
+  }
 }
 
 function render(ref, data, locals) {
@@ -568,6 +588,7 @@ function render(ref, data, locals) {
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
   renderStationSyndication(data);
+  doNotPublishToANF(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -648,6 +669,11 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need to get stations by editorial feeds before creating slugs for syndicated content
+  await addStationsByEditorialGroup(data, locals);
+  // we need apply content subscriptions before creating slugs for syndicated content
+  await applyContentSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
@@ -662,9 +688,11 @@ async function save(uri, data, locals) {
   });
 }
 
-module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
-module.exports.updateStationSyndicationType = updateStationSyndicationType;
-
-module.exports.render = render;
-module.exports.save = save;
-module.exports.assignStationInfo = assignStationInfo;
+module.exports = {
+  addStationSyndicationSlugs,
+  assignStationInfo,
+  render,
+  save,
+  setNoIndexNoFollow,
+  updateStationSyndicationType
+};

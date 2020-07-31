@@ -95,13 +95,13 @@ $latestArticleHeight: em(168);
     }
 
     &.section__container-- {
-      &music {
+      &music, &firstColumn {
          order: 1;
        }
-      &news {
+      &news, &secondColumn {
          order: 2;
        }
-      &sports {
+      &sports, &thirdColumn {
          order: 3;
          padding-right: 0;
        }

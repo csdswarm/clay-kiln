@@ -4,14 +4,16 @@
 
 .component--station-listen-nav {
     .drawer__social {
+        display: flex;
         > a {
             display: inline-block;
             text-decoration: none;
+            height: em(15);
         }
-        > a object {
+        > a svg {
             @mixin inline-block;
-            height: em(18);
-            margin: 0 em(10);
+            height: 100%;
+            margin-right: em(10);
             pointer-events: none;
         }
     }

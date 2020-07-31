@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl, boolObjectToArray } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -61,6 +61,10 @@ const
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
       sectionFronts: boolObjectToArray(data.excludeSectionFronts),
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+      subscriptions: { value: {
+        subscriptions: data.excludeSubscriptions ? ['national subscription'] : [],
+        stationSlug: getStationSlug(locals)
+      } },
       tags: (data.excludeTags || []).map(tag => tag.text)
     },
     curated: data.items || []
@@ -71,7 +75,7 @@ const
     pageUri: validatedItem.pageUri,
     urlIsValid: validatedItem.urlIsValid,
     canonicalUrl: curatedItem.url || validatedItem.canonicalUrl,
-    feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl ,
+    feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
   }),
   // Maps defined query filters to correct elastic query formatting
@@ -179,6 +183,15 @@ const
         return qs;
       }
     },
+    subscriptions: {
+      createObj: ({ stationSlug, subscriptions }) => {
+        const matchSources = subscriptions.map(source => ({ match_phrase: { 'stationSyndication.source': source } })),
+          anySource = { should: matchSources, minimum_should_match: 1 },
+          syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, { bool: anySource }];
+
+        return { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
+      }
+    },
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
@@ -239,7 +252,7 @@ const
    */
   addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
-      log('error', `No filter current exists for ${ key }`);
+      log('error', `No filter current exists for ${key}`);
       return;
     }
 
@@ -264,6 +277,10 @@ const
 
       if (typeof includeSyndicated !== 'undefined') {
         queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
+        return;
+      }
+
+      if (key === 'subscriptions' && !value.subscriptions.length) {
         return;
       }
       queryService[getQueryType(condition)](query, createObj(value));
@@ -319,10 +336,7 @@ const
     if (locals && locals.tag) {
       // This is from load more on a tag page
       tags = locals.tag;
-    } else if (locals && locals.params && locals.params.tag) {
-      // This is from a tag page but do not override a manually set tag
-      tags = data.tag || locals.params.tag;
-    } else if (locals && locals.params && locals.params.dynamicTag) {
+    } else if (_get(locals, 'params.dynamicTag')) {
       // This is from a tag page
       tags = locals.params.dynamicTag;
     }
@@ -375,7 +389,10 @@ const
    *
    * @returns {object}
    */
-  sectionOrTagCondition = (populateFrom, value) => populateFrom === 'section-front-or-tag' ? { condition: 'should', value } : value,
+  sectionOrTagCondition = (populateFrom, value) => populateFrom === 'section-front-or-tag' ? {
+    condition: 'should',
+    value
+  } : value,
   /**
    * Verify the url exists and is not a component
    *
@@ -384,9 +401,11 @@ const
    * @returns {boolean}
    */
   validUrl = url => url && !isComponent(url),
-  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
   // Get both the results and the total number of results for the query
-  transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
+  transformResult = (formattedResult, rawResult) => ({
+    content: formattedResult,
+    totalHits: _get(rawResult, 'hits.total')
+  }),
 
   /**
  * Use filters to query elastic for content
@@ -399,7 +418,7 @@ const
  * @param {Object} [locals]
  * @returns {array} elasticResults
  */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
     let results = {
       content: [],
       totalHits: 0
@@ -418,8 +437,8 @@ const
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
-    // Don't search for primary section front if the secondary is selected
     Object.entries(filters).forEach(([key, value]) => {
+      // Don't search for primary section front if the secondary is selected
       if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
         return;
       }
@@ -428,6 +447,9 @@ const
       }
       if (key === 'stationSlug' && !filters.includeSyndicated) {
         value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
+      }
+      if (key === 'stationSlug' && isRdcContent) {
+        value = DEFAULT_STATION.site_slug;
       }
       addCondition(query, key, value);
     });
@@ -481,7 +503,8 @@ const
     render = returnData,
     save = returnData,
     shouldAddAmphoraTimings = false,
-    skipRender = () => false } = {}) => unityComponent({
+    skipRender = () => false
+  } = {}) => unityComponent({
     async render(uri, data, locals) {
       const curatedIds = (data.items || []).map(anItem => anItem.uri),
         requiredSearchFields = ['stationSlug', 'stationSyndication'],
@@ -494,11 +517,11 @@ const
       }
 
       try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
+        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS, isRdcContent = false } = _merge(
             defaultMapDataToFilters(uri, data, locals),
             await mapDataToFilters(uri, data, locals)
           ),
-          itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
+          itemsNeeded = maxItems > curated.length ? maxItems - curated.length : 0,
           { content, totalHits } = await fetchRecirculation(
             {
               filters,
@@ -506,20 +529,21 @@ const
               elasticFields: esFields,
               pagination,
               maxItems: itemsNeeded,
-              shouldAddAmphoraTimings
+              shouldAddAmphoraTimings,
+              isRdcContent
             },
             locals);
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
           moreContent: totalHits > maxItems
         });
       } catch (e) {
-        log('error', `There was an error querying items from elastic - ${ e.message }`, e);
+        log('error', `There was an error querying items from elastic - ${e.message}`, e);
       }
       return render(uri, data, locals);
     },
@@ -537,6 +561,8 @@ const
           },
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
+        item.uri = result._id;
+
         return mapResultsToTemplate(locals, result, item);
       }));
 
@@ -546,6 +572,8 @@ const
   });
 
 module.exports = {
+  getStationSlug,
+  makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
   sectionOrTagCondition
 };

@@ -54,6 +54,11 @@ Within frequency-clay-translator run
 npm install
 ```
 
+Within clay-radio run
+```
+npm install
+```
+
 **Note:** prior to running the next command, consider if you are starting from scratch or not. **If not**, it is recommended to run at this point the `make nuke` command within the clay-radio folder. This will eventually:
 
 1. Installed dependencies.

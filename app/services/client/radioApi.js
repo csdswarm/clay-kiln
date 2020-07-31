@@ -137,9 +137,23 @@ const rest = require('../universal/rest'),
     return rest.get(endpoint).then(data => {
       return data;
     });
+  },
+
+  /**
+   * Put data
+   *
+   * @param {string} route
+   * @param {Object} payload
+   * @returns {Object}
+   */
+  put = (route, payload) => {
+    return rest.put(route, payload).then(data => {
+      return data;
+    });
   };
 
 module.exports.get = get;
+module.exports.put = put;
 module.exports.fetchDOM = fetchDOM;
 module.exports.TTL = TTL;
 module.exports._internals = __;

@@ -3,12 +3,22 @@
 const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
-
+  findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
   __ =  {
-    findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
+    findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
-    inStation: stationSlug => syndicationEntry => {
-      return stationSlug === (syndicationEntry.stationSlug || DEFAULT_STATION.site_slug);
+    inStation: stationSlug => data => {
+      /*
+        This method is being used both for checking if an article belongs to or is syndicated to a
+        station, but with a syndication entry we can't assume it belongs to national when stationSlug
+        doesn't exists, as we usually do for RDC original content. So here I'm using the syndication
+        source to diferentiate when we are checking for an original content or a syndication.
+      */
+      if (data.source) {
+        return stationSlug === data.stationSlug;
+      }
+
+      return stationSlug === (data.stationSlug || DEFAULT_STATION.site_slug);
     },
     noContent: value => !Array.isArray(value) || !value.length
   };
@@ -18,9 +28,10 @@ const
  * the syndicationUrl, so hyperlinks stay on the current site.
  *
  * @param {string} stationSlug
+ * @param {boolean} isRdcContent
  * @returns {function}
  */
-function syndicationUrlPremap(stationSlug) {
+function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   const
     { findSyndicatedStation, getOrigin, inStation, noContent } = __,
     isInStation = inStation(stationSlug),
@@ -29,13 +40,15 @@ function syndicationUrlPremap(stationSlug) {
   return article => {
     const item = { ...article };
 
-    if (!isInStation(item)) {
+    if (!isRdcContent && !isInStation(item)) {
       if (noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
-        const { syndicatedArticleSlug = '' } = syndicatedStation(item.stationSyndication) || {};
+        const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
 
         item.canonicalUrl = `${getOrigin(item.canonicalUrl)}${syndicatedArticleSlug}`;
+        item.syndicatedLabel = sectionFront;
+
         delete item.stationSyndication;
       }
     }
@@ -46,5 +59,6 @@ function syndicationUrlPremap(stationSlug) {
 
 module.exports = {
   _internals: __,
-  syndicationUrlPremap
+  syndicationUrlPremap,
+  findSyndicatedStation
 };

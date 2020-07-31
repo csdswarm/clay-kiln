@@ -144,3 +144,16 @@ $thumbnail-continer-width: 70px;
         }
     }
 }
+
+/*  Reset behavior of radioCom top nav bar */
+.latest-top-recirc-slider__slider-container.reset-slider-top-nav {
+    position: unset;
+  }
+
+.latest-top-recirc-slider__slider-container.sticky-latest-recirc-slider-bar {
+    position: fixed;
+    top: em(130);
+    @mixin medium-small-screen {
+        top: em(110);
+    }
+  }

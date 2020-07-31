@@ -78,7 +78,7 @@ function userPermissionRouter() {
 
       await urps.updateAuthData(session, locals);
 
-      if (!session.auth.token) {
+      if (!session.auth.idToken) {
         session.returnTo = req.originalUrl;
         res.redirect('/_auth/logout');
         return;
@@ -137,6 +137,8 @@ function userPermissionRouter() {
   //   intercepting unsafe methods (here we're intercepting
   //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
+
+  addToLocals.contentSubscriptions(userPermissionRouter);
 
   return userPermissionRouter;
 }
