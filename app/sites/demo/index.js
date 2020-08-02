@@ -9,7 +9,8 @@ const publishing = require('../../services/publishing'),
     '/_components/contest/instances',
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
-    '/_components/station-front/instances'
+    '/_components/station-front/instances',
+    '/_components/static-page/instances'
   ];
 
 module.exports.routes = [
@@ -81,6 +82,7 @@ module.exports.routes = [
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [
+  (uri, data, locals) => publishing.getStaticPageSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),

@@ -95,6 +95,14 @@ const exists = require('lodash/identity'),
       opts.stationSlug
     ].filter(exists)
       .join('/');
+  },
+  staticPage = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.slug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -107,5 +115,6 @@ module.exports = {
   event,
   eventsListing,
   contest,
-  stationFront
+  stationFront,
+  staticPage
 };

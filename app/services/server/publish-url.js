@@ -118,6 +118,20 @@ function getStationFrontSlugUrl(pageData, locals, mainComponentRefs) {
       }
     });
 }
+/**
+ * Return the url for a static page slug
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+async function getStaticPageSlugUrl(pageData, locals, mainComponentRefs) {
+  const urlOptions = await getUrlOptions(pageData, locals, mainComponentRefs);
+
+  if (urlOptions.pageType === PAGE_TYPES.STATIC_PAGES) {
+    return urlPatterns.staticPage(urlOptions);
+  }
+}
 
 /**
  * Return the url for a event pg based on its slug, within the events subdir
@@ -176,5 +190,6 @@ module.exports = {
   getEventSlugUrl,
   getEventsListingUrl,
   getContestSlugUrl,
-  getStationFrontSlugUrl
+  getStationFrontSlugUrl,
+  getStaticPageSlugUrl
 };
