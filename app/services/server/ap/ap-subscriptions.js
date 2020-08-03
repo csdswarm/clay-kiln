@@ -6,9 +6,8 @@ const
   { importArticle } = require('./ap-news-importer'),
   db = require('../db'),
   logger = require('../../universal/log'),
-  uuidV4 = require('uuid/v4'),
   Promise = require('bluebird'),
-
+  uuidV4 = require('uuid/v4'),
   log = logger.setup({ file: __filename }),
 
   /**
