@@ -147,7 +147,8 @@ class SpaPlayerInterface {
       })
 
       window.addEventListener('goToPodcastPage', e => {
-        this.redirectToPodcast(e.detail.podcastSiteSlug)
+        const { podcastSiteSlug, stationSiteSlug } = e.detail
+        this.redirectToPodcast(podcastSiteSlug, stationSiteSlug)
       })
 
       return true
@@ -253,10 +254,17 @@ class SpaPlayerInterface {
   /**
    * Redirect to Podcast Page by using podcastSiteSlug
    * Return if the route is the current
-   * @param { podcastSiteSlug } siteSlug
+   * @param { string } podcastSiteSlug
+   * @param { string } stationSiteSlug
    */
-  redirectToPodcast (podcastSiteSlug) {
-    const route = `/podcasts/${podcastSiteSlug}`
+  redirectToPodcast (podcastSiteSlug, stationSiteSlug) {
+    let route = `/podcasts/${podcastSiteSlug}`
+
+    if (stationSiteSlug) {
+      // if the siteSlug is defined make sure to append so they go back
+      // to station context
+      route = `/${stationSiteSlug}${route}`
+    }
 
     if (window.location.pathname === route) {
       // Short circuit If the route is the same as current
