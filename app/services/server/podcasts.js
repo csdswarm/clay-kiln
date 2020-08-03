@@ -12,6 +12,15 @@ const _concat = require('lodash/concat'),
   radioApiService = require('./radioApi'),
   stationUtils = require('./station-utils'),
 
+  PAGE_SIZE = 900, // requesting 1000 items causes a 503 error, so request a little less than that,
+
+  __ = {
+    dbRaw:db.raw,
+    moment,
+    radioApiGet:radioApiService.get,
+    getStationsById:stationUtils.getAllStations.byId
+  },
+
   /**
    * Get all podcasts from the RDC API
    * @param {object} locals
@@ -20,14 +29,15 @@ const _concat = require('lodash/concat'),
    * @returns {Promise<[object]>}
    */
   getPodcastsFromAPI = async (locals, collected = [], page = 1) => {
-    const PAGE_SIZE = 900, // requesting 1000 items causes a 503 error, so request a little less than that
+    const
+      { radioApiGet } = __,
       params = {
         page: {
           size: PAGE_SIZE,
           number: page
         }
       },
-      { data, links: { next } } = await radioApiService.get(
+      { data, links: { next } } = await radioApiGet(
         'podcasts',
         params,
         null,
@@ -44,8 +54,11 @@ const _concat = require('lodash/concat'),
    * @param {object} locals
    */
   storePodcastsFromAPItoDB = async (locals) => {
-    const podcasts = await getPodcastsFromAPI(locals),
-      stationsById = await stationUtils.getAllStations.byId({ locals });
+    const
+      {dbRaw, getStationsById, moment} = __,
+      podcasts = await getPodcastsFromAPI(locals),
+      stationsById = await getStationsById({ locals }),
+      now = moment().toIsoString();
 
     if (podcasts.length) {
       const values = _flatten(podcasts.map(podcast => {
@@ -54,7 +67,7 @@ const _concat = require('lodash/concat'),
             id = `${host}/_podcasts/${podcast.id}`;
 
           podcast.url = `${protocol}://${host}${path}`;
-          podcast.updated = new Date().toISOString();
+          podcast.updated = now;
 
           return [id, podcast];
         })),
@@ -64,8 +77,8 @@ const _concat = require('lodash/concat'),
         ${'(?,?),'.repeat(values.length / 2).slice(0, -1)}
       `;
 
-      await db.raw('DELETE FROM podcasts');
-      await db.raw(insertSql, values);
+      await dbRaw('DELETE FROM podcasts');
+      await dbRaw(insertSql, values);
     }
   },
   /**
@@ -73,13 +86,14 @@ const _concat = require('lodash/concat'),
    * @param {object} locals
    */
   updatePodcasts = async (locals) => {
-    const queryForOnePodcast = `
+    const
+      { dbRaw, moment } = __,
+      queryForOnePodcast = `
         SELECT id, data
         FROM podcasts
-        ORDER BY data->>id
         LIMIT 1
       `,
-      { rows: [podcastResult] } = await db.raw(queryForOnePodcast);
+      { rows: [podcastResult] } = await dbRaw(queryForOnePodcast);
 
     // Check when podcasts were last updated
     // fetch from API & update DB if more than a day old or not in DB
@@ -89,5 +103,6 @@ const _concat = require('lodash/concat'),
   };
 
 module.exports = {
+  _internals:__,
   updatePodcasts
 };
