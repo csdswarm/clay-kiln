@@ -55,7 +55,7 @@ const _concat = require('lodash/concat'),
    */
   storePodcastsFromAPItoDB = async (locals) => {
     const
-      {dbRaw, getStationsById, moment} = __,
+      { dbRaw, getStationsById, moment } = __,
       podcasts = await getPodcastsFromAPI(locals),
       stationsById = await getStationsById({ locals }),
       now = moment().toIsoString();
