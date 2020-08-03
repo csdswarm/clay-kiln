@@ -13,7 +13,6 @@ const _get = require('lodash/get'),
   urlParse = require('url-parse'),
   { stripOuterSlashes } = require('../pathname-utils'),
   {
-    pageTypeTagArticle,
     pageTypeTagSection,
     pageTypeTagStationDetail,
     pageTypeTagStationsDirectory
@@ -23,8 +22,9 @@ const _get = require('lodash/get'),
   pageTypeTagTag = 'tag',
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
-  articleOrGalleryPage = new Set(['article', 'vgallery']),
-  homepageOrSectionFront = new Set(['homepage', 'sectionFront']),
+  contentPages = new Set(['article', 'vgallery', 'events', 'contests', 'authorPage']),
+  homepageOrStationFront = new Set(['homepage', 'stationFront']),
+  rdcOrStationSectionFront = new Set(['sectionFront', 'stationSectionFront']),
   /**
    * stationsDirectory utilities assume the pathname passes `isStationsDirectory`
    */
@@ -148,9 +148,11 @@ module.exports = ({ pathname, url } = {}) => {
       const { page, pageName } = pageData;
       let pageId = pageName;
 
-      if (homepageOrSectionFront.has(page)) {
+      if (homepageOrStationFront.has(page)) {
         pageId = pageTypeHomepage;
-      } else if (articleOrGalleryPage.has(page)) {
+      } else if (rdcOrStationSectionFront.has(page)) {
+        pageId = pageTypeTagSection + '_' + pageName;
+      } else if (contentPages.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
@@ -178,9 +180,15 @@ module.exports = ({ pathname, url } = {}) => {
         case 'article':
         case 'vgallery':
           return [pageName, ...contentTags];
+        case 'events':
+        case 'contests':
+          return [pageName];
         case 'homepage':
-        case 'sectionFront':
+        case 'stationFront':
           return [pageTypeTagSection, pageTypeHomepage];
+        case 'sectionFront':
+        case 'stationSectionFront':
+          return [pageTypeTagSection, ...pageName.split('_')];
         case 'stationsDirectory':
           return [pageTypeTagStationsDirectory, pageName];
         case 'stationDetail':
@@ -188,7 +196,7 @@ module.exports = ({ pathname, url } = {}) => {
         case 'topicPage':
           return [pageTypeTagTag, pageTypeTagSection, pageName];
         case 'authorPage':
-          return [pageTypeTagArticle, pageTypeTagAuthor];
+          return [pageTypeTagAuthor];
         default:
           return [];
       }
@@ -198,7 +206,8 @@ module.exports = ({ pathname, url } = {}) => {
      */
     isAuthorPage: () => {
       // matches paths found on 'sites/demo/index.js'
-      return /^\/authors\/.+$/.test(pathname);
+      // Updated pattern to validate /<stationSlug>/authors/author-name
+      return /^\/(.*\/)?authors\/.+$/.test(pathname);
     },
     /**
      * @returns {boolean}
@@ -224,7 +233,7 @@ module.exports = ({ pathname, url } = {}) => {
      */
     isTopicPage: () => {
       // matches paths found on 'sites/demo/index.js'
-      return /^\/(topic|music|news|sports)\/.+$/.test(pathname);
+      return /^\/(.*\/)?topic\/.+$/.test(pathname);
     }
   };
 
