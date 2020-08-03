@@ -350,7 +350,7 @@ const
     }
 
     // split comma separated tags (for load-more get queries)
-    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
+    if (typeof tags === 'string' && tags.includes(',')) {
       tags = tags.split(',');
     }
 
