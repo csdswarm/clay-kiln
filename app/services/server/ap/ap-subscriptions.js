@@ -1,12 +1,16 @@
 'use strict';
 
-const db = require('../db'),
-  uuidV4 = require('uuid/v4'),
-  Promise = require('bluebird'),
+const
+  _intersectionBy = require('lodash/intersectionBy'),
   { getApFeed } = require('./ap-media'),
   { importArticle } = require('./ap-news-importer'),
+  db = require('../db'),
   logger = require('../../universal/log'),
+  uuidV4 = require('uuid/v4'),
+  Promise = require('bluebird'),
+
   log = logger.setup({ file: __filename }),
+
   /**
    * Returns all records in ap_subscriptions
    */
@@ -20,9 +24,9 @@ const db = require('../db'),
   __ = {
     dbPost: db.post,
     dbPut: db.put,
-    importArticle,
     getApFeed,
     getAll,
+    importArticle,
     log
   },
   /**
@@ -68,9 +72,7 @@ const db = require('../db'),
 
       return Promise.map(apFeed, feed => {
         const stationMappings = apSubscriptions
-          .filter(({ data }) => data.entitlements
-            .some(entitlement => feed.products
-              .some(product => product.id === entitlement.id)))
+          .filter(({ data }) => _intersectionBy(data.entitlements, feed.products, 'id').length)
           .reduce((acc, { data }) => {
             if (!acc[data.stationSlug]) {
               acc[data.stationSlug] = data.mappings;
@@ -92,7 +94,7 @@ const db = require('../db'),
 module.exports = {
   _internals: __,
   ensureRecordExists,
-  importApSubscription,
   getAll,
+  importApSubscription,
   save
 };

@@ -138,19 +138,19 @@ describe('apSubscription', () => {
 
       return {
         getAllStub,
-        logStub,
-        response,
+        getApFeedStub,
         importArticleStub,
-        getApFeedStub
+        logStub,
+        response
       };
     }
 
     it('importing ap-subscription articles', async () => {
       const {
-        response,
         getAllStub,
+        getApFeedStub,
         importArticleStub,
-        getApFeedStub
+        response
       } = await setup_importApSubscription();
 
       expect(getAllStub).to.have.been.callCount(1);
@@ -161,10 +161,10 @@ describe('apSubscription', () => {
 
     it('importing an ap-subscription no ap-feed', async () => {
       const {
-        response,
         getAllStub,
+        getApFeedStub,
         importArticleStub,
-        getApFeedStub
+        response
       } = await setup_importApSubscription({ returns: false, getAllCall: true, getApFeedCall: true, importArticleCall: true });
 
       expect(getAllStub).to.have.been.callCount(1);
@@ -175,34 +175,34 @@ describe('apSubscription', () => {
 
     it('importing an ap-subscription fail getAll', async () => {
       const {
-        response,
         getAllStub,
         getApFeedStub,
         importArticleStub,
-        logStub
+        logStub,
+        response
       } = await setup_importApSubscription({ returns: true, getAllCall: false, getApFeedCall: true, importArticleCall: true });
 
       expect(getAllStub).to.have.been.callCount(1);
       expect(getApFeedStub).to.have.been.callCount(1);
       expect(importArticleStub).to.have.been.callCount(0);
-      expect(response).that.eql([]);
       expect(logStub).to.have.been.calledOnceWith('error', 'Bad request importing articles from ap-subscription');
+      expect(response).that.eql([]);
     });
 
     it('importing an ap-subscription fail getApFeed', async () => {
       const {
-        response,
         getAllStub,
         getApFeedStub,
         importArticleStub,
-        logStub
+        logStub,
+        response
       } = await setup_importApSubscription({ returns: true, getAllCall: true, getApFeedCall: false, importArticleCall: true });
 
       expect(getApFeedStub).to.have.been.callCount(1);
       expect(getAllStub).to.have.been.callCount(0);
       expect(importArticleStub).to.have.been.callCount(0);
-      expect(response).that.eql([]);
       expect(logStub).to.have.been.calledOnceWith('error', 'Bad request importing articles from ap-subscription');
+      expect(response).that.eql([]);
     });
   });
 });

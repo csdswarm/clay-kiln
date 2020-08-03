@@ -1,12 +1,13 @@
 'use strict';
 
-const { retrieveList } = require('../lists'),
+const
+  { getAll } = require('./ap-subscriptions'),
+  { retrieveList } = require('../lists'),
   { uploadImage } = require('../s3'),
   { DAY } = require('../../universal/constants'),
   cache = require('../cache'),
   logger = require('../../universal/log'),
   rest = require('../../universal/rest'),
-  { getAll } = require('./ap-subscriptions'),
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),

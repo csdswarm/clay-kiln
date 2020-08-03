@@ -14,7 +14,7 @@ describe('server', () => {
 
   describe('ap-media', () => {
     function setupApMedia() {
-      const { _internals: __, getApArticleBody, getApFeed, saveApPicture, searchAp, importApSubscription } = apMedia,
+      const { _internals: __, getApArticleBody, getApFeed, importApSubscription, saveApPicture, searchAp } = apMedia,
         DEFAULT_RESULT = {
           data: {
             items: [{
@@ -43,9 +43,9 @@ describe('server', () => {
         DEFAULT_RESULT,
         getApArticleBody,
         getApFeed,
+        importApSubscription,
         saveApPicture,
-        searchAp,
-        importApSubscription
+        searchAp
       };
     }
     
