@@ -14,7 +14,7 @@ const _ = require('lodash'),
 function formatSimpleByline(authorsList, hostsList) {
   const authors = _.map(authorsList, (author) => _.isObject(author) ? author.text : author),
     hosts = _.map(hostsList, (host) => _.isObject(host) ? host.text : host),
-    list = [...authors, hosts];
+    list = [...authors, ...hosts];
 
   if (list.length === 1) {
     return '<span>' + list[0] + '</span>';
@@ -52,7 +52,7 @@ function complexByline(opts) {
     hosts = _.get(byline, 'hosts', []);
     hosts = _.map(hosts, (host) => ({ ...host, isHost: true }));
 
-    if (names.length > 0) {
+    if (names.length > 0 || hosts.length > 0) {
       acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names, hosts) : socialsByline.formatNumAuthorsHosts(names, hosts, options)}`);
     }
 
