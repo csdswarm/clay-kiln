@@ -40,7 +40,7 @@ const
 
 module.exports = unityComponent({
   render: (ref, data, locals) => {
-    if (_get(locals, 'params.author')) {
+    if (_get(locals, 'params.author') && _get(data, '_computed.dynamic')) {
       data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     }
     data._computed.dynamic = getComponentInstance(ref) === 'new';
