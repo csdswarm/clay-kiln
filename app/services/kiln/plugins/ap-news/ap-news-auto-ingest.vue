@@ -288,6 +288,7 @@
       onEdit (subscription) {
         this.modalMode = 'edit'
         this.workingSubscription = { ...subscription }
+        this.onStationChange(this.workingSubscription.data.station, false)
         this.openModal('subscriptionModal')
       },
       onConfirmDelete () {
@@ -304,14 +305,16 @@
           this.workingSubscription.data.entitlements = this.workingSubscription.data.entitlements.filter(ent => ent.value !== entitlement.value)
         }
       },
-      onStationChange (station) {
+      onStationChange (station, reset=true) {
         const delim = station.value === '' ? '' : '-'
         // get new lists based on station selection
         this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
         this.getList(`${station.value}${delim}secondary-section-fronts`, 'secondarySectionFronts')
-        // reset the selections
-        this.$refs.primarySectionFrontInput.forEach(psfi => psfi.reset())
-        this.$refs.secondarySectionFrontInput.forEach(ssfi => ssfi.reset())
+        // reset the selections if needed
+        if (reset) {
+          this.$refs.primarySectionFrontInput.forEach(psfi => psfi.reset())
+          this.$refs.secondarySectionFrontInput.forEach(ssfi => ssfi.reset())
+        }
       },
       getFirstItemValue(subscription, path='entitlements[0].name') {
         const name = _get(subscription, `data.${path}`)
