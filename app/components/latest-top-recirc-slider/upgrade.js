@@ -18,6 +18,9 @@ module.exports['2.0'] = async (uri, data) => {
   } else if (Array.isArray(data.tag)) {
     data.tag = data.tag.map((tag) => typeof tag === 'string' ? { text: tag } : tag);
     return data;
+  } else if (typeof data.tag === 'string') {
+    data.tag = [{ text: data.tag }];
+    return data;
   }
   return data;
 };
