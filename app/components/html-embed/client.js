@@ -1,7 +1,7 @@
 'use strict';
 const _bindAll = require('lodash/bindAll');
 
-let isAStationFront, isASectionFront;
+
 /**
  * duplicates a script tag with data attributes
  *
@@ -53,10 +53,9 @@ class HTMLEmbed {
       script.parentNode.replaceChild(newScript, script);
     });
 
-    isASectionFront = document.querySelector('.component--section-front'),
-    isAStationFront = document.querySelector('.component--station-front');
+    const isASectionOrStationFront = document.querySelector('.component--section-front, .component--station-front');
 
-    if (isASectionFront || isAStationFront) {
+    if (isASectionOrStationFront) {
       document.querySelectorAll('.two-column-component__column--2 .iframe-container__padded-container').forEach((embed) => {
         embed.children.forEach(elem => {
           elem.style.width ? elem.style.width = 'auto' : null;

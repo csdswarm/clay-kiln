@@ -10,12 +10,12 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   };
 
 module.exports = unityComponent({
-  render: async (uri, data) => {
+  render: (uri, data) => {
     if (typeof data.text !== 'string') {
       log('error', 'HTML Embed contains malformed data', { uri });
       data.text = '';
     }
-  
+
     data.isIframe = data.text.indexOf('<iframe') !== -1;
     if (data.isIframe && isTwoColumnComponent(data)) {
       data.text = data.text.replace(/(width:.+;)/g, 'width:auto;');
