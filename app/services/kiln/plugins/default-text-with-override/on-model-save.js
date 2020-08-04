@@ -1,4 +1,5 @@
 'use strict';
+const _has = require('lodash/has');
 
 /**
  * Assigns the field to the data found in defaultFieldName if the value should
@@ -18,7 +19,7 @@ const handleDefault = (fieldName, defaultFieldName, data) => {
   // this data is created via UPDATE_COMPONENT in ./input.vue
   const internalState = data[`_${fieldName}`] || {};
 
-  if (!internalState.shouldOverride) {
+  if (_has(internalState, 'shouldOverride') && !internalState.shouldOverride) {
     data[fieldName] = data[defaultFieldName];
   }
 };
