@@ -30,14 +30,13 @@ const format = require('date-fns/format'),
  */
 module.exports = async (data, locals) => {
   const {
-      canonicalUrl,
       content,
       feedImg,
       lead,
+      link,
       msnTitle,
       seoDescription
     } = data,
-    link = `${canonicalUrl}`,
     renderAsync = cmpt => {
       return renderContentAsync(cmpt, locals, 'msn', componentsToSkip);
     },
