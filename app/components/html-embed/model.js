@@ -3,11 +3,7 @@
 const log = require('../../services/universal/log').setup({ file: __filename }),
   getBadSources = require('../../services/universal/get-bad-sources'),
   { SERVER_SIDE } = require('../../services/universal/constants'),
-  { unityComponent } = require('../../services/universal/amphora'),
-  { getComponentName } = require('clayutils'),
-  isTwoColumnComponent = (data) => {
-    return data._computed.parents.some(ref => getComponentName(ref) === 'two-column-component');
-  };
+  { unityComponent } = require('../../services/universal/amphora');
 
 module.exports = unityComponent({
   render: (uri, data) => {
@@ -15,11 +11,7 @@ module.exports = unityComponent({
       log('error', 'HTML Embed contains malformed data', { uri });
       data.text = '';
     }
-
     data.isIframe = data.text.indexOf('<iframe') !== -1;
-    if (data.isIframe && isTwoColumnComponent(data)) {
-      data.text = data.text.replace(/(width:.+;)/g, 'width:auto;');
-    }
     
     return data;
   },

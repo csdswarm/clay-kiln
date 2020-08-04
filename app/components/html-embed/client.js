@@ -52,16 +52,6 @@ class HTMLEmbed {
       newScript.appendChild(document.createTextNode(script.innerHTML));
       script.parentNode.replaceChild(newScript, script);
     });
-
-    const isASectionOrStationFront = document.querySelector('.component--section-front, .component--station-front');
-
-    if (isASectionOrStationFront) {
-      document.querySelectorAll('.two-column-component__column--2 .iframe-container__padded-container').forEach((embed) => {
-        embed.children.forEach(elem => {
-          elem.style.width ? elem.style.width = 'auto' : null;
-        });
-      });
-    }
   }
   /**
    * Remove the added listeners that won't be destroyed

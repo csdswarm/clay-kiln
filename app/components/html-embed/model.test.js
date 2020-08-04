@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 'use strict';
 
 const chai = require('chai'),
@@ -11,7 +10,7 @@ describe(dirname, () => {
     const { render } = require('./model');
 
     describe('render', () => {
-      it('should update the iframe width attribute to auto', () => {
+      it('should update _computed information with ancestors', () => {
         const uri = 'clay.radio.com/_components/html-embed/instances/1',
           data = {
             text:
@@ -38,7 +37,8 @@ describe(dirname, () => {
         expect(result).to.have.property('_computed');
         expect(result._computed).to.have.property('parents');
         expect(result._computed.parents).to.have.lengthOf(1);
-        expect(result.text).to.eql('<iframe src="https://embed.waze.com/iframe?zoom=14&amp;lat=33.748995&amp;lon=-84.387982&amp;ct=livemap&amp;pname=Entercom_929thegame" style="height:850px; width:auto;"></iframe>');
+        expect(result.isIframe).to.eql(true);
+        expect(result.text).to.eql('<iframe src="https://embed.waze.com/iframe?zoom=14&amp;lat=33.748995&amp;lon=-84.387982&amp;ct=livemap&amp;pname=Entercom_929thegame" style="height:850px; width:100px;"></iframe>');
       });
     });
   });

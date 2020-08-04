@@ -1,5 +1,11 @@
 @import "_global/colors";
 
+/* Overrides the width inside .two-column-component__column--2 */
+.component--station-front .two-column-component__column--2 .iframe-container__padded-container iframe[style],
+.component--section-front .two-column-component__column--2 .iframe-container__padded-container iframe[style] {
+  width: auto !important;
+}
+
 .component--html-embed {
   margin-bottom: em(30);
   width: 100%;
