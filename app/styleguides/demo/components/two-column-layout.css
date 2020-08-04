@@ -89,11 +89,6 @@
 }
 
 .kiln-edit-mode .layout--two-column {
-  .content__sidebar {
-    visibility: visible;
-    margin-top: em(153);
-  },
-  &[data-main-component="podcast-show-page"],
   &[data-main-component="article"],
   &[data-main-component="gallery"] {
     .content__sidebar {
@@ -105,9 +100,13 @@
     .content__sidebar {
       visibility: visible;
     }
+  },
+  &[data-main-component="podcast-show-page"] {
+    .content__sidebar {
+      visibility: visible;
+    }
   }
 }
-
 .layout--two-column[data-main-component="contest"] {
   .layout__content {
     .content__sidebar {
@@ -121,7 +120,6 @@
     }
   }
 }
-   
 .layout--two-column[data-main-component="event"] {
   .layout__content {
     .content__sidebar {

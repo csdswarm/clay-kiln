@@ -1,9 +1,9 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
-  radioApiService = require('../../services/server/radioApi'),
-  podcastService = require('../../services/universal/podcast'),
-  log = require('../../services/universal/log').setup({ file: __filename });
+  log = require('../../services/universal/log').setup({ file: __filename }),
+  podcastUtils = require('../../services/universal/podcast'),
+  radioApiService = require('../../services/server/radioApi');
 
 module.exports = unityComponent({
   /**
@@ -28,16 +28,17 @@ module.exports = unityComponent({
     }
 
     return radioApiService.get(route, params, null, {}, locals)
-      .then((response) => {
+      .then(async (response) => {
         let podcasts = [];
 
         if (response.data) {
           podcasts = response.data;
-          for (let i = 0; i < podcasts.length; i++) {
-            const podcast = podcasts[i];
 
-            podcast.attributes.url = podcastService.createUrl(podcast.attributes.title);
-          }
+          const stationsById = await podcastUtils.getStationsForPodcasts(podcasts,locals);
+
+          podcasts.forEach((podcast) => {
+            podcast.attributes.url = podcastUtils.createUrl(podcast, stationsById[podcastUtils.getStationIdForPodcast(podcast)]);
+          });
         }
 
         data._computed.podcasts = podcasts;
