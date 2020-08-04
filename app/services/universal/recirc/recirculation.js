@@ -324,15 +324,7 @@ const
    * @return {string} host
    */
   getHost = (data, locals) => {
-    let host;
-
-    if (locals && locals.host) {
-      // This is from load more on an host page
-      host = locals.host;
-    } else if (locals && locals.params && locals.params.host) {
-      // This is from a curated & dynamic host page
-      host = locals.params.host;
-    }
+    const host = _get(locals, 'host') || _get(locals, 'params.host');
 
     // Used for load-more queries
     data.host = host;
