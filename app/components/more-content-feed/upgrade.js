@@ -188,3 +188,7 @@ module.exports['14.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['15.0'] = function (uri, data) {
+  return data.authors = data.authors || [];
+};

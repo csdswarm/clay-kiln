@@ -1,6 +1,21 @@
-_version: 14.0
+_version: 15.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
+
+authors:
+  _label: Author/Host Name(s)
+  _has:
+    input: select
+    list: authors
+    multiple: true
+    search: true
+    keys:
+      label: text
+      value: text
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: byline-authors
 
 contentType:
   _label: Content type
@@ -68,6 +83,9 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+      -
+        name: Byline/Author(s)
+        value: byline-authors
   _reveal:
     field: populateFrom
     operator: '!=='
@@ -316,6 +334,7 @@ _groups:
       - secondarySectionFrontManual
       - tagManual
       - contentType
+      - authors
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
