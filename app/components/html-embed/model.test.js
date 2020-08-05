@@ -1,12 +1,10 @@
 'use strict';
 
 const chai = require('chai'),
-  { expect } = chai,
-  dirname = __dirname.split('/').pop(),
-  filename = __filename.split('/').pop().split('.').shift();
+  { expect } = chai;
 
-describe(dirname, () => {
-  describe(filename, () => {
+describe('components/html-embed', () => {
+  describe('model', () => {
     const { render } = require('./model');
 
     describe('render', () => {

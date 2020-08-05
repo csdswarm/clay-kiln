@@ -1,7 +1,6 @@
 'use strict';
 const _bindAll = require('lodash/bindAll');
 
-
 /**
  * duplicates a script tag with data attributes
  *
