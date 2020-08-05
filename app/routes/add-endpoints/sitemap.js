@@ -13,12 +13,12 @@ const _snakeCase = require('lodash/snakeCase'),
     'sitemap_videos'
   ]),
   // using stationSitemapViews until stations have video sitemaps added as well
-  stationSitemapViews = new Set([
+  stationSitemapViews = [
     'sitemap_articles_and_galleries',
     'sitemap_section_fronts_and_homepage',
     'sitemap_authors',
     'sitemap_topics'
-  ]),
+  ],
   query = {
     sitemapIndex: getSitemapIndexQuery(sitemapViews),
     refreshViews: getRefreshViewsQuery(sitemapViews)
@@ -63,7 +63,7 @@ function getSitemapIndexQuery(sitemapViews) {
 }
 
 function getStationSitemapIndexQuery(sitemapViews, req) {
-  return Array.from(sitemapViews)
+  return sitemapViews
     .map(viewName => `
       SELECT '${_kebabCase(viewName)}' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
       FROM sitemap_station_${viewName.slice(8)}
