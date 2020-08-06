@@ -138,6 +138,8 @@ module.exports = router => {
   }));
 
   router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
+    if (!stationSitemapViews.includes('sitemap_' + _snakeCase(req.params.name))) return next();
+
     const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
       result = await db.raw(`
       SELECT data
