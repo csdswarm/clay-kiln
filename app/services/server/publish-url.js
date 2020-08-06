@@ -191,5 +191,6 @@ module.exports = {
   getEventsListingUrl,
   getContestSlugUrl,
   getStationFrontSlugUrl,
-  getStaticPageSlugUrl
+  getStaticPageSlugUrl,
+  getUrlOptions
 };
