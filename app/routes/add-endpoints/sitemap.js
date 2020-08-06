@@ -62,14 +62,20 @@ function getSitemapIndexQuery(sitemapViews) {
     .join('\nUNION\n');
 }
 
-function getStationSitemapIndexQuery(sitemapViews, req) {
-  return sitemapViews
-    .map(viewName => `
-      SELECT '${_kebabCase(viewName)}' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
-      FROM sitemap_station_${viewName.slice(8)}
-      WHERE id ~ '${req.params.stationSlug}'
-    `)
-    .join('\nUNION\n');
+function getStationSitemapIndexQuery() {
+  return (
+    'WITH _station AS (SELECT ? AS station_slug)' +
+    stationSitemapViews
+      .map(viewName =>
+        `
+        SELECT '${_kebabCase(viewName)}' || SUBSTRING (id, strpos(id,'-')) as sitemap_id, last_updated
+        FROM sitemap_station_${viewName.slice(8)} t
+          JOIN _station _s ON t.id = _s.station_slug
+        `
+      )
+      .join('\nUNION\n')
+  );
+
 }
 
 /**
@@ -120,8 +126,8 @@ module.exports = router => {
   }));
 
   router.get('/:stationSlug/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
-    const query = getStationSitemapIndexQuery(stationSitemapViews, req),
-      result = await db.raw(query);
+    const query = getStationSitemapIndexQuery(stationSitemapViews),
+      result = await db.raw(query, [`${req.params.stationSlug}-1`]);
 
     if (!result.rows.length) {
       return next();
@@ -137,22 +143,6 @@ module.exports = router => {
       SELECT data
       FROM ${viewName}
       WHERE id = '${req.params.stationSlug}-${req.params.id}'
-    `);
-
-    if (!result.rows.length) {
-      return next();
-    }
-
-    res.set('Content-Type', 'application/xml');
-    res.send(result.rows[0].data);
-  }));
-
-  router.get('/:stationSlug/sitemap-:name([a-z][a-z-]+[a-z]).xml', wrapInTryCatch(async (req, res, next) => {
-    const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
-      result = await db.raw(`
-      SELECT data
-      FROM ${viewName}
-      WHERE id = '${req.params.stationSlug}-1'
     `);
 
     if (!result.rows.length) {
