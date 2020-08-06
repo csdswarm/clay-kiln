@@ -1,6 +1,7 @@
 'use strict';
 
-const addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
+const _get = require('lodash/get'),
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -77,5 +78,14 @@ module.exports['7.0'] = async (uri, data) => {
   delete data.filterSecondarySectionFronts;
   delete data.filterTags;
 
+  return data;
+};
+
+module.exports['8.0'] = (uri, data) => {
+  // Account for incorrect formatting of data.primaryStoryLabel in the database for previously created content
+  // primaryStoryLabel is being changed from [ {text: ““} ] or [] to string
+  if (Array.isArray(data.primaryStoryLabel)) {
+    data.primaryStoryLabel = data.primaryStoryLabel.map(item => _get(item, 'text', item)).join();
+  }
   return data;
 };

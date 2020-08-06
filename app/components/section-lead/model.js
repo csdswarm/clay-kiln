@@ -74,8 +74,10 @@ module.exports = recirculationData({
       urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
+      curatedOverride: result.overrideLabel,
       label: result.overrideLabel || label,
-      plaintextTitle: toPlainText(result.title)
+      plaintextTitle: toPlainText(result.title),
+      sectionFront: result.sectionFront
     };
   },
 
@@ -101,10 +103,7 @@ module.exports = recirculationData({
         default: { width: 780, crop: wideCrop }
       };
 
-    data.primaryStoryLabel = data.primaryStoryLabel
-      || locals.secondarySectionFront
-      || locals.sectionFront
-      || data.tag;
+    data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront;
 
     if (isMultiColumn(data)) {
       Object.assign(defaultImageSizes, {
