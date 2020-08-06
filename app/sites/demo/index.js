@@ -9,7 +9,8 @@ const publishing = require('../../services/publishing'),
     '/_components/contest/instances',
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
-    '/_components/station-front/instances'
+    '/_components/station-front/instances',
+    '/_components/frequency-iframe-page/instances'
   ];
 
 module.exports.routes = [
@@ -71,6 +72,7 @@ module.exports.routes = [
   { path: '/contests/:slug' },
   { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
   { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
+  { path: '/:stationSlug/stats/:league/:standings', dynamicPage: 'frequency-iframe-page' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
