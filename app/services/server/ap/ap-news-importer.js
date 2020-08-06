@@ -47,7 +47,7 @@ const
   },
 
   getComponentBase = _memoize((name, { site: { host } }) => __.dbGet(`${host}/_components/${name}`)),
-  getNewComponent = (name, locals) => ({ ... getComponentBase(name, locals) });
+  getNewComponent = (name, locals) => ({ ...getComponentBase(name, locals) });
 
 // createPage imports hierarchy makes an immediate call to redis, which causes issues in tests, so lazy load only.
 addLazyLoadProperty(__, 'createPage', () => require('../page-utils').createPage);
@@ -75,7 +75,10 @@ async function findExistingArticle({ itemid } = {}) {
     query = setImmutable(QUERY_TEMPLATE, 'body.query.term[\'ap.itemid\']', itemid);
 
   try {
-    const [existing] = await searchByQuery(query, null, { includeIdInResult: true, shouldDedupeContent: false }),
+    const [existing] = await searchByQuery(query, null, {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      }),
       { rows: [info] = [] } = existing && await dbRaw(`
           SELECT id, data
           FROM pages,
@@ -163,14 +166,16 @@ async function getNewStations(article, stationMappings, locals) {
     stationEntries = Object.entries(stationMappings),
     stationsBySlug = await getAllStations.bySlug({ locals }),
     newStations = sectionFront
-      ? stationEntries.filter(([key]) => (sectionFront && key !== stationSlug) && !syndicated.includes(key))
+      ? stationEntries.filter(([key]) => (key !== stationSlug) && !syndicated.includes(key))
       : stationEntries;
 
-  return newStations.map(([stationSlug, [data]]) => {
-
-    const { callsign, name } = stationSlug === DEFAULT_STATION.site_slug
-      ? DEFAULT_STATION
-      : stationsBySlug[stationSlug];
+  return newStations.map(([stationSlug, mappings]) => {
+    const
+      { callsign, name } = stationSlug === DEFAULT_STATION.site_slug
+        ? DEFAULT_STATION
+        : stationsBySlug[stationSlug],
+      // mappings could be individual object or array. Currently only taking first item mapping
+      [data] = [].concat(mappings);
 
     return {
       ...data,
@@ -195,7 +200,7 @@ function resolveImage(associations = {}) {
     apRef = Object.values(associations).find(({ type }) => type === 'picture');
 
   return apRef
-    ?  saveApPicture(apRef.uri)
+    ? saveApPicture(apRef.uri)
     : Promise.resolve({
       headline: 'RADIO.COM - Associated Press',
       url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg'
@@ -216,12 +221,12 @@ async function resolveArticleSubComponents(article) {
       sideShare,
       tags
     } = article;
-  
+
   return Promise.all([
     { _ref: feedImg._ref, ...await dbGet(feedImg._ref) },
     Promise.all(lead.map(async item => ({ _ref: item._ref, ...await dbGet(item._ref) }))),
-    { _ref: sideShare._ref, ... await dbGet(sideShare._ref) },
-    { _ref: tags._ref, ... await dbGet(tags._ref) }
+    { _ref: sideShare._ref, ...await dbGet(sideShare._ref) },
+    { _ref: tags._ref, ...await dbGet(tags._ref) }
   ]);
 }
 
@@ -480,6 +485,8 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   });
   await restPut(`${pageUrl}@published`, pageInfo, true);
 
+  newArticleData.pageData = { _ref: pageRef };
+
   return newArticleData;
 }
 
@@ -524,7 +531,8 @@ async function importArticle(apMeta, stationMappings, locals) {
       article,
       metaDescription,
       metaImage,
-      metaTitle
+      metaTitle,
+      pageData
     } = isModifiedByAP || newStations
       ? await mapApDataToArticle(apMeta, articleData, newStations, locals)
       : articleData;
@@ -537,6 +545,7 @@ async function importArticle(apMeta, stationMappings, locals) {
     metaImage,
     metaTitle,
     newStations,
+    pageRef: pageData._ref.replace('@published', ''),
     preExistingArticle
   };
 }
