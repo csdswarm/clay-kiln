@@ -37,6 +37,27 @@ function getPrefixAndKey(path) {
 }
 
 const routes = [
+  // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
+  // https://regex101.com/r/TFNbVH/1
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return !!pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        [ , stationSlug, author ] = pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
+
+      if (stationSlug) {
+        params.stationSlug = stationSlug;
+      }
+      if (author) {
+        params.author = author;
+      }
+    },
+    getPageData: req => curatedOrDynamicRouteHandler(req, 'author')
+  },
   { // stations directories
     testPath: req => req.path.includes('/stations'),
     getParams: (req, params) => {
@@ -62,27 +83,6 @@ const routes = [
       params.dynamicSlug = matches[2];
     },
     getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
-  },
-  // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
-  // https://regex101.com/r/TFNbVH/1
-  {
-    testPath: req => {
-      const { pathname } = url.parse(req.url);
-
-      return !!pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
-    },
-    getParams: (req, params) => {
-      const { pathname } = url.parse(req.url),
-        [ , stationSlug, author ] = pathname.match(/([\w\-]+)?\/authors\/?([\w\-]+)+$/);
-
-      if (stationSlug) {
-        params.stationSlug = stationSlug;
-      }
-      if (author) {
-        params.author = author;
-      }
-    },
-    getPageData: req => curatedOrDynamicRouteHandler(req, 'author')
   },
   // `/contest-rules` or `{stationSlug}/contest-rules`
   {
@@ -195,10 +195,16 @@ async function middleware(req, res, next) {
   }
 
   // Define Curated/Dynamic routes.
-  // Match against section-front and topic slug prefixes
-  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  // Match against section-front, topic, and author slug prefixes
+  const sectionFrontsList = '/_lists/primary-section-fronts',
+    sectionFronts = await db.get(`${ req.hostname }${ sectionFrontsList }`),
+    sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
+    curatedOrDynamicRoutePrefixes = [
+      ...sectionFrontValues,
+      'topic',
+      'authors'
+    ];
 
-  curatedOrDynamicRoutePrefixes.push('topic');
   if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
     curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
   }

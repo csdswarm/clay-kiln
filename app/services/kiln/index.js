@@ -20,6 +20,7 @@ module.exports = () => {
   require('./plugins/manage-syndicated-content')();
   require('./plugins/national-subscriptions')();
   require('./plugins/new-page-override')();
+  require('./plugins/podcast-category-select')();
   require('./plugins/podcast-select')();
   require('./plugins/restrict-users')();
   require('./plugins/select-list')();

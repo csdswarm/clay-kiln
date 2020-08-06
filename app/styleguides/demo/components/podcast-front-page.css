@@ -1,0 +1,31 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin podcast-front-font1 {
+  @mixin font CircularStd-Black, 14px, $white, -0.55px, 17px;
+}
+
+.component--podcast-front-page {
+  &.podcast-front-page {
+    display: flex;
+    flex-direction: column;
+
+    .all-podcasts {
+      width: em(780);
+      height: em(50);
+      align-self: center;
+      @mixin medium-screen {
+        width: 100%;
+      }
+    }
+    .all-podcasts-button {
+      background: $purple;
+      width: 100%;
+      height: 100%;
+      @mixin podcast-front-font1;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+  }
+}

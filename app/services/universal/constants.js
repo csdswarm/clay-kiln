@@ -35,7 +35,8 @@ const _get = require('lodash/get'),
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     STATIC_PAGES: 'static-page',
-    STATIONFRONT: 'station-front'
+    STATIONFRONT: 'station-front',
+    PODCASTFRONT: 'podcast-front-page'
   },
 
   msnFeed = {
@@ -114,13 +115,13 @@ const _get = require('lodash/get'),
     urpsDomainName: 'National',
     national_doubleclick_bannertag: 'NTL.RADIO'
   },
-  
-  PODCASTS = 'podcasts',
   PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large,
 
-  LOAD_MORE_LIMIT = 10;
+  LOAD_MORE_LIMIT = 10,
+
+  PODCASTS = 'podcasts';
 
 module.exports = {
   DAY,

@@ -8,8 +8,8 @@
 
 const
   _get = require('lodash/get'),
-  isEmpty = require('lodash/isEmpty'),
   { retrieveList } = require('./lists'),
+  isEmpty = require('lodash/isEmpty'),
 
   /**
    * Generate relevant Branch.io meta tags for the page.
@@ -33,10 +33,10 @@ const
         });
       },
       isPodcast = _get(locals, 'podcast'),
-      // https://regex101.com/r/SyxFxE/1
-      isStationDetailPage = new RegExp(/\/.+\/*listen\/?$/).test(locals.url),
       episode = _get(locals, 'episode'),
       isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
+      // https://regex101.com/r/SyxFxE/1
+      isStationDetailPage = new RegExp(/\/.+\/*listen\/?$/).test(locals.url),
       timestamp = _get(locals, 'query.t');
 
     // primary section front
@@ -108,7 +108,7 @@ const
     if (timestamp) {
       addTag('timecode', timestamp);
     }
-    
+
     return tags;
   },
   /**

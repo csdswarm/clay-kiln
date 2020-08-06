@@ -1,0 +1,176 @@
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/mixins";
+
+@define-mixin podcast-featured-strip-title {
+  @mixin font CircularStd-Black, 24px, $black, -.38px, 29px;
+}
+@define-mixin podcast-featured-strip-sponsor-label {
+  @mixin font ProximaNova-Black, 14px, $black, -.38px, 17px;
+}
+@define-mixin podcast-featured-strip-font-category {
+  @mixin font CircularStd-Black, 15px, $robinsEgg, -.24px, 18px;
+}
+@define-mixin podcast-featured-strip-font-heading {
+  @mixin font CircularStd-Black, 16px, $black, -.55px, 19px;
+}
+@define-mixin podcast-featured-strip-font-description {
+  @mixin font CircularStd-Medium, 12px, $matterhorn, -.45px, 14px;
+}
+
+.component--podcast-featured-strip {
+  max-width: em(widthOnGrid(12, 11));
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto em(30, 11) auto;
+
+  &.show-border-bottom {
+    border-bottom: solid 1px $mercury;
+  }
+
+  .podcast-featured-strip__header {
+    display: flex;
+    align-items: center;
+    margin: em(13,24) 0;
+    @mixin podcast-featured-strip-title;
+
+    .podcast-featured-strip__sponsor-label {
+      margin-left: em(15,14);
+      @mixin podcast-featured-strip-sponsor-label;
+    }
+
+    .podcast-featured-strip__sponsor-image {
+      margin-left: em(16,14);
+      height: em(35,14);
+      width: em(100,14);
+      background: $dustyGray;
+      @mixin podcast-featured-strip-sponsor-label;
+    }
+  }
+
+  .podcast-featured-strip__items  {
+    display: flex;
+    flex-wrap: wrap;
+
+    .podcast-featured-strip__item {
+      margin-bottom: em(20);
+      max-width: em(widthOnGrid(3,2));
+      flex: 1 0;
+  
+      &:not(:last-child) {
+         margin-right: em(20);
+  
+        @mixin medium-screen {
+          margin-right: 0;
+        }
+      }
+  
+      &:nth-child(odd) {
+        @mixin medium-screen {
+          padding-right: em(10);
+        }
+        @mixin medium-small-screen {
+          padding-right: 0;
+        }
+      }
+  
+      &:nth-child(even) {
+        @mixin medium-screen {
+          padding-left: em(10);
+        }
+        @mixin medium-small-screen {
+          padding-left: 0;
+        }
+      }
+  
+      @mixin medium-screen {
+        flex: 1 0 50%;
+        max-width: em(widthOnGrid(3, 2, medium-screen));
+      }
+
+      @mixin medium-small-screen {
+        flex: 1 0 100%;
+        max-width: em(widthOnGrid(3, 2, medium-small-screen));
+      }
+
+      @mixin small-screen {
+        flex: 1 0 100%;
+      }
+
+      .podcast-featured-strip__image {
+        border: solid em(1) $mercury;
+        object-fit: cover;
+        width: 100%;
+      }
+    
+      .podcast-featured-strip__category {
+        @mixin podcast-featured-strip-font-category;
+        text-transform: uppercase;
+        margin-top: em(10,15);
+      }
+    
+      .podcast-featured-strip__heading {
+        @mixin podcast-featured-strip-font-heading;
+        margin-top: em(3);
+      }
+    
+      .podcast-featured-strip__description {
+        @mixin podcast-featured-strip-font-description;
+        margin-top: em(4,12);
+      }
+    
+      .podcast-featured-strip__link {
+        text-decoration: none;
+      }
+    }
+  }
+
+}
+
+.kiln-field {
+  .podcast-select {
+    .podcast-preview {
+      display: flex;
+      flex-direction: column;
+      max-width: initial;
+    }
+  
+    .podcast-preview__image {
+      display: block;
+      object-fit: cover;
+      width: 100%;
+      max-width: em(220);
+      margin: auto
+    }
+  
+    .podcast-preview__link {
+      margin-top: em(15, 22);
+      text-decoration: none;
+    }
+
+    .podcast-preview__description {
+      .podcast-description__label {
+        margin-top: em(15, 22);
+      }
+      .podcast-description__should-override {
+        margin-top: em(15, 22);
+      }
+      .podcast-description__value {
+        margin-top: em(15, 22);
+      }
+    }
+
+    .podcast-category-label {
+      margin-top: em(15, 22);
+      .podcast-description__label {
+        margin-top: em(15, 22);
+      }
+      .podcast-category-label__should-override {
+        margin-top: em(15, 22);
+      }
+      .podcast-category-label__value {
+        margin-top: em(15, 22);
+      }
+    }
+  }
+}

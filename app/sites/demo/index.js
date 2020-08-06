@@ -10,7 +10,8 @@ const middleware = require('./middleware'),
     '/_components/contest/instances',
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
-    '/_components/station-front/instances'
+    '/_components/station-front/instances',
+    '/_components/podcast-front-page/instances'
   ];
 
 module.exports.routes = [
@@ -93,7 +94,8 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getPodcastFrontSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [

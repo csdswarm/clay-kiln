@@ -36,10 +36,13 @@ slides:
         prop: description
         _label: Description
         _has:
-          help: the description of the slide
+          help: the description of the slide can be no more than 300 characters
           input: text
+          enforceMaxlength: true
           validate:
             required: true
+            max: 300
+            maxMessage: the description of the slide can be no more than 300 characters
       -
         prop: url
         _label: URL
