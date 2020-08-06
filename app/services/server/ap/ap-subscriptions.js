@@ -67,14 +67,18 @@ const
   importApSubscription = async (locals) => {
     try {
       const apFeed = await __.getApFeed(locals),
-        apSubscriptions = await __.getAll();
+        apSubscriptions = await __.getAll(),
+        intersect = ({ entitlements }, { products }) =>
+          !!_intersectionBy(entitlements, products, ({ id, value }) => id || value).length;
 
       return Promise.map(apFeed, feed => {
         const stationMappings = apSubscriptions
-          .filter(({ data }) => _intersectionBy(data.entitlements, feed.products, 'id').length)
+          .filter(({ data }) => intersect(data, feed))
           .reduce((acc, { data }) => {
-            if (!acc[data.stationSlug]) {
-              acc[data.stationSlug] = data.mappings;
+            const stationSlug = data.station.value;
+
+            if (!acc[stationSlug]) {
+              acc[stationSlug] = data.mappings;
             }
             return acc;
           }, {});

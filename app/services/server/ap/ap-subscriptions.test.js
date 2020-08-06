@@ -77,11 +77,11 @@ describe('apSubscription', () => {
                   secondarySectionFront: 'rock And roll all night'
                 }
               ],
-              stationSlug: 'slug1',
+              station: { label: 'Station 1', value: 'slug1' },
               entitlements: [
                 {
-                  id: 12345,
-                  name: 'AP Top News - Entertainment - Stories'
+                  name: 'AP Top News - Entertainment - Stories',
+                  value: 12345
                 }
               ]
             }
@@ -95,11 +95,11 @@ describe('apSubscription', () => {
                   secondarySectionFront: 'footbal'
                 }
               ],
-              stationSlug: 'slug2',
+              station: { label: 'Station 2', value: 'slug2' },
               entitlements: [
                 {
-                  id: 6789,
-                  name: 'An entitlement from the list in ON-1979'
+                  name: 'An entitlement from the list in ON-1979',
+                  value: 6789
                 }
               ]
             }
@@ -145,7 +145,7 @@ describe('apSubscription', () => {
       };
     }
 
-    it('importing ap-subscription articles', async () => {
+    it('imports ap-subscription articles', async () => {
       const {
         getAllStub,
         getApFeedStub,
