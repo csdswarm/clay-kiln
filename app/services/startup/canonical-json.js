@@ -74,6 +74,18 @@ const routes = [
     getParams: (req, params) => params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1],
     getPageData: req => db.get(`${req.hostname}/_pages/station@published`)
   },
+  { // podcast episode page - https://regex101.com/r/cjCzbC/4
+    testPath: req => /\/?([\w\-]+)?\/podcasts\/([\w\-]+)\/([\w\-]+)/.test(req.path),
+    applyMiddleware: (req, res, next) => middleware.episodeMiddleware(req, res, next),
+    getParams: (req, params) => {
+      const matches = req.path.match(/\/?([\w\-]+)?\/podcasts\/([\w\-]+)\/([\w\-]+)/);
+
+      params.stationSlug = matches[1];
+      params.dynamicSlug = matches[2];
+      params.dynamicEpisode = matches[3];
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/podcast-episode@published`)
+  },
   { // podcast show page - https://regex101.com/r/cjCzbC/6
     testPath: req => /\/?([\w\-]+)?\/podcasts\/?([\w\-]+)\/?$/.test(req.path),
     getParams: (req, params) => {

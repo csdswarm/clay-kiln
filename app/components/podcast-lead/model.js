@@ -6,6 +6,7 @@ const
   _get = require('lodash/get'),
   qs = require('querystring'),
   format = require('date-fns/format'),
+  parse = require('date-fns/parse'),
   addSeconds = require('date-fns/add_seconds'),
   { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants');
 
@@ -95,7 +96,9 @@ module.exports = unityComponent({
         getDurationFormat(durationInSeconds)
       );
 
-      data._computed.published_date_formatted = format(episodeData.published_date, 'MMMM d, YYYY');
+      data._computed.published_date_formatted = format(
+        parse(episodeData.published_date), 'MMMM DD, YYYY'
+      );
     }
 
     // at this point it isn't clear how we will get the share and subscription info necessary to

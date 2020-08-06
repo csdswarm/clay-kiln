@@ -3,7 +3,8 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
   _get = require('lodash/get'),
-  classnames = require('classnames');
+  classnames = require('classnames'),
+  podcasts = require('../../services/universal/podcast');
 
 
 async function addBreadcrumbs(data, locals) {
@@ -38,11 +39,18 @@ module.exports = unityComponent({
     if (!locals || !locals.params) {
       return data;
     }
+    
     const componentClass = classnames({
-      editing: locals.edit
-    });
-
-    locals.contentType = 'episode';
+        editing: locals.edit
+      }),
+      contentType = 'episode',
+      { dynamicSlug, dynamicEpisode } = locals.params,
+      [podcast, episode] = await Promise.all([
+        locals.podcast || podcasts.getPodcastShow(locals, dynamicSlug),
+        locals.episode || podcasts.getPodcastEpisode(locals, dynamicEpisode)
+      ]);
+    
+    Object.assign(locals, { podcast, episode, contentType });
 
     data._computed = {
       componentClass,

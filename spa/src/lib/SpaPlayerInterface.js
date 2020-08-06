@@ -108,7 +108,7 @@ class SpaPlayerInterface {
    * @return {string}
    */
   getPlayState (current) {
-    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive
+    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive || window.RadioPlayer.streamType
 
     if (current === 'play') {
       return interactive ? 'pause' : 'stop'
@@ -144,6 +144,11 @@ class SpaPlayerInterface {
 
       window.addEventListener('stationIdClick', e => {
         this.redirectToSDP(e.detail.siteSlug, e.detail.id, e.detail.callsign)
+      })
+
+      window.addEventListener('goToPodcastPage', e => {
+        const { podcastSiteSlug, stationSiteSlug } = e.detail
+        this.redirectToPodcast(podcastSiteSlug, stationSiteSlug)
       })
 
       return true
@@ -244,6 +249,29 @@ class SpaPlayerInterface {
   redirectToSDP (siteSlug, id, callsign) {
     const value = siteSlug || callsign || id
     this.spa.$router.push(`/${value}/listen`)
+  }
+
+  /**
+   * Redirect to Podcast Page by using podcastSiteSlug
+   * Return if the route is the current
+   * @param { string } podcastSiteSlug
+   * @param { string } stationSiteSlug
+   */
+  redirectToPodcast (podcastSiteSlug, stationSiteSlug) {
+    let route = `/podcasts/${podcastSiteSlug}`
+
+    if (stationSiteSlug) {
+      // if the siteSlug is defined make sure to append so they go back
+      // to station context
+      route = `/${stationSiteSlug}${route}`
+    }
+
+    if (window.location.pathname === route) {
+      // Short circuit If the route is the same as current
+      return
+    }
+
+    this.spa.$router.push(route)
   }
 
   /**

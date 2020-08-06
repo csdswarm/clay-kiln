@@ -42,16 +42,7 @@
   &__item-info {
     display: flex;
     flex-direction: column;
-    flex: 0 0 widthOnGrid(8, 7);
-    @mixin medium-screen {
-      flex: 0 0 widthOnGrid(5, 5, medium-screen);
-    }
-    @mixin medium-small-screen {
-      flex: 0 0 widthOnGrid(3, 3, medium-small-screen);
-    }
-    @mixin small-screen {
-      flex: 0 0 widthOnGrid(3, 3, small-screen);
-    }
+    flex-grow: 1;
   }
   &__title {
     @mixin podcast-episode-list-font1;
@@ -85,8 +76,18 @@
     @mixin podcast-episode-list-font1;
     width: em(32);
     height: em(32);
-    .svg-play-symbol {
+    .wplyr-cntrl-symbol {
       fill: theme(primaryColor, $purple);
+    }
+    &.show__play {
+      .pause {
+        display: none;
+      }
+    }
+    &.show__pause {
+      .play {
+        display: none;
+      }
     }
   }
 

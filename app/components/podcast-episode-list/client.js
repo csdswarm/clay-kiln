@@ -9,10 +9,11 @@ const
   qs = require('qs'),
   componentClassName = 'podcast-episode-list',
   { utils } = require('../../services/client/utils'),
+  clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
   loadMoreAmount = 20;
 
 let
-  $;
+  $one, $all;
 
 
 
@@ -101,10 +102,11 @@ class PodcastListComponentView {
   constructor(containerElement) {
     this.elements = {
       container: containerElement,
-      sortDropdown: $('#episodesOrder'),
-      episodesContainer: $(`.${componentClassName}__episodes`),
-      loadMoreBtn: $(`.${componentClassName}__load-more-btn`)
+      sortDropdown: $one('#episodesOrder'),
+      episodesContainer: $one(`.${componentClassName}__episodes`),
+      loadMoreBtn: $one(`.${componentClassName}__load-more-btn`)
     };
+    // TODO: ON-2216 refactor to use fetchDom
     this.itemTemplate = this.getHtmlTemplateFromClone();
   }
   /**
@@ -112,6 +114,7 @@ class PodcastListComponentView {
    * @return {Function} // function that will except episode data
    */
   getHtmlTemplateFromClone() {
+    if (!this.elements.episodesContainer.children[0]) return;
     const
       clone = this.elements.episodesContainer.children[0].cloneNode(true),
       cloneElements = {
@@ -139,11 +142,17 @@ class PodcastListComponentView {
               break;
             case 'playBtn':
               element.setAttribute('href', data.attributes.episode_detail_url);
+              // setting for player needs
+              element.dataset.playPodcastEpisodeId = data.id,
+              element.dataset.playPodcastShowId = data.attributes.podcast[0].id;
+              break;
+            case 'title':
+              element.setAttribute('href', data.attributes.episode_detail_url);
+              element.innerText = utils.truncate(data.attributes.title, 52, { useSuffix: true });
               break;
             default:
               let value = data.attributes[key];
 
-              if (key === 'title') value = utils.truncate(value, 52, { useSuffix: true });
               if (key === 'description') value = utils.truncate(value, 210, { useSuffix: true });
               element.innerText = value;
               break;
@@ -195,7 +204,7 @@ class PodcastListComponentController {
    * @param {HTMLElement} containerElement - The HTMLElement of the component.
    */
   constructor(containerElement) {
-    _bindAll(this, 'onMount', 'onDismount', 'onClick', 'onChange');
+    _bindAll(this, 'onMount', 'onDismount', 'onClick', 'onChange', 'onPlaybackStateChange');
     this.view = new PodcastListComponentView(containerElement);
     this.model = new PodcastListComponentModel(containerElement);
     doc.addEventListener(`${componentName}-mount`, this.onMount);
@@ -206,6 +215,7 @@ class PodcastListComponentController {
   onMount() {
     this.view.elements.container.addEventListener('click' , this.onClick);
     this.view.elements.sortDropdown.addEventListener('change' , this.onChange);
+    window.addEventListener('playbackStateChange', this.onPlaybackStateChange);
   }
   /**
    * click event handler
@@ -215,6 +225,7 @@ class PodcastListComponentController {
     if (this.model.isLoading) {
       return;
     }
+
     if (e.target === this.view.elements.loadMoreBtn) {
       this.model.isLoading == true;
       this.model.getEpisodes()
@@ -229,6 +240,40 @@ class PodcastListComponentController {
           }
         })
         .finally(()=> this.model.isLoading = false);
+    }
+
+    // to launch web player
+    const playBtnEl = e.target.closest('.podcast-episode-list__play-btn');
+
+    if (playBtnEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      const
+        episodeId = playBtnEl.dataset.playPodcastEpisodeId,
+        podcastId = playBtnEl.dataset.playPodcastShowId,
+        action = playBtnEl.classList.contains('show__pause') ? 'pause' : 'play';
+
+      let options = {
+        playbackStatus: action
+      };
+
+      if (action === 'play') {
+        options = {  ...options, stationId: null, podcastId, episodeId
+        };
+      }
+
+      clientCommunicationBridge
+        .sendMessage(
+          'SpaPlayerInterfacePlaybackStatus',
+          options
+        );
+    }
+
+    // if anchor link
+    if (e.target.classList.contains('podcast-episode-list__title')) {
+      e.preventDefault();
+      e.stopPropagation();
+      vueApp.$router.push(e.target.getAttribute('href'));
     }
   }
   /**
@@ -262,10 +307,30 @@ class PodcastListComponentController {
     this.view.elements.sortDropdown.removeEventListener('change' , this.onChange);
     doc.removeEventListener(`${componentName}-mount`, this.onMount);
   }
+  /**
+   * handler for when the web player playback state changes
+   *
+   * @param {Event} e
+   */
+  onPlaybackStateChange(e) {
+    const
+      { podcastEpisodeId, playerState } = e.detail,
+      targetBtn = $one(`[data-play-podcast-episode-id="${podcastEpisodeId}"]`),
+      webPlayerButtons = $all(`.${componentClassName}__play-btn`);
+
+    webPlayerButtons.forEach(btn => {
+      btn.classList.remove('show__play');
+      btn.classList.remove('show__pause');
+      if (btn === targetBtn) {
+        btn.classList.add(`show__${playerState === 'pause' ? 'play' : 'pause'}`);
+      }
+    });
+  }
 }
 
 
 module.exports = (el) => {
-  $ = el.querySelector.bind(el); // quick alias isolated to the container el
+  $one = el.querySelector.bind(el); // quick alias isolated to the container el
+  $all = el.querySelectorAll.bind(el); // quick alias isolated to the container el
   return new PodcastListComponentController(el);
 };
