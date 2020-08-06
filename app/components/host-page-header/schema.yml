@@ -9,10 +9,11 @@ hosts:
     input: simple-list
     propertyName: isRubric
     badge: FR
+    help: After typing a name, click ENTER or TAB to save your entry
     autocomplete:
       list: hosts
-      allowRemove: false
-      allowCreate: false
+      allowRemove: true
+      allowCreate: true
     validate:
       max: 1
       required: true
@@ -93,4 +94,4 @@ _groups:
     _placeholder:
       height: 250px
       text: Host Header
-      ifEmpty: host
+      ifEmpty: hosts
