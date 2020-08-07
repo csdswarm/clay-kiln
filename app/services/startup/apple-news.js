@@ -323,7 +323,7 @@ const _get = require('lodash/get'),
             && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
             && !noIndexNoFollow;
         };
-      
+
       if (await validAppleNews()) {
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
@@ -338,7 +338,7 @@ const _get = require('lodash/get'),
             'Content-Type': contentType
           },
           body: formData
-        }).then(({ status, statusText, body: { data: body } } ) => {
+        }).then(({ status, statusText, body: { data: body, errors } } ) => {
           if ([ 200, 201 ].includes(status)) {
             // To be deleted/changed to info once ANF beings working
             handleReqErr(
@@ -367,7 +367,7 @@ const _get = require('lodash/get'),
               {
                 status,
                 statusText,
-                errors: body.errors,
+                errors,
                 metadata: JSON.stringify(metadata),
                 uri: articleRef,
                 articleANF: JSON.stringify(articleANF)
