@@ -354,7 +354,7 @@ const
       tags = tags.split(',');
     }
 
-    // Check for tags. Some layouts/pages may not include a component with the tags parameter making it undefined.
+    // Check for tags. One column layouts may not include a component with the tags parameter making it undefined.
     if (tags) {
     // retain the correct formatting for updating the tags for kiln's UI
       data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
