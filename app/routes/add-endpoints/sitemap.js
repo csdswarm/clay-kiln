@@ -92,7 +92,13 @@ function getRefreshViewsQuery(sitemapViews) {
 
 module.exports = router => {
   router.get('/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
-    const viewName = 'sitemap_' + _snakeCase(req.params.name);
+    const viewName = 'sitemap_' + _snakeCase(req.params.name),
+      sql =
+      `
+      SELECT data
+      FROM ${viewName}
+      WHERE id = ?
+      `;
 
     if (!sitemapViews.has(viewName)) {
       return next();
@@ -100,11 +106,7 @@ module.exports = router => {
 
     // this shouldn't be declared above the short circuit
     // eslint-disable-next-line one-var
-    const result = await db.raw(`
-      SELECT data
-      FROM ${viewName}
-      WHERE id = ${req.params.id}
-    `);
+    const result = await db.raw(sql, [req.params.id]);
 
     if (!result.rows[0]) {
       return next();
@@ -141,11 +143,13 @@ module.exports = router => {
     if (!stationSitemapViews.includes('sitemap_' + _snakeCase(req.params.name))) return next();
 
     const viewName = 'sitemap_station_' + _snakeCase(req.params.name),
-      result = await db.raw(`
-      SELECT data
-      FROM ${viewName}
-      WHERE id = '${req.params.stationSlug}-${req.params.id}'
-    `);
+      sql =
+        `
+        SELECT data
+        FROM ${viewName}
+        WHERE id = ?
+        `,
+      result = await db.raw(sql, [`${req.params.stationSlug}-${req.params.id}`]);
 
     if (!result.rows.length) {
       return next();
