@@ -307,7 +307,7 @@ const _get = require('lodash/get'),
             accessoryText: accessoryText || secondarySectionFront || sectionFront || 'metadata.byline',
             ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
             ...isHidden ? { isHidden } : {},
-            ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
+            ...process.env.APPLE_NEWS_PREVIEW_ONLY === 'true' ? { isPreview: true } : { isPreview: false },
             ...isSponsored ? { isSponsored } : {},
             links: {
               channel: ANF_CHANNEL_API,
@@ -323,7 +323,7 @@ const _get = require('lodash/get'),
             && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
             && !noIndexNoFollow;
         };
-
+      
       if (await validAppleNews()) {
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
@@ -338,7 +338,7 @@ const _get = require('lodash/get'),
             'Content-Type': contentType
           },
           body: formData
-        }).then(({ status, statusText, body }) => {
+        }).then(({ status, statusText, body: { data: body } } ) => {
           if ([ 200, 201 ].includes(status)) {
             // To be deleted/changed to info once ANF beings working
             handleReqErr(
@@ -354,10 +354,12 @@ const _get = require('lodash/get'),
                   type: body.type,
                   shareUrl: body.shareUrl,
                   links: body.links,
-                  revision: body.revision
+                  revision: body.revision,
+                  isPreview: body.isPreview,
+                  state: body.state
                 }
               });
-            res.status(status).send(body.data);
+            res.status(status).send(body);
           } else {
             handleReqErr(
               {},
