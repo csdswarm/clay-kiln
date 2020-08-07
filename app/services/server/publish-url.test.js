@@ -11,7 +11,7 @@ chai.use(sinonChai);
 
 describe('publish-url', ()=> {
   beforeEach(sinon.restore);
-  async function setup_publisUrl(options) {
+  async function setup_publishUrl() {
     const  { _internals: __, getStaticPageSlugUrl } = publishUrl,
       component = {
         content:
@@ -37,10 +37,6 @@ describe('publish-url', ()=> {
         main: [ 'clay.radio.com/_components/static-page/instances/ckdhg4twf000927pdoyxyyfo2' ]
       },
       pageType = 'static-page',
-      radioUrlOptions = {
-        prefix: 'http://clay.radio.com',
-        slug: 'a-valid-headline',
-        pageType: 'static-page' },
       stationComponent = {
         content:
         [ { _ref:
@@ -54,41 +50,37 @@ describe('publish-url', ()=> {
         prefix: 'http://clay.radio.com',
         slug: 'a-valid-station-headline',
         pageType: 'static-page',
-        stationSlug: 'thebull' };
+        stationSlug: 'thebull' },
+      urlOptions = {
+        prefix: 'http://clay.radio.com',
+        slug: 'a-valid-headline',
+        pageType: 'static-page' };
 
-    if (options.station) {
-      __.pubUtils.getMainComponentFromRef = sinon.stub()
-        .resolves({ stationComponent, pageType });
-      __.pubUtils.getUrlOptions = sinon.stub()
-        .resolves(stationUrlOptions);
-    } else {
-      __.pubUtils.getMainComponentFromRef = sinon.stub()
-        .resolves({ component, pageType });
-      __.pubUtils.getUrlOptions = sinon.stub()
-        .resolves(radioUrlOptions);
-    }
-
-    const  redirectUrlRadio = await getStaticPageSlugUrl(pageData, locals, mainComponentRefs),
-      redirectUrlRadioStation = await getStaticPageSlugUrl(pageDataStation, locals, mainComponentRefs);
-
-    return { redirectUrlRadio, redirectUrlRadioStation };
+    return { __, component, getStaticPageSlugUrl, locals, mainComponentRefs, pageData, pageDataStation, pageType, stationComponent, stationUrlOptions, urlOptions };
   }
 
   describe('getStaticPageSlugUrl',async () => {
+    it('Generates an url with a slug appended for radio.com', async () => {
+      const { pageData, component, urlOptions, locals, mainComponentRefs, pageType, __,  getStaticPageSlugUrl } = await setup_publishUrl();
+      
+      __.pubUtils.getMainComponentFromRef = sinon.stub().resolves({ component, pageType });
+      __.pubUtils.getUrlOptions = sinon.stub().resolves(urlOptions);
+      const result = await getStaticPageSlugUrl(pageData, locals, mainComponentRefs);
 
-    it('Generates an url with an slug appended for radio.com', async () => {
-      const { redirectUrlRadio } = await setup_publisUrl({});
-
-      expect(redirectUrlRadio).to.be.equal('http://clay.radio.com/a-valid-headline');
-      expect(redirectUrlRadio).to.be.a('string');
+      expect(result).to.be.equal('http://clay.radio.com/a-valid-headline');
+      expect(result).to.be.a('string');
     });
 
     it('Generates an url with a slug appended for a station', async () => {
-      const station = 'a-valid-station',
-        { redirectUrlRadioStation } = await setup_publisUrl({ station });
+      const { pageDataStation, stationComponent, stationUrlOptions, locals, mainComponentRefs, pageType, __,  getStaticPageSlugUrl } = await setup_publishUrl();
 
-      expect(redirectUrlRadioStation).to.be.equal('http://clay.radio.com/thebull/a-valid-station-headline');
-      expect(redirectUrlRadioStation).to.be.a('string');
+      __.pubUtils.getMainComponentFromRef = sinon.stub().resolves({ stationComponent, pageType });
+      __.pubUtils.getUrlOptions = sinon.stub().resolves(stationUrlOptions);
+
+      const result = await getStaticPageSlugUrl(pageDataStation, locals, mainComponentRefs);
+
+      expect(result).to.be.equal('http://clay.radio.com/thebull/a-valid-station-headline');
+      expect(result).to.be.a('string');
     });
   });
 });
