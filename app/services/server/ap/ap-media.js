@@ -12,7 +12,7 @@ const
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
 
-  INCLUDES = 'associations,headline_extended,meta.products,renditions.nitf,subject',
+  INCLUDES = 'associations,headline_extended,meta.products,renditions.nitf,subject,versioncreated',
   MAX_CACHE_AP_IN_SECONDS = 3 * DAY / 1000,
 
   __ = {
