@@ -84,7 +84,7 @@ async function run() {
       })
       .then(pageData => {
         return clayImport({
-          payload: mock,
+          payload: pageData,
           hostUrl: `${toEnvHttp}://${toEnv}`,
           publish: true
         })
