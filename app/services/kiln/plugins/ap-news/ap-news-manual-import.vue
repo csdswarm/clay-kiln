@@ -14,7 +14,7 @@
     <ui-textbox
       class="ap-media-manual-import__entitlement--filter"
       icon="search"
-      floatingLabel="true"
+      floatingLabel
       label="Search"
       v-model="filter"
       @change="searchContent"
