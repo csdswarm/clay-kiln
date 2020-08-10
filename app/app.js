@@ -28,6 +28,7 @@ startup(express())
     log('info', 'Clay listening on ' + ip + ':' + port + ' (process ' + process.pid + ')');
 
     environmentVariablesInDb();
+    log('info', 'Node args', process.execArgv);
   })
   .catch(function (error) {
     log('error', error);

@@ -1,5 +1,12 @@
+_version: 1.0
 _permission:
   update: station-navigation
 
 featuredLinks:
   _subscribe: featuredLinks
+
+hidePodcastsLink:
+  _subscribe: hidePodcastsLink
+
+podcastsUrl:
+  _subscribe: listenNavPodcastUrl
