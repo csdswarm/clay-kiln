@@ -294,11 +294,9 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       },
       byline: [
         {
-          names: [],
+          names: [{ text: 'Associated Press', slug: 'associated-press' }],
           prefix: 'by',
-          sources: [
-            { text: 'The Associated Press', slug: 'the-associated-press' }
-          ]
+          sources: []
         }
       ],
       feedImgUrl: imageUrl,
@@ -476,6 +474,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     meta = await restGet(`${pageUrl}/meta`);
 
   meta.title = `AP-IMPORT: ${headline}`;
+  meta.authors = ['Associated Press'];
 
   await restReq(`${pageUrl}/meta`, {
     method: 'PATCH',
@@ -486,6 +485,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     },
     body: JSON.stringify(meta)
   });
+
   await restPut(`${pageUrl}@published`, pageInfo, true);
 
   newArticleData.pageData = { _ref: pageRef };

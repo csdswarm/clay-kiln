@@ -674,8 +674,10 @@ describe('server', () => {
           expect(__.restGet).to.have.been.calledWith(NEW_PAGE_REF_MATCH);
           expect(__.restReq).to.have.been.calledWith(
             NEW_PAGE_REF_MATCH,
-            sinon.match.has('body', `{"title":"AP-IMPORT: ${META_HEADLINE}"}`)
-          );
+            sinon.match.has(
+              'body',
+              `{"title":"AP-IMPORT: ${META_HEADLINE}","authors":["Associated Press"]}`
+            ));
         });
 
         it('publishes updates', async () => {
