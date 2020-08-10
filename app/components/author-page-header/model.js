@@ -40,17 +40,18 @@ const
 
 module.exports = unityComponent({
   render: (ref, data, locals) => {
-    if (_get(locals, 'params.author') && _get(data, '_computed.dynamic')) {
-      data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
-    }
     data._computed.dynamic = getComponentInstance(ref) === 'new';
     data._computed.socialLinks = socialLinks.map(link => {
       const handle = data[link.type];
-
+      
       if (handle) {
         return { ...link, url: link.url.replace('{handle}', handle) };
       }
     }).filter(updatedLink => updatedLink);
+    
+    if (_get(locals, 'params.author') && _get(data, '_computed.dynamic')) {
+      data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
+    }
 
     assignStationInfo(ref, data, locals);
 
