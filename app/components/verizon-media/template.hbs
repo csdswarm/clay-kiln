@@ -4,13 +4,14 @@
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
           <video-js id="video-{{ videoId }}"
-                 class="video-js vjs-16-9"
-                 data-video-id="{{ videoId }}"
-                 data-company="{{ @root.locals.site.verizonMediaCompanyId }}"
-                 data-player="{{ @root.locals.site.verizonMediaPlayerId }}"
-                 data-embed="default"
-                 data-application-id
-                 controls></video-js>
+            class="video-js vjs-16-9"
+            data-video-id="{{ videoId }}"
+            data-company="{{ @root.locals.site.verizonMediaCompanyId }}"
+            data-player="{{ @root.locals.site.verizonMediaPlayerId }}"
+            data-embed="default"
+            data-application-id
+            controls>
+          </video-js>
         {{else}}
           <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
             <div class="placeholder-label">
