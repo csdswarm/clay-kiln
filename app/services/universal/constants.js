@@ -118,9 +118,19 @@ const _get = require('lodash/get'),
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large,
 
-  LOAD_MORE_LIMIT = 10;
+  LOAD_MORE_LIMIT = 10,
+
+  // I realize these are defined in colors.css but that obviously isn't importable
+  // so starting a mirrored object here
+  COLORS = {
+    lightningYellow: '#FEC517',
+    sunsetOrange: '#FF4940',
+    azureRadience: '#0099FF',
+    robinsEggBlue: '#00CCB7'
+  };
 
 module.exports = {
+  COLORS,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,

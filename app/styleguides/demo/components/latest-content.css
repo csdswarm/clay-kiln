@@ -96,15 +96,15 @@ $latestArticleHeight: em(168);
 
     &.section__container-- {
       &music, &firstColumn {
-         order: 1;
-       }
+        order: 1;
+      }
       &news, &secondColumn {
-         order: 2;
-       }
+        order: 2;
+      }
       &sports, &thirdColumn {
-         order: 3;
-         padding-right: 0;
-       }
+        order: 3;
+        padding-right: 0;
+      }
     }
 
     & .container__article-list {
@@ -237,18 +237,18 @@ $latestArticleHeight: em(168);
     line-height: em(26, 14);
 
     &:first-letter {
-       text-transform: uppercase;
-     }
+      text-transform: uppercase;
+    }
 
     &--news {
-       background-color: theme(primaryColor, $lightningYellow);
-     }
+      background-color: theme(primaryColor, $lightningYellow);
+    }
     &--music {
-       background-color: theme(primaryColor, $sunsetOrange);
-     }
+      background-color: theme(primaryColor, $sunsetOrange);
+    }
     &--sports {
-       background-color: theme(primaryColor, $azureRadience);
-     }
+      background-color: theme(primaryColor, $azureRadience);
+    }
 
     @mixin medium-small-screen {
       @mixin latest-content-font7;
