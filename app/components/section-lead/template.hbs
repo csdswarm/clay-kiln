@@ -24,7 +24,7 @@
               {{/if}}
               {{#unless @index}}
                 {{#unless ../_computed.useContentLabel}}
-                  {{ set 'label' (if ../primaryStoryLabel ../primaryStoryLabel else=article.label)  }}
+                  {{ set 'label' (default ../primaryStoryLabel article.label) }}
                   <span class="details__primary-story-label">{{ default article.curatedOverride label }}</span>
                 {{/unless}}
               {{/unless}}
