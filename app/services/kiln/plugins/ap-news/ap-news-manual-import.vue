@@ -14,9 +14,11 @@
     <ui-textbox
       class="ap-media-manual-import__entitlement--filter"
       icon="search"
-      placeholder="Search"
+      floatingLabel="true"
+      label="Search"
       v-model="filter"
       @change="searchContent"
+      help="Click one or more Entitlements from above to return all available AP News content matching your selection(s).  Enter a keyword into the search field, then click tab/enter to filter your search results."
     ></ui-textbox>
     <ui-progress-circular
       color="primary"
