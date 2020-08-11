@@ -307,7 +307,7 @@ const _get = require('lodash/get'),
             accessoryText: accessoryText || secondarySectionFront || sectionFront || 'metadata.byline',
             ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
             ...isHidden ? { isHidden } : {},
-            ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
+            ...process.env.APPLE_NEWS_PREVIEW_ONLY === 'true' ? { isPreview: true } : { isPreview: false },
             ...isSponsored ? { isSponsored } : {},
             links: {
               channel: ANF_CHANNEL_API,
@@ -338,7 +338,7 @@ const _get = require('lodash/get'),
             'Content-Type': contentType
           },
           body: formData
-        }).then(({ status, statusText, body }) => {
+        }).then(({ status, statusText, body: { data: body, errors } } ) => {
           if ([ 200, 201 ].includes(status)) {
             // To be deleted/changed to info once ANF beings working
             handleReqErr(
@@ -354,10 +354,12 @@ const _get = require('lodash/get'),
                   type: body.type,
                   shareUrl: body.shareUrl,
                   links: body.links,
-                  revision: body.revision
+                  revision: body.revision,
+                  isPreview: body.isPreview,
+                  state: body.state
                 }
               });
-            res.status(status).send(body.data);
+            res.status(status).send(body);
           } else {
             handleReqErr(
               {},
@@ -365,7 +367,7 @@ const _get = require('lodash/get'),
               {
                 status,
                 statusText,
-                errors: body.errors,
+                errors,
                 metadata: JSON.stringify(metadata),
                 uri: articleRef,
                 articleANF: JSON.stringify(articleANF)
