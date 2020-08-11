@@ -170,15 +170,64 @@ module.exports.render = async (ref, data, locals) => {
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
-      vertical: { createObj: sectionFront => ({ match: { sectionFront } }) },
-      // tags
-      tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
+      vertical: {
+        filterConditionType: 'addMust',
+        createObj: sectionFront => ({
+          bool: {
+            should: [
+              { match: { sectionFront } },
+              { match: { sectionFront: sectionFront.toLowerCase() } },
+              {
+                nested: {
+                  path: 'stationSyndication',
+                  query: {
+                    bool: {
+                      should: [
+                        { match: { 'stationSyndication.sectionFront': sectionFront } },
+                        { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
+                      ],
+                      minimum_should_match: 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        })
+      },
       // subcategory (secondary article type)
       subcategory: {
-        createObj: secondarySectionFront => ({ match: { 'secondarySectionFront.normalized': secondarySectionFront } })
+        filterConditionType: 'addMust',
+        createObj: secondarySectionFront => ({
+          bool: {
+            should: [
+              { match: { secondarySectionFront } },
+              { match: { sectionFront: secondarySectionFront.toLowerCase() } },
+              {
+                nested: {
+                  path: 'stationSyndication',
+                  query: {
+                    bool: {
+                      should: [
+                        { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
+                        { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
+                      ],
+                      minimum_should_match: 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        })
       },
+      // tags
+      tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // editorial feed (grouped stations)
-      editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
+      editorial: {
+        filterConditionType: 'addMust',
+        createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } })
+      },
       // contentType
       type: {
         filterConditionType: 'addMust',
@@ -190,23 +239,28 @@ module.exports.render = async (ref, data, locals) => {
       },
       // stations (stationSyndication) - station content
       station: {
-        createObj: station => [
-          { match: { stationCallsign: station } },
-          {
-            nested: {
-              path: 'stationSyndication',
-              query: {
-                bool: {
-                  should: [
-                    { match: { 'stationSyndication.callsign': station } },
-                    { match: { 'stationSyndication.callsign.normalized': station } }
-                  ],
-                  minimum_should_match: 1
+        filterConditionType: 'addMust',
+        createObj: station => ({
+          bool: {
+            should: [
+              { match: { stationCallsign: station } },
+              {
+                nested: {
+                  path: 'stationSyndication',
+                  query: {
+                    bool: {
+                      should: [
+                        { match: { 'stationSyndication.callsign': station } },
+                        { match: { 'stationSyndication.callsign.normalized': station } }
+                      ],
+                      minimum_should_match: 1
+                    }
+                  }
                 }
               }
-            }
+            ]
           }
-        ]
+        })
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
