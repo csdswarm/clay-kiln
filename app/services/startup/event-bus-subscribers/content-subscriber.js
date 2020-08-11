@@ -115,7 +115,7 @@ async function handleUnpublishContentPg(page) {
     updateSyndicationRedirects(page);
 
     if (['article', 'gallery'].includes(__.getComponentName(mainRef)) &&
-      process.env.APPLE_NEWS_ENABLED === 'TRUE') {
+      process.env.APPLE_NEWS_ENABLED === 'true') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
         articleData = await __.dbGet(appleNewsKey, null, {}),
         { id } = articleData;
