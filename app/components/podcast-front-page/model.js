@@ -1,7 +1,7 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
-  { assignStationInfo } = require('../../services/universal/create-content.js');
+  { assignStationInfo } = require('../../services/universal/create-content/index');
 
 module.exports = unityComponent({
   /**

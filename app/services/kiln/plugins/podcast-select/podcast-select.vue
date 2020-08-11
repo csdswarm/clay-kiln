@@ -83,8 +83,8 @@
 </template>
 <script>
     const _get = require("lodash/get");
+    const podcastUtils = require('../../../../services/universal/podcast');
     const radioApi = require('../../../client/radioApi');
-    const utils = require('../../../../services/universal/podcast');
     const { UiSelect, UiTextbox, UiCheckbox } = window.kiln.utils.components;
 
     export default {
@@ -176,25 +176,30 @@
                     self.podcastOptions = self.cachedResults[self.filter];
                 }
                 const url = self.filter && self.filter.length
-                    ? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
-                    : 'https://api.radio.com/v1/podcasts';
+                    ? `${window.location.protocol}//api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
+                    : `${window.location.protocol}//api.radio.com/v1/podcasts`;
 
                 radioApi.get(url)
-                    .then(podcastResponse => {
-                        self.podcastOptions = podcastResponse.data.map(({attributes, id}) => {
-                            return {
-                                id,
-                                label: attributes.title,
-                                title: attributes.title,
-                                url: utils.createUrl(attributes.title),
-                                imageUrl: utils.createImageUrl(attributes.image),
-                                description: attributes.description,
-                                shouldOverrideDescription: attributes.shouldOverrideDescription || false,
-                                customDescription: attributes.customDescription || '',
-                                shouldOverrideCategoryLabel: attributes.shouldOverrideCategoryLabel || false,
-                                customCategoryLabel: attributes.customCategoryLabel || '',
-                                category: _get(attributes, 'category[0]')
-                            }
+                    .then( async podcastResponse => {
+                        const podcasts = podcastResponse.data,
+                          stationsById = await podcastUtils.getStationsForPodcasts(podcasts, window.kiln.locals);
+                          
+                        self.podcastOptions = podcasts.map((podcast) => {
+
+                          const {attributes, id} = podcast; 
+                          return {
+                              id,
+                              label: attributes.title,
+                              title: attributes.title,
+                              url: podcastUtils.createUrl(podcast, stationsById[podcastUtils.getStationIdForPodcast(podcast)]),
+                              imageUrl: podcastUtils.createImageUrl(attributes.image),
+                              description: attributes.description,
+                              shouldOverrideDescription: attributes.shouldOverrideDescription || false,
+                              customDescription: attributes.customDescription || '',
+                              shouldOverrideCategoryLabel: attributes.shouldOverrideCategoryLabel || false,
+                              customCategoryLabel: attributes.customCategoryLabel || '',
+                              category: _get(attributes, 'category[0]')
+                          }
                         });
                         self.cachedResults[self.filter] = self.podcastOptions
                     })
