@@ -132,19 +132,16 @@ function transformAuthorsAndTags(op) {
 function transformSectionFronts(op) {
   const
     data = op.value,
-    makeLower = (obj, key) => {
-      if (typeof obj[key] === 'string') {
-        obj[key] = obj[key].toLowerCase();
-      }
-    };
-  
-  makeLower(data, 'sectionFront');
-  makeLower(data, 'secondarySectionFront');
+    downCaseSectionFronts = obj =>
+      ['sectionFront', 'secondarySectionFront'].forEach(key => {
+        if (typeof obj[key] === 'string') {
+          obj[key] = obj[key].toLowerCase();
+        }
+      });
 
-  (data.stationSyndication || []).forEach(syndication => {
-    makeLower(syndication, 'sectionFront');
-    makeLower(syndication, 'secondarySectionFront');
-  });
+  downCaseSectionFronts(data);
+
+  (data.stationSyndication || []).forEach(downCaseSectionFronts);
   
   return op;
 }
