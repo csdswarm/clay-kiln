@@ -12,5 +12,5 @@ async function getStationBySiteSlug_v1(site_slug) {
 }
 
 module.exports = {
-    v1: getStationBySiteSlug_v1
+    getStationBySiteSlug_v1
 };
