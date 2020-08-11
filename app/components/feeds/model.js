@@ -171,7 +171,6 @@ module.exports.render = async (ref, data, locals) => {
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
       vertical: {
-        filterConditionType: 'addMust',
         createObj: sectionFront => ({
           bool: {
             should: [
@@ -197,12 +196,11 @@ module.exports.render = async (ref, data, locals) => {
       },
       // subcategory (secondary article type)
       subcategory: {
-        filterConditionType: 'addMust',
         createObj: secondarySectionFront => ({
           bool: {
             should: [
               { match: { secondarySectionFront } },
-              { match: { sectionFront: secondarySectionFront.toLowerCase() } },
+              { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } },
               {
                 nested: {
                   path: 'stationSyndication',
@@ -224,10 +222,7 @@ module.exports.render = async (ref, data, locals) => {
       // tags
       tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // editorial feed (grouped stations)
-      editorial: {
-        filterConditionType: 'addMust',
-        createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } })
-      },
+      editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
       // contentType
       type: {
         filterConditionType: 'addMust',
@@ -243,14 +238,13 @@ module.exports.render = async (ref, data, locals) => {
         createObj: station => ({
           bool: {
             should: [
-              { match: { stationCallsign: station } },
+              { match: { 'stationCallsign.normalized': station } },
               {
                 nested: {
                   path: 'stationSyndication',
                   query: {
                     bool: {
                       should: [
-                        { match: { 'stationSyndication.callsign': station } },
                         { match: { 'stationSyndication.callsign.normalized': station } }
                       ],
                       minimum_should_match: 1
