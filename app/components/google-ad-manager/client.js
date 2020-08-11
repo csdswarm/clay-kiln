@@ -375,7 +375,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingAuthors: authors,
       // google ad manager doesn't take the tags from nmc since nmc cares about
       //   the editorial tags rather than the ad tags.
-      targetingTags : contentTags || getMetaTagContent('name',  NMC.tag)
+      targetingTags : getMetaTagContent('name',  NMC.tag).replace(/\//g, ',')
     };
 
   if (shouldUseNmcTags) {
@@ -506,7 +506,8 @@ function getAdTargeting(pageData) {
 function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
-    pageData = getPageData(window.location.pathname, contentType),
+    stationData = getCurrentStation(),
+    pageData = getPageData(window.location.pathname, contentType, stationData.site_slug),
     adTargetingData = getAdTargeting(pageData),
     ads = [];
 

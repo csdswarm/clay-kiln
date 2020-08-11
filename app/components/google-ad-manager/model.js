@@ -9,7 +9,7 @@ module.exports = unityComponent({
   render(ref, data, locals) {
     const isDefaultStation = locals.station.id === DEFAULT_STATION.id;
 
-    data._computed.station = _pick(_get(locals, 'station'), ['callsign', 'category', 'genre_name[0]', 'market_name'] );
+    data._computed.station = _pick(_get(locals, 'station'), ['callsign', 'category', 'genre_name[0]', 'market_name', 'site_slug'] );
     data._computed.station = JSON.stringify(data._computed.station);
     return {
       ...data,
