@@ -375,7 +375,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingAuthors: authors,
       // google ad manager doesn't take the tags from nmc since nmc cares about
       //   the editorial tags rather than the ad tags.
-      targetingTags: trackingData.tag
+      targetingTags : contentTags || getMetaTagContent('name',  NMC.tag)
     };
 
   if (shouldUseNmcTags) {
@@ -388,8 +388,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags : getMetaTagContent('name',  NMC.tag)
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
+      
     });
   } else {
     Object.assign(adTargetingData, {
@@ -411,19 +411,24 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
 function getCurrentStation() {
   const fromPathname = makeFromPathname({ pathname: window.location.pathname });
 
-  if (!fromPathname.isStationDetail()) {
-    return {};
+  if (fromPathname.isStationDetail()) {
+    // these shouldn't be declared above the short circuit
+    // eslint-disable-next-line one-var
+    const stationDetailComponent = document.querySelector('.component--station-detail'),
+      stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
+      station = stationDetailEl
+        ? JSON.parse(stationDetailEl.innerHTML)
+        : {};
+
+    return station;
+  } else {
+    const googleAdManagerElement = document.querySelector('.component--google-ad-manager'),
+      stationData = JSON.parse(googleAdManagerElement.dataset.gamStationData);
+
+    return stationData;
+    
   }
 
-  // these shouldn't be declared above the short circuit
-  // eslint-disable-next-line one-var
-  const stationDetailComponent = document.querySelector('.component--station-detail'),
-    stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-    station = stationDetailEl
-      ? JSON.parse(stationDetailEl.innerHTML)
-      : {};
-
-  return station;
 }
 
 /**
