@@ -375,7 +375,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingAuthors: authors,
       // google ad manager doesn't take the tags from nmc since nmc cares about
       //   the editorial tags rather than the ad tags.
-      targetingTags : getMetaTagContent('name',  NMC.tag).replace(/\//g, ',')
+      targetingTags : (getMetaTagContent('name',  NMC.tag) || '').replace(/\//g, ',')
     };
 
   if (shouldUseNmcTags) {
