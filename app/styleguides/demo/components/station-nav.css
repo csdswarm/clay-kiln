@@ -100,6 +100,12 @@ $caret-margin-right: em(25);
     position: relative;
     width: 100%;
     z-index: 100;
+
+    .menu--wrap {
+      @mixin largest-screen {
+        flex-wrap: wrap;
+      }
+    }
     
     .station-nav__menu {
       background: $station-primaryColor;
@@ -150,7 +156,21 @@ $caret-margin-right: em(25);
         margin-bottom: em(15);
         margin-top: em(15);
       }
-      .menu__image {
+      .anchor--rectangular {
+        display: block;
+        margin-bottom: 0;
+        margin-top: em(5);
+        @mixin largest-screen {
+          width: 100%;
+        }
+        @mixin medium-screen {
+          margin-bottom: em(20);
+        }
+        @mixin medium-small-screen {
+          margin-right: 0;
+        }
+      }
+      .menu__image--square {
         display: block;
         width: $station-logo-width-height;
         height: $station-logo-width-height;

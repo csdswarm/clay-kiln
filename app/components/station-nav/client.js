@@ -13,8 +13,8 @@ let desktopNavItems,
   stationId,
   stationListenNavInstance,
   lastTarget,
+  logoImg,
   isMobile = false;
-
 
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
@@ -287,6 +287,50 @@ const { getComponentInstance } = require('clayutils'),
       }
     });
 
+  },
+  getImageSize = (callback) => {
+    const wait = setInterval(() => {
+      const width = logoImg.naturalWidth,
+        height = logoImg.naturalHeight;
+
+      if (width && height) {
+        clearInterval(wait);
+        callback(width, height);
+      }
+    }, 30);
+  },
+  setLogoImages = (isSquaredLogo) => {
+    const imgSource = logoImg.getAttribute('src');
+
+    logoImg.setAttribute(
+      'src',
+      isSquaredLogo
+        ? `${imgSource}width=100&height=100&crop=1:1`
+        : `${imgSource}width=140&height=80&crop=4:3`
+    );
+
+    if (!isSquaredLogo) {
+      document.querySelector('.station-nav__menu').classList.add('menu--wrap');
+      logoImg.parentElement.classList.add('anchor--rectangular');
+      logoImg.classList.remove('menu__image--square');
+      setRectangularSizes(imgSource);
+    }
+  },
+  setRectangularSizes = (imgSource) => {
+    const srcSet = [
+      `${imgSource}width=140&height=80&crop=4:3 140w`,
+      `${imgSource}width=175&height=100&crop=4:3 175w`,
+      `${imgSource}width=168&height=96&crop=4:3 168w`,
+      `${imgSource}width=119&height=68&crop=4:3 119w`
+    ];
+
+    logoImg.setAttribute('srcset', srcSet.join(', '));
+    logoImg.setAttribute('sizes', '(max-width: 360px) 119px, (max-width: 480px) 168px, (max-width: 1023px) 175px, 140px');
+  },
+  checkLogoSize = () => {
+    getImageSize((width, height) => {
+      setLogoImages(width === height);
+    });
   };
 
 // mount listener for vue (optional)
@@ -306,7 +350,8 @@ document.addEventListener('station-nav-mount', function () {
   listenNavComponent = document.querySelector('.component--station-listen-nav');
   stationId = stationNav.dataset.stationId;
   stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
-
+  logoImg = document.querySelector('.menu__image');
 
   addEventListeners();
+  checkLogoSize();
 });
