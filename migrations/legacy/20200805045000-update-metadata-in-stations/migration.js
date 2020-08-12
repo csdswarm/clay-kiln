@@ -5,7 +5,7 @@ const { clayImport, clayExport, _set } = require('../../utils/migration-utils').
   { v1: parseHost } = require('../../utils/parse-host'),
   hostUrl = process.argv[2] || 'clay.radio.com',
   _get = require('lodash/get'),
-  getStationBySiteSlug_v1 = require('../../utils/get-stations-site-slug'),
+  { getStationBySiteSlug_v1 } = require('../../utils/get-stations-site-slug'),
   RADIOCOM = 'RADIO.COM',
   envInfo = parseHost(hostUrl);
 
