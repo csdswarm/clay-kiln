@@ -1,9 +1,15 @@
 'use strict';
 
+const format = require('date-fns/format'),
+  mockArticle = require('../mock/article'),
+  parse = require('date-fns/parse');
+
+const pubDate = format(parse(mockArticle.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ');
+
 module.exports = [
   { title: { _cdata: 'test headline' } },
   { link: 'https://clay.radio.com/articles/abc-music-news/leslie-odom-jr-reveals-that-he-almost-walked-out-of-the-hamilton-movie-over' },
-  { pubDate: 'Tue, 11 Aug 2020 03:30:00 -0500' },
+  { pubDate },
   {
     guid: [
       {

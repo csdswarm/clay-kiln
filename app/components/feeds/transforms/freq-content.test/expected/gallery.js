@@ -1,9 +1,15 @@
 'use strict';
 
+const format = require('date-fns/format'),
+  mockGallery = require('../mock/gallery'),
+  parse = require('date-fns/parse');
+
+const pubDate = format(parse(mockGallery.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ');
+
 module.exports = [
   { title: { _cdata: 'test headline' } },
   { link: 'https://clay.radio.com/music/gallery/test-seo-headline' },
-  { pubDate: 'Tue, 11 Aug 2020 15:53:26 -0500' },
+  { pubDate },
   {
     guid: [
       {
