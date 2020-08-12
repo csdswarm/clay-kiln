@@ -1,6 +1,10 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
+  axios = require('../../node_modules/axios'),
+  amphoraRender = require('../../node_modules/amphora/lib/render'),
+  logger = require('../../services/universal/log'),
+  log = logger.setup({ file: __filename }),
   mainComponentRefs = [
     '/_components/article/instances',
     '/_components/gallery/instances',
@@ -44,7 +48,6 @@ module.exports.routes = [
   { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
@@ -69,14 +72,50 @@ module.exports.routes = [
   { path: '/contests', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
   { path: '/contests/:slug' },
-  { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
-  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
   { path: '/:year/:month/:name' },
-  { path: '/:year/:month/:day/:name' }
+  { path: '/:year/:month/:day/:name' },
+
+  // Station listen path
+  {
+    path: '/:dynamicStation/listen',
+    middleware: async (req, res ) => {
+      try {
+        // Retrieve all listen only stations from the database,
+        // filter the results, and return the correct page reference as page.
+        const page = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
+          .then((response) => {
+            const listenOnlyStationSlugs = response.data.map((station) => {
+              return station.siteSlug;
+            });
+
+            if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
+              return 'station-detail-listen-only';
+            } else {
+              return 'station';
+            };
+          });
+
+        // It is not possible to modify dynamicPage through amphora's middleware property
+        // as the dynamicPage is already defined on the route when the route is added through amphora.
+        // Refer to: app/node_modules/amphora/lib/services/attachRoutes.js line 91. parseHandler().
+        // We directly use amphora's renderPage() to correctly render the corresponding page reference.
+        // Refer to: app/node_modules/amphora/lib/render.js line 111. renderPage().
+        amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}`, req, res, process.hrtime());
+
+      } catch (error) {
+        log('An error occured getting the listen only station style list. \n ERROR: ', error);
+
+        res.status(404);
+        res.send('Could not render dynamic page.');
+      };
+
+    }
+  }
+  
 ];
 
 // Resolve the url to publish to
