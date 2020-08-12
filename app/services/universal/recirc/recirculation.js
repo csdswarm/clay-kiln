@@ -9,6 +9,7 @@
  * Component expects the following fields in the schema.yml
  * populateFrom
  * contentType
+ * authors
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -27,7 +28,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl, boolObjectToArray } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl, boolKeys } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -49,8 +50,9 @@ const
   defaultMapDataToFilters = (ref, data, locals) => ({
     filters: {
       ...getAuthor(data, locals),
-      contentTypes: boolObjectToArray(data.contentType),
+      contentTypes: boolKeys(data.contentType),
       ..._pick({
+        authors: { condition: 'should', value: data.authors },
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
@@ -59,8 +61,8 @@ const
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-      sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-      secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+      sectionFronts: boolKeys(data.excludeSectionFronts),
+      secondarySectionFronts: boolKeys(data.excludeSecondarySectionFronts),
       subscriptions: { value: {
         subscriptions: data.excludeSubscriptions ? ['national subscription'] : [],
         stationSlug: getStationSlug(locals)
@@ -83,6 +85,10 @@ const
     author: {
       filterCondition: 'must',
       createObj: author => ({ match: { 'authors.normalized': author } })
+    },
+    authors: {
+      filterCondition: 'must',
+      createObj: authors => boolKeys(authors).map(author => ({ match: { 'authors.normalized': author } }))
     },
     canonicalUrls: { createObj: canonicalUrl => ({ match: { canonicalUrl } }) },
     contentTypes: {
@@ -375,6 +381,8 @@ const
         return tags;
       case 'section-front':
         return sectionFronts;
+      case 'byline-authors':
+        return ['authors'];
       case 'all-content':
         return [];
       default:
@@ -406,19 +414,23 @@ const
     content: formattedResult,
     totalHits: _get(rawResult, 'hits.total')
   }),
-
+  
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
+   * Use filters to query elastic for content
+   * @param {{
+   *   filters: object,
+   *   excludes: object,
+   *   elasticFields: string[],
+   *   maxItems: number,
+   *   shouldAddAmphoraTimings: boolean,
+   *   isRdcContent: boolean
+   * }} config
+   * @param {Object} [locals]
+   * @returns {array} elasticResults
+   */
+  fetchRecirculation = async (config, locals) => {
+    const { filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent } = config;
+    
     let results = {
       content: [],
       totalHits: 0
@@ -488,11 +500,12 @@ const
    * @param {object} [config]
    * @param {string} [config.contentKey]
    * @param {array} [config.elasticFields]
-   * @param {number} [config.maxItems]
    * @param {function} [config.mapDataToFilters]
    * @param {function} [config.mapResultsToTemplate]
    * @param {function} [config.render]
    * @param {function} [config.save]
+   * @param {boolean} [config.shouldAddAmphoraTimings]
+   * @param {boolean} [config.skipRender]
    * @returns {object}
    */
   recirculationData = ({
