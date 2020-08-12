@@ -676,7 +676,7 @@ describe('server', () => {
             NEW_PAGE_REF_MATCH,
             sinon.match.has(
               'body',
-              `{"title":"AP-IMPORT: ${META_HEADLINE}","authors":["Associated Press"]}`
+              `{"title":"AP-IMPORT: ${META_HEADLINE}","authors":["The Associated Press"]}`
             ));
         });
 
