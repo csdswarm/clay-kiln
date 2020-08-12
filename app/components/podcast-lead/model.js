@@ -8,7 +8,8 @@ const
   format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   addSeconds = require('date-fns/add_seconds'),
-  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants');
+  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants'),
+  { utils } = require('../../services/client/utils');
 
 /**
  * Returns a query string with all that you provide or some defaults
@@ -79,14 +80,14 @@ module.exports = unityComponent({
 
     data._computed.category = _get(podcastData, 'category.0.name');
     data._computed.title = podcastData.title;
-    data._computed.description = podcastData.description;
+    data._computed.description = utils.stripHtml(podcastData.description);
     data._computed.imageURL = podcastData.image;
 
     if (episodeData) {
       data._computed.imageURL = episodeData.image_url;
       data._computed.title = episodeData.title;
       data._computed.episodeListURL = locals.url.replace(`/${episodeData.site_slug}`, '');
-      data._computed.description = episodeData.description;
+      data._computed.description = utils.stripHtml(episodeData.description);
 
       const startOfDay = new Date(0),
         durationInSeconds = parseFloat(episodeData.duration_seconds);
