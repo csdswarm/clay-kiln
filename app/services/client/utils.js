@@ -17,6 +17,18 @@ class Utils {
       return `${str.slice(0, limit).trim()}${options.useSuffix ? options.suffix : ''}`;
     }
   }
+
+  /**
+   * strips all html from string replacing with empty by default
+   *
+   * @param {*} str
+   * @param {string} [replace='']
+   * @returns {string}
+   * @memberof Utils
+   */
+  stripHtml(str, replace = '') {
+    return str.replace(/(<([^>]+)>)/ig, replace);
+  }
 };
 
 module.exports.utils = new Utils();
