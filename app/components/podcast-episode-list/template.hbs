@@ -23,9 +23,15 @@
           Download
         </a>
       </div>
-      <a class="podcast-episode-list__title" href="{{ episode_detail_url }}">
-        {{truncate title 52}}
-      </a>
+      {{#if shouldLink}}
+        <a class="podcast-episode-list__title" href="{{ episode_detail_url }}">
+          {{truncate title 52}}
+        </a>
+      {{else}}
+        <a class="podcast-episode-list__title">
+          {{truncate title 52}}
+        </a>
+      {{/if}}
       <div class="podcast-episode-list__description">{{truncate description 210}}</div>
     </div>
     <div class="podcast-episode-list__item-controls">
