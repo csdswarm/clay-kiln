@@ -1,0 +1,43 @@
+@import "_global/colors";
+
+@define-mixin smart-speaker-font {
+    font-family: CircularStd-Medium, sans-serif;
+    font-size: 14px;
+    color: $black;
+    letter-spacing: -0.23px;
+    line-height: 17px;
+}
+
+.smart-speaker {
+    @mixin smart-speaker-font;
+    margin: em(5, 14) 0 em(40, 14) 0;
+
+    &__container {
+        display: flex;
+    }
+
+    &__icon {
+        color: theme(primaryColor, $parisM);
+        margin-right: em(5);
+        svg > path {
+            fill: theme(primaryColor, $parisM);
+        }
+    }
+
+    &__divider {
+        border-bottom: em(1) solid theme(primaryColor, $parisM);
+
+        &__start {
+        margin-bottom: em(18.5);
+        }
+
+        &__end {
+        margin-top: em(18.5);
+        }
+    }
+
+    &__phonetic_name {
+        padding-top: em(5);
+        font-size: em(20);
+    }
+}

@@ -2,6 +2,16 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin station-detail-font4 {
+  @mixin font CircularStd-Black, 16px, $black, -.58px, 16px;
+}
+@define-mixin station-detail-font8 {
+  @mixin font CircularStd-Medium, 12px, #767676, -.58px, 14px;
+}
+@define-mixin station-detail-font9 {
+  @mixin font CircularStd-Book, 12px, $boulder, -.58px, 18px;
+}
+
 .component--station-recently-played {
   min-height: em(210);
 

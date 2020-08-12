@@ -1,3 +1,5 @@
 _components:
   station-listen-nav:
     featuredLinks: []
+    hidePodcastsLink: false
+    podcastsUrl: '/audio'
