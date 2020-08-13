@@ -15,7 +15,7 @@ const _has = require('lodash/has');
 module.exports = (uri, data) => {
 
   if (_has(data, 'filterPrimarySectionFronts')) {
-    data.excludeSectionFront = data.excludeSectionFront
+    data.excludeSectionFronts = data.excludeSectionFronts
       || data.excludePrimarySectionFronts
       || data.filterPrimarySectionFronts;
 
