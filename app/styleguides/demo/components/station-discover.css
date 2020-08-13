@@ -3,10 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-@define-mixin station-detail-font4 {
-  @mixin font CircularStd-Black, 16px, $black, -.58px, 16px;
-}
-
 .component--station-discover {
   .station-discover__dropdown--mobile {
     display: none;

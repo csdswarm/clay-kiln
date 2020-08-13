@@ -3,83 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-@define-mixin station-detail-font1 {
-  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
-}
-@define-mixin station-detail-font2 {
-  @mixin font CircularStd-Black, 24px, $black, -.58px, 30px;
-}
-@define-mixin station-detail-font3 {
-  @mixin font ProximaNova-Light, 18px, $black, -.58px, 25px;
-}
-@define-mixin station-detail-font5 {
-  @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
-}
-@define-mixin station-detail-font7 {
-  @mixin font CircularStd-Medium, 12px, $black, -.58px, 14px;
-}
-@define-mixin station-detail-font10 {
-  @mixin font CircularStd-Medium, 11px, $boulder, -.58px, 13px;
-}
-@define-mixin station-detail-font12 {
-  @mixin font CircularStd-Medium, 16px, $white, .6px, 20px;
-}
-
-@define-mixin show__button_btn {
-  width: em(19.4);
-  height: em(19.4);
-  border-radius: 50%;
-  box-shadow: 0 0 em(1) em(1) rgba(0,0,0,0.18), inset 0 0 em(4) em(1) $wildSand;
-  background-color: $white;
-  outline:0;
-
-  &:after {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-  }
-}
-
-@define-mixin show__play_btn $color: $purple {
-  @mixin show__button_btn;
-
-  &:after {
-    border-top: em(5) solid transparent;
-    border-bottom: em(5) solid transparent;
-    border-left: em(7) solid $color;
-    margin-left: em(7);
-    margin-top: em(4);
-  }
-}
-
-@define-mixin show__pause_btn $color: $purple {
-  @mixin show__button_btn;
-
-  &:after {
-    margin-top: em(6);
-    margin-left: em(6);
-    height: em(8);
-    width: em(7);
-    border: em(2.9) solid $color;
-    border-top: 0;
-    border-bottom: 0;
-    border-radius: em(1);
-  }
-}
-
-@define-mixin show__stop_btn $color: $purple {
-  @mixin show__button_btn;
-
-  &:after {
-    margin-top: em(6);
-    margin-left: em(6);
-    height: em(7);
-    width: em(7);
-    background-color: $color;
-  }
-}
-
 .component--station-detail {
   .station-detail__data {
     display: none;
@@ -192,47 +115,8 @@
             }
           }
         }
-        .station-detail__listen {
-          margin-bottom: em(15);
-          .station-detail__listen-button {
-            background-color: $parisM;
-            padding: em(9) 0;
-            max-width: em(130);
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-evenly;
-            cursor: pointer;
-
-            .image__play-btn {
-              width: em(19.4);
-              height: em(19.4);
-              &.show__play {
-                @mixin show__play_btn
-              }
-              &.show__pause {
-                @mixin show__pause_btn
-              }
-              &.show__stop {
-                @mixin show__stop_btn
-              }
-              &:after {
-                position: absolute;
-              }
-            }
-            .text__listen-btn {
-              @mixin station-detail-font12;
-              text-transform: uppercase;
-              text-align: center;
-            }
-            &:hover {
-              opacity: 0.7;
-            }
-          }
-        }
-        .text__station-description {
+        .text__station-slogan {
           @mixin station-detail-font3;
-          margin-bottom: em(15);
           @mixin medium-screen {
             margin-bottom: em(20, 18);
           }

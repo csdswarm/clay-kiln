@@ -57,7 +57,7 @@ function filterNonContentType(page) {
 async function handlePublishContentPg(page) {
   __.handlePublishStationSyndication(page);
 
-  if (process.env.APPLE_NEWS_ENABLED === 'true') {
+  if (process.env.APPLE_NEWS_ENABLED === 'TRUE') {
     const articleRef = page.data.main[0].replace('@published', ''),
       appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`,
       appleNewsData = await __.dbGet(appleNewsKey, null, {});
@@ -113,9 +113,9 @@ async function handleUnpublishContentPg(page) {
       mainRef = pageData.main[0];
 
     updateSyndicationRedirects(page);
-
+    
     if (['article', 'gallery'].includes(__.getComponentName(mainRef)) &&
-      process.env.APPLE_NEWS_ENABLED === 'true') {
+      process.env.APPLE_NEWS_ENABLED === 'TRUE') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
         articleData = await __.dbGet(appleNewsKey, null, {}),
         { id } = articleData;

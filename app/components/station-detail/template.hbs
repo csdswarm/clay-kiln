@@ -23,13 +23,7 @@
             {{!-- <button data-fav-station="{{station.id}}" class="station-title__favorite-btn{{station.favoriteModifier}}"></button> --}}
             <h1 class="station-title__name">{{station.name}}</h1>
           </div>
-          <div class='station-detail__listen'>
-            <div data-play-station="{{station.id}}" class="station-detail__listen-button {{station.playingClass}}">
-              <div data-play-station="{{station.id}}" class="image__play-btn {{station.playingClass}}"></div>
-              <p class="text__listen-btn">listen</p>
-            </div>
-          </div>
-          <p class="text__station-description">{{ellipsisSubstring station.description 0 250}}</p>
+          <p class="text__station-slogan">{{station.slogan}}</p>
         </div>
         <div class="info__links">
           <div class="links__lede--mobile">

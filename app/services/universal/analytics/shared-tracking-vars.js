@@ -25,6 +25,5 @@ module.exports = {
   pageTypeTagStationDetail: 'livestreamplayer',
   pageTypeTagStationsDirectory: 'stationsdirectory',
   NMC,
-  OG_TYPE: 'og:type',
-  EDITORIAL_TAGS: 'editorial tags'
+  OG_TYPE: 'og:type'
 };

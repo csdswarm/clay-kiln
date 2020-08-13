@@ -46,7 +46,6 @@
           :hasSearch="true"
           :options="stationSectionFronts.primaryOptions"
           :value="selectedSectionFronts.primary"
-          :invalid="invalidSectionFront"
           @input="updateSectionFront('primary', ...arguments)"/>
         <ui-select
           :placeholder="'Secondary Section Front'"
@@ -56,13 +55,7 @@
           @input="updateSectionFront('secondary', ...arguments)"/>
       </template>
       <div class="syndication-modal__buttons">
-        <ui-button
-          buttonType="button"
-          color="green"
-          :disabled="invalidSectionFront"
-          :loading="saveLoading"
-          @click.stop="saveSyndication"
-        >Save</ui-button>
+        <ui-button buttonType="button" @click.stop="saveSyndication" :loading="saveLoading" color="green">Save</ui-button>
         <ui-button buttonType="button" @click.stop="closeModal">Close</ui-button>
       </div>
     </ui-modal>
@@ -123,9 +116,6 @@
       },
       queryText() {
         return this.query.replace(/user:\S+/i, '').trim();
-      },
-      invalidSectionFront() {
-        return this.stationSectionFronts && !this.selectedSectionFronts.primary;
       }
     },
     watch: {
@@ -250,7 +240,6 @@
       }, 2000),
       loadSectionFronts() {
         const { slug, name, callsign } = this.stationFilter,
-          stationSlug = slug ? `${slug}-` : '',
           label = `${name} | ${callsign}`,
           transformSectionFronts = sectionFronts => sectionFronts.map(sf => ({
             label: sf.name,
@@ -258,8 +247,8 @@
           }));
 
         Promise.all([
-          retrieveList(`${stationSlug}primary-section-fronts`),
-          retrieveList(`${stationSlug}secondary-section-fronts`),
+          retrieveList(`${slug}-primary-section-fronts`),
+          retrieveList(`${slug}-secondary-section-fronts`),
         ])
         .then(([primarySectionFronts, secondarySectionFronts]) => {
           if (primarySectionFronts.length || secondarySectionFronts.length) {

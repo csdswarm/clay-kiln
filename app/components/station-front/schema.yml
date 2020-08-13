@@ -11,7 +11,7 @@ stationSlug:
     - pageListTitle
     - pageTitle
   _has:
-    input: static
+    input: text
     validate:
       required: true
 

@@ -37,9 +37,6 @@ excludeSubscriptions:
   _label: Exclude Subscriptions
   _has:
     input: checkbox
-  _reveal:
-    field: hasCustomColumns
-    operator: falsy
 
 sportsItems:
   _label: Sports Articles
@@ -217,7 +214,7 @@ hasCustomColumns:
   _label: Allow Custom Columns
   _has:
     input: checkbox
-    help: This option enables advanced customization options for each column
+    help: This option enables advanced customization options for each column 
 
 firstColumn:
   _placeholder:
@@ -257,3 +254,4 @@ thirdColumn:
       required:
         field: hasCustomColumns
         operator: truthy
+      

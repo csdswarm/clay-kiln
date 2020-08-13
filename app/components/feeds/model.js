@@ -9,8 +9,7 @@ const _castArray = require('lodash/castArray'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'feeds'
-  }),
-  { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
+  });
 
 /**
  * for now we only want articles and galleries to be processed by feeds.  This
@@ -77,8 +76,6 @@ module.exports.save = function (uri, data) {
   if (!meta.fileExtension) {
     return bluebird.reject(new Error('A feed needs a `fileExtension` property to indicate the file type of the scraped feed'));
   }
-
-  data.meta.link = `${protocol}://${host}`;
 
   return data;
 };
@@ -170,57 +167,13 @@ module.exports.render = async (ref, data, locals) => {
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
-      vertical: {
-        createObj: sectionFront => ({
-          bool: {
-            should: [
-              { match: { sectionFront } },
-              { match: { sectionFront: sectionFront.toLowerCase() } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    bool: {
-                      should: [
-                        { match: { 'stationSyndication.sectionFront': sectionFront } },
-                        { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
-                      ],
-                      minimum_should_match: 1
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        })
-      },
-      // subcategory (secondary article type)
-      subcategory: {
-        createObj: secondarySectionFront => ({
-          bool: {
-            should: [
-              { match: { secondarySectionFront } },
-              { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    bool: {
-                      should: [
-                        { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
-                        { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
-                      ],
-                      minimum_should_match: 1
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        })
-      },
+      vertical: { createObj: sectionFront => ({ match: { sectionFront } }) },
       // tags
       tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
+      // subcategory (secondary article type)
+      subcategory: {
+        createObj: secondarySectionFront => ({ match: { 'secondarySectionFront.normalized': secondarySectionFront } })
+      },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
       // contentType
@@ -234,27 +187,23 @@ module.exports.render = async (ref, data, locals) => {
       },
       // stations (stationSyndication) - station content
       station: {
-        filterConditionType: 'addMust',
-        createObj: station => ({
-          bool: {
-            should: [
-              { match: { 'stationCallsign.normalized': station } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    bool: {
-                      should: [
-                        { match: { 'stationSyndication.callsign.normalized': station } }
-                      ],
-                      minimum_should_match: 1
-                    }
-                  }
+        createObj: station => [
+          { match: { stationCallsign: station } },
+          {
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                bool: {
+                  should: [
+                    { match: { 'stationSyndication.callsign': station } },
+                    { match: { 'stationSyndication.callsign.normalized': station } }
+                  ],
+                  minimum_should_match: 1
                 }
               }
-            ]
+            }
           }
-        })
+        ]
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },

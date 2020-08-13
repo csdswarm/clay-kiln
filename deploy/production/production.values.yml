@@ -10,8 +10,8 @@ ingress:
   healthCheckDomain: "prd-clay-k8s.radio.com"
 configmap:
   data:
-    APPLE_NEWS_ENABLED: "true"
-    APPLE_NEWS_PREVIEW_ONLY: "false"
+    APPLE_NEWS_ENABLED: "TRUE"
+    APPLE_NEWS_PREVIEW_ONLY: "TRUE"
     ARTICLE_AD_INSERT_EVERY: "3"
     AWS_S3_BUCKET: "radioimg"
     AWS_S3_CDN_HOST: "images.radio.com"

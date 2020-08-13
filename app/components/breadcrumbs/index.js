@@ -186,7 +186,7 @@ module.exports = {
       }
     }
 
-    if (data.stationSyndication) {
+    if (station.site_slug && data.stationSyndication) {
       const syndication = data.stationSyndication.find(
         item => item.callsign === station.callsign
       );

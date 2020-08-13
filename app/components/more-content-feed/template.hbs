@@ -46,38 +46,40 @@
           {{#each _computed.content as |feedItem|}}
             <li>
               <a class="links__link {{#if ../_computed.applyStationTheme }}links__link--station-theme {{else}} links__link--{{ feedItem.sectionFront }}{{/if}}" href="{{ feedItem.canonicalUrl }}"
-                data-track-type="feedItem-link"
-                data-track-component-name="more-content-feed"
-                data-track-page-uri="{{ feedItem.pageUri }}"
-                data-track-headline="{{ feedItem.primaryHeadline }}"
-                data-track-component-title="More Content Feed"
-                data-track-sectionFront="{{ feedItem.sectionFront }}">
+                 data-track-type="feedItem-link"
+                 data-track-component-name="more-content-feed"
+                 data-track-page-uri="{{ feedItem.pageUri }}"
+                 data-track-headline="{{ feedItem.primaryHeadline }}"
+                 data-track-component-title="More Content Feed"
+                 data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
-                  {{#ifAll (compare ../populateFrom 'all-content') feedItem.sectionFront}}
+                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
                     <span class="thumb__section-front">{{{ feedItem.label }}}</span>
                   {{/ifAll}}
-                  {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/watch.svg' }}}
-                    </span>
-                  {{/ifAny}}
-                  {{#if (compare feedItem.lead 'omny')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/listen.svg' }}}
-                    </span>
-                  {{/if}}
-                  {{#if (compare feedItem.contentType 'gallery')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/gallery.svg' }}}
-                    </span>
-                  {{/if}}
+                  {{#unless (compare ../locationOfContentFeed 'homepage')}}
+                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/watch.svg' }}}
+                      </span>
+                    {{/ifAny}}
+                    {{#if (compare feedItem.lead 'omny')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                      </span>
+                    {{/if}}
+                    {{#if (compare feedItem.contentType 'gallery')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/gallery.svg' }}}
+                      </span>
+                    {{/if}}
+                  {{/unless}}
                   <img
                     src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
                     srcset="{{ sanitizeURI feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
-                            {{ sanitizeURI feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
-                            {{ sanitizeURI feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
-                            {{ sanitizeURI feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
-                            {{ sanitizeURI feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
                     sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
                     class="link__thumb" />
                 </div>

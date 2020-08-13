@@ -1,6 +1,0 @@
-_components:
-  smart-speaker:
-    allowed: true
-    instances:
-      new:
-        allowed: true

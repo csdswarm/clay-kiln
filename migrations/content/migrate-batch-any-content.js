@@ -44,7 +44,7 @@ async function run() {
 
     _.each(object, (value, key) => {
       if (typeof value === 'string' && value.includes(fromEnv)) {
-        newObject[key] = value.replace(new RegExp(`https*://${fromEnv}`, 'g'), `${toEnvHttp}://${toEnv}`);
+        newObject[key] = value.replace(new RegExp(`${fromEnvHttp}://${fromEnv}`, 'g'), `${toEnvHttp}://${toEnv}`);
       } else if (typeof value === 'object') {
         newObject[key] = replaceHostDeep(value);
       }
@@ -75,36 +75,27 @@ async function run() {
 
   const importURL = async (url, numTried = 0, maxTries = 3) => {
     return clayExport({ componentUrl: url })
-      .catch(async e => {
-        console.log('failed to export', url, e);
-      })
       .then(exportedPage => replaceHostDeep(exportedPage.data))
-      .catch(async e => {
-        console.log('failed to replace host deep', url, e);
-      })
       .then(pageData => {
         return clayImport({
           payload: pageData,
           hostUrl: `${toEnvHttp}://${toEnv}`,
           publish: true
         })
-        .catch(async e => {
-          console.log('failed to import', url, e);
-        })
-        .then(async () => transformCustomUrlToUrl(url, pageData))
-        .catch(async e => {
-          const updatedNumTried = numTried + 1;
-          const limiter = 100;
-          
-          await new Promise(resolve => setTimeout(resolve, limiter));
-          
-          if (updatedNumTried < maxTries) {
-            return importURL(url, updatedNumTried, maxTries);
-          }
-          
-          console.error('Failed to transform:', url, e);
-          return null;
-        });
+          .then(async () => transformCustomUrlToUrl(url, pageData))
+          .catch(async e => {
+            const updatedNumTried = numTried + 1;
+            const limiter = 100;
+            
+            await new Promise(resolve => setTimeout(resolve, limiter));
+            
+            if (updatedNumTried < maxTries) {
+              return importURL(url, updatedNumTried, maxTries);
+            }
+            
+            console.error('Failed to import:', url, e);
+            return null;
+          });
       })
       .catch(e => console.error(_.get(e, 'stack', e)));
   }

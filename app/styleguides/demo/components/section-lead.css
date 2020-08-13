@@ -3,38 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Section-Lead Fonts Styleguide |||||| */
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin section-lead-font1 {
-  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
-}
-@define-mixin section-lead-font2 {
-  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
-}
-@define-mixin section-lead-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
-}
-@define-mixin section-lead-font4 {
-  @mixin font CircularStd-Medium, 14px, $parisM, -.2px, 18px;
-}
-@define-mixin section-lead-font5 {
-  @mixin font CircularStd-Medium, 16px, $black, -.4px, 19px;
-}
-/* --  multi-column variations --*/
-@define-mixin section-lead-mc-font1 {
-  @mixin font CircularStd-Black, 22px, $black, -.55px, 26px;
-}
-@define-mixin section-lead-mc-font2 {
-  @mixin font CircularStd-Medium, 12px, theme(primaryColor, $parisM), -.2px, 14px;
-}
-@define-mixin section-lead-mc-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
-}
-@define-mixin section-lead-mc-font4 {
-  @mixin font CircularStd-Black, 16px, $black, -.43px, 19px;
-}
-
 .component--section-lead {
   width: em(widthOnGrid(14, 13));
   display: flex;

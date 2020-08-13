@@ -14,14 +14,12 @@ const { stripOuterSlashes } = require('../pathname-utils'),
  * tracking data.
  * @param {string} pathname
  * @param {?string} contentType
- * @param {?string} site_slug
  * @returns {PageData}
  */
-module.exports = (pathname, contentType, site_slug) => {
+module.exports = (pathname, contentType) => {
   const fromPathname = makeFromPathname({ pathname }),
-    innerPathname = stripOuterSlashes(pathname),
-    isAStationSectionFront = innerPathname.split('/').length > 1; // wearechannelq -> sectionFront , wearechannelq/music/pop -> stationSectionFront
-  
+    innerPathname = stripOuterSlashes(pathname);
+
   let page,
     pageName;
 
@@ -31,10 +29,6 @@ module.exports = (pathname, contentType, site_slug) => {
     page = pageName = 'article';
   } else if (contentType === 'gallery') {
     page = pageName = 'vgallery';
-  } else if (contentType === 'contest') {
-    page = pageName = 'contests';
-  } else if (contentType === 'event') {
-    page = pageName = 'events';
   } else if (fromPathname.isStationsDirectory()) {
     page = 'stationsDirectory';
     pageName = innerPathname.replace('/', '_');
@@ -43,19 +37,13 @@ module.exports = (pathname, contentType, site_slug) => {
     pageName = innerPathname.split('/')[0];
   } else if (fromPathname.isTopicPage()) {
     page = 'topicPage';
-    pageName = innerPathname.replace(/[^\/]+\//g, '');
+    pageName = innerPathname.replace(/[^\/]+\//, '');
   } else if (fromPathname.isAuthorPage()) {
     page = 'authorPage';
-    pageName = 'authors';
-  } else if (site_slug && isAStationSectionFront) {
-    page = 'stationSectionFront';
-    pageName = innerPathname.split('/').slice(1).join('_');
-  } else if (site_slug && !isAStationSectionFront) {
-    page = 'stationFront';
-    pageName = innerPathname;
+    pageName = innerPathname.replace('/', '_');
   } else {
     page = 'sectionFront';
-    pageName = innerPathname.split('/').join('_');
+    pageName = innerPathname;
   }
 
   return {

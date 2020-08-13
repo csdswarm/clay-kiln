@@ -22,9 +22,7 @@ module.exports = stationizedComponent({
         `${ data.stationLogo }&` :
         `${ data.stationLogo }?`;
     }
-    if (!data.podcastsUrl) { // This should validates against null, undefined and blank values
-      data.podcastsUrl = '/audio';
-    }
+
     return data;
   }
 });

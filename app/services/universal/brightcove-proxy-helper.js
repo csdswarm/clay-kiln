@@ -101,7 +101,6 @@ async function addVideoDetails(data) {
       data.bcUpdatedAt = videoData.updated_at;
       // for some reason this was getting parsed back to millisecond integer value when not wrapped in a string
       data.duration = `${moment.duration(videoData.duration)}`;
-      data.durationSeconds = Math.round(videoData.duration / 1000);
       data.link = videoData.link;
       data.video.m3u8Source = videoSource;
     }

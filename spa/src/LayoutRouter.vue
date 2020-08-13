@@ -193,23 +193,14 @@ export default {
       const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}`
       const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
-      // Reset loaded ids to prevent breaking deduping during spa navigation
-      this.$store.commit(mutationTypes.SET_LOADED_IDS, [])
-
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             // preview pages will 404 if the header is true because the published key does not exist
             'x-amphora-page-json': !destination.includes('.html'),
-            'x-locals': JSON.stringify(await getLocals(this.$store.state)),
-            'x-loaded-ids': '[]'
+            'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
-
-        this.$store.commit(
-          mutationTypes.SET_LOADED_IDS,
-          JSON.parse(nextSpaPayloadResult.headers['x-loaded-ids'] || '[]')
-        )
 
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`

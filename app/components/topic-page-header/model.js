@@ -7,7 +7,7 @@ module.exports.render = (ref, data, locals) => {
   let tag = '';
 
   if (locals && locals.params) {
-    tag = locals.params.dynamicTag;
+    tag = locals.params.tag || locals.params.dynamicTag;
   }
   data.tag = !data.tag && locals && tag ? tag.replace(/-/g, ' ').replace(/\//g,'').replace(/%26/g, '&') : data.tag;
   return data;

@@ -98,7 +98,7 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-
+    
 
     if (station_slug === DEFAULT_STATION.site_slug) {
       queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
@@ -129,7 +129,7 @@ module.exports.render = async function (ref, data, locals) {
 
       queryService.addMustNot(query, makeSubscriptionsQuery({
         stationSlug,
-        subscriptions: ['content subscription']
+        subscriptions: ['national subscription']
       }));
     }
 

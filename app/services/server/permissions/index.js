@@ -74,15 +74,7 @@ function userPermissionRouter() {
     const { locals } = res;
 
     if (_get(locals, 'user.provider') === 'cognito') {
-      const { session } = req;
-
-      await urps.updateAuthData(session, locals);
-
-      if (!session.auth.idToken) {
-        session.returnTo = req.originalUrl;
-        res.redirect('/_auth/logout');
-        return;
-      }
+      await urps.updateAuthData(req.session, locals);
     }
 
     next();

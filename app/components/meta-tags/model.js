@@ -7,7 +7,7 @@ const _get = require('lodash/get'),
   getPageId = require('../../services/universal/analytics/get-page-id'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
-  { NMC, OG_TYPE, EDITORIAL_TAGS } = require('../../services/universal/analytics/shared-tracking-vars'),
+  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars'),
   { getBranchMetaTags } = require('../../services/server/branch-io');
 
 /**
@@ -22,7 +22,7 @@ const _get = require('lodash/get'),
 function getNmcData(hasImportedNmcData, componentData, locals) {
   const { station, url } = locals,
     pathname = parse(url).pathname,
-    pageData = getPageData(pathname, componentData.contentType, station.site_slug);
+    pageData = getPageData(pathname, componentData.contentType);
 
   if (hasImportedNmcData) {
     const pageId = getPageId({ pageData, pathname }),
@@ -34,7 +34,7 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
 
     return nmcData;
   } else { // nmc data is not imported
-    const contentTags = [componentData.sectionFront, componentData.secondarySectionFront, ...(componentData.contentTagItems || []).map(i => i.text)].filter(Boolean),
+    const contentTags = (componentData.contentTagItems || []).map(i => i.text),
       nmcData = getTrackingData({
         contentTags,
         pageData,
@@ -42,7 +42,7 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
         station
       });
 
-    nmcData.tag = nmcData.tag.join(',');
+    nmcData.tag = nmcData.tag.join('/');
 
     return nmcData;
   }
@@ -64,8 +64,7 @@ module.exports.render = async (ref, data, locals) => {
     // author is handled separately because we need to check data.authors before
     //   figuring out nmc's author value
     nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author'),
-    ROBOTS = 'robots',
-    editorialTagItems = _get(data, 'contentTagItems', []).map(tag => tag.text).join(' ,');
+    ROBOTS = 'robots';
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
@@ -134,13 +133,6 @@ module.exports.render = async (ref, data, locals) => {
     data.metaTags.push({ name: ROBOTS, content: 'noindex, nofollow' });
   } else {
     data.unusedTags.push({ type: 'name', name: ROBOTS });
-  }
-
-  // Add 'editorial tags' meta for Google Analytics
-  if (editorialTagItems) {
-    data.metaTags.push({ name: EDITORIAL_TAGS, content: editorialTagItems });
-  } else {
-    data.unusedTags.push({ type: 'name', name: EDITORIAL_TAGS });
   }
 
   // handle nmc tags

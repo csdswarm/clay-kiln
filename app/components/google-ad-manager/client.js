@@ -388,8 +388,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags : getMetaTagContent('name',  NMC.tag)
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
     });
   } else {
     Object.assign(adTargetingData, {
@@ -459,16 +458,12 @@ function getAdTargeting(pageData) {
   switch (pageData.page) {
     case 'article':
     case 'vgallery':
-    case 'events':
-    case 'contests':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
-    case 'stationFront':
       adTargetingData.siteZone = siteZone.concat('/', 'home', '/', pageTypeTagSection);
       break;
     case 'sectionFront':
-    case 'stationSectionFront':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':

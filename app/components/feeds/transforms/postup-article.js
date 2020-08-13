@@ -33,19 +33,8 @@ const cheerio = require('cheerio'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const {
-      _id,
-      featured,
-      feedImgUrl,
-      headline,
-      link,
-      seoDescription,
-      seoHeadline,
-      stationTitle,
-      stationURL,
-      subHeadline,
-      syndicatedUrl
-    } = data,
+  const { _id, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+    link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     itemId = getComponentInstance(_id),
     renderSanitizedContent = (content, opts = {}) => {
       const { renderContentParams = [] } = opts;

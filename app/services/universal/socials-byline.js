@@ -1,7 +1,7 @@
 'use strict';
 
 const socialSvgs = require('./social-svgs'),
-  slugifyService = require('./slugify'),
+  { textToEncodedSlug } = require('./utils'),
   twitterHtml = (authorData) => `<a href="http://twitter.com/${authorData.twitter}" target='_blank' class="author-socials"><span class="author-socials-icon twitter">${socialSvgs.TWITTER}</span><span>@${authorData.twitter}</span></a>`,
   fbHtml = (authorData) => `<a href="http://facebook.com/${authorData.facebook}" target='_blank' class="author-socials"><span class="author-socials-icon facebook">${socialSvgs.FACEBOOK}</span><span>@${authorData.name.toLowerCase().replace(/\s/g, '')}</span></a>`,
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
@@ -103,7 +103,7 @@ function getSocialHtmlWithoutPreference(authorData) {
  */
 function createAuthorHtml(authorData, options) {
   const nameOrText = authorData.name || authorData.text,
-    link = slugifyService(nameOrText),
+    link = textToEncodedSlug(nameOrText),
     linkAuthorPage = `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/authors/${link}`;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally

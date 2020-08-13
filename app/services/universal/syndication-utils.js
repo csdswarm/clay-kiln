@@ -9,18 +9,8 @@ const
   __ =  {
     findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
-    inStation: stationSlug => data => {
-      /*
-        This method is being used both for checking if an article belongs to or is syndicated to a
-        station, but with a syndication entry we can't assume it belongs to national when stationSlug
-        doesn't exists, as we usually do for RDC original content. So here I'm using the syndication
-        source to diferentiate when we are checking for an original content or a syndication.
-      */
-      if (data.source) {
-        return stationSlug === data.stationSlug;
-      }
-
-      return stationSlug === (data.stationSlug || DEFAULT_STATION.site_slug);
+    inStation: stationSlug => syndicationEntry => {
+      return stationSlug === (syndicationEntry.stationSlug || DEFAULT_STATION.site_slug);
     },
     noContent: value => !Array.isArray(value) || !value.length
   };
@@ -59,8 +49,8 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   return article => {
     const item = { ...article };
 
-    if (!isInStation(item)) {
-      if (!isRdcContent && noContent(item.stationSyndication)) {
+    if (!isRdcContent && !isInStation(item)) {
+      if (noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
         const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
