@@ -38,6 +38,7 @@ module.exports = {
   _get: require('../../app/node_modules/lodash/get'),
   _has: require('../../app/node_modules/lodash/has'),
   _identity: require('../../app/node_modules/lodash/identity'),
+  _invoke: require('../../app/node_modules/lodash/invoke'),
   _isEqual: require('../../app/node_modules/lodash/isEqual'),
   _set: require('../../app/node_modules/lodash/set'),
   _unset: require('../../app/node_modules/lodash/unset'),
@@ -47,6 +48,8 @@ module.exports = {
   clayutils: require('../../app/node_modules/clayutils'),
   clone: obj => obj && JSON.parse(JSON.stringify(obj)),
   ensureEndsWith,
+  moment: require('../../app/node_modules/moment'),
+  pgCursor: require('../../app/node_modules/pg-cursor'),
   prettyJSON: obj => JSON.stringify(obj, null, 2),
   toYaml: obj => YAML.stringify(obj, 8, 2),
   waitMs: ms => new Promise(resolve => {
