@@ -4,8 +4,11 @@ const _ = require('lodash'),
   url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
+  log = require('../universal/log').setup({ file: __filename }),
   { sites, composer } = require('amphora'),
-  log = require('../universal/log').setup({ file: __filename });
+  { topicPagePrefixes } = require('../universal/constants');
+
+
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -163,9 +166,14 @@ const routes = [
  */
 function middleware(req, res, next) {
   const params = {},
-    { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
+    { routeParamKey, routePrefix } = getPrefixAndKey(req.path),
+    stationSlug = _.get(res, 'locals.station.site_slug');
 
-  let promise, dynamicParamExtractor;
+  let promise,
+    dynamicParamExtractor,
+    curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS
+      ? process.env.SECTION_FRONTS.split(',')
+      : [];
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -173,11 +181,14 @@ function middleware(req, res, next) {
 
   // Define Curated/Dynamic routes.
   // Match against section-front and topic slug prefixes
-  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
 
-  curatedOrDynamicRoutePrefixes.push('topic');
-  if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
-    curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
+  curatedOrDynamicRoutePrefixes = curatedOrDynamicRoutePrefixes.concat(topicPagePrefixes);
+
+  if (stationSlug) {
+    const prefixesToAdd = topicPagePrefixes.filter(prefix => req.path.includes(`/${prefix}`))
+      .map(prefix => `${stationSlug}/${prefix}`);
+
+    curatedOrDynamicRoutePrefixes = curatedOrDynamicRoutePrefixes.concat(prefixesToAdd);
   }
 
   // Define curated/dynamic routing logic

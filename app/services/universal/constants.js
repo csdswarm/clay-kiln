@@ -127,7 +127,9 @@ const _get = require('lodash/get'),
     sunsetOrange: '#FF4940',
     azureRadience: '#0099FF',
     robinsEggBlue: '#00CCB7'
-  };
+  },
+
+  topicPagePrefixes = ['topic', 'music', 'news', 'sports'];
 
 module.exports = {
   COLORS,
@@ -146,5 +148,6 @@ module.exports = {
   YEAR,
   contentTypes,
   msnFeed,
-  time
+  time,
+  topicPagePrefixes
 };

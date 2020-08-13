@@ -1,9 +1,21 @@
 'use strict';
 
-const publishing = require('../../services/publishing'),
-  axios = require('../../node_modules/axios'),
-  amphoraRender = require('../../node_modules/amphora/lib/render'),
+const amphoraRender = require('amphora/lib/render'),
+  axios = require('axios'),
   logger = require('../../services/universal/log'),
+  publishing = require('../../services/publishing'),
+  { topicPagePrefixes } = require('../../services/universal/constants');
+
+const dynamicTopicRoutes = {
+    national: topicPagePrefixes.map(prefix => ({
+      path: `/${prefix}/:dynamicTag`,
+      dynamicPage: 'topic'
+    })),
+    station: topicPagePrefixes.map(prefix => ({
+      path: `/:stationSlug/${prefix}/:dynamicTag`,
+      dynamicPage: 'topic'
+    }))
+  },
   log = logger.setup({ file: __filename }),
   mainComponentRefs = [
     '/_components/article/instances',
@@ -14,7 +26,13 @@ const publishing = require('../../services/publishing'),
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
     '/_components/station-front/instances'
-  ];
+  ],
+  staticTopicRoutes = {
+    national: topicPagePrefixes.map(prefix => ({ path: `/${prefix}/*` })),
+    station: topicPagePrefixes.map(prefix => ({
+      path: `/:stationSlug/${prefix}/*`
+    }))
+  };
 
 module.exports.routes = [
   // Partially static
@@ -31,14 +49,8 @@ module.exports.routes = [
   { path: '/music/gallery/:slug' },
   { path: '/news/gallery/:slug' },
   { path: '/sports/gallery/:slug' },
-  { path: '/topic/*' },
-  { path: '/music/*' },
-  { path: '/news/*' },
-  { path: '/sports/*' },
-  { path: '/:stationSlug/topic/*' },
-  { path: '/:stationSlug/music/*' },
-  { path: '/:stationSlug/news/*' },
-  { path: '/:stationSlug/sports/*' },
+  ...staticTopicRoutes.national,
+  ...staticTopicRoutes.station,
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' },
   { path: '/small-business-pulse/:slug' },
@@ -57,14 +69,8 @@ module.exports.routes = [
   { path: '/stations/sports', dynamicPage: 'stations-directory' },
   { path: '/account/:dynamicPage', dynamicPage: 'home'  },
   { path: '/account/:dynamicPage/:mode', dynamicPage: 'home' },
-  { path: '/:stationSlug/topic/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/music/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/news/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/sports/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/music/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/news/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
+  ...dynamicTopicRoutes.station,
+  ...dynamicTopicRoutes.national,
   { path: '/authors/:author', dynamicPage: 'author' },
   { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
@@ -115,7 +121,7 @@ module.exports.routes = [
 
     }
   }
-  
+
 ];
 
 // Resolve the url to publish to
