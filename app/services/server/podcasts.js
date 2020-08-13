@@ -58,7 +58,7 @@ const _concat = require('lodash/concat'),
       { dbRaw, getStationsById, moment } = __,
       podcasts = await getPodcastsFromAPI(locals),
       stationsById = await getStationsById({ locals }),
-      now = moment().toIsoString();
+      now = moment().toISOString();
 
     if (podcasts.length) {
       const values = _flatten(podcasts.map(podcast => {

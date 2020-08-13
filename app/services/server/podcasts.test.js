@@ -98,7 +98,7 @@ describe('server/podcasts', () => {
 
       __.moment.returns({
         isAfter: sinon.stub().returns(opts.isStale),
-        toIsoString: sinon.stub()
+        toISOString: sinon.stub()
       });
 
       await updatePodcasts({});
