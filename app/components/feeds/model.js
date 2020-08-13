@@ -13,23 +13,6 @@ const _castArray = require('lodash/castArray'),
   { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
 
 /**
- * for now we only want articles and galleries to be processed by feeds.  This
- *   is in prep to add more content types which the feeds may not support.  The
- *   plan will be to test each content type as support is added to each feed.
- *
- * @param {object} query - this parameter is mutated
- */
-function restrictFeedsToArticlesAndGalleries(query) {
-  const pathToFilter = 'body.query.bool.filter',
-    // if the current filter is an object then we need to put it inside an array
-    //   because we're adding an additional one
-    filter = _castArray(_get(query, pathToFilter, []));
-
-  _set(query, pathToFilter, filter);
-
-  filter.push({ terms: { contentType: ['article', 'gallery'] } });
-}
-/**
  * This filters content that was created for RDC only, any content created with a station will be excluded.
  * @param {object} query - this parameter is mutated
  */
@@ -263,7 +246,6 @@ module.exports.render = async (ref, data, locals) => {
   // Loop through all the generic items and add any filter/exclude conditions that are needed
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
-  restrictFeedsToArticlesAndGalleries(query);
   if (!locals.filter) {
     restrictToRDC(query);
   }

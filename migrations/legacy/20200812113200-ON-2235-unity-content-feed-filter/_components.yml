@@ -1,0 +1,24 @@
+
+_components:
+  feeds:
+    instances:
+      postup:
+        meta:
+          title: Radio.com Postup Feed
+          renderer: rss
+          contentType: application/rss+xml
+          description: Most recent content from Radio.com
+          fileExtension: rss
+        index: published-content
+        query:
+          size: 20
+          sort:
+            date: desc
+          query:
+            bool:
+              filter:
+                terms:
+                  contentType:
+                  - article
+                  - gallery
+        transform: content
