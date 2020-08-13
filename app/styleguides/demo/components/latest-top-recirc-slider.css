@@ -2,6 +2,16 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-top-recirc-slider-font1 {
+    @mixin font CircularStd-Black, 12px, color: theme(primaryColor, $black), -.2px, 14px;
+}
+@define-mixin latest-top-recirc-slider-font2 {
+    @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
 $controls-width: 70px;
 $controls-width-half: 35px;
 $thumbnail-width: 50px;
@@ -110,13 +120,13 @@ $thumbnail-continer-width: 70px;
         @mixin latest-top-recirc-slider-font1;
         text-transform: uppercase;
         &--music {
-            color: $sunsetOrange;
+            color: theme(primaryColor, $sunsetOrange);
         }
         &--sports {
-            color: $azureRadience;
+            color: theme(primaryColor, $azureRadience);
         }
         &--news {
-            color: $lightningYellow;
+            color: theme(primaryColor, $lightningYellow);
         }
     }
     &__item-title {
