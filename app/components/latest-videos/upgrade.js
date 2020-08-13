@@ -1,6 +1,8 @@
 'use strict';
 
-const addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
+const
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
+  filterToExcludes = require('../../services/universal/component-upgrades/filter-to-excludes');
 
 module.exports['1.0'] = function (uri, data) {
   // Only change the filter value for the HP instance
@@ -32,3 +34,5 @@ module.exports['5.0'] = async (uri, data, locals) => {
 
   return data;
 };
+
+module.exports['6.0'] = filterToExcludes;

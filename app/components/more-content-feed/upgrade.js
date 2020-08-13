@@ -1,10 +1,15 @@
 'use strict';
 
-const _get = require('lodash/get'),
+const
+  _get = require('lodash/get'),
+  {
+    getComponentInstance,
+    putComponentInstance
+  } = require('../../services/server/publish-utils'),
+  { getComponentVersion } = require('clayutils'),
   addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
   db = require('amphora-storage-postgres'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
-  { getComponentVersion } = require('clayutils');
+  filterToExcludes = require('../../services/universal/component-upgrades/filter-to-excludes');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -158,11 +163,7 @@ module.exports['9.0'] = async function (uri, data) {
   }
 };
 
-module.exports['10.0'] = async function (uri, data) {
-  const { filterTags, filterSecondarySectionFronts, ...restOfData } = data;
-
-  return { ...restOfData, excludeTags: filterTags, excludeSecondarySectionFronts: filterSecondarySectionFronts };
-};
+module.exports['10.0'] = filterToExcludes;
 
 module.exports['11.0'] = function (uri, data) {
   data.componentTitleVisible = false;

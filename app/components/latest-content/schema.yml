@@ -1,4 +1,4 @@
-_version: 5.0
+_version: 6.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
@@ -165,7 +165,7 @@ newsItems:
         validate:
           required: true
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -178,7 +178,7 @@ filterTags:
     field: hasCustomColumns
     operator: falsy
 
-filterSecondarySectionFronts:
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -197,8 +197,8 @@ _groups:
       - componentTitleVisible
       - hasCustomColumns
       - contentType
-      - filterTags
-      - filterSecondarySectionFronts
+      - excludeTags
+      - excludeSecondarySectionFronts
       - excludeSubscriptions
   musicItems:
     fields:
@@ -254,4 +254,3 @@ thirdColumn:
       required:
         field: hasCustomColumns
         operator: truthy
-      
