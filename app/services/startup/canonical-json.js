@@ -245,7 +245,7 @@ function middleware(req, res, next) {
   }
 
   // Compose and respond
-  promise
+  return promise
     .then(data => {
       // Set locals
       fakeLocals(req, res, params);
