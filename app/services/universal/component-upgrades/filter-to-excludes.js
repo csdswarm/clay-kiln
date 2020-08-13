@@ -15,26 +15,15 @@ const _has = require('lodash/has');
 module.exports = (uri, data) => {
 
   if (_has(data, 'filterPrimarySectionFronts')) {
-    data.excludeSectionFronts = data.excludeSectionFronts
-      || data.excludePrimarySectionFronts
-      || data.filterPrimarySectionFronts;
-
+    data.filterSectionFronts = data.filterSectionFronts || data.filterPrimarySectionFronts;
     delete data.filterPrimarySectionFronts;
-    delete data.excludePrimarySectionFronts;
   }
   
   ['SectionFronts', 'SecondarySectionFronts, Tags'].forEach(field => {
-    let excludes = field === 'Tags' ? [] : {};
+    data[`exclude${field}`] = data[`exclude${field}`] || data[`filter${field}`] || (field === 'Tags' ? [] : {});
     
-    if (_has(data,`filter${field}`)) {
-      excludes = data[`exclude${field}`] || data[`filter${field}`];
-
-      delete data[`filter${field}`];
-    }
-
-    data[`exclude${field}`] = excludes;
+    delete data[`filter${field}`];
   });
-
 
   return data;
 };
