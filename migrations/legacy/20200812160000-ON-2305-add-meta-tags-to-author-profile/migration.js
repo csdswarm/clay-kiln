@@ -2,23 +2,19 @@
 
 const {
   addComponentToContainers,
-  formatAxiosError,
-  usingDb
+  usingDb,
+  parseHost
 } = require('../migration-utils').v1;
 
-const { parseHost } = require('../migration-utils').v2;
-
 const host = process.argv[2] || 'clay.radio.com',
+  http = parseHost(host).http == 'http' ? require('http') : require('https'),
   options = {
     host
   },
   failedRequests = [];
 
-  console.log('DEBUG:::::::::::::::::::::: hostinfo', parseHost(host));
-
-
   updateExistingAuthorsPages()
-    .catch(err => console.error(formatAxiosError(err, { includeStack: true })))
+    .catch(err => console.log(err))
   
   // helper functions
 
@@ -53,8 +49,6 @@ const host = process.argv[2] || 'clay.radio.com',
                 // logging so we're aware at runtime, but storing so i can remind after done
                 console.log(`Request failed for: ${path} with response: ${rawData}`);
                 failedRequests.push(`Request failed for: ${path} with response: ${rawData}`);
-              } else {
-                console.log(`Non-200 status for ${path}: ${res.statusCode}`);
               }
               resolve(rawData);
             } catch (e) {
@@ -69,8 +63,9 @@ const host = process.argv[2] || 'clay.radio.com',
           }
         });
       }
+      console.log('DEBUG:::::::::::::::::::::: requestOptions', requestOptions);
       let req = http.request(requestOptions, handleResponse);
-  
+      
       req.on('error', (e) => {
         console.error(e);
         reject(e);
@@ -80,7 +75,8 @@ const host = process.argv[2] || 'clay.radio.com',
         req.write(dataStr);
       }
   
-      console.log(`${method} to ${requestOptions.path}`);
+      // log for progress
+      console.log(`${method} to ${parseHost(host).http}://${requestOptions.host}${requestOptions.path}`);
       req.end();
     });
   }
@@ -110,58 +106,17 @@ const host = process.argv[2] || 'clay.radio.com',
   }
 
 
-  async function createMetaTagComponent(page, published, hash = 'general') {
-    const metaTagsComponent = `/_components/meta-tags/instances/${hash}`,
-      metaTagsComponentWHost = `${host}${metaTagsComponent}`;
-  
-    let added = false;
-    if (page && page.head && !(hasMetaTagsComponent(page.head))) {
-      page.head.push(metaTagsComponentWHost);
-      added = true;
-  
-      // /_components/meta-tags/instances/general has already been created and published
-      if (hash != 'general' && hash != '404') {
-        const metaTags = {
-          authors: [],
-          publishDate: '',
-          automatedPublishDate: '',
-          contentType: '',
-          sectionFront: '',
-          secondarySectionFront: '',
-          metaTags: []
-        };
-  
-        // if this is an article or gallery, we have to modify the metaTags obj since it's only updated on kiln pub/sub
-        if (page.main && page.main.length == 1 && (page.main[0].includes('/article/') || page.main[0].includes('/gallery/'))) {
-          const content = await makeRequest(page.main[0].replace(host, ''), 'GET');
-          if (content) {
-            const contentObj = JSON.parse(content);
-            metaTags.authors = contentObj.authors || [];
-            metaTags.publishDate = contentObj.date || '';
-            metaTags.automatedPublishDate = contentObj.dateModified || '';
-            metaTags.contentType = contentObj.contentType || '';
-            metaTags.sectionFront = contentObj.sectionFront || '';
-            metaTags.secondarySectionFront = contentObj.secondarySectionFront || '';
-          }
-        }
-        await makeRequest(metaTagsComponent, 'PUT', metaTags);
-  
-        if (published) {
-          await makeRequest(`${metaTagsComponent}@published`, 'PUT');
-        }
-      }
-    }
-  
-    return Promise.resolve(added);
+  async function createMetaTagComponent(data, hash = 'general') {
+    const metaTagsComponent = `/_components/meta-tags/instances/${hash}`;
+        return await makeRequest(metaTagsComponent, 'PUT', metaTags);
   }
   
   async function updateExistingAuthorsPages() {
     await usingDb(async db => {
       const authorsId = await getAllAuthorPagesId(db, host);
-      console.log('DEBUG:::::::::::::::::::::: authorsId', authorsId);
+      // console.log('DEBUG:::::::::::::::::::::: authorsId', authorsId);
 
-      const response = await makeRequest('_components/meta-tag/instances/general', 'GET');
-      console.log('DEBUG:::::::::::::::::::::: response', response);
+      const metaTags = await makeRequest(`/_components/meta-tags/instances/general`, 'GET');
       authorsId.map(author => {
         let hash = author.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
         const slug = hash[1] || 'general'
