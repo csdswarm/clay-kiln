@@ -19,7 +19,7 @@ module.exports = (uri, data) => {
     delete data.filterPrimarySectionFronts;
   }
   
-  ['SectionFronts', 'SecondarySectionFronts, Tags'].forEach(field => {
+  ['SectionFronts', 'SecondarySectionFronts', 'Tags'].forEach(field => {
     data[`exclude${field}`] = data[`exclude${field}`] || data[`filter${field}`] || (field === 'Tags' ? [] : {});
     
     delete data[`filter${field}`];
