@@ -16,7 +16,7 @@ columnTitle:
     help: Override the default component title
     validate:
       max: 20
-      required: 
+      required:
         field: useCustomTitle
         operator: truthy
   _reveal:
@@ -59,7 +59,7 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
-      - 
+      -
         name: External RSS Feed
         value: rss-feed
 

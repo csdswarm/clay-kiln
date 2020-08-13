@@ -37,11 +37,13 @@
           <li>
             <span data-play-station="{{ _computed.station.id }}" class="{{ playingClass }}">Live</span>
           </li>
+          {{#unless hidePodcastsLink }}
           <li>
-            <a href="/audio">
+            <a href="{{podcastsUrl}}">
               <span>Podcasts</span>
             </a>
           </li>
+          {{/unless }}
         </ul>
       </li>
       {{#if _computed.station.phonetic_name }}
