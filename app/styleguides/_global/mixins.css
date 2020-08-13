@@ -14,11 +14,6 @@ t @define-mixin hidden-content {
     @mixin-content;
   }
 }
-@define-mixin largest-screen {
-  @media only screen and (min-width: 1024px) {
-    @mixin-content;
-  }
-}
 
 /* Large Screen */
 @define-mixin large-screen {

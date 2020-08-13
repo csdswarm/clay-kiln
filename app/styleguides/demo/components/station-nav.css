@@ -102,8 +102,9 @@ $caret-margin-right: em(25);
     z-index: 100;
 
     .menu--wrap {
-      @mixin largest-screen {
-        flex-wrap: wrap;
+      flex-wrap: wrap;
+      @mixin medium-screen {
+        flex-wrap: nowrap;
       }
     }
     
@@ -158,16 +159,19 @@ $caret-margin-right: em(25);
       }
       .anchor--rectangular {
         display: block;
+        margin-top: em(10);
         margin-bottom: 0;
-        margin-top: em(5);
-        @mixin largest-screen {
-          width: 100%;
-        }
+        flex: 0 0 100%;
         @mixin medium-screen {
-          margin-bottom: em(20);
+          margin: em(15) 0;
+          flex: 0 0 auto;
         }
         @mixin medium-small-screen {
-          margin-right: 0;
+          margin: em(7) 0;
+        }
+        @mixin small-screen {
+          margin-top: em(21);
+          margin-bottom: em(11);
         }
       }
       .menu__image--square {
