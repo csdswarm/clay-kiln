@@ -24,7 +24,7 @@ module.exports = (uri, data) => {
   }
   
   ['SectionFronts', 'SecondarySectionFronts, Tags'].forEach(field => {
-    let excludes = [];
+    let excludes = field === 'Tags' ? [] : {};
     
     if (_has(data,`filter${field}`)) {
       excludes = data[`exclude${field}`] || data[`filter${field}`];
