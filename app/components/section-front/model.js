@@ -1,42 +1,47 @@
 'use strict';
-const { unityComponent } = require('../../services/universal/amphora'),
+
+const log = require('../../services/universal/log').setup({ file: __filename }),
+  stationThemingApi = require('../../services/server/stationThemingApi'),
   { assignStationInfo } = require('../../services/universal/create-content'),
-  _get = require('lodash/get'),
-  { COLORS } = require('../../services/universal/constants');
+  { COLORS, DEFAULT_STATION } = require('../../services/universal/constants'),
+  { defaultTheme } = require('../theme/model'),
+  { unityComponent } = require('../../services/universal/amphora');
+
+const sectionFrontToPrimaryColor = {
+  audio: COLORS.robinsEggBlue,
+  music: COLORS.sunsetOrange,
+  news: COLORS.lightningYellow,
+  sports: COLORS.azureRadience
+};
 
 /**
- * adds the primaryColor to _computed if a primary section front
- * which is used in the template to set a global css var and
- * eliminates the need for complicated postCSS mixin
+ * returns the primary color based first off station then section front
  *
  * @param {object} data
  * @param {object} locals
  * @returns {string}
  */
-function addPrimaryColorToPrimarySectionFronts(data, locals) {
-  let primaryColor = '';
+async function getPrimaryColor(data, locals) {
+  const { sectionFront = '', station = {} } = locals;
 
-  switch (_get(locals,'sectionFront', '').toLowerCase()) {
-    case 'music':
-      primaryColor = COLORS.sunsetOrange;
-      break;
-    case 'news':
-      primaryColor = COLORS.lightningYellow;
-      break;
-    case 'sports':
-      primaryColor = COLORS.azureRadience;
-      break;
-    case 'audio':
-      primaryColor = COLORS.robinsEggBlue;
-      break;
-    default:
-      break;
+  if (station.id !== DEFAULT_STATION.id) {
+    try {
+      const { primaryColor } = await stationThemingApi.get(station.site_slug, defaultTheme);
+
+      return primaryColor;
+    } catch (err) {
+      log('error', err);
+
+      return defaultTheme.primaryColor;
+    }
   }
-  return primaryColor;
+
+  return sectionFrontToPrimaryColor[sectionFront.toLowerCase()]
+    || defaultTheme.primaryColor;
 }
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
+  render: async (uri, data, locals) => {
     if (data.title) {
       if (data.primary) {
         locals.sectionFront = data.title.toLowerCase();
@@ -46,7 +51,7 @@ module.exports = unityComponent({
       }
     }
 
-    data._computed.primaryColor = addPrimaryColorToPrimarySectionFronts(data, locals);
+    data._computed.primaryColor = await getPrimaryColor(data, locals);
 
     return data;
   },

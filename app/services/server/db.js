@@ -188,16 +188,16 @@ const utils = require('../universal/utils'),
   };
 
 module.exports = {
-  getUri: uri => db.get(uri),
+  checkTableExists,
+  createTable,
+  DATA_STRUCTURES,
   del,
+  ensureTableExists,
   get,
+  getComponentData,
+  getUri: uri => db.get(uri),
   post,
   put,
   raw: db.raw,
-  uriToUrl: utils.uriToUrl,
-  checkTableExists,
-  createTable,
-  ensureTableExists,
-  DATA_STRUCTURES,
-  getComponentData
+  uriToUrl: utils.uriToUrl
 };
