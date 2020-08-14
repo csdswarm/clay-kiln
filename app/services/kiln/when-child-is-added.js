@@ -4,8 +4,8 @@ const { hasClass } = require('../client/dom-helpers');
 
 /**
  * This method fires the callback once when the child class either pre-exists
- *   from the server or is added.  It is assumed the parent selector passed
- *   exists at the time this function is called.
+ *   from the server or is added.  It is assumed the parent class exists at the
+ *   time this function is called.
  *
  * Note: if an observer is created, currently this only fires once then
  *   disconnects.  This is for performance reasons since we should only be
@@ -15,20 +15,12 @@ const { hasClass } = require('../client/dom-helpers');
  *
  * @param {function} cb
  * @param {string} childClass
- * @param {string} [parentClass]
- * @param {string} [parentUri]
+ * @param {string} parentClass
  */
-module.exports = ({ cb, childClass, parentClass, parentUri }) => {
-  if (!parentClass && !parentUri) {
-    throw new Error('parentClass or parentUri must be passed');
-  }
-
-  const parentSelector = parentClass
-      ? `.${parentClass}`
-      : `[data-uri="${parentUri}"]`,
-    serverRenderedChild = document.querySelector(
-      `${parentSelector} .${childClass}`
-    );
+module.exports = ({ cb, childClass, parentClass }) => {
+  const serverRenderedChild = document.querySelector(
+    `.${parentClass} .${childClass}`
+  );
 
   if (serverRenderedChild) {
     cb(serverRenderedChild);
@@ -37,7 +29,7 @@ module.exports = ({ cb, childClass, parentClass, parentUri }) => {
 
   // this shouldn't be declared above the short circuit
   // eslint-disable-next-line one-var
-  const parentEl = document.querySelector(parentSelector),
+  const parentEl = document.querySelector(`.${parentClass}`),
     runCallbackWhenChildExists = mutation => {
       const childEl = Array.from(mutation.addedNodes)
         .find(hasClass(childClass));
