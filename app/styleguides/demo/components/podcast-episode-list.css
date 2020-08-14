@@ -100,7 +100,8 @@
   }
 
   &__load-more {
-    width: widthOnGrid(10, 9);
+    display: flex;
+    flex: 0 0 widthOnGrid(1, 0);
   }
   &__load-more-btn {
     @mixin podcast-episode-list-font3;
