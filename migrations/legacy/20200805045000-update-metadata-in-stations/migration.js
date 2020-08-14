@@ -14,7 +14,7 @@ const
   getPages = async () => {
     try {
       const migratedStations = await esQuery(
-        {},
+        { size: 100 },
         {
           ...envInfo.es,
           index: 'published-stations',
