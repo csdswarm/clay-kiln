@@ -3,11 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--station-detail {
-  .station-detail__data {
-    display: none;
-  }
-}
 .station-detail__head {
   width: 100%;
   display: flex;

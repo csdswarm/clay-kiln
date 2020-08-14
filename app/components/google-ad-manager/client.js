@@ -371,10 +371,16 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       pageData,
       contentTags
     }),
+    nmcTags = getMetaTagContent('name', NMC.tag),
     adTargetingData = {
       targetingAuthors: authors,
-      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty. In case that there is no tags we should not sent information to GAM.
-      targetingTags: _isEmpty(contentTags.filter(Boolean)) && !_isEmpty(getMetaTagContent('name',  NMC.tag)) ? (getMetaTagContent('name',  NMC.tag) || '').replace(/\//g, ',') : trackingData.tag
+      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
+      // In case that there is no tags we should not sent information to GAM.
+      targetingTags:
+        _isEmpty(contentTags.filter(Boolean)) &&
+        !_isEmpty(nmcTags)
+          ? (nmcTags || '').replace(/\//g, ',')
+          : trackingData.tag
     };
 
   if (shouldUseNmcTags) {
@@ -388,7 +394,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
       targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags: getMetaTagContent('name',  NMC.tag)
+      targetingTags: nmcTags
     });
   } else {
     Object.assign(adTargetingData, {
