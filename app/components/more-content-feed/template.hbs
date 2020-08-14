@@ -53,7 +53,7 @@
                  data-track-component-title="More Content Feed"
                  data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
-                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
+                  {{#ifAll ../_computed.showContentLabels feedItem.label}}
                     <span class="thumb__section-front">{{{ feedItem.label }}}</span>
                   {{/ifAll}}
                   {{#unless (compare ../locationOfContentFeed 'homepage')}}
