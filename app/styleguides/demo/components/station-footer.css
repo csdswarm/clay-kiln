@@ -22,7 +22,7 @@
       @mixin station-footer-font2;
     }
 
-    &__slogan {
+    &__slogan, &__divider {
       @mixin station-footer-font1;
     }
 
