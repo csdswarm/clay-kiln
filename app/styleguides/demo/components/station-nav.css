@@ -82,7 +82,7 @@ $caret-margin-right: em(25);
 
 .component--station-nav {
   display: block;
-  height: em(130);
+  height: em(143);
   *[data-play-station] {
     cursor: pointer;
   }
