@@ -5,6 +5,7 @@
 @import "_global/colors";
 @import "_global/alert-banner";
 @import "_global/layouts";
+@import "_global/permissions";
 
 .layout.layout--one-column-full-width {
   height: 100vh;

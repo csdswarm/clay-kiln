@@ -1,0 +1,5 @@
+.layout.cannot-remove-component {
+  .quick-bar-remove {
+    display: none;
+  }
+}
