@@ -2,11 +2,11 @@
 
 
 const _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
-  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
   {
     pageTypeTagArticle,
     pageTypeTagSection,
@@ -373,9 +373,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     }),
     adTargetingData = {
       targetingAuthors: authors,
-      // google ad manager doesn't take the tags from nmc since nmc cares about
-      //   the editorial tags rather than the ad tags.
-      targetingTags : (getMetaTagContent('name',  NMC.tag) || '').replace(/\//g, ',')
+      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty. In case that there is no tags we should not sent information to GAM.
+      targetingTags: _isEmpty(contentTags.filter(Boolean)) && !_isEmpty(getMetaTagContent('name',  NMC.tag)) ? (getMetaTagContent('name',  NMC.tag) || '').replace(/\//g, ',') : trackingData.tag
     };
 
   if (shouldUseNmcTags) {
@@ -388,8 +387,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
-      
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
+      targetingTags: getMetaTagContent('name',  NMC.tag)
     });
   } else {
     Object.assign(adTargetingData, {
@@ -409,25 +408,10 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
 }
 
 function getCurrentStation() {
-  const fromPathname = makeFromPathname({ pathname: window.location.pathname });
+  const googleAdManagerElement = document.querySelector('.component--google-ad-manager'),
+    stationData = JSON.parse(googleAdManagerElement.dataset.gamStationData);
 
-  if (fromPathname.isStationDetail()) {
-    // these shouldn't be declared above the short circuit
-    // eslint-disable-next-line one-var
-    const stationDetailComponent = document.querySelector('.component--station-detail'),
-      stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-      station = stationDetailEl
-        ? JSON.parse(stationDetailEl.innerHTML)
-        : {};
-
-    return station;
-  } else {
-    const googleAdManagerElement = document.querySelector('.component--google-ad-manager'),
-      stationData = JSON.parse(googleAdManagerElement.dataset.gamStationData);
-
-    return stationData;
-    
-  }
+  return stationData;
 
 }
 
