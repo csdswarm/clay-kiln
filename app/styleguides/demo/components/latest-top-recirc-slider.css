@@ -32,7 +32,7 @@ $thumbnail-continer-width: 70px;
     border-bottom: 1px solid $60gray;
   }
   &__controls-container {
-    background: var(--theme-secondaryColor, $purple);
+    background: theme(secondaryColor,$purple);
     height: 100%;
     flex: 0 0 em($controls-width, 16);
     display: flex;
