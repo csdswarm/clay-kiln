@@ -37,7 +37,8 @@ const _get = require('lodash/get'),
 
     Object.assign(data._computed, {
       stationId: _get(locals, 'station.id'),
-      lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
+      lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0),
+      showContentLabels: data.populateFrom === 'all-content' || data.populateFrom === 'author'
     });
 
     // ON-1995: The data.station property is not filled when is done using the migration script and older components may no have the property set properly.
