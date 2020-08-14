@@ -17,11 +17,10 @@ const sectionFrontToPrimaryColor = {
 /**
  * returns the primary color based first off station then section front
  *
- * @param {object} data
  * @param {object} locals
  * @returns {string}
  */
-async function getPrimaryColor(data, locals) {
+async function getPrimaryColor(locals) {
   const { sectionFront = '', station = {} } = locals;
 
   if (station.id !== DEFAULT_STATION.id) {
@@ -51,7 +50,7 @@ module.exports = unityComponent({
       }
     }
 
-    data._computed.primaryColor = await getPrimaryColor(data, locals);
+    data._computed.primaryColor = await getPrimaryColor(locals);
 
     return data;
   },
