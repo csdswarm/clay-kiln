@@ -1,0 +1,112 @@
+@import "_global/colors";
+
+@define-mixin text-styles {
+  font-family: Noto Sans,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.manage-syndicated-content {
+  min-width: 980px;
+  overflow-y: auto;
+  padding: 10px;
+
+  .page-list-controls {
+    &__column {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+  }
+
+  .filters {
+    &__station-select {
+      display: flex;
+      margin: 8px 0;
+  
+      .ui-select {
+        margin: 0 3px 8px 0;
+        flex-grow: 1;
+      }
+      .ui-button {
+        display: none;
+      }
+    }
+  }
+
+  .page-list-headers {
+    &__title {
+      flex: 1 1 450px;
+    }
+    &__station, &__status {
+      flex: 0 1 150px;
+      text-align: center;
+    }
+    &__manage {
+      flex: 1 1 100px;
+      text-align: center;
+    }
+  }
+  
+  .page-list-item {
+    &__title {
+      flex: 1 1 450px;
+    }
+    &__station {
+      flex: 0 1 150px;
+      @mixin text-styles;
+      text-align: center;
+    },
+    &__station, &__status {
+      flex: 0 1 150px;
+      align-items: center !important;
+    }
+    &__manage {
+      flex: 1 1 100px;
+      text-align: center;
+    }
+    .available {
+      color: $keenUiAlertIconYellow;
+    }
+  }
+
+  .manage-syndicated-content__rows {
+    overflow-y: hidden;
+  }
+
+  .buttons-group {
+    padding: 4px;
+    &__syndicate {
+      margin-bottom: 3px;
+    }
+    &__syndicate, &__clone {
+      height: 20px;
+      width: 80%;
+    }
+    &__unpublish {
+      width: 80%;
+    }
+  }
+
+  .syndication-modal {
+    &__title {
+      margin: 12px 0;
+      font-size: 16px;
+    }
+    p {
+      @mixin text-styles;
+    }
+    &__buttons {
+      margin-top: 40px;
+    }
+  }
+}
+
+.manage-syndicated-content-menu {
+  .nav-menu-button-text {
+    text-align: left;
+  }
+}
+

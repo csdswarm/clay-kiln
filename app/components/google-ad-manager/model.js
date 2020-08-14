@@ -13,7 +13,8 @@ module.exports = unityComponent({
         ? process.env.DOUBLECLICK_BANNER_TAG
         : locals.station.doubleclick_bannertag,
       environment: process.env.NODE_ENV,
-      adRefreshInterval: process.env.GOOGLE_AD_REFRESH_INTERVAL
+      adRefreshInterval: process.env.GOOGLE_AD_REFRESH_INTERVAL,
+      hasStationNav: locals.station && locals.station.id
     };
   }
 });

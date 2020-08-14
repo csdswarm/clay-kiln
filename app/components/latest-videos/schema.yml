@@ -2,6 +2,11 @@ _version: 5.0
 _description: |
   Latest videos module
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 items:
   _label: Latest Videos
   _has:
@@ -25,11 +30,6 @@ items:
         input: text
         validate:
           max: 80
-    -
-      prop: urlIsValid
-      _has:
-        validate:
-          required: true
 
 sectionFront:
   _label: Section Front
@@ -72,4 +72,5 @@ _groups:
       - primaryContentLabel
       - filterTags
       - filterSecondarySectionFronts
+      - excludeSubscriptions
 

@@ -41,7 +41,8 @@ let refreshCount = 0,
   numGalleryInline = 1,
   numStationsDirectoryInline = 1,
   adIndices = {},
-  adsMounted = false;
+  adsMounted = false,
+  prevLocation = window.location.href;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -82,6 +83,25 @@ document.addEventListener('google-ad-manager-dismount', () => {
     googletag.destroySlots();
   });
 });
+// Refreshes ads when navigating to other pages in SPA
+window.onload = function () {
+  const
+    bodyList = document.querySelector('body'),
+    observer = new MutationObserver( mutations => {
+      mutations.forEach( () => {
+        if (prevLocation !== window.location.href) {
+          prevLocation = window.location.href;
+          refreshAllSlots();
+        }
+      });
+    }),
+    config = {
+      childList: true,
+      subtree: true
+    };
+
+  observer.observe(bodyList, config);
+};
 
 // Create listeners inside of the context of having googletag.pubads()
 googletag.cmd.push(() => {
@@ -212,6 +232,15 @@ function lazyLoadAd(changes, observer) {
     }
   });
 }
+/**
+ * Refreshes all slots when navigating between pages
+ */
+const  refreshAllSlots = () => {
+  googletag.cmd.push(() => {
+    googletag.pubads().refresh();
+  });
+};
+
 
 /**
  * adds a listener to the x div to enable it to close the current ad
@@ -359,7 +388,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
+      targetingTags : getMetaTagContent('name',  NMC.tag)
     });
   } else {
     Object.assign(adTargetingData, {
@@ -405,13 +435,18 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
+  /**
+   * the initialgoogleAdManagerComponent ref used before and elsewhere, is inaccurate or stale and therefore,
+   * a new ref was created within this method’s context to grab new data that occurs on SPA page change.
+   */
+  const googleAdEl = document.querySelector('.component--google-ad-manager'),
+    { doubleclickBannerTag } = googleAdEl.dataset,
     currentStation = getCurrentStation(),
     /**
      * NOTE: This is a workaround to access process.env.NODE_ENV
      * because it is not available in client.js.
      */
-    env = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : '',
+    { env } = googleAdEl.dataset,
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
     hasNmcTags = !!firstNmcTag,
@@ -424,12 +459,16 @@ function getAdTargeting(pageData) {
   switch (pageData.page) {
     case 'article':
     case 'vgallery':
+    case 'events':
+    case 'contests':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
+    case 'stationFront':
       adTargetingData.siteZone = siteZone.concat('/', 'home', '/', pageTypeTagSection);
       break;
     case 'sectionFront':
+    case 'stationSectionFront':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':
@@ -691,3 +730,5 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     updateSkinStyles(false);
   };
 };
+
+

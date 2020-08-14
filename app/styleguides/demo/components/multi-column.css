@@ -24,7 +24,6 @@
     }
 
     &--1 {
-      
       @mixin default-screen {
         flex: 0 0 widthOnGrid(6, 5);
         margin-right: em(20);
@@ -71,8 +70,11 @@
   }
 
   .multi-column__ad--col3 {
-    @mixin medium-screen {
-      display: none;
+    .google-ad-manager--medium-rectangle {
+      @mixin medium-screen {
+        margin-top: em(20);
+        justify-content: center;
+      }
     }
     .kiln-edit-mode .component--google-ad-manager, .component--google-ad-manager {
       margin-bottom: 0;

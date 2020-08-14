@@ -1,0 +1,6 @@
+_components:
+  station-detail-listen-only-banner:
+    allowed: true
+    instances:
+      default:
+        allowed: true

@@ -1,25 +1,61 @@
 'use strict';
+const { unityComponent } = require('../../services/universal/amphora'),
+  { assignStationInfo } = require('../../services/universal/create-content'),
+  _get = require('lodash/get'),
+  { COLORS } = require('../../services/universal/constants');
 
-const { assignStationInfo } = require('../../services/universal/create-content.js');
+/**
+ * adds the primaryColor to _computed if a primary section front
+ * which is used in the template to set a global css var and
+ * eliminates the need for complicated postCSS mixin
+ *
+ * @param {object} data
+ * @param {object} locals
+ * @returns {string}
+ */
+function addPrimaryColorToPrimarySectionFronts(data, locals) {
+  let primaryColor = '';
 
-module.exports.render = (uri, data, locals) => {
-  if (data.title) {
-    if (data.primary) {
-      locals.sectionFront = data.title.toLowerCase();
-    } else {
-      locals.sectionFront = data.primarySectionFront;
-      locals.secondarySectionFront = data.title.toLowerCase();
-    }
+  switch (_get(locals,'sectionFront', '').toLowerCase()) {
+    case 'music':
+      primaryColor = COLORS.sunsetOrange;
+      break;
+    case 'news':
+      primaryColor = COLORS.lightningYellow;
+      break;
+    case 'sports':
+      primaryColor = COLORS.azureRadience;
+      break;
+    case 'audio':
+      primaryColor = COLORS.robinsEggBlue;
+      break;
+    default:
+      break;
   }
+  return primaryColor;
+}
 
-  return data;
-};
+module.exports = unityComponent({
+  render: (uri, data, locals) => {
+    if (data.title) {
+      if (data.primary) {
+        locals.sectionFront = data.title.toLowerCase();
+      } else {
+        locals.sectionFront = data.primarySectionFront;
+        locals.secondarySectionFront = data.title.toLowerCase();
+      }
+    }
 
-module.exports.save = (uri, data, locals) => {
-  assignStationInfo(uri, data, locals);
+    data._computed.primaryColor = addPrimaryColorToPrimarySectionFronts(data, locals);
 
-  return {
-    ...data,
-    revealSectionFrontControls: !data.stationFront && !data.titleLocked
-  };
-};
+    return data;
+  },
+  save: (uri, data, locals) => {
+    assignStationInfo(uri, data, locals);
+
+    return {
+      ...data,
+      revealSectionFrontControls: !data.stationFront && !data.titleLocked
+    };
+  }
+});

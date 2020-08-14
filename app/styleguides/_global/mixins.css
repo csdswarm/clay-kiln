@@ -1,4 +1,4 @@
-@define-mixin hidden-content {
+t @define-mixin hidden-content {
   border: none;
   clip: rect(0 0 0 0);
   height: 1px;
@@ -179,3 +179,18 @@ $small-screen-nav-width: em(320); /* 360- mobile */
   background-size: $size;
 }
 
+@define-mixin clamp $numLines, $height {
+  height: $height;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: $numLines;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+@define-mixin unset-clamp {
+  overflow: unset;
+  -webkit-line-clamp: unset;
+  text-overflow: unset;
+}

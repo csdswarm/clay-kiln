@@ -2,7 +2,7 @@
   as an item within more-content-feed's 'ul' --}}
 {{ set "tag" (if (compare adSize "sharethrough-tag") "li" else="div") }}
 
-<{{tag}}
+<{{default tag '!--'}}
   data-uri="{{ default _ref _self }}"
   data-placeholder="adSize"
   data-ad-position="{{ adPosition }}"
@@ -15,7 +15,7 @@
   data-aps-bid-timeout="{{ @root.locals.site.apsBidTimeout }}"
   data-aps-load-timeout="{{ @root.locals.site.apsLoadTimeout }}"
   data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
-  class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
+  class="component component--google-ad-manager google-ad-manager--{{adSize}}{{#if sticky }} sticky {{#if hasStationNav}}sticky--station-nav{{/if}}{{/if}}{{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
   {{#unless @root.locals.edit}}
     {{#if (compare adSize "outOfPage")}}
@@ -35,4 +35,4 @@
       {{/if}}
     {{/if}}
   {{/unless}}
-</{{tag}}>
+</{{default tag '--'}}>

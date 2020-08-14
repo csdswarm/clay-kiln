@@ -1,8 +1,16 @@
 'use strict';
 const _get = require('lodash/get'),
   _capitalize = require('lodash/capitalize'),
+  db = require('../../services/server/db'),
   { getVideoDetails } = require('../../services/universal/youtube'),
-  defaultPlayerBorderTopCTA = 'Watch';
+  defaultPlayerBorderTopCTA = 'Watch',
+  __ = {
+    clearContentId,
+    dbGet: db.get,
+    getVideoDetails,
+    setVideoDetails,
+    updateSettingsByType
+  };
 
 /**
  * Override various settings by type of video
@@ -78,31 +86,45 @@ function setVideoDetails(data, videoDetails) {
  * @param {object=} locals This is not used
  * @returns {*} data
  */
-module.exports.render = (ref, data) => {
-  data.origSource = `https://www.youtube.com/${ data.isPlaylist ? 'playlist?list' : 'watch?v'}=${ data.contentId }`;
-  return data;
-};
+const render = (ref, data) => {
+    data.origSource = `https://www.youtube.com/${ data.isPlaylist ? 'playlist?list' : 'watch?v'}=${ data.contentId }`;
+    return data;
+  },
 
-/**
+  /**
  * saves the changes from the editor
  * @param {string} uri This is not used
  * @param {object} data The data from the editor
  * @param {object=} locals This is not used
  * @returns {*}
  */
-module.exports.save = (uri, data) => {
-  data.isPlaylist = data.videoSource === 'playlist';
+  save = async (uri, data, locals) => {
+    const { clearContentId, dbGet, getVideoDetails, setVideoDetails, updateSettingsByType } = __;
 
-  clearContentId(data);
-  updateSettingsByType(data);
+    data.isPlaylist = data.videoSource === 'playlist';
 
-  if (data.contentId) {
-    return getVideoDetails(data.contentId, data.isPlaylist)
-      .then(videoDetails => setVideoDetails(data, videoDetails));
-  }
+    clearContentId(data);
+    updateSettingsByType(data);
 
-  // Missing contentId is technically not invalid. Do not show an error.
-  data.videoValid = true;
+    if (data.contentId) {
+      const previousContent = await dbGet(uri.replace('@published', ''),locals);
 
-  return data;
+      if (previousContent.contentId && data.contentId !== previousContent.contentId) {
+        return getVideoDetails(data.contentId, data.isPlaylist)
+          .then(videoDetails => setVideoDetails(data, videoDetails));
+      } else {
+        return data;
+      }
+    }
+
+    // Missing contentId is technically not invalid. Do not show an error.
+    data.videoValid = true;
+
+    return data;
+  };
+
+module.exports = {
+  _internals: __,
+  render,
+  save
 };

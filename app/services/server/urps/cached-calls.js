@@ -99,12 +99,12 @@ function makeCachedUrpsCall(metaData) {
           getFromUrps(
             urlPath,
             Object.assign({ domainType: 'station' }, urpsReqBody),
-            auth.token
+            auth.idToken
           ),
           getFromUrps(
             urlPath,
             Object.assign({ domainType: 'market' }, urpsReqBody),
-            auth.token
+            auth.idToken
           )
         ]);
 

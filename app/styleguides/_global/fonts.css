@@ -153,25 +153,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Latest Recirculation Fonts Styleguide |||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin latest-recirc-font1 $color: $purple {
-  @mixin font CircularStd-Medium, 16px, theme(secondaryColor, $color), -.26px, 18px;
-}
-@define-mixin latest-recirc-font2 {
-  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
-}
-@define-mixin latest-recirc-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
-}
-@define-mixin latest-recirc-font4 {
-  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 14px;
-}
-@define-mixin latest-recirc-font5 {
-  @mixin font CircularStd-Black, 16px, $black, -.4px, 19px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Redirects Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin redirects-font1 {
@@ -179,31 +160,6 @@ em, i {
 }
 @define-mixin redirects-font2 {
   @mixin font CircularStd-Medium, 20px, $black, -.32px, 25px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||||| Latest Content Fonts Styleguide ||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin latest-content-font1 $color: $purple {
-  @mixin font CircularStd-Black, 20px, $color, -.32px, 25px;
-}
-@define-mixin latest-content-font2 {
-  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
-}
-@define-mixin latest-content-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
-}
-@define-mixin latest-content-font4 {
-  @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
-}
-@define-mixin latest-content-font5 {
-  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
-}
-@define-mixin latest-content-font6 {
-  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
-}
-@define-mixin latest-content-font7 {
-  @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -299,37 +255,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Section-Lead Fonts Styleguide |||||| */
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin section-lead-font1 {
-  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
-}
-@define-mixin section-lead-font2 {
-  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
-}
-@define-mixin section-lead-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
-}
-@define-mixin section-lead-font4 {
-  @mixin font CircularStd-Medium, 14px, $parisM, -.2px, 18px;
-}
-@define-mixin section-lead-font5 {
-  @mixin font CircularStd-Medium, 16px, $black, -.4px, 19px;
-}
-/* --  multi-column variations --*/
-@define-mixin section-lead-mc-font1 {
-  @mixin font CircularStd-Black, 22px, $black, -.55px, 26px;
-}
-@define-mixin section-lead-mc-font2 {
-  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 14px;
-}
-@define-mixin section-lead-mc-font3 {
-  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
-}
-@define-mixin section-lead-mc-font4 {
-  @mixin font CircularStd-Black, 16px, $black, -.43px, 19px;
-}
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Latest Videos Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin latest-videos-font1 {
@@ -356,6 +281,16 @@ em, i {
 }
 @define-mixin topic-page-header-font2 {
   @mixin font CircularStd-Black, 35px, theme(primaryColor, $parisM), -.55px, 44px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||| Page Header Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin page-header-font1 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 90px;
+}
+@define-mixin page-header-font2 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 42px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -400,43 +335,6 @@ em, i {
 }
 @define-mixin gallery-font6 {
   @mixin font CircularStd-Black, 18px, $tundora, -.22px, 25px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Station Detail Fonts Styleguide ||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin station-detail-font1 {
-  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
-}
-@define-mixin station-detail-font2 {
-  @mixin font CircularStd-Black, 24px, $black, -.58px, 30px;
-}
-@define-mixin station-detail-font3 {
-  @mixin font ProximaNova-Light, 18px, $black, -.58px, 25px;
-}
-@define-mixin station-detail-font4 {
-  @mixin font CircularStd-Black, 16px, $black, -.58px, 16px;
-}
-@define-mixin station-detail-font5 {
-  @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
-}
-@define-mixin station-detail-font6 {
-  @mixin font CircularStd-Black, 13px, $black, -.58px, 15px;
-}
-@define-mixin station-detail-font7 {
-  @mixin font CircularStd-Medium, 12px, $black, -.58px, 14px;
-}
-@define-mixin station-detail-font8 {
-  @mixin font CircularStd-Medium, 12px, #767676, -.58px, 14px;
-}
-@define-mixin station-detail-font9 {
-  @mixin font CircularStd-Book, 12px, $boulder, -.58px, 18px;
-}
-@define-mixin station-detail-font10 {
-  @mixin font CircularStd-Medium, 11px, $boulder, -.58px, 13px;
-}
-@define-mixin station-detail-font11 {
-  @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -594,28 +492,23 @@ em, i {
   font-style: italic;
 }
 @define-mixin component-settings-font-2 {
-  font-weight: 400;
-  @mixin font Helvetica, Arial, em(24, 16), inherit, -.3, em(28, 24);
+  @mixin font "Helvetica, Arial", 24px, inherit, -.3px, 28px;
 }
 @define-mixin component-settings-font-3 {
   font-weight: 700;
-  @mixin font Helvetica, Arial, em(16, 16), inherit, -.3, em(28, 16);
+  @mixin font "Helvetica, Arial", 16px, inherit, -.3px, 28px;
 }
 @define-mixin component-settings-font-4 {
-  font-weight: 400;
-  @mixin font Helvetica, Arial, em(16, 16), $easternBlue, -.3, em(18, 16);
+  @mixin font "Helvetica, Arial", 16px, $easternBlue, -.3px, 18px;
 }
 @define-mixin component-settings-font-5 {
-  font-weight: 400;
-  @mixin font Helvetica, Arial, em(12, 16), $tundora, -.3, em(14, 12);
+  @mixin font "Helvetica, Arial", 12px, $tundora, -.3px, 14px;
 }
 @define-mixin component-settings-font-6 {
-  font-weight: 400;
-  @mixin font Helvetica, Arial, em(12, 16), $halfBaked, -.3, em(14, 12);
+  @mixin font "Helvetica, Arial", 12px, $halfBaked, -.3px, 14px;
 }
 @define-mixin component-settings-font-7 {
-  font-weight: 400;
-  @mixin font Helvetica, Arial, em(14, 16), inherit, -.3, em(16, 14);
+  @mixin font "Helvetica, Arial", 14px, inherit, -.3px, 16px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -626,6 +519,41 @@ em, i {
 }
 @define-mixin alert-banner-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Rules Component Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin rules-component-font-1 {
+  @mixin font ProximaNova-Bold, inherit, inherit, inherit, inherit;
+}
+@define-mixin rules-component-font-2 {
+  @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Contest Component Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin contest-font1 {
+  @mixin font CircularStd-Black, 45px, $black, -0.74px, 54px;
+}
+@define-mixin contest-font2 {
+  @mixin font ProximaNova-Light, 22px, $black, -0.36px, 26px;
+}
+@define-mixin contest-font3 {
+  @mixin font CircularStd-Medium, 16px, $black, -0.26px, 19px;
+}
+@define-mixin contest-font4 {
+  @mixin font CircularStd-Black, 22px, $black, -0.55px, 26px;
+}
+@define-mixin contest-font5 {
+  @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
+}
+@define-mixin contest-font6 {
+  @mixin font ProximaNova-Light, 18px, $black, -0.29px, 22px;
+}
+@define-mixin contest-font7 {
+  @mixin font CircularStd-Black, 18px, $black, -0.45px, 22px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -704,6 +632,13 @@ em, i {
   @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -712,6 +647,57 @@ em, i {
 }
 @define-mixin latest-top-recirc-slider-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||||||||| Event Page Fonts Styleguide ||||||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin event-page-font1 {
+  @mixin font CircularStd-Black, 22px, $redViolet, -.55px, 26px;
+}
+@define-mixin event-page-font2 {
+  @mixin font ProximaNova-Regular, 18px, $black, inherit, 22px;
+}
+@define-mixin event-page-font3 {
+  @mixin font CircularStd-Black, 45px, $black, -.74px, 54px;
+}
+@define-mixin event-page-font4 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.23px, 30px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Events List Page Fonts Styleguide |||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin events-list-page-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin events-list-page-font2 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin events-list-page-font3 {
+  @mixin font ProximaNova-Regular, 16px, $black, -.26px, 20px;
+}
+
+/*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Events Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin events-lede-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin events-lede-font2 {
+  @mixin font CircularStd-Medium, 12px, $black, -.2px, 14px;
+}
+@define-mixin events-lede-font2-1 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin events-lede-font3 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 22px;
+}
+@define-mixin events-lede-font4 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 28px;
+}
+@define-mixin events-lede-font5 {
+  @mixin font CircularStd-Black, 14px, $black, -.55px, 17px;
 }
 
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
@@ -734,7 +720,6 @@ em, i {
   @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Card Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -743,11 +728,4 @@ em, i {
 }
 @define-mixin card-font2 {
   @mixin font CircularStd-Medium, 20px, $black, -.33px, 24px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||| Permissions Fonts Styleguide ||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin permissions-font1 {
-  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
 }

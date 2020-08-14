@@ -1,9 +1,6 @@
 'use strict';
 
-const { rendererPipeline } = require('./utils'),
-  redis = require('../../services/server/redis'),
-  { redisKey } = require('../../services/universal/msn-feed-utils'),
-  { urlToElasticSearch } = require('../../services/universal/utils');
+const { rendererPipeline } = require('./utils');
 
 /**
  * Run the feed instance through the transform
@@ -16,9 +13,5 @@ const { rendererPipeline } = require('./utils'),
  * @return {Promise}
  */
 module.exports = (ref, data, locals) => {
-  const urls = data.results.map(entry => urlToElasticSearch(entry.canonicalUrl));
-
-  redis.set(redisKey.urlsLastQueried, JSON.stringify(urls));
-
   return rendererPipeline(ref, data, locals, 'msn');
 };

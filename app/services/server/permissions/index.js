@@ -74,7 +74,15 @@ function userPermissionRouter() {
     const { locals } = res;
 
     if (_get(locals, 'user.provider') === 'cognito') {
-      await urps.updateAuthData(req.session, locals);
+      const { session } = req;
+
+      await urps.updateAuthData(session, locals);
+
+      if (!session.auth.idToken) {
+        session.returnTo = req.originalUrl;
+        res.redirect('/_auth/logout');
+        return;
+      }
     }
 
     next();
@@ -129,6 +137,8 @@ function userPermissionRouter() {
   //   intercepting unsafe methods (here we're intercepting
   //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
+
+  addToLocals.contentSubscriptions(userPermissionRouter);
 
   return userPermissionRouter;
 }
@@ -238,7 +248,6 @@ async function checkUserPermissions(uri, req, locals, db) {
     if (!locals.stationsIHaveAccessTo[site_slug]) {
       return false;
     }
-
     if (isComponent(uri)) {
       await checkComponentPermission(uri, req, locals, db);
     }
@@ -266,7 +275,6 @@ async function checkUserPermissions(uri, req, locals, db) {
         return false;
       }
     }
-
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),

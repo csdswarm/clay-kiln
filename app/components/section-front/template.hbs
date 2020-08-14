@@ -4,6 +4,14 @@
   class="component component--section-front{{ if @root.locals.edit ' editing' }}"
   data-station-slug="{{ stationSlug }}">
 
+  {{#if _computed.primaryColor }}
+    <style>
+      :root {
+        --theme-primaryColor: {{ _computed.primaryColor }};
+      }
+    </style>
+  {{/if}}
+
   {{#if @root.locals.edit }}
     <div class="section-front__settings" data-editable="settings">
       <h1>Section Front Settings:</h1>
@@ -18,16 +26,9 @@
       {{/unless}}
       {{#if stationFront}}<span>Site Slug <span class="warn">*required</span> : {{ default stationSlug 'No Slug Set' }}</span>{{/if}}
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
-      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
   {{/if}}
-  {{> section-lead sectionLead }}
-  <div class="stations-carousel-container" data-editable="stationsCarousel">
-    {{> component-list stationsCarousel }}
+  <div class="section-front__main-content" data-editable="mainContent">
+    {{> component-list mainContent }}
   </div>
-  {{> google-ad-manager googleAdUnderStationsModule}}
-  {{#if includePodcastModule }}
-    {{> podcast-list podcastList }}
-  {{/if}}
-  {{> two-column-component twoColumnComponent }}
 </section>

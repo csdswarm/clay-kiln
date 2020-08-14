@@ -15,7 +15,6 @@ $thumbnail-continer-width: 70px;
         width: 100%;
         left: 0;
         z-index: 99;
-
         background: $white;
         height: em(71, 16);
         display: flex;
@@ -131,4 +130,30 @@ $thumbnail-continer-width: 70px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+  &.empty:not(.editing) {
+    display: none;
+  }
 }
+
+.editing .latest-top-recirc-slider {
+    &__slider-container {
+        top: em(116, 16);
+        @mixin medium-screen {
+            top: em(102, 16);
+        }
+    }
+}
+
+/*  Reset behavior of radioCom top nav bar */
+.latest-top-recirc-slider__slider-container.reset-slider-top-nav {
+    position: unset;
+  }
+
+.latest-top-recirc-slider__slider-container.sticky-latest-recirc-slider-bar {
+    position: fixed;
+    top: em(130);
+    @mixin medium-small-screen {
+        top: em(110);
+    }
+  }

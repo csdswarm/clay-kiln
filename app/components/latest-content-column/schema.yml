@@ -1,0 +1,303 @@
+_version: 5.0
+_description: |
+  A list of five latest related articles by article type, tag, or manually populated.
+
+useCustomTitle:
+  _label: Override column title
+  _has:
+    input: checkbox
+    options:
+      - override-column-title
+
+columnTitle:
+  _label: Custom Title
+  _has:
+    input: text
+    help: Override the default component title
+    validate:
+      max: 20
+      required:
+        field: useCustomTitle
+        operator: truthy
+  _reveal:
+    field: useCustomTitle
+    operator: truthy
+
+contentType:
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+populateFrom:
+  _label: Populate articles by primary section front, secondary section front or tag?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: All Content
+        value: all-content
+      -
+        name: Section Front
+        value: section-front
+      - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
+      - manual
+      -
+        name: External RSS Feed
+        value: rss-feed
+
+sectionFront:
+  _subscribe: sectionFront
+
+sectionFrontManual:
+  _label: Section Front Category
+  _subscribe: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
+
+tag:
+  _label: Tag
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Includes content from all tags inside the section set in the URL
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
+
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+
+excludeTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+
+hyperLinkTitle:
+  _label: Should the title link to an external source ?
+  _has:
+    input: checkbox
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+hyperLinkUrl:
+  _label: External URL Title HyperLink
+  _has:
+    input: text
+    validate:
+      required:
+        field: hyperLinkTitle
+        operator: truthy
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+      #TODO: Ask for the proper pattern to be used. So far this in an example https://<site_slug>.radio.com/station_feed.json
+  _reveal:
+    field: hyperLinkTitle
+    operator: truthy
+
+items:
+  _label: content
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 3
+    help: Manually choose articles to include
+    props:
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: content-search
+        type: url
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: text
+        help: Image url for article thumbnail
+        type: url
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+filterTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: filterTag
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+filterPrimarySectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+_groups:
+  settings:
+    fields:
+      - useCustomTitle
+      - columnTitle
+      - contentType
+      - populateFrom
+      - rssFeed
+      - hyperLinkTitle
+      - hyperLinkUrl
+      - sectionFrontManual
+      - secondarySectionFront
+      - tag
+      - filterTags
+      - filterPrimarySectionFronts
+      - filterSecondarySectionFronts
+      - items
+  items:
+    fields:
+      - items

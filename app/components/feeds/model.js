@@ -9,7 +9,8 @@ const _castArray = require('lodash/castArray'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'feeds'
-  });
+  }),
+  { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
 
 /**
  * for now we only want articles and galleries to be processed by feeds.  This
@@ -27,6 +28,28 @@ function restrictFeedsToArticlesAndGalleries(query) {
   _set(query, pathToFilter, filter);
 
   filter.push({ terms: { contentType: ['article', 'gallery'] } });
+}
+/**
+ * This filters content that was created for RDC only, any content created with a station will be excluded.
+ * @param {object} query - this parameter is mutated
+ */
+function restrictToRDC(query) {
+  const pathToFilter = 'body.query.bool.must',
+    // if the current filter is an object then we need to put it inside an array
+    //   because we're adding an additional one
+    filter = _castArray(_get(query, pathToFilter, []));
+
+  _set(query, pathToFilter, filter);
+
+  filter.push({
+    bool: {
+      should: [
+        { match: { stationSlug: '' } },
+        { bool: { must_not: { exists: { field: 'stationSlug' } } } }
+      ],
+      minimum_should_match: 1
+    }
+  });
 }
 
 /**
@@ -54,6 +77,8 @@ module.exports.save = function (uri, data) {
   if (!meta.fileExtension) {
     return bluebird.reject(new Error('A feed needs a `fileExtension` property to indicate the file type of the scraped feed'));
   }
+
+  data.meta.link = `${protocol}://${host}`;
 
   return data;
 };
@@ -163,14 +188,25 @@ module.exports.render = async (ref, data, locals) => {
       corporate: {
         createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
       },
-      // stations (stationSyndication)
+      // stations (stationSyndication) - station content
       station: {
         createObj: station => [
-          { match: { 'stationSyndication.callsign': station } },
-          { match: { 'stationSyndication.callsign.normalized': station } }
-        ],
-        multiQuery: true,
-        nested: 'stationSyndication'
+          { match: { stationCallsign: station } },
+          {
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                bool: {
+                  should: [
+                    { match: { 'stationSyndication.callsign': station } },
+                    { match: { 'stationSyndication.callsign.normalized': station } }
+                  ],
+                  minimum_should_match: 1
+                }
+              }
+            }
+          }
+        ]
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
@@ -201,6 +237,20 @@ module.exports.render = async (ref, data, locals) => {
 
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
         }
+      },
+      // exclude content from importer (only works for exclude, not filter)
+      importer: {
+        excludeConditionType: 'addMustNot',
+        createObj: () => ({
+          nested : {
+            path : 'stationSyndication',
+            query : {
+              exists : {
+                field : 'stationSyndication.importer'
+              }
+            }
+          }
+        })
       }
     };
 
@@ -214,6 +264,9 @@ module.exports.render = async (ref, data, locals) => {
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
   restrictFeedsToArticlesAndGalleries(query);
+  if (!locals.filter) {
+    restrictToRDC(query);
+  }
 
   try {
     if (meta.rawQuery) {

@@ -3,11 +3,23 @@
 const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
-
+  findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
   __ =  {
-    findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
+    findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
-    inStation: station => ({ stationSlug = DEFAULT_STATION.site_slug }) => stationSlug === station.site_slug,
+    inStation: stationSlug => data => {
+      /*
+        This method is being used both for checking if an article belongs to or is syndicated to a
+        station, but with a syndication entry we can't assume it belongs to national when stationSlug
+        doesn't exists, as we usually do for RDC original content. So here I'm using the syndication
+        source to diferentiate when we are checking for an original content or a syndication.
+      */
+      if (data.source) {
+        return stationSlug === data.stationSlug;
+      }
+
+      return stationSlug === (data.stationSlug || DEFAULT_STATION.site_slug);
+    },
     noContent: value => !Array.isArray(value) || !value.length
   };
 
@@ -15,26 +27,28 @@ const
  * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
  * the syndicationUrl, so hyperlinks stay on the current site.
  *
- * @param {object} locals
- * @param {object} locals.station
+ * @param {string} stationSlug
+ * @param {boolean} isRdcContent
  * @returns {function}
  */
-function syndicationUrlPremap({ station }) {
+function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   const
     { findSyndicatedStation, getOrigin, inStation, noContent } = __,
-    isInStation = inStation(station),
-    syndicatedStation = findSyndicatedStation(station);
+    isInStation = inStation(stationSlug),
+    syndicatedStation = findSyndicatedStation(stationSlug);
 
   return article => {
     const item = { ...article };
 
     if (!isInStation(item)) {
-      if (noContent(item.stationSyndication)) {
+      if (!isRdcContent && noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
-        const { syndicatedArticleSlug = '' } = syndicatedStation(item.stationSyndication) || {};
+        const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
 
         item.canonicalUrl = `${getOrigin(item.canonicalUrl)}${syndicatedArticleSlug}`;
+        item.syndicatedLabel = sectionFront;
+
         delete item.stationSyndication;
       }
     }
@@ -45,5 +59,6 @@ function syndicationUrlPremap({ station }) {
 
 module.exports = {
   _internals: __,
-  syndicationUrlPremap
+  syndicationUrlPremap,
+  findSyndicatedStation
 };
