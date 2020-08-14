@@ -306,7 +306,7 @@ const { getComponentInstance } = require('clayutils'),
       'src',
       isSquaredLogo
         ? `${imgSource}width=100&height=100&crop=1:1`
-        : `${imgSource}width=140&height=80&crop=4:3`
+        : `${imgSource}width=140&height=80`
     );
 
     if (!isSquaredLogo) {
@@ -318,10 +318,10 @@ const { getComponentInstance } = require('clayutils'),
   },
   setRectangularSizes = (imgSource) => {
     const srcSet = [
-      `${imgSource}width=140&height=80&crop=4:3 140w`,
-      `${imgSource}width=175&height=100&crop=4:3 175w`,
-      `${imgSource}width=168&height=96&crop=4:3 168w`,
-      `${imgSource}width=119&height=68&crop=4:3 119w`
+      `${imgSource}width=140&height=80 140w`,
+      `${imgSource}width=175&height=100 175w`,
+      `${imgSource}width=168&height=96 168w`,
+      `${imgSource}width=119&height=68 119w`
     ];
 
     logoImg.setAttribute('srcset', srcSet.join(', '));
