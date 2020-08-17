@@ -1,7 +1,79 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .ap-news-manager {
 
   > .ap-news-manager__tabs {
-      width: 900px;
+    width: 75vw;
+    overflow-y: auto;
   }
 
+}
+
+.ap-news-auto-ingest {
+  fieldset {
+    border: 1px solid $alto;
+    padding: 1em;
+    margin-bottom: 1em;
+    .flex-group {
+      /* because filedset can't be flexed */
+      display: flex;
+      & > div {
+        flex: 0 0 50%;
+        padding: 0 1em 0 0;
+      }
+    }
+  }
+  .entitlements-group {
+    .ui-checkbox-group__checkboxes {
+      flex-wrap: wrap;
+      .ui-checkbox-group__checkbox {
+        flex: 0 0 25%;
+        margin-left: inherit;
+      }
+    }
+  }
+  .add-mapping {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .add-subscription-btn {
+    margin-bottom: 0.5em;
+  }
+
+  .subscriptions {
+    width: 100%;
+    thead {
+      background: $mineShaft;
+      color: $white;
+      text-transform: uppercase;
+      th {
+        padding: 0.5em 1em;
+        &.actions, &.slug {
+          width: 5%;
+        }
+      }
+    }
+    tbody {
+      tr {
+      background: $white;
+      &:nth-of-type(odd) {
+        background: $alabaster;
+      }
+      td {
+        padding: 0.5em 1em;
+      }
+    }
+    }
+    .edit-subscription-btn {
+      margin-right: 0.35em;
+    }
+    .row-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
