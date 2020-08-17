@@ -11,21 +11,21 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
-  slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
-  { DEFAULT_STATION } = require('../constants'),
-  { PAGE_TYPES } = require('../constants'),
+  { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
-    uriToUrl,
-    replaceVersion,
     has,
     isFieldEmpty,
+    replaceVersion,
     textToEncodedSlug,
+    uriToUrl,
     urlToElasticSearch
-  } = require('../utils');
+  } = require('../utils'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -559,12 +559,7 @@ function addStationSyndicationSlugs(data) {
       const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
 
       if (shouldSetSlug) {
-        station.syndicatedArticleSlug = '/' + [
-          station.stationSlug,
-          slugify(station.sectionFront),
-          slugify(station.secondarySectionFront),
-          station.slug || data.slug
-        ].filter(Boolean).join('/');
+        station.syndicatedArticleSlug = generateSyndicationSlug(data.slug, station);
       } else {
         delete station.syndicatedArticleSlug;
       }
