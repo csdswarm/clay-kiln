@@ -354,11 +354,12 @@ const
       tags = tags.split(',');
     }
 
-    // Check for tags. One column layouts may not include a component with the tags parameter making it undefined.
-    if (tags) {
-    // retain the correct formatting for updating the tags for kiln's UI
+    // Check for tags and retain the correct formatting for updating the tags for kiln's UI
+    if (typeof tags === 'string') {
+      data.tag = { text: tags };
+    } else if (Array.isArray(tags)) {
       data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
-    };
+    }
 
     if (tags === '') {
       return [];
