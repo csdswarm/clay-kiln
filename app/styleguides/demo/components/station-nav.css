@@ -87,8 +87,16 @@ $caret-margin-right: em(25);
     cursor: pointer;
   }
 
+  @mixin medium-screen {
+    height: em(133);
+  }
+
   @mixin medium-small-screen {
-    height: em(110);
+    height: em(113);
+  }
+
+  @mixin small-screen {
+    height: em(103);
   }
 
   .station-nav__fixed-container {
@@ -107,7 +115,7 @@ $caret-margin-right: em(25);
         flex-wrap: nowrap;
       }
     }
-    
+
     .station-nav__menu {
       background: $station-primaryColor;
       display: flex;

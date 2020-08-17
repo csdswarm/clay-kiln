@@ -153,7 +153,15 @@ $thumbnail-continer-width: 70px;
 .latest-top-recirc-slider__slider-container.sticky-latest-recirc-slider-bar {
     position: fixed;
     top: em(143);
-    @mixin medium-small-screen {
-        top: em(110);
+    @mixin medium-screen {
+        top: em(133);
     }
-  }
+
+    @mixin medium-small-screen {
+        top: em(113);
+    }
+
+    @mixin small-screen {
+        top: em(103);
+    }
+}
