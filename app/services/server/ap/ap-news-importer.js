@@ -88,7 +88,7 @@ async function findExistingArticle({ itemid } = {}) {
       { data, id } = info || {};
 
     if (id) {
-      return { _ref: id, ...data };
+      return JSON.parse(JSON.stringify({ _ref: id, ...data }).replace(/@published/g,''));
     }
 
   } catch (error) {
@@ -162,11 +162,14 @@ async function getNewStations(article, stationMappings, locals) {
       stationSlug,
       stationSyndication
     } = article,
-    syndicated = stationSyndication.filter(({ source }) => source === 'ap feed').map(({ stationSlug }) => stationSlug),
+    syndicated = stationSyndication
+      .filter(({ source }) => source === 'ap feed')
+      .map(({ stationSlug }) => stationSlug),
     stationEntries = Object.entries(stationMappings),
     stationsBySlug = await getAllStations.bySlug({ locals }),
     newStations = sectionFront
-      ? stationEntries.filter(([key]) => (key !== stationSlug) && !syndicated.includes(key))
+      ? stationEntries
+        .filter(([entrySlug]) => (entrySlug !== stationSlug) && !syndicated.includes(entrySlug))
       : stationEntries;
 
   return newStations.map(([stationSlug, mappings]) => {
@@ -238,9 +241,9 @@ async function resolveArticleSubComponents(article) {
  * @returns {object}
  */
 function integrateArticleStations(article, newStations) {
-  const { stationSlug } = article;
+  const { sectionFront } = article;
 
-  if (stationSlug) {
+  if (sectionFront) {
     return {
       ...article,
       stationSyndication: article.stationSyndication.concat(newStations)
