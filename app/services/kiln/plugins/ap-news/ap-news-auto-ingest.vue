@@ -10,9 +10,9 @@
       </thead>
       <tbody>
         <tr v-for="(subscription, index) in subscriptions" :key="index">
-          <td>{{ subscription.data.stationSlug }}</td>
+          <td>{{ getStation(subscription) }}</td>
           <td>
-            <ui-collapsible :title="subscription.data.entitlements[0].name + '...'">
+            <ui-collapsible :title="getFirstItemValue(subscription)">
               <ol class="entitlements-list">
                 <li v-for="(entitlement, eindex) in subscription.data.entitlements" :key="eindex">
                   {{ entitlement.name }}
@@ -21,7 +21,7 @@
             </ui-collapsible>
           </td>
           <td>
-            <ui-collapsible :title="subscription.data.mappings[0].sectionFront + '...'">
+            <ui-collapsible :title="getFirstItemValue(subscription, 'mappings[0].sectionFront')">
               <ol class="mappings-list">
                 <li v-for="(mapping, mindex) in subscription.data.mappings" :key="mindex">
                   <div class="mapping">
@@ -54,7 +54,7 @@
                 label="Station"
                 placeholder="Radio.com (NATL-RC)"
                 :options="options.stations"
-                v-model="workingSubscription.data.stationSlug"
+                v-model="workingSubscription.data.station"
                 @input="onStationChange"
               ></ui-select>
               <ui-select
@@ -79,7 +79,7 @@
                 has-search
                 label="Primary Section Front"
                 placeholder="Select Primary Section Front to Include"
-
+                ref="primarySectionFrontInput"
                 :options="primarySectionFronts.map(psf => psf.name)"
                 :invalid="isPrimarySectionfrontsInvalid"
 
@@ -90,7 +90,7 @@
                 has-search
                 label="Secondary Section Front"
                 placeholder="Select Secondary Section Front to Include"
-
+                ref="secondarySectionFrontInput"
                 :options="secondarySectionFronts.map(essf => essf.name)"
 
                 v-model="workingSubscription.data.mappings[index].secondarySectionFront"
@@ -137,7 +137,7 @@
       isHeader: false
     },
     {
-      key: 'data.stationSlug',
+      key: 'data.station',
       display: 'station slug',
       isHeader: true
     },
@@ -157,12 +157,12 @@
       isHeader: true
     }
   ]
+  const apiEndpoint = '/rdc/ap-subscriptions'
 
   class ApSubscription {
     constructor () {
-      this.id = `${Math.random()}`, // NOTE: Will need to be removed for 1998
       this.data = {
-        stationSlug: { label: 'Radio.com (NATL-RC)', value: ''},
+        station: { label: 'Radio.com (NATL-RC)', value: ''},
         entitlements: [],
         mappings: [{
           sectionFront: '',
@@ -188,7 +188,7 @@
       this.getList('ap-media-entitlements', 'entitlements')
       this.getList('primary-section-fronts', 'primarySectionFronts')
       this.getList('secondary-section-fronts', 'secondarySectionFronts')
-      // need to get subscriptions
+      this.getApNewsSubscriptions()
     },
     methods: {
       openModal (ref) {
@@ -199,7 +199,6 @@
       },
       getList (listName, dataKey) {
         this.isLoading = true
-        console.log('[getList]', listName, dataKey)
         axios.get(`/_lists/${listName}`)
           .then(r => {
             this[dataKey] = [...r.data]
@@ -222,21 +221,25 @@
         const split = longName.split(' - ')
         return split[1]
       },
-      getApNewsSubscriptions () {},
+      getApNewsSubscriptions () {
+        axios.get(apiEndpoint)
+          .then(response => {
+            this.subscriptions = [...response.data]
+          })
+          .catch(this.handleError)
+          .finally(() => { this.isLoading = false })
+      },
       createApNewsSubscription () {
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
-          ...this.workingSubscription
+          ...this.workingSubscription.data
         }
-        console.log('NEW:', newSub)
-        //TODO: need to POST when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.post(apiEndpoint, newSub)
           .then(response => {
-            this.subscriptions.push(newSub)
+            this.subscriptions.push({...response.data})
             this.showSnack('AP News Subscription Added')
             this.closeModal('subscriptionModal')
-            // this.workingSubscription = new ApSubscription()
           })
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
@@ -245,15 +248,13 @@
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
-          ...this.workingSubscription
+          ...this.workingSubscription.data
         }
-        console.log('UPDATE:', updatedSub)
-        //TODO: need to PUT when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.put(`${apiEndpoint}/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
               if (sub.id === response.data.id) {
-                return { ...updatedSub } //will be response.data when updated for 1998
+                return { ...response.data }
               } else {
                 return sub
               }
@@ -267,9 +268,7 @@
       deleteApNewsSubscription (id) {
         if (this.isLoading) return
         this.isLoading = true
-        console.log('DELETE:', id)
-        //TODO: need to DELETE when ON-1998 is complete for now just doing a get to mimic
-        axios.get('/_pages/home')
+        axios.delete(`${apiEndpoint}/${id}`)
           .then(response => {
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
             this.showSnack('AP News Subscription Removed')
@@ -277,47 +276,53 @@
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
-      addMapping() {},
+      addMapping() {
+        // here for when multiple mappings are possible
+      },
       onCreate () {
         this.modalMode = 'new'
         this.workingSubscription = new ApSubscription()
+        this.onStationChange(this.workingSubscription.data.station)
         this.openModal('subscriptionModal')
       },
       onEdit (subscription) {
         this.modalMode = 'edit'
         this.workingSubscription = { ...subscription }
+        this.onStationChange(this.workingSubscription.data.station, false)
         this.openModal('subscriptionModal')
       },
       onConfirmDelete () {
         this.deleteApNewsSubscription(this.workingSubscription.id)
       },
       onDelete (subscription) {
-        console.log('[subscription]', subscription);
         this.workingSubscription = { ...subscription }
         this.$refs.deleteConfirm.open()
       },
-      workingSubscriptionIsValid () {
-        console.log('[this.workingSubscription.data.entitlements.length < 1]', this.workingSubscription.data.entitlements.length < 1)
-        console.log('[this.workingSubscription.data.mappings[0].sectionFront === ""]', this.workingSubscription.data.mappings[0].sectionFront === '');
-        return (
-          this.workingSubscription.data.entitlements.length < 1 ||
-          this.workingSubscription.data.mappings[0].sectionFront === ''
-        )
-      },
       onEntitlementChange (e, entitlement) {
-        console.log('[onEntitlementChange]', e, entitlement)
         if(e) {
           this.workingSubscription.data.entitlements.push(entitlement)
         } else {
           this.workingSubscription.data.entitlements = this.workingSubscription.data.entitlements.filter(ent => ent.value !== entitlement.value)
         }
-        this.workingSubscription.data.entitlements.forEach(ent => console.log(ent.name))
       },
-      onStationChange (station) {
-        console.log('[onStationChange]', station.value)
+      onStationChange (station, reset=true) {
         const delim = station.value === '' ? '' : '-'
+        // get new lists based on station selection
         this.getList(`${station.value}${delim}primary-section-fronts`, 'primarySectionFronts')
         this.getList(`${station.value}${delim}secondary-section-fronts`, 'secondarySectionFronts')
+        // reset the selections if needed
+        if (reset) {
+          this.$refs.primarySectionFrontInput.forEach(psfi => psfi.reset())
+          this.$refs.secondarySectionFrontInput.forEach(ssfi => ssfi.reset())
+        }
+      },
+      getFirstItemValue(subscription, path='entitlements[0].name') {
+        const name = _get(subscription, `data.${path}`)
+        return name ? name + '...' : ''
+      },
+      getStation(subscription) {
+        const slug = _get(subscription, 'data.station.value')
+        return slug ? slug : 'Radio.com (NATL-RC)'
       }
     },
     computed: {
