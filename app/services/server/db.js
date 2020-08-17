@@ -71,7 +71,7 @@ const utils = require('../universal/utils'),
     var tableName;
 
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      if (key.indexOf(`_${DATA_TYPE}`) > -1) {
+      if (key.includes(`_${DATA_TYPE}`)) {
         tableName = DATA_TYPE;
       }
     });
