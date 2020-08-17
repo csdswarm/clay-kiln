@@ -124,6 +124,29 @@ function transformAuthorsAndTags(op) {
 }
 
 /**
+ * section fronts are always searched against with lower case values. Make sure that they are
+ * always lower case going into elastic.
+ * @param { object } op
+ * @returns { object }
+ */
+function transformSectionFronts(op) {
+  const
+    data = op.value,
+    downCaseSectionFronts = obj =>
+      ['sectionFront', 'secondarySectionFront'].forEach(key => {
+        if (typeof obj[key] === 'string') {
+          obj[key] = obj[key].toLowerCase();
+        }
+      });
+
+  downCaseSectionFronts(data);
+
+  (data.stationSyndication || []).forEach(downCaseSectionFronts);
+  
+  return op;
+}
+
+/**
  * Should not publish default or new instances
  *
  * @param {Object} op
@@ -153,6 +176,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(transformAuthorsAndTags)
+    .map(transformSectionFronts)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
