@@ -1,6 +1,7 @@
 'use strict';
 
 const
+  { getAll } = require('./ap-subscriptions'),
   { retrieveList } = require('../lists'),
   { uploadImage } = require('../s3'),
   { DAY } = require('../../universal/constants'),
@@ -10,10 +11,13 @@ const
 
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
+
+  INCLUDES = 'associations,headline_extended,meta.products,renditions.nitf,subject',
   MAX_CACHE_AP_IN_SECONDS = 3 * DAY / 1000,
 
   __ = {
     cache,
+    getAll,
     log,
     rest,
     retrieveList,
@@ -32,7 +36,7 @@ const
     }
     const searchURL = 'https://api.ap.org/media/v/content/search?',
       sort = 'versioncreated:desc',
-      API_URL = `${searchURL}apikey=${apMediaKey}&q=${filterConditions}&page_size=100&sort=${sort}`;
+      API_URL = `${searchURL}apikey=${apMediaKey}&q=${filterConditions}&include=${INCLUDES}&page_size=100&sort=${sort}`;
 
     try {
       const response = await __.rest.get(API_URL),
@@ -64,10 +68,9 @@ const
           : `${next_page}?apikey=${apMediaKey}`;
       } else {
         const entitlements = await __.retrieveList('ap-media-entitlements', Object.assign({ locals }, null)),
-          entitlementsStr = entitlements.map(e => e.value).join(' OR '),
-          includes = 'associations,headline_extended,meta.products,renditions.nitf,subject';
+          entitlementsStr = entitlements.map(e => e.value).join(' OR ');
 
-        endpoint = `${apFeedUrl}?q=productid%3A(${entitlementsStr})&page_size=${pageSize}&include=${includes}&apikey=${apMediaKey}`;
+        endpoint = `${apFeedUrl}?q=productid%3A(${entitlementsStr})&page_size=${pageSize}&include=${INCLUDES}&apikey=${apMediaKey}`;
       }
 
       const { data: { items, next_page: nextPage } } = await __.rest.get(endpoint);

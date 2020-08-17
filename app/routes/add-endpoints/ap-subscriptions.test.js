@@ -29,6 +29,7 @@ describe('ap-subscriptions', () => {
     sinon.stub(__, 'dbGet');
     sinon.stub(__, 'ensureRecordExists');
     sinon.stub(__, 'getAll');
+    sinon.stub(__, 'importApSubscription');
     sinon.stub(__, 'log');
     sinon.stub(__, 'save');
     apSubscriptions(router);
@@ -345,6 +346,45 @@ describe('ap-subscriptions', () => {
       expect(statusStub).to.be.calledOnceWith(500);
       expect(sendStub).to.be.calledOnceWith({
         message: 'There was an error removing the subscription'
+      });
+      expect(__.log).to.be.calledOnceWith('error', throws);
+    });
+  });
+
+  describe('post import', async () => {
+    async function setup_post_import(options) {
+      const { __, res, routes, sendStub, statusStub } = setup_apSubscriptions(),
+        req = {},
+        post = routes.post['/rdc/ap-subscriptions/import'],
+        data = [{ ...req.body }];
+
+      if (options.importAP) {
+        __.importApSubscription.resolves(data);
+      }
+
+      if (options.throws) {
+        __.importApSubscription.throws(new Error(options.throws));
+      }
+
+      await post(req, res);
+      return { __, data, sendStub, statusStub };
+    }
+    it('Import AP subscriptions', async () => {
+      const importAP = 'import data',
+        { __, sendStub, statusStub } = await setup_post_import({ importAP });
+
+      expect(statusStub).to.be.calledOnceWith(201);
+      expect(__.importApSubscription).to.be.calledOnce;
+      expect(sendStub).to.have.been.calledOnce;
+    });
+
+    it('catches errors', async () => {
+      const throws = 'some error',
+        { __, sendStub, statusStub } = await setup_post_import({ throws });
+
+      expect(statusStub).to.be.calledOnceWith(500);
+      expect(sendStub).to.be.calledOnceWith({
+        message: 'There was an error importing the subscriptions'
       });
       expect(__.log).to.be.calledOnceWith('error', throws);
     });

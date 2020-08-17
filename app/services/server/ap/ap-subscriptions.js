@@ -1,10 +1,32 @@
 'use strict';
 
-const db = require('../db'),
+const
+  _intersectionBy = require('lodash/intersectionBy'),
+  { getApFeed } = require('./ap-media'),
+  { importArticle } = require('./ap-news-importer'),
+  db = require('../db'),
+  logger = require('../../universal/log'),
+  Promise = require('bluebird'),
   uuidV4 = require('uuid/v4'),
+  log = logger.setup({ file: __filename }),
+
+  /**
+   * Returns all records in ap_subscriptions
+   */
+  getAll = async () => {
+    const  { rows } = await db.raw(`
+      SELECT * FROM ap_subscriptions;
+    `);
+
+    return rows;
+  },
   __ = {
     dbPost: db.post,
-    dbPut: db.put
+    dbPut: db.put,
+    getApFeed,
+    getAll,
+    importArticle,
+    log
   },
   /**
    * Get a record matching a given id
@@ -18,16 +40,6 @@ const db = require('../db'),
   `,[key]);
 
     return rows.length > 0;
-  },
-  /**
-   * Returns all records in ap_subscriptions
-   */
-  getAll = async () => {
-    const  { rows } = await db.raw(`
-      SELECT * FROM ap_subscriptions;
-    `);
-
-    return rows;
   },
   /**
    * saves an individual subscription. if an id is provided,
@@ -45,11 +57,47 @@ const db = require('../db'),
       await __.dbPost(key, subscription);
       return key;
     };
+  },
+
+  /**
+   * Import an articles from the AP Subscription
+   * @param {object} locals
+   * @return {array}
+   */
+  importApSubscription = async (locals) => {
+    try {
+      const apFeed = await __.getApFeed(locals),
+        apSubscriptions = await __.getAll(),
+        intersect = ({ entitlements }, { products }) =>
+          !!_intersectionBy(entitlements, products, ({ id, value }) => id || value).length;
+
+      return Promise.map(apFeed, feed => {
+        const stationMappings = apSubscriptions
+          .filter(({ data }) => intersect(data, feed))
+          .reduce((acc, { data }) => {
+            const stationSlug = data.station.value;
+
+            if (!acc[stationSlug]) {
+              acc[stationSlug] = data.mappings;
+            }
+            return acc;
+          }, {});
+
+        __.importArticle(feed.item, stationMappings, locals);
+        
+        return `${feed.item.uri}&include=*`;
+      }, { concurrency: 5 });
+
+    } catch (e) {
+      __.log('error', 'Bad request importing articles from ap-subscription', e);
+      return [];
+    }
   };
 
 module.exports = {
   _internals: __,
   ensureRecordExists,
   getAll,
+  importApSubscription,
   save
 };
