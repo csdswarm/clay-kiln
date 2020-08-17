@@ -39,8 +39,7 @@ function getFormatSearchResult(searchOpts = {}) {
     }
 
     return result.hits.hits.map(hit => {
-      hit._source._id = hit._id;
-      return hit._source;
+      return { ...hit._source, _id: hit._id };
     });
   };
 }

@@ -107,8 +107,8 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     // Filter out the following tags
-    if (data.filterTags) {
-      for (const tag of data.filterTags.map((tag) => tag.text)) {
+    if (data.excludeTags) {
+      for (const tag of data.excludeTags.map((tag) => tag.text)) {
         queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
       }
     }

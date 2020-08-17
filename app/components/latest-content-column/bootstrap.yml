@@ -12,9 +12,9 @@ _components:
     sectionFrontManual: ''
     secondarySectionFront: ''
     tag: ''
-    filterTags: ''
-    filterPrimarySectionFronts: {}
-    filterSecondarySectionFronts: {}
+    excludeTags: []
+    excludeSectionFronts: {}
+    excludeSecondarySectionFronts: {}
     instances:
       new:
         items: []
@@ -29,6 +29,6 @@ _components:
         sectionFrontManual: ''
         secondarySectionFront: ''
         tag: ''
-        filterTags: ''
-        filterPrimarySectionFronts: {}
-        filterSecondarySectionFronts: {}
+        excludeTags: []
+        excludeSectionFronts: {}
+        excludeSecondarySectionFronts: {}
