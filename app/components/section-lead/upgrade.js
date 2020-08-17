@@ -1,6 +1,9 @@
 'use strict';
 
-const addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
+const
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
+  filterToExcludes = require('../../services/universal/component-upgrades/filter-to-excludes');
+
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -70,12 +73,4 @@ module.exports['6.0'] = async (uri, data, locals) => {
 };
 
 
-module.exports['7.0'] = async (uri, data) => {
-  data.excludeSecondarySectionFronts = data.filterSecondarySectionFronts || data.excludeSecondarySectionFronts;
-  data.excludeTags = data.filterTags || data.excludeTags;
-
-  delete data.filterSecondarySectionFronts;
-  delete data.filterTags;
-
-  return data;
-};
+module.exports['7.0'] = filterToExcludes;
