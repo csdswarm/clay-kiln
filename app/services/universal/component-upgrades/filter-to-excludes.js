@@ -16,13 +16,10 @@ module.exports = (uri, data) => {
 
   if (_has(data, 'filterPrimarySectionFronts')) {
     data.filterSectionFronts = data.filterSectionFronts || data.filterPrimarySectionFronts;
-    delete data.filterPrimarySectionFronts;
   }
   
   ['SectionFronts', 'SecondarySectionFronts', 'Tags'].forEach(field => {
     data[`exclude${field}`] = data[`exclude${field}`] || data[`filter${field}`] || (field === 'Tags' ? [] : {});
-    
-    delete data[`filter${field}`];
   });
 
   return data;
