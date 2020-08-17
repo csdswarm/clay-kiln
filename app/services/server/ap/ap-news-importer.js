@@ -205,7 +205,7 @@ function resolveImage(associations = {}) {
   return apRef
     ? saveApPicture(apRef.uri)
     : Promise.resolve({
-      headline: 'RADIO.COM - Associated Press',
+      headline: 'RADIO.COM - The Associated Press',
       url: 'https://images.radio.com/aiu-media/og_775x515_0.jpg'
     });
 }
@@ -294,11 +294,9 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       },
       byline: [
         {
-          names: [],
+          names: [{ text: 'The Associated Press', slug: 'the-associated-press' }],
           prefix: 'by',
-          sources: [
-            { text: 'The Associated Press', slug: 'the-associated-press' }
-          ]
+          sources: []
         }
       ],
       feedImgUrl: imageUrl,
@@ -476,6 +474,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     meta = await restGet(`${pageUrl}/meta`);
 
   meta.title = `AP-IMPORT: ${headline}`;
+  meta.authors = ['The Associated Press'];
 
   await restReq(`${pageUrl}/meta`, {
     method: 'PATCH',
@@ -486,6 +485,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     },
     body: JSON.stringify(meta)
   });
+
   await restPut(`${pageUrl}@published`, pageInfo, true);
 
   newArticleData.pageData = { _ref: pageRef };

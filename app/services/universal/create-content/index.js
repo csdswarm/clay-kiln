@@ -462,9 +462,10 @@ function updateStationSyndicationType(data) {
  * @returns {Object}
  */
 function setNoIndexNoFollow(data) {
-  const isContentFromAP = _get(data, 'byline', [])
-    .some(({ sources = [] }) =>
-      sources.some(({ text }) => text === 'The Associated Press'));
+  const
+    containAP = ({ text }) => text.includes('Associated Press'),
+    isContentFromAP = _get(data, 'byline', [])
+      .some(({ sources = [], names = [] }) => names.some(containAP) || sources.some(containAP));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
