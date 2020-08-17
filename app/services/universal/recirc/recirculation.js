@@ -348,21 +348,21 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
+    
+    if (tags === '') {
+      return [];
+    }
 
     // split comma separated tags (for load-more get queries)
     if (typeof tags === 'string' && tags.includes(',')) {
       tags = tags.split(',');
     }
 
-    // Check for tags in the case of one collumn layouts, and retain the correct formatting for updating the tags for kiln's UI
+    // Check for tags in the case of one column layouts, and retain the correct formatting for updating the tags for kiln's UI
     if (typeof tags === 'string') {
-      data.tag = { text: tags };
+      data.tag = [{ text: tags }];
     } else if (Array.isArray(tags)) {
       data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
-    }
-
-    if (tags === '') {
-      return [];
     }
 
     return tags;
