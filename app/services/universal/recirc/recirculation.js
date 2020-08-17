@@ -354,7 +354,7 @@ const
       tags = tags.split(',');
     }
 
-    // Check for tags and retain the correct formatting for updating the tags for kiln's UI
+    // Check for tags in the case of one collumn layouts, and retain the correct formatting for updating the tags for kiln's UI
     if (typeof tags === 'string') {
       data.tag = { text: tags };
     } else if (Array.isArray(tags)) {
