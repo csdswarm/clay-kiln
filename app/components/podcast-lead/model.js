@@ -55,7 +55,13 @@ function getDurationFormat(durationInSeconds) {
  * @returns {string}
  */
 function stripHtml(str) {
-  return cheerio(str).text();
+  const hasHtml = /<\/?[a-z][\s\S]*>/i.test(str);
+
+  if (hasHtml) {
+    return cheerio(str).text();
+  } else {
+    return str;
+  }
 }
 
 module.exports = unityComponent({
