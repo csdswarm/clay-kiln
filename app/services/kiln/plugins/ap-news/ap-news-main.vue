@@ -2,58 +2,51 @@
 <template>
   <div class="ap-news-manager">
     <ui-tabs class="ap-news-manager__tabs" fullwidth @tab-change="changeTab">
-      <ui-tab :key="tab.id" :id="tab.id" :title="tab.title" v-for="tab in tabs">
-        <p>
-          <em>{{ tab.title }}</em> content should be displayed...
-        </p>
-        <hr>
-        <ApNewsAutoIngest v-if="tab.id === 1" />
-         <!--
-           /*
-            * @TODO: Handle content for upcoming tickets
-            * ON-1979 AP News | create/add AUTO-INGEST tab and
-            * ON-1980 AP News | create/add Manual Import tab to AP News
-            */
-          -->
+       <ui-tab id="auto" title="Auto Ingest" v-if="hasAccessAutoIngestPermission">
+        <ApNewsAutoIngest/>
+      </ui-tab>
+      <ui-tab selected id="manual" title="Manual Import">
+        <ap-news-manual :entitlements="entitlements"></ap-news-manual>
       </ui-tab>
     </ui-tabs>
   </div>
 </template>
 
 <script>
-const { UiTabs, UiTab } = window.kiln.utils.components;
+const axios = require('axios');
 const { unityAppDomainName: unityApp } = require('../../../universal/urps');
+const { UiTabs, UiTab } = window.kiln.utils.components;
 const ApNewsAutoIngest = require('./ap-news-auto-ingest.vue');
+const ApNewsManualImport = require('./ap-news-manual-import.vue');
 
 export default {
   name: "AP News",
+  data() {
+    return {
+      entitlements: [],
+    };
+  },
   computed: {
-    tabs() {
-      const { user } = kiln.locals,
-        hasAccessAutoIngestPermission = user.can('access').the('ap-news-auto-ingest').for(unityApp).value,
-        tabs = [
-          { id: 'manual', title: "Manual Article Import" },
-        ];
-
-      if (hasAccessAutoIngestPermission) {
-        tabs.unshift({ id: 'auto-ingest', title: "Auto-Ingest" });
-      }
-
-      return tabs;
+    hasAccessAutoIngestPermission(){
+      const { user } = kiln.locals;
+      return user.can('access').the('ap-news-auto-ingest').for(unityApp).value
     }
   },
-  methods: {
-    changeTab(tab){
-      /*
-      * @TODO: Handle logic for upcoming tickets
-      * ON-1979 AP News | create/add AUTO-INGEST tab and
-      * ON-1980 AP News | create/add Manual Import tab to AP News
-      */
+  async created() {
+    const AP_LIST = '/_lists/ap-media-entitlements';
+    try {
+      const response = await axios.get(
+        AP_LIST
+      );
+      this.entitlements = response.data;
+    } catch (error) {
+      console.log('An error ocurred while fetching ap-media-entitlements', error);
     }
   },
   components: {
     UiTabs,
     UiTab,
+    'ap-news-manual': ApNewsManualImport,
     ApNewsAutoIngest,
   },
 };

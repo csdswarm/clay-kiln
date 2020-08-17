@@ -155,6 +155,7 @@ async function getArticleData(pageData) {
  * @returns {Promise<unknown[]>}
  */
 async function getNewStations(article, stationMappings, locals) {
+
   const
     { getAllStations } = __,
     {
