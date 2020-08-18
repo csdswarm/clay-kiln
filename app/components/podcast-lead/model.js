@@ -8,8 +8,7 @@ const
   format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   addSeconds = require('date-fns/add_seconds'),
-  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants'),
-  cheerio = require('cheerio');
+  { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../services/universal/constants');
 
 /**
  * Returns a query string with all that you provide or some defaults
@@ -49,19 +48,13 @@ function getDurationFormat(durationInSeconds) {
 }
 
 /**
- * strips html from string
+ * strips html from string and assumes simple, properly formatted html
  *
  * @param {string} str
  * @returns {string}
  */
 function stripHtml(str) {
-  const hasHtml = /<\/?[a-z][\s\S]*>/i.test(str);
-
-  if (hasHtml) {
-    return cheerio(str).text();
-  } else {
-    return str;
-  }
+  return str.replace(/(<([^>]+)>)/ig);
 }
 
 module.exports = unityComponent({
