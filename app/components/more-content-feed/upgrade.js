@@ -188,3 +188,20 @@ module.exports['14.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['15.0'] = (uri, data) => {
+  // Account for inccorrect formatting of data.tagManual in the database for previously created content.
+  // Instances of data.tag that do not return an empty array, or properly formatted tag array will break the kiln UI.
+  // e.g. tag array: data.tagManual: [] || data.tagManual: [{ text: 'tag' }].
+  if (!data.tagManual || data.tagManual.length === 0) {
+    data.tagManual = [];
+    return data;
+  } else if (Array.isArray(data.tagManual)) {
+    data.tagManual = data.tagManual.map((tag) => typeof tag === 'string' ? { text: tag } : tag);
+    return data;
+  } else if (typeof data.tagManual === 'string') {
+    data.tagManual = [{ text: data.tagManual }];
+    return data;
+  }
+  return data;
+};
