@@ -1,15 +1,5 @@
 'use strict';
 
-const getRightRail = (el) => {
-  const layoutPageHeader = document.querySelector('.layout__page-header'),
-    rightColumn = document.querySelector('.two-column-component__column--2'),
-    hostPageHeaderRightRail = el.querySelector('.host-page-header__right-content');
+const getRightRail = require('../../services/client/getRightRail');
 
-  if (hostPageHeaderRightRail && rightColumn) {
-    layoutPageHeader.style['z-index'] = 4;
-
-    hostPageHeaderRightRail.appendChild(rightColumn);
-  }
-};
-
-module.exports = getRightRail;
+module.exports = el => getRightRail(el, 'host');
