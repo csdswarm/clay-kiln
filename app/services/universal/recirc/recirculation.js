@@ -49,6 +49,7 @@ const
   defaultMapDataToFilters = (ref, data, locals) => ({
     filters: {
       ...getAuthor(data, locals),
+      ...getHost(data, locals),
       contentTypes: boolObjectToArray(data.contentType),
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
@@ -89,6 +90,10 @@ const
       filterCondition: 'must',
       unique: true,
       createObj: contentType => ({ match: { contentType } })
+    },
+    host: {
+      filterCondition: 'must',
+      createObj: host => ({ match: { 'hosts.normalized': host } })
     },
     sectionFronts: {
       filterCondition: 'must',
@@ -309,6 +314,22 @@ const
     data.author = author;
 
     return { author };
+  },
+  /**
+   * Pull host from locals
+   *
+   * @param {object} data
+   * @param {object} locals
+   *
+   * @return {string} host
+   */
+  getHost = (data, locals) => {
+    const host = _get(locals, 'host') || _get(locals, 'params.host');
+
+    // Used for load-more queries
+    data.host = host;
+
+    return { host };
   },
   /**
    * Pull stationSlug from local params if dynamic station page
