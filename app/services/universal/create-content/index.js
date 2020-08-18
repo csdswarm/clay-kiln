@@ -372,7 +372,7 @@ function sanitizeByline(data) {
  * @param {object} data
  */
 function bylineOperations(data) {
-  const authors = [], sources = [], hosts = [];
+  const authors = [], sources = [], hosts = data.hosts ? data.hosts : [];
 
   for (const { names, sources: bylineSources, hosts: bylineHosts } of data.byline || []) {
     /*
