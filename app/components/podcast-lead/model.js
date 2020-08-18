@@ -54,7 +54,7 @@ function getDurationFormat(durationInSeconds) {
  * @returns {string}
  */
 function stripHtml(str) {
-  return str.replace(/(<([^>]+)>)/ig);
+  return str.replace(/(<([^>]+)>)/ig, '');
 }
 
 module.exports = unityComponent({
