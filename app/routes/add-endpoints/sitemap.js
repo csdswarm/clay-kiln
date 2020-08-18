@@ -3,7 +3,9 @@
 const _snakeCase = require('lodash/snakeCase'),
   _kebabCase = require('lodash/kebabCase'),
   db = require('../../services/server/db'),
+  { updatePodcasts } = require('../../services/server/podcasts'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
+
   xmlIndexHeader = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
   sitemapViews = new Set([
     'sitemap_articles_and_galleries',
@@ -101,6 +103,7 @@ module.exports = router => {
   }));
 
   router.post('/update-sitemaps', wrapInTryCatch(async (req, res) => {
+    await updatePodcasts({ locals: req.locals }); // ensure that the podcasts data in db is updated before creating the sitemap using that data
     await db.raw(query.refreshViews);
     res.status(200).end();
   }));
