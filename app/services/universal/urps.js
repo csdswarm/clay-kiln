@@ -1,10 +1,12 @@
 'use strict';
 
-const { DEFAULT_STATION } = require('./constants');
+const { DEFAULT_STATION } = require('./constants'),
+  USE_URPS_CORE_ID = require('../server/urps/utils');
 
 // Unity App encompasses permissions which don't belong to a station such as
 //   whether you can update a global alert or the homepage
-const unityAppDomainName = 'Unity App';
+const unityAppDomainName = 'Unity App',
+  unityAppId = 'REPLACE_WITH_UNITY_APP_ID';
 
 /**
  * given a station, returns its urps domain name
@@ -36,11 +38,12 @@ const unityAppDomainName = 'Unity App';
  *    from the back or frontends, hence the fallback to .slug
  *
  * @param {object} station
+ * @param {boolean} USE_URPS_CORE_ID
  * @returns {string}
  */
 function getStationDomainName(station) {
   if (station.id === DEFAULT_STATION.id) {
-    return station.urpsDomainName;
+    return USE_URPS_CORE_ID ? station.id : station.urpsDomainName;
   }
 
   // site_slug might be an empty string from the default station, in which case
@@ -52,4 +55,4 @@ function getStationDomainName(station) {
   return `${station.name} | ${slug}`;
 }
 
-module.exports = { getStationDomainName, unityAppDomainName };
+module.exports = { getStationDomainName, unityAppDomainName, unityAppId };

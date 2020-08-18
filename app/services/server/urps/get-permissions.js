@@ -3,8 +3,8 @@
 const formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
   getFromUrps = require('./get-from-urps'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { createUnityPermissions } = require('./utils'),
-  { unityAppDomainName } = require('../../universal/urps');
+  { createUnityPermissions, USE_URPS_CORE_ID } = require('./utils'),
+  { unityAppDomainName, unityAppId } = require('../../universal/urps');
 
 /**
  * Gets all permissions for user with jwt from URPS and organizes them as a simple object for checking
@@ -40,10 +40,35 @@ module.exports = async (idToken, stationDomainNames) => {
     if (!idToken) {
       throw new Error('idToken is a required parameter');
     }
-
+    
     const { data: permissionsList } = await getFromUrps(
       '/permissions/by-domain',
-      { domains: [unityAppDomainName, ...stationDomainNames] },
+      { domains: USE_URPS_CORE_ID ? [unityAppId, ...stationDomainNames].filter(Boolean).map(id => {
+        let domain;
+
+        switch (id) {
+          case unityAppId:
+            domain = {
+              type: 'app',
+              id
+            };
+            break;
+          case 'National':
+            domain = {
+              type: 'market',
+              id
+            };
+            break;
+          default:
+            domain = {
+              type: 'station',
+              id
+            };
+            break;
+        }
+        
+        return domain;
+      }) : [unityAppDomainName, ...stationDomainNames] },
       idToken
     );
 
