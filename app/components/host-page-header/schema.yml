@@ -1,0 +1,97 @@
+_description: |
+  A header for the host Page
+
+_confirmRemoval: true
+
+hosts:
+  _label: Host Name
+  _has:
+    input: simple-list
+    propertyName: isRubric
+    badge: FR
+    help: After typing a name, click ENTER or TAB to save your entry
+    autocomplete:
+      list: hosts
+      allowRemove: true
+      allowCreate: true
+    validate:
+      max: 1
+      required: true
+
+host:
+  _has:
+    input: text
+
+profileImage:
+  _label: Image URL
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+
+scheduleTime:
+  _label: Schedule Time
+  _has:
+    input: text
+    help: Enter the weekday(s) and time(s) of the Host’s On Air Schedule
+
+bio:
+  _label: Biography
+  _has:
+    input: wysiwyg
+    type: multi-line
+    buttons:
+      - bold
+      - italic
+      - link
+    help: Enter the Host or Host’s professional biography
+
+facebook:
+  _label: Facebook Handle
+  _has:
+    input: text
+    help: "Link to the Host or Host’s Facebook Account (for example: if facebook.com/YOURHANDLE just enter YOURHANDLE above)"
+
+twitter:
+  _label: Twitter Handle
+  _has:
+    input: text
+    help: "Link to the Host or Host’s Twitter Account (for example: if twitter.com/YOURHANDLE just enter YOURHANDLE above)"
+
+youtube:
+  _label: YouTube Account
+  _has:
+    input: text
+    help: "Link to the Host or Host’s YouTube Account ((for example: if youtube.com/YOURHANDLE just enter YOURHANDLE above)"
+
+instagram:
+  _label: Instagram Handle
+  _has:
+    input: text
+    help: "Link to the Host or Host’s Instagram Account (for example: if instagram.com/YOURHANDLE just enter YOURHANDLE above)"
+
+email:
+  _label: Email
+  _has:
+    input: text
+    help: Enter the Host or Host’s public-facing email address
+
+_groups:
+  settings:
+    fields:
+      - hosts
+      - profileImage
+      - scheduleTime
+      - bio
+      - facebook
+      - twitter
+      - youtube
+      - instagram
+      - email
+    _label: Host Header Settings
+    _placeholder:
+      height: 250px
+      text: Host Header
+      ifEmpty: hosts
