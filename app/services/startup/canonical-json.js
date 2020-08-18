@@ -143,6 +143,27 @@ const routes = [
     getParams: () => {},
     getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
   },
+  // `/hosts/{hostSlug}` or `{stationSlug}/hosts/{hostSlug}`
+  // https://regex101.com/r/TFNbVH/1
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return !!pathname.match(/([\w\-]+)?\/hosts\/?([\w\-]+)+$/);
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        [ , stationSlug, host ] = pathname.match(/([\w\-]+)?\/hosts\/?([\w\-]+)+$/);
+
+      if (stationSlug) {
+        params.stationSlug = stationSlug;
+      }
+      if (host) {
+        params.host = host;
+      }
+    },
+    getPageData: req => curatedOrDynamicRouteHandler(req, 'host')
+  },
   // [default route handler] resolve the uri and page instance
   {
     testPath: () => true,
