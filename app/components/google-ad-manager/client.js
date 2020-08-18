@@ -522,6 +522,7 @@ function createAds(adSlots) {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
         updateSkinStyles(true);
       } else {
+        updateSkinStyles(false);
         slot = googletag.defineSlot(
           adTargetingData.siteZone,
           [adSizes[adSize].defaultSize],
