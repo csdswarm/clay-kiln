@@ -261,9 +261,9 @@ _components:
           - _ref: /_components/more-content-feed/instances/home
         col2:
           - _ref: >-
-              /_components/google-ad-manager/instances/contentCollectionLogoSponsorship@published
+              /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
           - _ref: >-
-              /_components/google-ad-manager/instances/halfPageBottomTopic@published
+              /_components/google-ad-manager/instances/halfPageBottomTopic
   more-content-feed:
     instances:
       home:
@@ -291,7 +291,7 @@ _components:
         componentTitle: MORE from RADIO.COM
         introComponents: []
         sharethroughTag:
-          _ref: /_components/google-ad-manager/instances/sharethroughTag@published
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
         componentVariation: more-content-feed
         enableSharethrough: true
         sectionFrontManual: home
