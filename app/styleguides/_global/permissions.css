@@ -1,5 +1,28 @@
-.layout.cannot-remove-component {
-  .quick-bar-remove {
-    display: none;
+.layout {
+  &.cannot-remove-component {
+    .quick-bar-remove {
+      display: none;
+    }
+  }
+
+  &.cannot-add-component {
+    .quick-bar-dupe,
+    .quick-bar-add {
+      display: none;
+    }
+  }
+}
+
+.kiln-internals {
+  &.cannot-remove-component {
+    .form-header-actions button[aria-label~='Remove'] {
+      display: none;
+    }
+  }
+
+  &.cannot-add-component {
+    .form-header-actions button[aria-label~='Add'] {
+      display: none;
+    }
   }
 }

@@ -3,18 +3,26 @@
 const _get = require('lodash/get');
 
 const actionToEnforceFn = {
-  'add-component': enforceAddComponent,
-  'remove-component': enforceRemoveComponent
-};
+    'add-component': enforceAddComponent,
+    'remove-component': enforceRemoveComponent
+  },
+  CANNOT_ADD_COMPONENT = 'cannot-add-component',
+  CANNOT_REMOVE_COMPONENT = 'cannot-remove-component';
 
 function enforceAddComponent() {
   document.getElementById('vue-app-mount-point')
-    .children[0].classList.add('cannot-add-component');
+    .children[0].classList.add(CANNOT_ADD_COMPONENT);
+
+  document.getElementsByClassName('kiln-internals')[0]
+    .classList.add(CANNOT_ADD_COMPONENT);
 }
 
 function enforceRemoveComponent() {
   document.getElementById('vue-app-mount-point')
-    .children[0].classList.add('cannot-remove-component');
+    .children[0].classList.add(CANNOT_REMOVE_COMPONENT);
+  
+  document.getElementsByClassName('kiln-internals')[0]
+    .classList.add(CANNOT_REMOVE_COMPONENT);
 }
 
 function enforcePagePermissions(schema) {
