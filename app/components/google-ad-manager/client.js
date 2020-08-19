@@ -44,7 +44,7 @@ let refreshCount = 0,
   adIndices = {},
   adsMounted = false,
   prevLocation = window.location.href,
-  windowWidth = '';
+  windowWidth = 0;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
