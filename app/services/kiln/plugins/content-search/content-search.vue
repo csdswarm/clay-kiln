@@ -64,9 +64,23 @@
         must_not: { exists: { field: "stationSlug" } }
       }
     },
-    { match: { stationSlug: nationalStationSlug } }
-  ]
-  const ELASTIC_FIELDS = [
+    { match: { stationSlug: nationalStationSlug } },
+    {
+      nested: {
+        path: "stationSyndication",
+        query: {
+          bool: {
+            must: [
+              { 
+                match: { "stationSyndication.stationSlug": nationalStationSlug }
+              },
+            ],
+          },
+        },
+      },
+    },
+  ],
+  ELASTIC_FIELDS = [
     'date',
     'canonicalUrl',
     'seoHeadline',
@@ -104,6 +118,22 @@
                   stationSlug: this.selectedStation
                     ? this.selectedStation.slug
                     : this.initialStationSlug,
+                },
+              },
+              {
+                nested: {
+                  path: "stationSyndication",
+                  query: {
+                    bool: {
+                      must: [
+                        { match: { "stationSyndication.stationSlug": this.selectedStation
+                            ? this.selectedStation.slug
+                            : this.initialStationSlug
+                          },
+                        },
+                      ],
+                    },
+                  },
                 },
               },
             ];
