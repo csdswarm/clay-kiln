@@ -3,7 +3,7 @@ _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
 authors:
-  _label: Author/Host Name(s)
+  _label: Authors
   _has:
     input: select
     list: authors
@@ -15,7 +15,7 @@ authors:
   _reveal:
     field: populateFrom
     operator: ===
-    value: byline-authors
+    value: byline
 
 contentType:
   _label: Content type
@@ -84,8 +84,8 @@ populateFrom:
         value: section-front-or-tag
       - manual
       -
-        name: Byline/Author(s)
-        value: byline-authors
+        name: Byline
+        value: byline
   _reveal:
     field: populateFrom
     operator: '!=='

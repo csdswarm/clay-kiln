@@ -381,7 +381,7 @@ const
         return tags;
       case 'section-front':
         return sectionFronts;
-      case 'byline-authors':
+      case 'byline':
         return ['authors'];
       case 'all-content':
         return [];
