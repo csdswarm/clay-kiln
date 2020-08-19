@@ -3,14 +3,14 @@
 const KilnInput = window.kiln.kilnInput;
 
 /**
-   * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
-   *
-   * @param {object} schema
-   * @param {string} field
-   * @param {string} [component]
-   *
-   * @return {object} - schema
-   */
+ * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
+ *
+ * @param {object} schema
+ * @param {string} field
+ * @param {string} [component]
+ *
+ * @return {object} - schema
+ */
 function simpleListRights(schema, field, component = schema.schemaName) {
   const subscriptions = new KilnInput(schema);
 
