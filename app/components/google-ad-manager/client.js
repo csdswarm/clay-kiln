@@ -2,11 +2,11 @@
 
 
 const _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
-  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
   {
     pageTypeTagArticle,
     pageTypeTagSection,
@@ -371,11 +371,16 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       pageData,
       contentTags
     }),
+    nmcTags = getMetaTagContent('name', NMC.tag),
     adTargetingData = {
       targetingAuthors: authors,
-      // google ad manager doesn't take the tags from nmc since nmc cares about
-      //   the editorial tags rather than the ad tags.
-      targetingTags: trackingData.tag
+      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
+      // In case that there is no tags we should not sent information to GAM.
+      targetingTags:
+        _isEmpty(contentTags.filter(Boolean)) &&
+        !_isEmpty(nmcTags)
+          ? (nmcTags || '').replace(/\//g, ',')
+          : trackingData.tag
     };
 
   if (shouldUseNmcTags) {
@@ -389,7 +394,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
       targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags : getMetaTagContent('name',  NMC.tag)
+      targetingTags: nmcTags
     });
   } else {
     Object.assign(adTargetingData, {
@@ -409,21 +414,11 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
 }
 
 function getCurrentStation() {
-  const fromPathname = makeFromPathname({ pathname: window.location.pathname });
+  const googleAdManagerElement = document.querySelector('.component--google-ad-manager'),
+    stationData = JSON.parse(googleAdManagerElement.dataset.gamStationData);
 
-  if (!fromPathname.isStationDetail()) {
-    return {};
-  }
+  return stationData;
 
-  // these shouldn't be declared above the short circuit
-  // eslint-disable-next-line one-var
-  const stationDetailComponent = document.querySelector('.component--station-detail'),
-    stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-    station = stationDetailEl
-      ? JSON.parse(stationDetailEl.innerHTML)
-      : {};
-
-  return station;
 }
 
 /**
@@ -501,7 +496,8 @@ function getAdTargeting(pageData) {
 function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
-    pageData = getPageData(window.location.pathname, contentType),
+    stationData = getCurrentStation(),
+    pageData = getPageData(window.location.pathname, contentType, stationData.site_slug),
     adTargetingData = getAdTargeting(pageData),
     ads = [];
 

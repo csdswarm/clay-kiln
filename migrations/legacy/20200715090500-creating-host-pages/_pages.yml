@@ -1,0 +1,32 @@
+_pages:
+  # Host Page
+  host:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/host
+      - /_components/dynamic-meta-description/instances/host
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+      - /_components/meta-tags/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/host-page-header/instances/new
+    main:
+      - /_components/host-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general
+
+  # Host Profile Page
+  host-profile:
+    head:
+      - /_components/dynamic-meta-title/instances/host-profile
+      - /_components/dynamic-meta-description/instances/host-profile
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/host-page-header/instances/new
+    main:
+      - /_components/host-page/instances/new
+    layout: /_layouts/one-column-layout/instances/general

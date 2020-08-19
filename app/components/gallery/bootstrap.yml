@@ -7,11 +7,13 @@ _components:
     feedImgUrl: ''
     teaser: ''
     authors: []
+    hosts: []
     byline:
       -
         prefix: by
         names: []
         sources: []
+        hosts: []
     secondaryBylineText: 'Photograph By'
     secondaryAttribution: []
     dateUpdated: false
