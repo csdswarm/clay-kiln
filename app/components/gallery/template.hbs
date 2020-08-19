@@ -8,6 +8,7 @@
   data-syndication="{{ syndicationStatus }}"
   data-headline="{{ striptags headline }}"
   data-authors="{{ join (map authors (getProp "text")) }}"
+  data-hosts="{{ join (map hosts (getProp "text")) }}"
   data-sources="{{ join (map sources (getProp "text")) }}"
   data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
   data-tags="{{ join (map tags.items (getProp "text")) }}"
@@ -77,7 +78,9 @@
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial stationSlug=stationSlug }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
-              --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
+              -->{{#each hosts as |host|}}<!--
+                --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}} {{host.text}}</span>
+              {{/each}}
             {{/each}}
           {{/each}}
           {{#if stationTitle}}<span>,</span>{{/if}}
