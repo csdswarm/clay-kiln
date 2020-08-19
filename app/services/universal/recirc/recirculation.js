@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl, boolObjectToArray } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl, boolObjectToArray, coalesce } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -46,29 +46,37 @@ const
   ],
   DEFAULT_MAX_ITEMS = 10,
   returnData = (_, data) => data,
-  defaultMapDataToFilters = (ref, data, locals) => ({
-    filters: {
-      ...getAuthor(data, locals),
-      contentTypes: boolObjectToArray(data.contentType),
-      ..._pick({
-        sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
-        secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
-        tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
-      }, populateFilter(data.populateFrom)),
-      ...{ stationSlug: getStationSlug(locals) }
-    },
-    excludes: {
-      canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-      sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-      secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
-      subscriptions: { value: {
-        subscriptions: data.excludeSubscriptions ? ['content subscription'] : [],
-        stationSlug: getStationSlug(locals)
-      } },
-      tags: (data.excludeTags || []).map(tag => tag.text)
-    },
-    curated: data.items || []
-  }),
+  defaultMapDataToFilters = (ref, data, locals) => {
+    const
+      author = getAuthor(data, locals),
+      primarySF = coalesce(data, 'sectionFrontManual','sectionFront'),
+      secondarySF =  coalesce(data, 'secondarySectionFrontManual', 'secondarySectionFront'),
+      tag = getTag(data, locals);
+
+    return {
+      filters: {
+        author,
+        contentTypes: boolObjectToArray(data.contentType),
+        ..._pick({
+          sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
+          secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
+          tags: sectionOrTagCondition(data.populateFrom, tag)
+        }, populateFilter(data.populateFrom)),
+        ...{ stationSlug: getStationSlug(locals) }
+      },
+      excludes: {
+        canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
+        sectionFronts: boolObjectToArray(data.excludeSectionFronts),
+        secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+        subscriptions: { value: {
+          subscriptions: data.excludeSubscriptions ? ['content subscription'] : [],
+          stationSlug: getStationSlug(locals)
+        } },
+        tags: (data.excludeTags || []).map(tag => tag.text)
+      },
+      curated: data.items || []
+    };
+  },
   defaultTemplate = (locals, validatedItem, curatedItem = {}) => ({
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
@@ -218,6 +226,7 @@ const
       })
     }
   },
+
   /**
    * Transform condition to queryService method name
    *
@@ -234,6 +243,7 @@ const
         return 'addShould';
     }
   },
+
   /**
    * Convert array to a bool query with a minimum should match
    *
@@ -242,6 +252,7 @@ const
    * @returns {object}
    */
   minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match } }),
+
   /**
    * Add to bool query portion of elastic query
    *
@@ -286,6 +297,7 @@ const
       queryService[getQueryType(condition)](query, createObj(value));
     }
   },
+
   /**
    * Pull author from locals
    *
@@ -295,21 +307,11 @@ const
    * @return {string} author
    */
   getAuthor = (data, locals) => {
-    let author;
+    data.author = coalesce(locals, 'author', 'params.author');
 
-    if (locals && locals.author) {
-      // This is from load more on an author page
-      author = locals.author;
-    } else if (locals && locals.params && locals.params.author) {
-      // This is from a curated & dynamic author page
-      author = locals.params.author;
-    }
-
-    // Used for load-more queries
-    data.author = author;
-
-    return { author };
+    return data.author;
   },
+
   /**
    * Pull stationSlug from local params if dynamic station page
    * or locals station object
@@ -318,9 +320,8 @@ const
    *
    * @return {string} stationSlug
    */
-  getStationSlug = locals => {
-    return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
-  },
+  getStationSlug = locals => coalesce(locals, 'params.stationSlug', 'station.site_slug'),
+
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
    *
@@ -330,16 +331,7 @@ const
    * @return {array} tags
    */
   getTag = (data, locals) => {
-    let tags = data.tagManual || data.tag;
-
-    // Check if we are on a tag page and override the above
-    if (locals && locals.tag) {
-      // This is from load more on a tag page
-      tags = locals.tag;
-    } else if (_get(locals, 'params.dynamicTag')) {
-      // This is from a tag page
-      tags = locals.params.dynamicTag;
-    }
+    let tags = coalesce({ data, locals }, 'locals.tag', 'locals.params.dynamicTag', 'data.tagManual', 'data.tag');
 
     // normalize tag array (based on simple list input)
     if (Array.isArray(tags)) {
@@ -347,10 +339,10 @@ const
     }
 
     if (typeof tags == 'string' && tags.indexOf(',') > -1) {
+      // split comma separated tags (for load-more get queries)
       tags = tags.split(',');
     }
 
-    // split comma separated tags (for load-more get queries)
     data.tag = tags;
 
     if (tags === '') {
@@ -359,6 +351,7 @@ const
 
     return tags;
   },
+
   /**
    * Determine which sectionFront/tag values to consider based on where the populateFrom value
    *
@@ -381,6 +374,7 @@ const
         return [...sectionFronts, ...tags];
     }
   },
+
   /**
    * Query condition needs to be should if populateFrom = section-front-or-tag
    *
@@ -393,6 +387,7 @@ const
     condition: 'should',
     value
   } : value,
+
   /**
    * Verify the url exists and is not a component
    *
@@ -408,16 +403,16 @@ const
   }),
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
+   * Use filters to query elastic for content
+   *
+   * @param {object} config.filter
+   * @param {object} config.exclude
+   * @param {array} config.fields
+   * @param {object} config.pagination
+   * @param {number} config.maxItems
+   * @param {Object} [locals]
+   * @returns {array} elasticResults
+   */
   fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
     let results = {
       content: [],
