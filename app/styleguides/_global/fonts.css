@@ -460,19 +460,6 @@ em, i {
   @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
 }
 
-/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||||   Station Footer Styleguide     |||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin station-footer-font1 {
-  @mixin font CircularStd-Medium, 18px, $station-primaryFontColor, -.45px, 22px;
-}
-@define-mixin station-footer-font2 {
-  @mixin font CircularStd-Black, 18px, $station-primaryFontColor, -.45px, 22px;
-}
-@define-mixin station-footer-font3 {
-  @mixin font ProximaNova-Regular, 14px, $station-primaryFontColor, -.23px, 22px;
-}
-
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||| Gallery Editing  |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
