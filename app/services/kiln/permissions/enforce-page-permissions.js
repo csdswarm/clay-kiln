@@ -10,19 +10,11 @@ const actionToEnforceFn = {
   CANNOT_REMOVE_COMPONENT = 'cannot-remove-component';
 
 function enforceAddComponent() {
-  document.getElementById('vue-app-mount-point')
-    .children[0].classList.add(CANNOT_ADD_COMPONENT);
-
-  document.getElementsByClassName('kiln-internals')[0]
-    .classList.add(CANNOT_ADD_COMPONENT);
+  document.body.classList.add(CANNOT_ADD_COMPONENT);
 }
 
 function enforceRemoveComponent() {
-  document.getElementById('vue-app-mount-point')
-    .children[0].classList.add(CANNOT_REMOVE_COMPONENT);
-  
-  document.getElementsByClassName('kiln-internals')[0]
-    .classList.add(CANNOT_REMOVE_COMPONENT);
+  document.body.classList.add(CANNOT_REMOVE_COMPONENT);
 }
 
 function enforcePagePermissions(schema) {
