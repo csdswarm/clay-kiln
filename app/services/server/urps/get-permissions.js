@@ -16,7 +16,7 @@ const formatPossibleAxiosError = require('../../universal/format-possible-axios-
  *  permissions checking, which will simultaneously reduce overall bandwidth, while improving security
  *
  * @param {string} idToken the jwt Token of the authenticated user to authorizations for
- * @param {string[]} stationDomainNames
+ * @param {Array} stationDomainNames
  * @returns {Promise<Object>}
  *
  * @example
@@ -43,32 +43,7 @@ module.exports = async (idToken, stationDomainNames) => {
     
     const { data: permissionsList } = await getFromUrps(
       '/permissions/by-domain',
-      { domains: USE_URPS_CORE_ID ? [unityAppId, ...stationDomainNames].filter(Boolean).map(id => {
-        let domain;
-
-        switch (id) {
-          case unityAppId:
-            domain = {
-              type: 'app',
-              id
-            };
-            break;
-          case 'National':
-            domain = {
-              type: 'market',
-              id
-            };
-            break;
-          default:
-            domain = {
-              type: 'station',
-              id
-            };
-            break;
-        }
-        
-        return domain;
-      }) : [unityAppDomainName, ...stationDomainNames] },
+      { domains: USE_URPS_CORE_ID ? [unityAppId, ...stationDomainNames] : [unityAppDomainName, ...stationDomainNames] },
       idToken
     );
 

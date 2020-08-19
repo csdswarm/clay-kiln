@@ -14,6 +14,8 @@ module.exports = async (auth, stationDomainNames) => {
     updatedPermissions = await getPermissions(auth.idToken, stationDomainNames);
 
   for (const domainName of stationDomainNames) {
+    // TODO: this should be revisited since all the information is been generated in the URPS Side.
+    //  just addinng this line to keep track of this.
     lastUpdatedByStationDomainName[domainName] = currentTime;
   }
 

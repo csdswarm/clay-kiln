@@ -1,7 +1,7 @@
 'use strict';
 
 const getFromUrps = require('./get-from-urps'),
-  { PERM_CHECK_INTERVAL } = require('./utils');
+  { PERM_CHECK_INTERVAL, USE_URPS_CORE_ID } = require('./utils');
 
 // these are slight misnomers as it's only stations and markets, but I can't
 //   think of a good term to encompass both and the var names are already
@@ -14,12 +14,14 @@ const getFromUrps = require('./get-from-urps'),
 const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
     urlPath: '/domains/by-type',
     cachedPropName: 'domainNamesIHaveAccessTo',
-    toResult: domains => domains.map(aDomain => aDomain.name)
+    // TODO: this should be revisited since all the information is been generated in the URPS Side.
+    //  just adding this comment to keep track of it.
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name)
   }),
   getDomainNamesICanImportContent = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanImportContent',
-    toResult: domains => domains.map(aDomain => aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
     urpsReqBody: {
       action: 'import',
       // permissionCategory is the target as we think of it
@@ -37,7 +39,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateSectionFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateSectionFronts',
-    toResult: domains => domains.map(aDomain => aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it
@@ -47,7 +49,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateStaticPages = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateStaticPages',
-    toResult: domains => domains.map(aDomain => aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it
@@ -57,7 +59,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateStationFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateStationFronts',
-    toResult: domains => domains.map(aDomain => aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it

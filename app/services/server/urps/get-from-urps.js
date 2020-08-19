@@ -20,9 +20,6 @@ const urpsHasAuthLayer = process.env.URPS_HAS_AUTH_LAYER === 'true';
 module.exports = async (path, reqBody, idToken) => {
   const url = `${process.env.URPS_AUTHORIZATIONS_URL}${path}`;
 
-  console.log('DEBUG:::::::::::::::::::::: URPS idToken', idToken);
-  console.log('DEBUG:::::::::::::::::::::: URPS path', path);
-  console.log('DEBUG:::::::::::::::::::::: URPS reqBody', reqBody);
   if (!urpsHasAuthLayer) {
     reqBody = Object.assign({}, reqBody, {
       cognito_id: jwt.decode(idToken).sub
