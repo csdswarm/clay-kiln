@@ -27,7 +27,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl, boolObjectToArray, coalesce } = require('../utils'),
+  { addAmphoraRenderTime, boolKeys, cleanUrl, coalesce } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
@@ -56,7 +56,7 @@ const
     return {
       filters: {
         author,
-        contentTypes: boolObjectToArray(data.contentType),
+        contentTypes: boolKeys(data.contentType),
         ..._pick({
           sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
@@ -66,8 +66,8 @@ const
       },
       excludes: {
         canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-        sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-        secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+        sectionFronts: boolKeys(data.excludeSectionFronts),
+        secondarySectionFronts: boolKeys(data.excludeSecondarySectionFronts),
         subscriptions: { value: {
           subscriptions: data.excludeSubscriptions ? ['content subscription'] : [],
           stationSlug: getStationSlug(locals)
