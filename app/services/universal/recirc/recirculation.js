@@ -62,7 +62,7 @@ const
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
           tags: sectionOrTagCondition(data.populateFrom, tag)
         }, populateFilter(data.populateFrom)),
-        ...{ stationSlug: getStationSlug(locals) }
+        stationSlug: getStationSlug(locals)
       },
       excludes: {
         canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -101,21 +101,45 @@ const
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: sectionFront => ({
+      createObj: (sectionFront, stationSlug) => ({
         bool: {
           should: [
-            { match: { sectionFront: sectionFront } },
-            { match: { sectionFront: sectionFront.toLowerCase() } },
+            {
+              bool: {
+                must: [
+                  { match: { stationSlug } },
+                  {
+                    bool: {
+                      should: [
+                        { match: { sectionFront: sectionFront } },
+                        { match: { sectionFront: sectionFront.toLowerCase() } }
+                      ], minimumShouldMatch: 1
+                    }
+                  }
+                ]
+              }
+            },
             {
               nested: {
                 path: 'stationSyndication',
                 query: {
                   bool: {
-                    should: [
-                      { match: { 'stationSyndication.sectionFront': sectionFront } },
-                      { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
-                    ],
-                    minimum_should_match: 1
+                    must: [
+                      {
+                        match: {
+                          'stationSyndication.stationSlug': stationSlug
+                        }
+                      },
+                      {
+                        bool: {
+                          should: [
+                            { match: { 'stationSyndication.sectionFront': sectionFront } },
+                            { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
+                          ],
+                          minimum_should_match: 1
+                        }
+                      }
+                    ]
                   }
                 }
               }
@@ -126,21 +150,44 @@ const
       })
     },
     secondarySectionFronts: {
-      createObj: secondarySectionFront => ({
+      createObj: (secondarySectionFront, stationSlug) => ({
         bool: {
           should: [
-            { match: { secondarySectionFront: secondarySectionFront } },
-            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } },
+            {
+              bool: {
+                must: [
+                  { match: { stationSlug } },
+                  {
+                    should: [
+                      { match: { secondarySectionFront: secondarySectionFront } },
+                      { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
+                    ],
+                    minimum_should_match: 1
+                  }
+                ]
+              }
+            },
             {
               nested: {
                 path: 'stationSyndication',
                 query: {
                   bool: {
-                    should: [
-                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
-                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
-                    ],
-                    minimum_should_match: 1
+                    must: [
+                      {
+                        match: {
+                          'stationSyndication.stationSlug': stationSlug
+                        }
+                      },
+                      {
+                        bool: {
+                          should: [
+                            { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
+                            { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
+                          ],
+                          minimum_should_match: 1
+                        }
+                      }
+                    ]
                   }
                 }
               }
@@ -268,9 +315,12 @@ const
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value, includeSyndicated } = _isPlainObject(valueObj)
-        ? valueObj
-        : { value: valueObj };
+      {
+        condition = conditionOverride || filterCondition,
+        includeSyndicated,
+        stationSlug,
+        value
+      } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
     if (Array.isArray(value)) {
       if (unique && value.length) {
@@ -288,6 +338,11 @@ const
 
       if (typeof includeSyndicated !== 'undefined') {
         queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
+        return;
+      }
+
+      if (typeof stationSlug !== 'undefined') {
+        queryService[getQueryType(condition)](query, createObj(value, stationSlug));
         return;
       }
 
@@ -433,18 +488,28 @@ const
     queryService.addSort(query, { date: 'desc' });
 
     Object.entries(filters).forEach(([key, value]) => {
-      // Don't search for primary section front if the secondary is selected
-      if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
-        return;
-      }
-      if (key === 'includeSyndicated') {
-        return;
-      }
-      if (key === 'stationSlug' && !filters.includeSyndicated) {
-        value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
-      }
-      if (key === 'stationSlug' && isRdcContent) {
-        value = DEFAULT_STATION.site_slug;
+      switch (key) {
+        case 'sectionFronts':
+          if (!_isEmpty(filters.secondarySectionFronts)) {
+            return;
+          }
+          value = { value, stationSlug: filters.stationSlug || DEFAULT_STATION.site_slug };
+          break;
+        case 'secondarySectionFronts':
+          value = { value, stationSlug: filters.stationSlug || DEFAULT_STATION.site_slug };
+          break;
+        case 'includeSyndicated':
+          return;
+        case 'stationSlug':
+          if (!filters.includeSyndicated) {
+            value = { value, includeSyndicated: false };
+          }
+          if (isRdcContent) {
+            value = DEFAULT_STATION.site_slug;
+          }
+          break;
+        default:
+          // do nothing
       }
       addCondition(query, key, value);
     });
