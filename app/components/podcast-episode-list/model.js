@@ -168,8 +168,6 @@ module.exports = unityComponent({
 
       attributes.episode_detail_url = buildEpisodeDetailLink(episodeData, locals);
 
-      attributes.shouldLink = episodeData.attributes.site_slug;
-
       // need to get the playing class on each episode in list for ON-1961
       attributes.playing_class = playingClass(locals, episodeData.id);
 
