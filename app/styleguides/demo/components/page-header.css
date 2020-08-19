@@ -2,10 +2,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.has-fullpage-ad .component--topic-page-header {
-  background: $white;
-}
-
 .component--page-header {
   h1 {
     @mixin page-header-font1;
@@ -49,5 +45,13 @@
 
   .topic-page-header__banner {
     height: em(110);
+  }
+}
+
+.has-fullpage-ad .component--page-header {
+  background: $white;
+  h1 {
+    padding-bottom: em(20, 35);
+    margin-bottom: 0;
   }
 }
