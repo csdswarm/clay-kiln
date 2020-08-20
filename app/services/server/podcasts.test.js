@@ -84,17 +84,33 @@ describe('server/podcasts', () => {
   afterEach(sinon.restore);
 
   describe('updatePodcasts', () => {
+    /**
+     *
+     * @param {boolean} opts[isStale] whether or not the current mock data should be considered stale
+     * @param {object} opts[dbResponse] returns the value you pass as a response from the db
+     * @param {boolean} opts[rdcApiThrows] Whether or not the radioApiGet function should throw an error
+     * @returns {Promise<{}>}
+     */
     async function setup_updatePodcasts(opts = {}) {
-      const { _internals: __, updatePodcasts } = podcastUtils;
+      const { _internals: __, updatePodcasts: update } = podcastUtils,
+        updatePodcasts = sinon.spy(update);
 
-      __.moment = sinon.stub();
       __.dbRaw = sinon.stub();
-      __.radioApiGet = sinon.stub();
       __.getStationsById = sinon.stub();
+      __.log = sinon.stub();
+      __.moment = sinon.stub();
+      __.radioApiGet = sinon.stub();
 
       __.dbRaw.resolves(opts.dbResponse || mockData.dbResponse);
-      __.radioApiGet.resolves(mockData.apiResponse);
       __.getStationsById.resolves(mockData.stations.byId);
+
+      if (opts.rdcApiThrows) {
+        __.radioApiGet.throws(() => {
+          return new Error('TESTING - Failed to connect to RDC API');
+        });
+      } else {
+        __.radioApiGet.resolves(mockData.apiResponse);
+      }
 
       __.moment.returns({
         isAfter: sinon.stub().returns(opts.isStale),
@@ -102,7 +118,7 @@ describe('server/podcasts', () => {
       });
 
       await updatePodcasts({});
-      return { __ };
+      return { __, updatePodcasts };
     }
 
     it('gets a single podcast from db', async () => {
@@ -172,5 +188,11 @@ describe('server/podcasts', () => {
       expect(__.getStationsById).to.have.been.called;
     });
 
+    it('Handles errors thrown by radioApi gracefully', async () => {
+      const { __, updatePodcasts } = await setup_updatePodcasts({ rdcApiThrows: true, isStale: true });
+
+      expect(__.log).to.be.calledWith('error', sinon.match(/Failed to get podcasts from RDC API/));
+      expect(updatePodcasts).not.to.have.thrown;
+    });
   });
 });

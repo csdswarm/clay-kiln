@@ -2,51 +2,66 @@
 
 const _concat = require('lodash/concat'),
   _flatten = require('lodash/flatten'),
-  {
-    CLAY_SITE_PROTOCOL: protocol,
-    CLAY_SITE_HOST: host
-  } = process.env,
   db = require('../../services/server/db'),
+  log = require('../universal/log').setup({ file: __filename }),
   moment = require('moment'),
   podcastUtils = require('../universal/podcast'),
   radioApiService = require('./radioApi'),
   stationUtils = require('./station-utils'),
+  {
+    CLAY_SITE_PROTOCOL: protocol,
+    CLAY_SITE_HOST: host
+  } = process.env,
 
   PAGE_SIZE = 900, // requesting 1000 items causes a 503 error, so request a little less than that,
 
   __ = {
-    dbRaw:db.raw,
+    dbRaw: db.raw,
     moment,
-    radioApiGet:radioApiService.get,
-    getStationsById:stationUtils.getAllStations.byId
+    radioApiGet: radioApiService.get,
+    getStationsById: stationUtils.getAllStations.byId,
+    log
   },
+
 
   /**
    * Get all podcasts from the RDC API
    * @param {object} locals
-   * @param {[object]} [collected]
-   * @param {number} [page]
-   * @returns {Promise<[object]>}
+   * @returns {Promise<[object]>} A list of podcasts
    */
-  getPodcastsFromAPI = async (locals, collected = [], page = 1) => {
+  getPodcastsFromAPI = async (locals) => {
     const
-      { radioApiGet } = __,
+      { radioApiGet, log } = __,
       params = {
         page: {
           size: PAGE_SIZE,
-          number: page
+          number: 1
         }
       },
-      { data, links: { next } } = await radioApiGet(
-        'podcasts',
-        params,
-        null,
-        { ttl: 0 }, // disable redis cache - it takes a long time, and we don't need to call this route very often.
-        locals);
+      collected = [];
 
-    return next
-      ? getPodcastsFromAPI(locals, _concat(collected, data), page + 1)
-      : _concat(collected, data);
+    let
+      next;
+
+    do {
+      try {
+        const
+          { data, links } = await radioApiGet(
+            'podcasts',
+            params,
+            null,
+            { ttl: 0 }, // disable redis cache - it takes a long time, and we don't need to call this route very often.
+            locals);
+
+        next = links.next;
+        params.page.number++;
+        collected.concat(data);
+      } catch (e) {
+        log('error', `Failed to get podcasts from RDC API - page number ${params.page.number}`, e);
+      }
+    } while (next);
+
+    return collected;
   },
 
   /**
@@ -55,7 +70,7 @@ const _concat = require('lodash/concat'),
    */
   storePodcastsFromAPItoDB = async (locals) => {
     const
-      { dbRaw, getStationsById, moment } = __,
+      { dbRaw, getStationsById, log, moment } = __,
       podcasts = await getPodcastsFromAPI(locals),
       stationsById = await getStationsById({ locals }),
       now = moment().toISOString();
@@ -77,8 +92,12 @@ const _concat = require('lodash/concat'),
         ${'(?,?),'.repeat(values.length / 2).slice(0, -1)}
       `;
 
-      await dbRaw('DELETE FROM podcasts');
-      await dbRaw(insertSql, values);
+      try {
+        await dbRaw('DELETE FROM podcasts');
+        await dbRaw(insertSql, values);
+      } catch (err) {
+        log('error', `There was a problem updating database with podcast data. Values: ${values}`, err);
+      }
     }
   },
   /**
@@ -87,22 +106,27 @@ const _concat = require('lodash/concat'),
    */
   updatePodcasts = async (locals) => {
     const
-      { dbRaw, moment } = __,
+      { dbRaw, moment, log } = __,
       queryForOnePodcast = `
         SELECT id, data
         FROM podcasts
         LIMIT 1
-      `,
-      { rows: [podcastResult] } = await dbRaw(queryForOnePodcast);
+      `;
 
-    // Check when podcasts were last updated
-    // fetch from API & update DB if more than a day old or not in DB
-    if (!podcastResult || moment().isAfter(podcastResult.data.updated, 'day')) {
-      await storePodcastsFromAPItoDB(locals);
+    try {
+      const { rows: [podcastResult] } = await dbRaw(queryForOnePodcast);
+
+      // Check when podcasts were last updated
+      // fetch from API & update DB if more than a day old or not in DB
+      if (!podcastResult || moment().isAfter(podcastResult.data.updated, 'day')) {
+        await storePodcastsFromAPItoDB(locals);
+      }
+    } catch (e) {
+      log('error', 'Failed to check for podcast data in db', e);
     }
   };
 
 module.exports = {
-  _internals:__,
+  _internals: __,
   updatePodcasts
 };
