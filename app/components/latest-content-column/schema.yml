@@ -167,6 +167,11 @@ excludeSubscriptions:
   _has:
     input: checkbox
   _subscribe: hasCustomColumns
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 rssFeed:
   _label: RSS Feed URL
