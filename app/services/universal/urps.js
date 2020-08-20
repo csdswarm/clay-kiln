@@ -7,7 +7,7 @@ const { DEFAULT_STATION } = require('./constants'),
 //   whether you can update a global alert or the homepage
 const unityAppDomainName = 'Unity App',
   unityAppId = {
-    type: 'app',
+    type: 'application',
     id: 'REPLACE_WITH_UNITY_APP_ID'
   };
 
