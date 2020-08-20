@@ -23,6 +23,7 @@ if [[ $(curl "$http://$1/_components/section-front/instances" 2>&1) == *"station
 then
     echo "Section Front 3 section front already exists";
 else
+    npm init -f;
     npm i yamljs node-fetch;
     clay export -y "$http://$1/_layouts/one-column-layout/instances/general" > layout.yml;
     node ./modifyLayout.js;
@@ -32,5 +33,5 @@ else
     cat ./components.yml | clay import -y -k demo "$http://$1";
     cat ./pages.yml | clay import -y -k demo "$http://$1";
 
-    rm -rf ./node_modules package-lock.json layout.yml components.yml
+    rm -rf ./node_modules package*.json layout.yml components.yml
 fi
