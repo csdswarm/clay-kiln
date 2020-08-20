@@ -1,6 +1,7 @@
 'use strict';
 
 const
+  _concat = require('lodash/concat'),
   _flatten = require('lodash/flatten'),
   db = require('../../services/server/db'),
   log = require('../universal/log').setup({ file: __filename }),
@@ -37,11 +38,11 @@ const
           size: PAGE_SIZE,
           number: 1
         }
-      },
-      collected = [];
+      };
 
     let
-      next;
+      next,
+      collected = [];
 
     do {
       try {
@@ -55,7 +56,7 @@ const
 
         next = links.next;
         params.page.number++;
-        collected.concat(data);
+        collected = _concat(collected,data);
       } catch (e) {
         log('error', `Failed to get podcasts from RDC API - page number ${params.page.number}`, e);
       }
