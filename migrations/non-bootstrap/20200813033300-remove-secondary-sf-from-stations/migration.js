@@ -4,8 +4,8 @@ const { clayImport, clayExport, _set } = require('../../utils/migration-utils').
   hostUrl = process.argv[2] || 'clay.radio.com',
   { esQuery } = require('../../utils/migration-utils').v2,
   { v1: parseHost } = require('../../utils/parse-host'),
-  republishPageUris = require('../../non-bootstrap/utils/republish-page-uris').v1,
-  usingDb = require('../using-db').v1,
+  republishPageUris = require('../utils/republish-page-uris').v1,
+  usingDb = require('../../legacy/using-db').v1,
   _get = require('lodash/get'),
   envInfo = parseHost(hostUrl),
   INCLUDES = [
@@ -29,11 +29,16 @@ const
         secondarySectionFronts = {};
 
       await Promise.all(instances.map(async (instance) => {
-        const sectionFronts = await clayExport({ componentUrl: instance });
+        let sectionFronts;
+        try {
+          sectionFronts = await clayExport({ componentUrl: instance });
+        } catch (error) {
+          console.log('section front error', error);
+        }
 
         Object.entries(_get(sectionFronts, 'data._components.section-front.instances', {}))
           .forEach(([_, { primary, title, stationSlug }]) => {
-            if (!primary) {
+            if (!primary && title && title != '' && stationSlug) {
               const secondarySectionFront = { name: title, value: title.toLowerCase() },
                 stationSSFront = `${stationSlug}-secondary-section-fronts`;
 
