@@ -134,13 +134,23 @@ const routes = [
   // `{stationSlug}/shows/show-schedule`
   {
     testPath: req => req.path.includes('/shows/show-schedule'),
-    getParams: () => {},
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/shows/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
     getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
   },
   // `{stationSlug}/stats/mlb/scores`
   {
     testPath: req => req.path.includes('/stats'),
-    getParams: () => {},
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/stats/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
     getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
   },
   // [default route handler] resolve the uri and page instance

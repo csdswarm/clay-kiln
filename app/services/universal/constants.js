@@ -38,6 +38,13 @@ const _get = require('lodash/get'),
     STATIONFRONT: 'station-front'
   },
 
+  STATUS_CODE = {
+    BAD_REQUEST: 400,
+    CREATED: 201,
+    OK: 200,
+    SERVER_ERROR: 500
+  },
+
   msnFeed = {
     // values are in pixels.  image requirements found here:
     // https://partnerhub.msn.com/docs/spec/vcurrent/feed-specifications/AAsCh
@@ -142,6 +149,7 @@ module.exports = {
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
+  STATUS_CODE,
   WEEK,
   YEAR,
   contentTypes,

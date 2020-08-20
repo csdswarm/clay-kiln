@@ -1,6 +1,6 @@
-_version: 5.0
+_version: 6.0
 _description: |
-  A list of five latest related articles by article type, tag, or manually populated.
+  A list of three latest related articles by article type, tag, or manually populated.
 
 useCustomTitle:
   _label: Override column title
@@ -162,6 +162,12 @@ excludeTags:
     values:
       - rss-feed
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+  _subscribe: hasCustomColumns
+
 rssFeed:
   _label: RSS Feed URL
   _has:
@@ -255,47 +261,6 @@ items:
     values:
       - rss-feed
 
-filterTags:
-  _label: Exclude Tags
-  _has:
-    input: simple-list
-    autocomplete:
-      list: filterTag
-      allowRemove: true
-      allowCreate: true
-    help: Exclude content from all tags
-  _reveal:
-    field: populateFrom
-    operator: '!=='
-    values:
-      - rss-feed
-
-filterPrimarySectionFronts:
-  _label: Exclude Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: primary-section-fronts
-  _reveal:
-    field: populateFrom
-    operator: '!=='
-    values:
-      - rss-feed
-
-filterSecondarySectionFronts:
-  _label: Exclude Secondary Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: secondary-section-fronts
-  _reveal:
-    field: populateFrom
-    operator: '!=='
-    values:
-      - rss-feed
-
 _groups:
   settings:
     fields:
@@ -309,10 +274,11 @@ _groups:
       - sectionFrontManual
       - secondarySectionFront
       - tag
-      - filterTags
-      - filterPrimarySectionFronts
-      - filterSecondarySectionFronts
+      - excludeTags
+      - excludeSectionFronts
+      - excludeSecondarySectionFronts
       - items
+      - excludeSubscriptions
   items:
     fields:
       - items
