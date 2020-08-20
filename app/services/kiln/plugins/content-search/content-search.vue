@@ -114,11 +114,7 @@
           ? matchNationalStation
           : [
               {
-                match: {
-                  stationSlug: this.selectedStation
-                    ? this.selectedStation.slug
-                    : this.initialStationSlug,
-                },
+                match: { stationSlug: this.getStationSlug },
               },
               {
                 nested: {
@@ -126,10 +122,7 @@
                   query: {
                     bool: {
                       must: [
-                        { match: { "stationSyndication.stationSlug": this.selectedStation
-                            ? this.selectedStation.slug
-                            : this.initialStationSlug
-                          },
+                        { match: { "stationSyndication.stationSlug": this.getStationSlug },
                         },
                       ],
                     },
@@ -137,6 +130,11 @@
                 },
               },
             ];
+      },
+      getStationSlug() {
+        return this.selectedStation
+          ? this.selectedStation.slug
+          : this.initialStationSlug
       },
       showResults() {
         return this.loading || this.searchResults.length !== 0;
