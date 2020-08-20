@@ -58,6 +58,7 @@ const
         params.page.number++;
         collected = _concat(collected,data);
       } catch (e) {
+        next = false; // escape from do...while loop
         log('error', `Failed to get podcasts from RDC API - page number ${params.page.number}`, e);
       }
     } while (next);
