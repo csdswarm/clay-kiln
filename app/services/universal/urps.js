@@ -8,7 +8,7 @@ const { DEFAULT_STATION } = require('./constants'),
 const unityAppDomainName = 'Unity App',
   unityAppId = {
     type: 'application',
-    id: 'REPLACE_WITH_UNITY_APP_ID'
+    id: 'Unity App'
   };
 
 /**
@@ -41,16 +41,12 @@ const unityAppDomainName = 'Unity App',
  *    from the back or frontends, hence the fallback to .slug
  *
  * @param {object} station
- * @param {boolean} USE_URPS_CORE_ID
  * @returns {string}
  */
 function getStationDomainName(station) {
   if (station.id === DEFAULT_STATION.id) {
     return USE_URPS_CORE_ID
-      ? {
-        type: 'market',
-        id: station.market.id
-      }
+      ? `market - ${station.market.id}`
       : station.urpsDomainName;
   }
 
@@ -60,11 +56,28 @@ function getStationDomainName(station) {
     typeof station.site_slug === 'string' ? station.site_slug : station.slug;
 
   return USE_URPS_CORE_ID
-    ? {
-      type: 'station',
-      id: station.id
-    }
+    ? `station - ${station.id}`
     : `${station.name} | ${slug}`;
 }
 
-module.exports = { getStationDomainName, unityAppDomainName, unityAppId };
+/**
+ * given a station, returns its urps domain object
+ *
+* @param {object} station
+* @returns {Object}
+*/
+function getStationDomain(station) {
+  if (station.id === DEFAULT_STATION.id) {
+    return {
+      type: 'market',
+      id: station.market.id
+    };
+  }
+
+  return {
+    type: 'station',
+    id: station.id
+  };
+}
+
+module.exports = { getStationDomainName, getStationDomain, unityAppDomainName, unityAppId };

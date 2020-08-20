@@ -6,7 +6,7 @@ const getPermissions = require('./get-permissions');
  * loads the permissions for each domain name in stationDomainNames
  *
  * @param {object} auth - req.session.auth.  This value is mutated
- * @param {string[]} stationDomainNames
+ * @param {Array} stationDomainNames
  */
 module.exports = async (auth, stationDomainNames) => {
   const { lastUpdatedByStationDomainName = {} } = auth,
@@ -16,7 +16,13 @@ module.exports = async (auth, stationDomainNames) => {
   for (const domainName of stationDomainNames) {
     // TODO: this should be revisited since all the information is been generated in the URPS Side.
     //  just addinng this line to keep track of this.
-    lastUpdatedByStationDomainName[domainName] = currentTime;
+    if (typeof domainName === 'string') {
+      lastUpdatedByStationDomainName[domainName] = currentTime;
+    } else {
+      const domain = `${domainName.type} - ${domainName.id}`;
+
+      lastUpdatedByStationDomainName[domain] = currentTime;
+    }
   }
 
   Object.assign(auth, {

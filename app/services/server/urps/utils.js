@@ -32,9 +32,11 @@ function toDomainLevelPermissions(domainPermissions, perm) {
  * @returns {object} - the mutated permissionsObj
  */
 function toPermissionsByDomain(permissionsObj, domain) {
+  const domainName = USE_URPS_CORE_ID ? `${domain.type} - ${domain.core_id}` : domain.name;
+
   return _set(
     permissionsObj,
-    [domain.name],
+    [domainName],
     domain.permissions.reduce(toDomainLevelPermissions, {})
   );
 }

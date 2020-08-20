@@ -16,12 +16,12 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
     cachedPropName: 'domainNamesIHaveAccessTo',
     // TODO: this should be revisited since all the information is been generated in the URPS Side.
     //  just adding this comment to keep track of it.
-    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name)
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.core_id}` : aDomain.name)
   }),
   getDomainNamesICanImportContent = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanImportContent',
-    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.core_id}` : aDomain.name),
     urpsReqBody: {
       action: 'import',
       // permissionCategory is the target as we think of it
@@ -39,7 +39,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateSectionFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateSectionFronts',
-    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.core_id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it
@@ -49,7 +49,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateStaticPages = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateStaticPages',
-    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.core_id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it
@@ -59,7 +59,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   getDomainNamesICanCreateStationFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
     cachedPropName: 'domainNamesICanCreateStationFronts',
-    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.id}` : aDomain.name),
+    toResult: domains => domains.map(aDomain => USE_URPS_CORE_ID ? `${aDomain.type} - ${aDomain.core_id}` : aDomain.name),
     urpsReqBody: {
       action: 'create',
       // permissionCategory is the target as we think of it
