@@ -101,117 +101,83 @@ const
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (sectionFront, stationSlug) => ({
-        bool: {
-          should: [
-            {
+      createObj: (sectionFront, stationSlug) => minimumShouldMatch([
+        {
+          bool: {
+            must: [
+              { match: { stationSlug } },
+              minimumShouldMatch([
+                { match: { sectionFront: sectionFront } },
+                { match: { sectionFront: sectionFront.toLowerCase() } }
+              ])
+            ]
+          }
+        },
+        {
+          nested: {
+            path: 'stationSyndication',
+            query: {
               bool: {
                 must: [
-                  { match: { stationSlug } },
                   {
-                    bool: {
-                      should: [
-                        { match: { sectionFront: sectionFront } },
-                        { match: { sectionFront: sectionFront.toLowerCase() } }
-                      ], minimumShouldMatch: 1
+                    match: {
+                      'stationSyndication.stationSlug': stationSlug
                     }
-                  }
+                  },
+                  minimumShouldMatch([
+                    { match: { 'stationSyndication.sectionFront': sectionFront } },
+                    { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
+                  ])
                 ]
               }
-            },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  bool: {
-                    must: [
-                      {
-                        match: {
-                          'stationSyndication.stationSlug': stationSlug
-                        }
-                      },
-                      {
-                        bool: {
-                          should: [
-                            { match: { 'stationSyndication.sectionFront': sectionFront } },
-                            { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
-                          ],
-                          minimum_should_match: 1
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
             }
-          ],
-          minimum_should_match: 1
+          }
         }
-      })
+      ])
     },
     secondarySectionFronts: {
-      createObj: (secondarySectionFront, stationSlug) => ({
-        bool: {
-          should: [
-            {
+      createObj: (secondarySectionFront, stationSlug) => minimumShouldMatch([
+        {
+          bool: {
+            must: [
+              { match: { stationSlug } },
+              minimumShouldMatch([
+                { match: { secondarySectionFront: secondarySectionFront } },
+                { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
+              ])
+            ]
+          }
+        },
+        {
+          nested: {
+            path: 'stationSyndication',
+            query: {
               bool: {
                 must: [
-                  { match: { stationSlug } },
                   {
-                    should: [
-                      { match: { secondarySectionFront: secondarySectionFront } },
-                      { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
-                    ],
-                    minimum_should_match: 1
-                  }
+                    match: {
+                      'stationSyndication.stationSlug': stationSlug
+                    }
+                  },
+                  minimumShouldMatch([
+                    { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
+                    { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
+                  ])
                 ]
               }
-            },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  bool: {
-                    must: [
-                      {
-                        match: {
-                          'stationSyndication.stationSlug': stationSlug
-                        }
-                      },
-                      {
-                        bool: {
-                          should: [
-                            { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
-                            { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
-                          ],
-                          minimum_should_match: 1
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
             }
-          ],
-          minimum_should_match: 1
+          }
         }
-      })
+      ])
     },
     stationSlug: {
       filterCondition: 'must',
       createObj: (stationSlug, includeSyndicated = true) => {
-
-        const qs = {
-          bool: {
-            should: [
-              { match: { stationSlug } }
-            ],
-            minimum_should_match: 1
-          }
-        };
+        const qs = minimumShouldMatch([{ match: { stationSlug } }]),
+          should = _get(qs, 'bool.should', []);
 
         if (includeSyndicated) {
-          qs.bool.should.push({
+          should.push({
             nested: {
               path: 'stationSyndication',
               query: {
@@ -224,7 +190,7 @@ const
         }
 
         if (stationSlug === DEFAULT_STATION.site_slug) {
-          qs.bool.should.push({
+          should.push({
             bool: {
               must_not: {
                 exists: {
@@ -240,9 +206,9 @@ const
     },
     subscriptions: {
       createObj: ({ stationSlug, subscriptions }) => {
-        const matchSources = subscriptions.map(source => ({ match_phrase: { 'stationSyndication.source': source } })),
-          anySource = { should: matchSources, minimum_should_match: 1 },
-          syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, { bool: anySource }];
+        const matchSources = source => ({ match_phrase: { 'stationSyndication.source': source } }),
+          anySource = minimumShouldMatch(subscriptions.map(matchSources)),
+          syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, anySource];
 
         return { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
       }
@@ -254,23 +220,18 @@ const
     videos: {
       filterCondition: 'must',
       unique: true,
-      createObj: value => ({
-        bool: {
-          should: [
-            {
-              nested: {
-                path: 'lead',
-                query: {
-                  regexp: {
-                    'lead._ref': value
-                  }
-                }
+      createObj: value => minimumShouldMatch([
+        {
+          nested: {
+            path: 'lead',
+            query: {
+              regexp: {
+                'lead._ref': value
               }
             }
-          ],
-          minimum_should_match: 1
+          }
         }
-      })
+      ])
     }
   },
 
@@ -460,11 +421,13 @@ const
   /**
    * Use filters to query elastic for content
    *
-   * @param {object} config.filter
-   * @param {object} config.exclude
-   * @param {array} config.fields
-   * @param {object} config.pagination
+   * @param {object} config
+   * @param {object} config.filters
+   * @param {object} config.excludes
+   * @param {array} config.elasticFields
    * @param {number} config.maxItems
+   * @param {boolean} config.shouldAddAmphoraTimings
+   * @param {boolean} config.isRdcContent
    * @param {Object} [locals]
    * @returns {array} elasticResults
    */
@@ -501,6 +464,9 @@ const
         case 'includeSyndicated':
           return;
         case 'stationSlug':
+          if (!(_isEmpty(filters.sectionFronts) && _isEmpty(filters.secondarySectionFronts))) {
+            return;
+          }
           if (!filters.includeSyndicated) {
             value = { value, includeSyndicated: false };
           }
@@ -548,7 +514,6 @@ const
    * @param {object} [config]
    * @param {string} [config.contentKey]
    * @param {array} [config.elasticFields]
-   * @param {number} [config.maxItems]
    * @param {function} [config.mapDataToFilters]
    * @param {function} [config.mapResultsToTemplate]
    * @param {function} [config.render]
