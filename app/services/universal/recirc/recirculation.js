@@ -106,7 +106,7 @@ const
         {
           bool: {
             must: [
-              ...filterMainStation(stationSlug),
+              filterMainStation(stationSlug),
               multiCaseFilter({ sectionFront })
             ]
           }
@@ -122,7 +122,7 @@ const
         {
           bool: {
             must: [
-              ...filterMainStation(stationSlug),
+              filterMainStation(stationSlug),
               multiCaseFilter({ secondarySectionFront })
             ]
           }
@@ -137,7 +137,7 @@ const
       filterCondition: 'must',
       createObj: (stationSlug, includeSyndicated = true) => {
         const qs = minimumShouldMatch([
-          ...filterMainStation(stationSlug),
+          filterMainStation(stationSlug),
           ...includeSyndicated ? syndicatedStationFilter(stationSlug) : []
         ]);
 
@@ -210,6 +210,34 @@ const
     }
   ].filter(Boolean)),
 
+
+  /**
+   * Convert array to a bool query with a minimum should match
+   *
+   * @param {array} queries
+   * @param {number} minimum_should_match
+   * @returns {object}
+   */
+  minimumShouldMatch = (queries, minimum_should_match = 1) => ({
+    bool: { should: queries, minimum_should_match }
+  }),
+
+  /**
+   * Creates a filter for when we need to check regular and lower case versions of the property
+   * value.
+   * @param {object} obj - essentially the property and value to check. the value will be checked
+   *                       as is and lowercase against the data
+   * @returns {{bool: {should: Array, minimum_should_match: number}}}
+   */
+  multiCaseFilter = obj => {
+    const [key, value] = Object.keys(obj)[0] || [];
+
+    return minimumShouldMatch([
+      { match: { [ key ]: `${value}` } },
+      { match: { [ key ]: `${value}`.toLowerCase() } }
+    ]);
+  },
+
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
@@ -251,26 +279,6 @@ const
         }
       }
     }
-  }),
-
-  multiCaseFilter = obj => {
-    const [key, value] = Object.keys(obj)[0] || [];
-
-    return minimumShouldMatch([
-      { match: { [ key ]: `${value}` } },
-      { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]);
-  } ,
-
-  /**
-   * Convert array to a bool query with a minimum should match
-   *
-   * @param {array} queries
-   * @param {number} minimum_should_match
-   * @returns {object}
-   */
-  minimumShouldMatch = (queries, minimum_should_match = 1) => ({
-    bool: { should: queries, minimum_should_match }
   }),
 
   /**
