@@ -18,33 +18,34 @@
  */
 
 const
-  _merge = require('lodash/merge'),
   _get = require('lodash/get'),
   _has = require('lodash/has'),
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
+  _merge = require('lodash/merge'),
   _pick = require('lodash/pick'),
-  logger = require('../log'),
-  queryService = require('../../server/query'),
-  recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, boolKeys, cleanUrl, coalesce } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
+  { addAmphoraRenderTime, boolKeys, cleanUrl, coalesce } = require('../utils'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
   { unityComponent } = require('../amphora'),
+  logger = require('../log'),
+  queryService = require('../../server/query'),
+  recircCmpt = require('./recirc-cmpt'),
 
   log = logger.setup({ file: __filename }),
   index = 'published-content',
   DEFAULT_CONTENT_KEY = 'articles',
   DEFAULT_ELASTIC_FIELDS = [
-    'primaryHeadline',
-    'pageUri',
     'canonicalUrl',
-    'feedImgUrl',
     'contentType',
+    'feedImgUrl',
+    'pageUri',
+    'primaryHeadline',
     'sectionFront'
   ],
   DEFAULT_MAX_ITEMS = 10,
+
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => {
     const
@@ -101,105 +102,44 @@ const
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (sectionFront, stationSlug) => minimumShouldMatch([
+      createObj: (sectionFront, stationSlug, includeSyndicated) => minimumShouldMatch([
         {
           bool: {
             must: [
-              { match: { stationSlug } },
-              minimumShouldMatch([
-                { match: { sectionFront: sectionFront } },
-                { match: { sectionFront: sectionFront.toLowerCase() } }
-              ])
+              ...filterMainStation(stationSlug),
+              multiCaseFilter({ sectionFront })
             ]
           }
         },
-        {
-          nested: {
-            path: 'stationSyndication',
-            query: {
-              bool: {
-                must: [
-                  {
-                    match: {
-                      'stationSyndication.stationSlug': stationSlug
-                    }
-                  },
-                  minimumShouldMatch([
-                    { match: { 'stationSyndication.sectionFront': sectionFront } },
-                    { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
-                  ])
-                ]
-              }
-            }
-          }
-        }
-      ])
+        includeSyndicated && syndicatedSectionFrontFilter(
+          stationSlug,
+          { 'stationSyndication.sectionFront': sectionFront }
+        )
+      ].filter(Boolean))
     },
     secondarySectionFronts: {
-      createObj: (secondarySectionFront, stationSlug) => minimumShouldMatch([
+      createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
-              { match: { stationSlug } },
-              minimumShouldMatch([
-                { match: { secondarySectionFront: secondarySectionFront } },
-                { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
-              ])
+              ...filterMainStation(stationSlug),
+              multiCaseFilter({ secondarySectionFront })
             ]
           }
         },
-        {
-          nested: {
-            path: 'stationSyndication',
-            query: {
-              bool: {
-                must: [
-                  {
-                    match: {
-                      'stationSyndication.stationSlug': stationSlug
-                    }
-                  },
-                  minimumShouldMatch([
-                    { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
-                    { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
-                  ])
-                ]
-              }
-            }
-          }
-        }
-      ])
+        includeSyndicated && syndicatedSectionFrontFilter(
+          stationSlug,
+          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+        )
+      ].filter(Boolean))
     },
     stationSlug: {
       filterCondition: 'must',
       createObj: (stationSlug, includeSyndicated = true) => {
-        const qs = minimumShouldMatch([{ match: { stationSlug } }]),
-          should = _get(qs, 'bool.should', []);
-
-        if (includeSyndicated) {
-          should.push({
-            nested: {
-              path: 'stationSyndication',
-              query: {
-                match: {
-                  'stationSyndication.stationSlug': stationSlug
-                }
-              }
-            }
-          });
-        }
-
-        if (stationSlug === DEFAULT_STATION.site_slug) {
-          should.push({
-            bool: {
-              must_not: {
-                exists: {
-                  field: 'stationSlug'
-                }
-              }
-            }
-          });
-        }
+        const qs = minimumShouldMatch([
+          ...filterMainStation(stationSlug),
+          ...includeSyndicated ? syndicatedStationFilter(stationSlug) : []
+        ]);
 
         return qs;
       }
@@ -253,13 +193,85 @@ const
   },
 
   /**
+   * Creates a filter for the main station of an article or gallery
+   * @param { string } stationSlug
+   * @returns {{bool: {should: Array, minimum_should_match: number}}}
+   */
+  filterMainStation = stationSlug => minimumShouldMatch([
+    { match: { stationSlug } },
+    stationSlug === DEFAULT_STATION.site_slug && {
+      bool: {
+        must_not: {
+          exists: {
+            field: 'stationSlug'
+          }
+        }
+      }
+    }
+  ].filter(Boolean)),
+
+  /**
+   * Creates a filter for a syndicated sectionFront or secondarySectionFront
+   * @param {string} stationSlug - The station to filter by
+   * @param {object} obj - The syndicated property and value to filter
+   * @returns {*|
+   *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
+   *   {bool: {should: Array, minimum_should_match: number}}]}}}}
+   * }
+   */
+  syndicatedSectionFrontFilter = (stationSlug, obj) => ({
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            multiCaseFilter(obj)
+          ]
+        }
+      }
+    }
+  }),
+
+  /**
+   * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
+   * @param {string} stationSlug - The station to filter by
+   * @returns {(*|{nested: {path: string, query: {match: {'stationSyndication.stationSlug': *}}}})[]}
+   */
+  syndicatedStationFilter = (stationSlug) => ({
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        match: {
+          'stationSyndication.stationSlug': stationSlug
+        }
+      }
+    }
+  }),
+
+  multiCaseFilter = obj => {
+    const [key, value] = Object.keys(obj)[0] || [];
+
+    return minimumShouldMatch([
+      { match: { [ key ]: `${value}` } },
+      { match: { [ key ]: `${value}`.toLowerCase() } }
+    ]);
+  } ,
+
+  /**
    * Convert array to a bool query with a minimum should match
    *
    * @param {array} queries
    * @param {number} minimum_should_match
    * @returns {object}
    */
-  minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match } }),
+  minimumShouldMatch = (queries, minimum_should_match = 1) => ({
+    bool: { should: queries, minimum_should_match }
+  }),
 
   /**
    * Add to bool query portion of elastic query
@@ -297,20 +309,15 @@ const
         return;
       }
 
-      if (typeof includeSyndicated !== 'undefined') {
-        queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
-        return;
-      }
-
-      if (typeof stationSlug !== 'undefined') {
-        queryService[getQueryType(condition)](query, createObj(value, stationSlug));
+      if (stationSlug !== undefined) {
+        queryService[getQueryType(condition)](query, createObj(value, stationSlug, includeSyndicated));
         return;
       }
 
       if (key === 'subscriptions' && !value.subscriptions.length) {
         return;
       }
-      queryService[getQueryType(condition)](query, createObj(value));
+      queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
     }
   },
 
