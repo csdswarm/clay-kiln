@@ -85,10 +85,10 @@ describe('server/podcasts', () => {
 
   describe('updatePodcasts', () => {
     /**
-     *
-     * @param {boolean} opts[isStale] whether or not the current mock data should be considered stale
-     * @param {object} opts[dbResponse] returns the value you pass as a response from the db
-     * @param {boolean} opts[rdcApiThrows] Whether or not the radioApiGet function should throw an error
+     * @param {object} [opts]
+     * @param {boolean} opts.isStale whether or not the current mock data should be considered stale
+     * @param {object} opts.dbResponse returns the value you pass as a response from the db
+     * @param {boolean} opts.rdcApiThrows Whether or not the radioApiGet function should throw an error
      * @returns {Promise<{}>}
      */
     async function setup_updatePodcasts(opts = {}) {

@@ -1,6 +1,6 @@
 'use strict';
 
-const _concat = require('lodash/concat'),
+const
   _flatten = require('lodash/flatten'),
   db = require('../../services/server/db'),
   log = require('../universal/log').setup({ file: __filename }),
