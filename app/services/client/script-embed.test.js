@@ -11,7 +11,7 @@ const expect = require('chai').expect,
 
 global.document = dom.defaultView.document;
 global.DOMParser = dom.defaultView.DOMParser;
-const { duplicateScript } = require('./add-script-embed');
+const { duplicateScript } = require('./script-embed');
 
 chai.use(sinonChai);
 
