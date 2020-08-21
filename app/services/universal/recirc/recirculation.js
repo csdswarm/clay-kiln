@@ -102,7 +102,7 @@ const
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (sectionFront, stationSlug, includeSyndicated) => minimumShouldMatch([
+      createObj: (sectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
@@ -136,12 +136,12 @@ const
     stationSlug: {
       filterCondition: 'must',
       createObj: (stationSlug, includeSyndicated = true) => {
-        const qs = minimumShouldMatch([
-          filterMainStation(stationSlug),
-          ...includeSyndicated ? syndicatedStationFilter(stationSlug) : []
-        ]);
+        const syndicated = includeSyndicated ? [syndicatedStationFilter(stationSlug)] : [];
 
-        return qs;
+        return minimumShouldMatch([
+          filterMainStation(stationSlug),
+          ...syndicated
+        ]);
       }
     },
     subscriptions: {
@@ -230,7 +230,7 @@ const
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
   multiCaseFilter = obj => {
-    const [key, value] = Object.keys(obj)[0] || [];
+    const [key, value] = Object.entries(obj)[0] || [];
 
     return minimumShouldMatch([
       { match: { [ key ]: `${value}` } },
@@ -466,28 +466,30 @@ const
     queryService.addSort(query, { date: 'desc' });
 
     Object.entries(filters).forEach(([key, value]) => {
+      const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
+
       switch (key) {
         case 'sectionFronts':
           if (!_isEmpty(filters.secondarySectionFronts)) {
             return;
           }
-          value = { value, stationSlug: filters.stationSlug || DEFAULT_STATION.site_slug };
+          value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
-          value = { value, stationSlug: filters.stationSlug || DEFAULT_STATION.site_slug };
+          value = { value, stationSlug, includeSyndicated };
           break;
         case 'includeSyndicated':
           return;
         case 'stationSlug':
-          if (!(_isEmpty(filters.sectionFronts) && _isEmpty(filters.secondarySectionFronts))) {
+          const hasSectionFrontFilter = !(_isEmpty(filters.sectionFronts) && _isEmpty(filters.secondarySectionFronts));
+
+          if (hasSectionFrontFilter) {
             return;
-          }
-          if (!filters.includeSyndicated) {
-            value = { value, includeSyndicated: false };
           }
           if (isRdcContent) {
             value = DEFAULT_STATION.site_slug;
           }
+          value = { value, includeSyndicated };
           break;
         default:
           // do nothing
@@ -533,6 +535,8 @@ const
    * @param {function} [config.mapResultsToTemplate]
    * @param {function} [config.render]
    * @param {function} [config.save]
+   * @param {boolean} [config.shouldAddAmphoraTimings]
+   * @param {boolean} [config.skipRender]
    * @returns {object}
    */
   recirculationData = ({
