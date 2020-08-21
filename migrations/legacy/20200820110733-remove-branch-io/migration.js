@@ -45,7 +45,7 @@ async function getPagesUsingBranchIO() {
         const branchIOInstance = head.filter(instance => instance.includes('branch-io-head'));
       
         removeBranchIoComponents(id, branchIOInstance);
-      }, { concurrency: 50 })
+      }, { concurrency: 10 })
     })
   } catch (error) {
     console.log('error', error);
