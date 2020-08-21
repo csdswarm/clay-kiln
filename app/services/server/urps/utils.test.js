@@ -1,27 +1,52 @@
 'use strict';
 
-const { createUnityPermissions } = require('./utils'),
+const { createUnityPermissions, _internals } = require('./utils'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   { expect } = require('chai'),
-  { unityAppDomainName } = require('../../universal/urps');
+  { unityAppDomainName, unityAppId } = require('../../universal/urps');
 
 const rdcDomainName = DEFAULT_STATION.unityDomainName;
 
 describe('server/urps/utils', () => {
-  it('createUnityPermissions returns the correct unity permissions', async () => {
-    expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
-      [rdcDomainName]: {
-        update: {
-          footer: true,
-          'page-template': true,
-          'static-page': true,
-          'meta-tags': true
+  describe('When USE_URPS_CORE_ID is false',() => {
+    it('createUnityPermissions returns the correct unity permissions', async () => {
+      _internals.USE_URPS_CORE_ID = false;
+
+      expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
+        [rdcDomainName]: {
+          update: {
+            footer: true,
+            'page-template': true,
+            'static-page': true,
+            'meta-tags': true
+          }
+        },
+        [unityAppDomainName]: {
+          create: { 'global-alert': true },
+          update: { 'global-alert': true }
         }
-      },
-      [unityAppDomainName]: {
-        create: { 'global-alert': true },
-        update: { 'global-alert': true }
-      }
+      });
+    });
+  });
+
+  describe('When USE_URPS_CORE_ID is true',() => {
+    it('createUnityPermissions returns the correct unity permissions using the type and id', async () => {
+      _internals.USE_URPS_CORE_ID = true;
+
+      expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
+        [`${getMockUrpsPermissions()[0].type} - ${getMockUrpsPermissions()[0].core_id}`]: {
+          update: {
+            footer: true,
+            'page-template': true,
+            'static-page': true,
+            'meta-tags': true
+          }
+        },
+        [`${unityAppId.type} - ${unityAppId.id}`]: {
+          create: { 'global-alert': true },
+          update: { 'global-alert': true }
+        }
+      });
     });
   });
 });
@@ -35,6 +60,7 @@ function getMockUrpsPermissions() {
       name: rdcDomainName,
       id: '25b8f5df-aff1-41ce-83b4-68c0a5b289a1',
       type: 'station',
+      core_id: 12,
       permissions: [
         {
           permissionId: '011fcede-0f18-40c4-8785-45fd599bfab3',
@@ -65,7 +91,7 @@ function getMockUrpsPermissions() {
     {
       name: unityAppDomainName,
       id: '53f043a3-340b-45dd-8e9e-33b9779ae371',
-      type: 'app',
+      type: 'application',
       permissions: [
         {
           permissionId: '011fcede-0f18-40c4-8785-45fd599bfab3',
