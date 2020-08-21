@@ -1,6 +1,6 @@
 'use strict';
 
-const { clayImport, clayExport, _set } = require('../../utils/migration-utils').v1,
+const { clayImport, clayExport, _set, readFile } = require('../../utils/migration-utils').v1,
   hostUrl = process.argv[2] || 'clay.radio.com',
   { esQuery } = require('../../utils/migration-utils').v2,
   { v1: parseHost } = require('../../utils/parse-host'),
@@ -23,10 +23,11 @@ const { clayImport, clayExport, _set } = require('../../utils/migration-utils').
 const
   run = async () => {
     try {
-      const res = await fetch(`http://${hostUrl}/_components/section-front/instances`),
-        response = await res.json(),
-        instances = response.filter(checker),
-        secondarySectionFronts = {};
+      const secondarySectionFronts = {},
+        stationsSlug = [];
+
+      const instances = await getSectionFrontInstances(),
+        mapping = await getSecondarySFMapping();
 
       await Promise.all(instances.map(async (instance) => {
         let sectionFronts;
@@ -42,15 +43,32 @@ const
               const secondarySectionFront = { name: title, value: title.toLowerCase() },
                 stationSSFront = `${stationSlug}-secondary-section-fronts`;
 
-              if (secondarySectionFront.value != '') {
+              if (!mapping[stationSlug] && secondarySectionFront.value != '') {
                 secondarySectionFronts[stationSSFront]
                   ? secondarySectionFronts[stationSSFront].push(secondarySectionFront)
                   : secondarySectionFronts[stationSSFront] = [secondarySectionFront];
+              } else if (mapping[stationSlug] && !stationsSlug.includes(stationSSFront)) {
+                stationsSlug.push(stationSSFront);
               }
             }
           });
       }));
 
+      Object.entries(mapping)
+        .forEach(([stationSlug, values]) => {
+          const stationSSFront = `${stationSlug}-secondary-section-fronts`;
+
+          Object.values(values)
+            .forEach((value, _) => {
+              const secondarySectionFront = { name: value, value: value.toLowerCase() };
+
+              if (stationsSlug.includes(stationSSFront)) {
+                secondarySectionFronts[stationSSFront]
+                  ? secondarySectionFronts[stationSSFront].push(secondarySectionFront)
+                  : secondarySectionFronts[stationSSFront] = [secondarySectionFront];    
+              }
+            })
+        })
       await getSecondarySectionFrontsList(secondarySectionFronts);
       await updateSecondarySectionFronts(secondarySectionFronts);
     } catch (e) {
@@ -61,8 +79,14 @@ const
   getSecondarySectionFrontsList = async (secondarySectionFronts) => {
     return Promise.all(Object.keys(secondarySectionFronts)
       .map(async (item) => {
-        const { data } = await clayExport({ componentUrl: `${hostUrl}/_lists/${item}` }),
-          list = _get(data, `_lists.${item}`, []),
+        let data;
+        try {
+          data = await clayExport({ componentUrl: `${hostUrl}/_lists/${item}` });
+        } catch(e) {
+          console.log('_list error', e)
+        }
+
+        const list = _get(data, `_lists.${item}`, []),
           newList = _get(secondarySectionFronts, item),
           listDifference = list.filter(({ value: id1 }) => !newList.some(({ value: id2 }) => id2 === id1));
 
@@ -74,6 +98,21 @@ const
   },
 
   checker = value => !INCLUDES.some(element => value.includes(element)),
+
+  getSectionFrontInstances = async () => {
+    const 
+      res = await fetch(`http://${hostUrl}/_components/section-front/instances`),
+      response = await res.json();
+
+    return response.filter(checker)
+  },
+
+  getSecondarySFMapping = async () => {
+    const secondarySFMapping = 'https://etm-radiostations.s3.us-east-1.amazonaws.com/secondary-section-fronts-mapping.json',
+      responseMapping = await fetch(secondarySFMapping);
+      
+    return responseMapping.json();
+  },
 
   updateArticles = async (lists) => {
     return Promise.all(lists.map(async (list) => {
