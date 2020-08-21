@@ -128,10 +128,42 @@ function onePublishedArticleByUrl(url, fields, locals) {
   const query = newQueryWithCount('published-content', null, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(url)
-    );
+    ),
+    articleSyndicatedUrl = new URL(url),
+    { pathname } = articleSyndicatedUrl;
 
-  universalQuery.addFilter(query, {
-    term: { canonicalUrl }
+  universalQuery.addShould(query, {
+    bool: {
+      should: [
+        {
+          bool: {
+            filter: {
+              term: { canonicalUrl }
+            }
+          }
+        },
+        {
+          nested: {
+            path: 'stationSyndication',
+            query: {
+              bool: {
+                must: [
+                  {
+                    match: {
+                      'stationSyndication.syndicatedArticleSlug': {
+                        query: pathname,
+                        operator: 'and'
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
   });
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
