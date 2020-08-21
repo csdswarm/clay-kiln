@@ -98,7 +98,7 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-    
+
 
     if (station_slug === DEFAULT_STATION.site_slug) {
       queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
@@ -107,8 +107,8 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     // Filter out the following tags
-    if (data.filterTags) {
-      for (const tag of data.filterTags.map((tag) => tag.text)) {
+    if (data.excludeTags) {
+      for (const tag of data.excludeTags.map((tag) => tag.text)) {
         queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
       }
     }
@@ -129,7 +129,7 @@ module.exports.render = async function (ref, data, locals) {
 
       queryService.addMustNot(query, makeSubscriptionsQuery({
         stationSlug,
-        subscriptions: ['national subscription']
+        subscriptions: ['content subscription']
       }));
     }
 

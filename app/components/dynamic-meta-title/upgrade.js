@@ -19,8 +19,21 @@ module.exports['2.0'] = (uri, data) => {
   return data;
 };
 
-// key is the wrong term because 'path' is the term lodash employs
 module.exports['3.0'] = (uri, data) => {
+  const isCuratedTopic = uri.endsWith('curated-topic');
+
+  if (isCuratedTopic) {
+    return {
+      ...data,
+      routeParam: ''
+    };
+  }
+
+  return data;
+};
+
+
+module.exports['4.0'] = (uri, data) => {
   data.localsPath = data.localsPath || data.localsKey;
   data.metaLocalsPath = data.metaLocalsPath || data.metaLocalskey;
 

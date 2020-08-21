@@ -62,7 +62,7 @@ const
       sectionFronts: boolObjectToArray(data.excludeSectionFronts),
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
       subscriptions: { value: {
-        subscriptions: data.excludeSubscriptions ? ['national subscription'] : [],
+        subscriptions: data.excludeSubscriptions ? ['content subscription'] : [],
         stationSlug: getStationSlug(locals)
       } },
       tags: (data.excludeTags || []).map(tag => tag.text)
@@ -336,9 +336,6 @@ const
     if (locals && locals.tag) {
       // This is from load more on a tag page
       tags = locals.tag;
-    } else if (_get(locals, 'params.tag')) {
-      // This is from a tag page but do not override a manually set tag
-      tags = data.tag || locals.params.tag;
     } else if (_get(locals, 'params.dynamicTag')) {
       // This is from a tag page
       tags = locals.params.dynamicTag;

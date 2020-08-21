@@ -37,7 +37,7 @@ const queryService = require('../../../server/query'),
 
       data._computed.isMigrated = isMigrated;
 
-      return !isMigrated;
+      return !isMigrated && locals.station.website;
     }
 
     return false;

@@ -190,7 +190,7 @@ module.exports = {
       }
     }
 
-    if (station.site_slug && data.stationSyndication) {
+    if (data.stationSyndication) {
       const syndication = data.stationSyndication.find(
         item => item.callsign === station.callsign
       );
@@ -198,12 +198,16 @@ module.exports = {
       // SectionFront must be taken into account since is been used to complete the breadcrumbs
       // when a content is imported only the callsign is been set in the process.
       if (syndication && syndication.sectionFront) {
-        const excludeSyndicationSource = ['editorial feed'].includes(syndication.source);
+        const excludeSyndicationSource = [
+          'editorial feed',
+          'content subscription'
+        ].includes(syndication.source);
 
         breadcrumbProps = [
           { slug: syndication.stationSlug, text: syndication.stationName },
           ...props
         ];
+
         breadcrumbItems = breadcrumbProps
           .filter(prop => existingProp(prop, syndication))
           .map(useDisplayName(syndication, lists));

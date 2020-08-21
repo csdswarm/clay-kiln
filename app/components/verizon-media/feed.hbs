@@ -1,9 +1,11 @@
-<div class="component--verizon-media">
-  <div class="player">
-    {{#if videoId}}
-      <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
-        {{! TODO: Get VMG iframe code }}
-      </div>
-    {{/if}}
+{{#if videoId}}
+  <div
+    id="{{ @root.locals.site.verizonMediaPlayerId }}"
+    class="vdb_player vdb_{{ @root.locals.site.verizonMediaPlayerId }}{{ @root.locals.site.verizonMediaCompanyId }}"
+  >
+    <script
+      type="text/javascript"
+      src="https://delivery.vidible.tv/jsonp/pid={{ @root.locals.site.verizonMediaPlayerId }}/vid={{ videoId }}/{{ @root.locals.site.verizonMediaCompanyId }}.js?"
+    ></script>
   </div>
-</div>
+{{/if}}

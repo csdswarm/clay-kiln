@@ -1,6 +1,7 @@
 _components:
   latest-content-column:
     items: []
+    excludeSubscriptions: false
     populate-from: section-front
     contentType: { article: true, gallery: true }
     rssFeed: ''
@@ -12,9 +13,9 @@ _components:
     sectionFrontManual: ''
     secondarySectionFront: ''
     tag: ''
-    filterTags: ''
-    filterPrimarySectionFronts: {}
-    filterSecondarySectionFronts: {}
+    excludeTags: []
+    excludeSectionFronts: {}
+    excludeSecondarySectionFronts: {}
     instances:
       new:
         items: []
@@ -29,6 +30,6 @@ _components:
         sectionFrontManual: ''
         secondarySectionFront: ''
         tag: ''
-        filterTags: ''
-        filterPrimarySectionFronts: {}
-        filterSecondarySectionFronts: {}
+        excludeTags: []
+        excludeSectionFronts: {}
+        excludeSecondarySectionFronts: {}
