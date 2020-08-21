@@ -3,6 +3,7 @@
 module.exports = {
   alerts: require('./alerts'),
   apSubscriptions: require('./ap-subscriptions'),
+  cloneContent: require('./clone-content'),
   contentSubscription: require('./content-subscription'),
   contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
