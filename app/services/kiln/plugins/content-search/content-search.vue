@@ -84,6 +84,8 @@
     'date',
     'canonicalUrl',
     'seoHeadline',
+    'stationSyndication',
+    'stationSlug'
   ];
 
   export default {
@@ -131,10 +133,35 @@
               },
             ];
       },
+      getStationNestedQuery() {
+        return {
+            path: "stationSyndication",
+            query: {
+              bool: {
+                must: [
+                  { 
+                    match: { "stationSyndication.stationSlug": this.getStationSlug },
+                  },
+                  {
+                    match: { "stationSyndication.syndicatedArticleSlug": this.getSyndicatedArticleSlug }
+                  }
+                ],
+              },
+          },
+        }
+      },
       getStationSlug() {
         return this.selectedStation
           ? this.selectedStation.slug
           : this.initialStationSlug
+      },
+      getSyndicatedArticleSlug() {
+        const searchString = this.searchText.replace(/^https?:\/\//, ''),
+          host = isUrl(this.searchText) ? searchString.split('/')[0] : '';
+        return {
+          query: searchString.replace(host, ''),
+          operator: "and"
+        }
       },
       showResults() {
         return this.loading || this.searchResults.length !== 0;
@@ -163,21 +190,33 @@
         const { locals } = window.kiln,
           query = queryService('published-content', locals),
             // if there are no search text yet, pass in * to get the top 10 most recent
-            searchString = this.searchText || '*';
-
+            searchString = this.searchText || '*',
+            searchCondition = {
+              bool: {
+                should: [
+                  {
+                    bool: {
+                      must: [{
+                        query_string: {
+                          query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
+                          fields: ["authors", "canonicalUrl", "tags", "teaser"]
+                        }
+                      },
+                      {
+                        match: { stationSlug: this.getStationSlug }
+                      }],
+                    }
+                  }, 
+                  {
+                    nested: this.getStationNestedQuery
+                  }
+                ],
+                minimum_should_match: 1
+              }
+            }
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
-        queryService.addFilter(query, {
-          bool: {
-            must: [{
-              query_string: {
-                query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
-                fields: ["authors", "canonicalUrl", "tags", "teaser"]
-              }
-            }],
-            should: this.getStationFilter
-          }
-        });
+        queryService.addShould(query, searchCondition);
         queryService.addSort(query, { date: { order: 'desc' } });
 
         const results = await queryService.searchByQuery(
@@ -231,7 +270,12 @@
        * @param selected
        */
       selectItem(selected) {
-        this.searchText = selected.canonicalUrl;
+        const { canonicalUrl, stationSlug, stationSyndication } = selected, 
+          { protocol, host } = new URL(canonicalUrl);
+
+        this.searchText = this.getStationSlug !== stationSlug ?
+        `${protocol}//${host}${stationSyndication[0].syndicatedArticleSlug}`:
+        canonicalUrl;
         this.searchResults = [selected];
         this.commitFormData();
       }
