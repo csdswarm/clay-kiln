@@ -33,7 +33,7 @@ const
   { syndicationUrlPremap } = require('../syndication-utils'),
   { unityComponent } = require('../amphora'),
   fetchStationFeeds = require('../../server/fetch-station-feeds'),
-  { transformFeedResults } = fetchStationFeeds,
+  transformStationFeed = require('../../universal/transform-station-feed'),
   log = logger.setup({ file: __filename }),
   index = 'published-content',
   DEFAULT_CONTENT_KEY = 'articles',
@@ -70,7 +70,7 @@ const
       {
         items: nextContent,
         hasMoreItems: moreContent
-      } = await transformFeedResults(
+      } = await transformStationFeed(
         locals,
         feed,
         numberOfArticles,
@@ -582,7 +582,8 @@ const
 
         if (isFromRss) {
           const { content, moreContent } = await fetchAndTransformStationFeed({
-            data, locals, itemsNeeded,
+            data, locals,
+            numberOfArticles: itemsNeeded,
             page: pagination.page,
             mapResultsToTemplate
           });

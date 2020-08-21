@@ -2,7 +2,7 @@
 const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
   { getComponentName } = require('clayutils'),
   fetchStationFeeds = require('../../../server/fetch-station-feeds'),
-  { transformFeedResults } = fetchStationFeeds,
+  transformStationFeed = require('../../../universal/transform-station-feed'),
   getS3StationFeedImgUrl = require('../../../server/get-s3-station-feed-img-url'),
   _get = require('lodash/get'),
   { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../../universal/constants'),
@@ -17,7 +17,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
    */
   renderRssFeed = async (data, locals, numberOfArticles = 5) => {
     data._computed.station = locals.station.name;
-    data._computed.articles = (await transformFeedResults(
+    data._computed.articles = (await transformStationFeed(
       locals,
       await fetchStationFeeds(data, locals),
       numberOfArticles
