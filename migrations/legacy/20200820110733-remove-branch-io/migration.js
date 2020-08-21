@@ -1,5 +1,7 @@
 'use strict';
 
+const Promise = require('../../../app/node_modules/bluebird');
+
 const {
   removeComponentsFromContainers,
   usingDb
@@ -39,11 +41,11 @@ async function getPagesUsingBranchIO() {
     await usingDb(async db => {
       const pages = await getAllPagesWithBranchIOHead(db, host);
 
-      pages.map(({ id, data: { head }}) => {
+      Promise.map(pages, ({ id, data: { head }}) => {
         const branchIOInstance = head.filter(instance => instance.includes('branch-io-head'));
       
         removeBranchIoComponents(id, branchIOInstance);
-      })
+      }, { concurrency: 50 })
     })
   } catch (error) {
     console.log('error', error);
