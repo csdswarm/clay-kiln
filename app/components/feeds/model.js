@@ -9,7 +9,8 @@ const _castArray = require('lodash/castArray'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'feeds'
-  });
+  }),
+  { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
 
 /**
  * for now we only want articles and galleries to be processed by feeds.  This
@@ -76,6 +77,8 @@ module.exports.save = function (uri, data) {
   if (!meta.fileExtension) {
     return bluebird.reject(new Error('A feed needs a `fileExtension` property to indicate the file type of the scraped feed'));
   }
+
+  data.meta.link = `${protocol}://${host}`;
 
   return data;
 };

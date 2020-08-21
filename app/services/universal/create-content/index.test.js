@@ -2,8 +2,6 @@
 
 const _noop = require('lodash/noop'),
   expect = require('chai').expect,
-  dirname = __dirname.split('/').pop(),
-  filename = __filename.split('/').pop().split('.').shift(),
   uri = 'clay.radio.com/_components/article/instances/cjzbandlv000f3klg5krzbyyx',
   proxyquire = require('proxyquire'),
   { save } = proxyquire('./index', {
@@ -23,7 +21,7 @@ const _noop = require('lodash/noop'),
           });
       }
     },
-    './apply-national-subscriptions': _noop,
+    './apply-content-subscriptions': _noop,
     '../editorial-feed-syndication': {
       addStationsByEditorialGroup: () => {
         mockData.data.stationSyndication = [];
@@ -156,7 +154,7 @@ const _noop = require('lodash/noop'),
     }
   };
 
-describe(`${dirname}/${filename}`, () => {
+describe('universal/create-content', () => {
   const seoHeadline = 'bar';
 
   it('syncs slug to seo headline', async () => {

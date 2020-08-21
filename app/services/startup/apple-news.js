@@ -1,6 +1,7 @@
 'use strict';
 
-const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
+const _get = require('lodash/get'),
+  HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
   qs = require('querystring'),
   rest = require('../universal/rest'),
@@ -15,13 +16,23 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    *
    * @param {Object} e
    * @param {string} message
+   * @param {Object} data
    * @param {Object} res
    * @returns {Promise}
   */
-  handleReqErr = (e, message, res) => {
-    log('error', `APPLE NEWS LOG -- ${ message }: ${ e }`);
-    if (res) res.status(500).send(e);
-    else return null;
+  handleReqErr = (e, message, data, res = false) => {
+    // This can be called from something other than a catch
+    if (_get(e, 'stack')) {
+      data = { stack: e.stack, ...data };
+    }
+
+    log('error', `APPLE NEWS LOG -- ${ message }`, data );
+
+    if (res) {
+      res.status(500).send(e);
+    } else {
+      return null;
+    }
   },
   /**
    * Bootstrap API:
@@ -124,7 +135,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         if (res) res.status(status).send(statusText);
         else return [];
       }
-    }).catch(e => handleReqErr(e, 'Error getting all apple news sections', res));
+    }).catch(e => handleReqErr(e, 'Error getting all apple news sections', { requestURL }, res));
   },
   /**
    * Get data about section
@@ -144,7 +155,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body: section }) => {
       if (status === 200) res.send(section.data);
       else res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, `Error getting data for apple news section ID ${ req.params.sectionID }`, res));
+    }).catch(e => handleReqErr(e, 'Error getting data for apple news section ID', { requestURL }, res));
   },
   /**
    * Search for articles in section
@@ -172,7 +183,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body: articleResults }) => {
       if (status === 200) res.send(articleResults.data);
       else res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, `Error getting articles in section ID ${ req.params.sectionID } search`, res));
+    }).catch(e => handleReqErr(e, 'Error getting articles in section ID search', { requestURL }, res));
   },
   /**
    * Set promoted articles in section
@@ -198,7 +209,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body }) => {
       if (status === 200) res.send(body.data.promotedArticles);
       else res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, `Error setting promoted articles in section ID ${ req.params.sectionID }`, res));
+    }).catch(e => handleReqErr(e, 'Error setting promoted articles in section ID', { requestURL }, res));
   },
   /**
    * Search for articles in channel
@@ -224,7 +235,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body: searchResults }) => {
       if (status === 200) res.send(searchResults.data);
       else res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, 'Error getting apple news search results for articles in channel', res));
+    }).catch(e => handleReqErr(e, 'Error getting apple news search results for articles in channel', { requestURL }, res));
   },
   /**
    * Get article data
@@ -249,7 +260,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         if (res) res.status(status).send(statusText);
         else return statusText;
       }
-    }).catch(e => handleReqErr(e, 'Error getting article data from apple news API', res));
+    }).catch(e => handleReqErr(e, 'Error getting article data from apple news API', { requestURL }, res));
   },
   /**
    * Publish/update article to apple news by sending
@@ -267,21 +278,21 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   articleRequest = async (req, res) => {
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
-    let articleData;
+    const updateArticle = !!req.params.articleID,
+      method = 'POST',
+      requestURL = `${ updateArticle ? ANF_API : ANF_CHANNEL_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
+      { articleRef, revision } = req.body;
 
     try {
-      const updateArticle = !!req.params.articleID,
-        method = 'POST',
-        requestURL = `${ updateArticle ? ANF_API : ANF_CHANNEL_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
-        { articleRef, revision } = req.body,
-        [ { sectionFront,
+      const [ { sectionFront,
           secondarySectionFront,
           accessoryText,
           isCandidateToBeFeatured,
           isHidden,
           isSponsored,
           tags: { _ref: tagsRef },
-          noIndexNoFollow
+          noIndexNoFollow,
+          feeds: { 'apple-news': includeInAppleNewsFeed }
         },
         articleANF ] = await Promise.all([
           getCompInstanceData(articleRef),
@@ -296,7 +307,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
             accessoryText: accessoryText || secondarySectionFront || sectionFront || 'metadata.byline',
             ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
             ...isHidden ? { isHidden } : {},
-            ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
+            ...process.env.APPLE_NEWS_PREVIEW_ONLY === 'true' ? { isPreview: true } : { isPreview: false },
             ...isSponsored ? { isSponsored } : {},
             links: {
               channel: ANF_CHANNEL_API,
@@ -307,7 +318,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         validAppleNews = async () => {
           const { items: tagsItems } = await getCompInstanceData(tagsRef);
 
-          return sectionLink
+          return includeInAppleNewsFeed
+            && sectionLink
             && !tagsItems.some(tag => tag.text === 'RADIO.COM Latino')
             && !noIndexNoFollow;
         };
@@ -326,40 +338,61 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
             'Content-Type': contentType
           },
           body: formData
-        }).then(({ status, statusText, body: article }) => {
-          articleData = JSON.stringify(article);
+        }).then(({ status, statusText, body: { data: body, errors } } ) => {
           if ([ 200, 201 ].includes(status)) {
-            log('error', 'APPLE NEWS LOG -- ARTICLE POST CONTENT:', {
-              status,
-              text: statusText,
-              data: JSON.stringify(article),
-              enabled: process.env.APPLE_NEWS_ENABLED,
-              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
-            });
-            res.status(status).send(article.data);
+            // To be deleted/changed to info once ANF beings working
+            handleReqErr(
+              {},
+              'Article Post Content Success', {
+                status,
+                statusText,
+                uri: articleRef,
+                data: {
+                  createdAt: body.createdAt,
+                  modifiedAt: body.modifiedAt,
+                  id: body.id,
+                  type: body.type,
+                  shareUrl: body.shareUrl,
+                  links: body.links,
+                  revision: body.revision,
+                  isPreview: body.isPreview,
+                  state: body.state
+                }
+              });
+            res.status(status).send(body);
           } else {
-            log('error', 'APPLE NEWS LOG -- ARTICLE POST ERROR:', {
-              status,
-              text: statusText,
-              data: JSON.stringify(article),
-              enabled: process.env.APPLE_NEWS_ENABLED,
-              preview: process.env.APPLE_NEWS_PREVIEW_ONLY
-            });
-            res.status(status).send(article);
+            handleReqErr(
+              {},
+              'Article Post Error',
+              {
+                status,
+                statusText,
+                errors,
+                metadata: JSON.stringify(metadata),
+                uri: articleRef,
+                articleANF: JSON.stringify(articleANF)
+              });
+            res.status(status).send(body);
           }
-        }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
+        }).catch(e => handleReqErr(
+          e,
+          'Error publishing/updating article to apple news API',
+          {
+            requestURL,
+            article: articleRef,
+            metadata: JSON.stringify(metadata),
+            uri: articleRef,
+            articleANF: JSON.stringify(articleANF)
+          },
+          res
+        ));
       } else {
-        log('info', 'APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS NOT A VALID APPLE NEWS ARTICLE');
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
-      log('error', 'APPLE NEWS LOG --', {
-        data: articleData,
-        enabled: process.env.APPLE_NEWS_ENABLED,
-        preview: process.env.APPLE_NEWS_PREVIEW_ONLY,
-        e
-      });
-      res.status(500).send(e);
+      handleReqErr(e,'Generic Error',{
+        requestURL
+      }, res);
     }
   },
   /**
@@ -399,7 +432,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText }) => {
       res.status(status).send(statusText);
-    }).catch(e => handleReqErr(e, 'Error deleting article with apple news API', res));
+    }).catch(e => handleReqErr(e, 'Error deleting article with apple news API', { requestURL }, res));
   },
   /**
    * Add apple news routes to the express app

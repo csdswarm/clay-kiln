@@ -1,6 +1,6 @@
 {
   "name": "clay-starter",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
@@ -108,6 +108,7 @@
     "vue-template-compiler": "^2.5.17",
     "xml": "^1.0.1",
     "xml-escape": "^1.1.0",
+    "xml2js": "^0.4.23",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
@@ -142,6 +143,7 @@
     "mocha": "^6.0.0",
     "mock-local-storage": "^1.1.11",
     "pg": "^7.12.1",
+    "pg-cursor": "^2.3.0",
     "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",
     "postcss-mixins": "^6.2.0",

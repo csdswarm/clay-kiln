@@ -2,7 +2,7 @@
 
 const
   _get = require('lodash/get'),
-  applyNationalSubscriptions = require('./apply-national-subscriptions'),
+  applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
   circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
@@ -11,21 +11,21 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
-  slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
-  { DEFAULT_STATION } = require('../constants'),
-  { PAGE_TYPES } = require('../constants'),
+  { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
-    uriToUrl,
-    replaceVersion,
     has,
     isFieldEmpty,
+    replaceVersion,
     textToEncodedSlug,
+    uriToUrl,
     urlToElasticSearch
-  } = require('../utils');
+  } = require('../utils'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -462,9 +462,10 @@ function updateStationSyndicationType(data) {
  * @returns {Object}
  */
 function setNoIndexNoFollow(data) {
-  const isContentFromAP = _get(data, 'byline', [])
-    .some(({ sources = [] }) =>
-      sources.some(({ text }) => text === 'The Associated Press'));
+  const
+    containAP = ({ text }) => text.includes('Associated Press'),
+    isContentFromAP = _get(data, 'byline', [])
+      .some(({ sources = [], names = [] }) => names.some(containAP) || sources.some(containAP));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
@@ -559,17 +560,21 @@ function addStationSyndicationSlugs(data) {
       const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
 
       if (shouldSetSlug) {
-        station.syndicatedArticleSlug = '/' + [
-          station.stationSlug,
-          slugify(station.sectionFront),
-          slugify(station.secondarySectionFront),
-          data.slug
-        ].filter(Boolean).join('/');
+        station.syndicatedArticleSlug = generateSyndicationSlug(data.slug, station);
       } else {
         delete station.syndicatedArticleSlug;
       }
       return station;
     });
+}
+
+function doNotPublishToANF(data) {
+  if (data.feeds && (data.stationSlug || data.isCloned)) {
+    data.feeds = {
+      ...data.feeds,
+      'apple-news': false
+    };
+  }
 }
 
 function render(ref, data, locals) {
@@ -579,6 +584,7 @@ function render(ref, data, locals) {
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
   renderStationSyndication(data);
+  doNotPublishToANF(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -662,7 +668,8 @@ async function save(uri, data, locals) {
 
   // we need to get stations by editorial feeds before creating slugs for syndicated content
   await addStationsByEditorialGroup(data, locals);
-  await applyNationalSubscriptions(data, locals);
+  // we need apply content subscriptions before creating slugs for syndicated content
+  await applyContentSubscriptions(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),

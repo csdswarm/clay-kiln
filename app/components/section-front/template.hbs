@@ -4,6 +4,14 @@
   class="component component--section-front{{ if @root.locals.edit ' editing' }}"
   data-station-slug="{{ stationSlug }}">
 
+  {{#if _computed.primaryColor }}
+    <style>
+      :root {
+        --theme-primaryColor: {{ _computed.primaryColor }};
+      }
+    </style>
+  {{/if}}
+
   {{#if @root.locals.edit }}
     <div class="section-front__settings" data-editable="settings">
       <h1>Section Front Settings:</h1>

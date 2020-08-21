@@ -84,6 +84,7 @@ const
       }
       // both national & station pages
       addTag('station_name', _get(locals, 'station.name', 'Radio.com'));
+      _get(data, 'contentTagItems', []).forEach(tag => addTag('editorial_tags', tag.text));
     }
 
     // podcast page

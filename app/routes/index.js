@@ -158,9 +158,10 @@ module.exports = router => {
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);
+  addEndpoints.apSubscriptions(router);
   addEndpoints.createPage(router);
   addEndpoints.imageInfo(router, checkAuth);
-  addEndpoints.nationalSubscriptions(router);
+  addEndpoints.contentSubscription(router);
   ensureStationOnCustomUrl(router);
   addEndpoints.syndicatedContent(router);
   addEndpoints.validSource(router);
