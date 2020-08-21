@@ -1,0 +1,29 @@
+_description: |
+  List of stats scoreboard widgets.
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    enforceMaxlength: false
+    props:
+      -
+        prop: url
+        _label: URL
+        _has:
+          input: content-search
+          validate:
+            required: true
+
+title:
+  _label: LATEST SCORES
+  _has:
+    input: text
+    validate:
+      required: true
+
+_groups:
+  settings:
+    fields:
+      - title
+      - items
