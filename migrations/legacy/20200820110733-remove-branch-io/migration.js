@@ -41,10 +41,10 @@ async function getPagesUsingBranchIO() {
     await usingDb(async db => {
       const pages = await getAllPagesWithBranchIOHead(db, host);
 
-      Promise.map(pages, ({ id, data: { head }}) => {
+      return Promise.map(pages, ({ id, data: { head }}) => {
         const branchIOInstance = head.filter(instance => instance.includes('branch-io-head'));
       
-        removeBranchIoComponents(id, branchIOInstance);
+        return removeBranchIoComponents(id, branchIOInstance);
       }, { concurrency: 10 })
     })
   } catch (error) {
