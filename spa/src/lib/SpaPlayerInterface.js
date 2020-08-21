@@ -10,6 +10,7 @@ import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
 import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
+import recentPodcasts from '../../../app/services/client/recentPodcasts.js'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
 const sessionStorage = window.sessionStorage
@@ -140,6 +141,8 @@ class SpaPlayerInterface {
         sessionStorage.setItem('currentlyPlaying', JSON.stringify(payload))
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
         this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
+        // add show id to recently played
+        recentPodcasts.add(e.detail.podcastShowId)
       })
 
       window.addEventListener('stationIdClick', e => {
