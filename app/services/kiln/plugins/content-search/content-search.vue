@@ -271,10 +271,11 @@
        */
       selectItem(selected) {
         const { canonicalUrl, stationSlug, stationSyndication } = selected, 
-          { protocol, host } = new URL(canonicalUrl);
+          { protocol, host } = new URL(canonicalUrl),
+          syndicationToStation = (stationSyndication || []).find(syndication => syndication.stationSlug === this.getStationSlug);
 
         this.searchText = this.getStationSlug !== stationSlug ?
-        `${protocol}//${host}${stationSyndication[0].syndicatedArticleSlug}`:
+        `${protocol}//${host}${syndicationToStation ? syndicationToStation.syndicatedArticleSlug: ''}`:
         canonicalUrl;
         this.searchResults = [selected];
         this.commitFormData();
