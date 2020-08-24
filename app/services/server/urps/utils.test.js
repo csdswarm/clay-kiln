@@ -10,7 +10,7 @@ const rdcDomainName = DEFAULT_STATION.unityDomainName;
 describe('server/urps/utils', () => {
   it('createUnityPermissions returns the correct unity permissions using the type and id', async () => {
     expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
-      [`${rdcDomainName}`]: {
+      [rdcDomainName]: {
         update: {
           footer: true,
           'page-template': true,
@@ -18,7 +18,7 @@ describe('server/urps/utils', () => {
           'meta-tags': true
         }
       },
-      [`${unityAppDomainName}`]: {
+      [unityAppDomainName]: {
         create: { 'global-alert': true },
         update: { 'global-alert': true }
       }

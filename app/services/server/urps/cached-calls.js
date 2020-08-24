@@ -14,8 +14,6 @@ const getFromUrps = require('./get-from-urps'),
 const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
     urlPath: '/domains/by-type',
     cachedPropName: 'domainNamesIHaveAccessTo',
-    // TODO: this should be revisited since all the information is been generated in the URPS Side.
-    //  just adding this comment to keep track of it.
     toResult: domains => domains.map(aDomain => aDomain.name)
   }),
   getDomainNamesICanImportContent = makeCachedUrpsCall({
