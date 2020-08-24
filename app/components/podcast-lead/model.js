@@ -47,6 +47,16 @@ function getDurationFormat(durationInSeconds) {
   return 'm [m]in';
 }
 
+/**
+ * strips html from string and assumes simple, properly formatted html
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function stripHtml(str) {
+  return str.replace(/(<([^>]+)>)/ig, '');
+}
+
 module.exports = unityComponent({
   /**
    * Updates the data for the template prior to render
@@ -79,14 +89,14 @@ module.exports = unityComponent({
 
     data._computed.category = _get(podcastData, 'category.0.name');
     data._computed.title = podcastData.title;
-    data._computed.description = podcastData.description;
+    data._computed.description = stripHtml(podcastData.description);
     data._computed.imageURL = podcastData.image;
 
     if (episodeData) {
       data._computed.imageURL = episodeData.image_url;
       data._computed.title = episodeData.title;
       data._computed.episodeListURL = locals.url.replace(`/${episodeData.site_slug}`, '');
-      data._computed.description = episodeData.description;
+      data._computed.description = stripHtml(episodeData.description);
 
       const startOfDay = new Date(0),
         durationInSeconds = parseFloat(episodeData.duration_seconds);

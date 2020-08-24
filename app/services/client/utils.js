@@ -8,6 +8,15 @@
 class Utils {
   constructor() {}
 
+  /**
+   * truncates string to limit and adds suffix if set
+   *
+   * @param {string} str
+   * @param {number} limit
+   * @param {object} [options={}]
+   * @returns {string}
+   * @memberof Utils
+   */
   truncate(str, limit, options = {}) {
     options.useSuffix = options.useSuffix || false;
     options.suffix = options.suffix || '...';
