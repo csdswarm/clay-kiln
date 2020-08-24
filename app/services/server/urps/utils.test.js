@@ -8,7 +8,7 @@ const { createUnityPermissions } = require('./utils'),
 const rdcDomainName = DEFAULT_STATION.unityDomainName;
 
 describe('server/urps/utils', () => {
-  it('createUnityPermissions returns the correct unity permissions using the type and id', async () => {
+  it('createUnityPermissions returns the correct unity permissions', async () => {
     expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
       [rdcDomainName]: {
         update: {
@@ -35,7 +35,6 @@ function getMockUrpsPermissions() {
       name: rdcDomainName,
       id: '25b8f5df-aff1-41ce-83b4-68c0a5b289a1',
       type: 'station',
-      core_id: 12,
       permissions: [
         {
           permissionId: '011fcede-0f18-40c4-8785-45fd599bfab3',
