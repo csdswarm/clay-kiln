@@ -44,8 +44,10 @@ function getValuesAndSuffix(dataOrMatch, locals) {
   if (routeParam && _get(locals, 'params')) {
     metaValue = paramValue = hypensToSpaces(locals.params[routeParam]);
   } else if (localsVal) {
-    paramValue = localsVal;
     metaValue = createMetaTitle(dataOrMatch, locals, localsVal);
+    paramValue = locals.url.includes('/listen')
+      ? metaValue
+      : localsVal;
   }
 
   return { metaValue, paramValue, suffix };
