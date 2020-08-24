@@ -366,16 +366,21 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
-    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
-      tags = tags.split(',');
+    
+    if (tags === '') {
+      return [];
     }
 
     // split comma separated tags (for load-more get queries)
-    data.tag = tags;
+    if (typeof tags === 'string' && tags.includes(',')) {
+      tags = tags.split(',');
+    }
 
-    if (tags === '') {
-      return [];
+    // Check for tags in the case of one column layouts, and retain the correct formatting for updating the tags for kiln's UI
+    if (typeof tags === 'string') {
+      data.tag = [{ text: tags }];
+    } else if (Array.isArray(tags)) {
+      data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
     }
 
     return tags;
