@@ -637,7 +637,6 @@ window.disableAdRefresh = function (ads) {
  * @param {string} position
  */
 window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
-  updateSkinStyles(true);
   const skinDiv = 'freq-dfp--bg-skin',
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
@@ -698,7 +697,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
       // DFP seems to include a 1x1 pixel image even with no takeover.
       if (typeof bgImg.width !== 'undefined' && bgImg.width > 1) {
         // Create our wrapper div element
-
+        updateSkinStyles(true);
         mainDiv.classList.add('has-fullpage-ad');
       }
     };
