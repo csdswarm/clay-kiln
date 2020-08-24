@@ -1,14 +1,17 @@
 'use strict';
 
-const { DEFAULT_STATION } = require('./constants'),
-  { USE_URPS_CORE_ID } = require('../server/urps/utils');
+const { DEFAULT_STATION } = require('./constants');
 
 // Unity App encompasses permissions which don't belong to a station such as
 //   whether you can update a global alert or the homepage
 const unityAppDomainName = 'Unity App',
-  unityAppId = {
+  unityAppDomain = {
     type: 'application',
     id: 'Unity App'
+  },
+  nationalMarket = {
+    type: 'market',
+    id: 14
   };
 
 /**
@@ -45,19 +48,15 @@ const unityAppDomainName = 'Unity App',
  */
 function getStationDomainName(station) {
   if (station.id === DEFAULT_STATION.id) {
-    return USE_URPS_CORE_ID
-      ? `market - ${station.market.id}`
-      : station.urpsDomainName;
+    return station.urpsDomainName;
   }
-
   // site_slug might be an empty string from the default station, in which case
   //   we want to use it
-  const slug =
-    typeof station.site_slug === 'string' ? station.site_slug : station.slug;
+  const slug = typeof station.site_slug === 'string'
+    ? station.site_slug
+    : station.slug;
 
-  return USE_URPS_CORE_ID
-    ? `station - ${station.id}`
-    : `${station.name} | ${slug}`;
+  return `${station.name} | ${slug}`;
 }
 
 /**
@@ -68,10 +67,7 @@ function getStationDomainName(station) {
 */
 function getStationDomain(station) {
   if (station.id === DEFAULT_STATION.id) {
-    return {
-      type: 'market',
-      id: station.market.id
-    };
+    return nationalMarket;
   }
 
   return {
@@ -80,4 +76,4 @@ function getStationDomain(station) {
   };
 }
 
-module.exports = { getStationDomainName, getStationDomain, unityAppDomainName, unityAppId };
+module.exports = { getStationDomainName, getStationDomain, unityAppDomainName, unityAppDomain, nationalMarket };

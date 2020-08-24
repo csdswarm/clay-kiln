@@ -55,7 +55,6 @@ configmap:
     URPS_AUTHORIZATIONS_URL: "https://admin-api-stg.radio-sbx.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
-    USE_URPS_CORE_ID: "false"
 clayconfig:
   data:
     .clayconfig: |

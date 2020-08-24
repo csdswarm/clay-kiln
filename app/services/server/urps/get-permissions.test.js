@@ -2,18 +2,16 @@
 
 const proxyquire = require('proxyquire').noCallThru(),
   sinon = require('sinon'),
-  { DEFAULT_STATION } = require('../../universal/constants'),
   { expect } = require('chai'),
-  { unityAppDomainName } = require('../../universal/urps');
+  { unityAppDomain } = require('../../universal/urps');
 
-const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 
 describe('getPermissions', () => {
   const mockUrpsPermissions = [{ some: 'permission' }],
     getFromUrps = sinon.spy(() => ({ data: mockUrpsPermissions })),
     createUnityPermissions = sinon.spy(),
     idToken = 'idToken',
-    stationDomainNames = [rdcDomainName],
+    stationDomainNames = [unityAppDomain],
     getPermissions = proxyquire('./get-permissions', {
       './get-from-urps': getFromUrps,
       './utils': { createUnityPermissions }
@@ -30,7 +28,7 @@ describe('getPermissions', () => {
     expect(getFromUrps.calledOnce).to.be.true;
     expect(getFromUrps.firstCall.args).to.deep.equal([
       '/permissions/by-domain',
-      { domains: [unityAppDomainName, ...stationDomainNames] },
+      { domains: [unityAppDomain, ...stationDomainNames] },
       idToken
     ]);
   });

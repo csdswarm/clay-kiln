@@ -1,52 +1,27 @@
 'use strict';
 
-const { createUnityPermissions, _internals } = require('./utils'),
+const { createUnityPermissions } = require('./utils'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   { expect } = require('chai'),
-  { unityAppDomainName, unityAppId } = require('../../universal/urps');
+  { unityAppDomainName } = require('../../universal/urps');
 
 const rdcDomainName = DEFAULT_STATION.unityDomainName;
 
 describe('server/urps/utils', () => {
-  describe('When USE_URPS_CORE_ID is false',() => {
-    it('createUnityPermissions returns the correct unity permissions', async () => {
-      _internals.USE_URPS_CORE_ID = false;
-
-      expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
-        [rdcDomainName]: {
-          update: {
-            footer: true,
-            'page-template': true,
-            'static-page': true,
-            'meta-tags': true
-          }
-        },
-        [unityAppDomainName]: {
-          create: { 'global-alert': true },
-          update: { 'global-alert': true }
+  it('createUnityPermissions returns the correct unity permissions using the type and id', async () => {
+    expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
+      [`${rdcDomainName}`]: {
+        update: {
+          footer: true,
+          'page-template': true,
+          'static-page': true,
+          'meta-tags': true
         }
-      });
-    });
-  });
-
-  describe('When USE_URPS_CORE_ID is true',() => {
-    it('createUnityPermissions returns the correct unity permissions using the type and id', async () => {
-      _internals.USE_URPS_CORE_ID = true;
-
-      expect(createUnityPermissions(getMockUrpsPermissions())).to.deep.equal({
-        [`${getMockUrpsPermissions()[0].type} - ${getMockUrpsPermissions()[0].core_id}`]: {
-          update: {
-            footer: true,
-            'page-template': true,
-            'static-page': true,
-            'meta-tags': true
-          }
-        },
-        [`${unityAppId.type} - ${unityAppId.id}`]: {
-          create: { 'global-alert': true },
-          update: { 'global-alert': true }
-        }
-      });
+      },
+      [`${unityAppDomainName}`]: {
+        create: { 'global-alert': true },
+        update: { 'global-alert': true }
+      }
     });
   });
 });

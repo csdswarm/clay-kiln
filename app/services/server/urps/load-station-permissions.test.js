@@ -4,7 +4,8 @@ const proxyquire = require('proxyquire'),
   sinon = require('sinon'),
   { DEFAULT_STATION } = require('../../universal/constants'),
   { expect } = require('chai'),
-  { PERM_CHECK_INTERVAL } = require('./utils');
+  { PERM_CHECK_INTERVAL } = require('./utils'),
+  { nationalMarket } = require('../../universal/urps');
 
 const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 
@@ -52,7 +53,7 @@ describe('loadStationPermissions', () => {
 
     expect(loadPermissions.firstCall.args).to.deep.equal([
       session.auth,
-      [rdcDomainName]
+      [nationalMarket]
     ]);
   });
 

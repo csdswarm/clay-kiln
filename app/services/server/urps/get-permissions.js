@@ -3,8 +3,8 @@
 const formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
   getFromUrps = require('./get-from-urps'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { createUnityPermissions, USE_URPS_CORE_ID } = require('./utils'),
-  { unityAppDomainName, unityAppId } = require('../../universal/urps');
+  { createUnityPermissions } = require('./utils'),
+  { unityAppDomain } = require('../../universal/urps');
 
 /**
  * Gets all permissions for user with jwt from URPS and organizes them as a simple object for checking
@@ -43,7 +43,7 @@ module.exports = async (idToken, stationDomainNames) => {
     
     const { data: permissionsList } = await getFromUrps(
       '/permissions/by-domain',
-      { domains: USE_URPS_CORE_ID ? [unityAppId, ...stationDomainNames] : [unityAppDomainName, ...stationDomainNames] },
+      { domains: [unityAppDomain, ...stationDomainNames] },
       idToken
     );
 

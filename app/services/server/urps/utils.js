@@ -3,16 +3,7 @@
 const _set = require('lodash/set'),
   { SECOND } = require('../../universal/constants').time;
 
-const PERM_CHECK_INTERVAL = 30 * SECOND,
-  // the urps team doesn't have their CORE_ID working yet so we need to
-  //   validate until that's turned on
-  USE_URPS_CORE_ID = process.env.USE_URPS_CORE_ID === 'true',
-  { unityAppId } = require('../../universal/urps'),
-
-  // Only for tests.
-  __ = {
-    USE_URPS_CORE_ID
-  };
+const PERM_CHECK_INTERVAL = 30 * SECOND;
 
 /**
  * assigns the value 'true' to the path `${action}.${target}`
@@ -38,22 +29,9 @@ function toDomainLevelPermissions(domainPermissions, perm) {
  * @returns {object} - the mutated permissionsObj
  */
 function toPermissionsByDomain(permissionsObj, domain) {
-  let domainName;
-  
-  // Unity App do not have a core_id value.
-  if (__.USE_URPS_CORE_ID) {
-    if (domain.type === unityAppId.type) {
-      domainName = `${unityAppId.type} - ${unityAppId.id}`;
-    } else {
-      domainName = `${domain.type} - ${domain.core_id}`;
-    }
-  } else {
-    domainName = domain.name;
-  }
-
   return _set(
     permissionsObj,
-    [domainName],
+    [domain.name],
     domain.permissions.reduce(toDomainLevelPermissions, {})
   );
 }
@@ -70,8 +48,6 @@ function createUnityPermissions(permissionsList) {
 }
 
 module.exports = {
-  _internals: __,
   createUnityPermissions,
-  PERM_CHECK_INTERVAL,
-  USE_URPS_CORE_ID
+  PERM_CHECK_INTERVAL
 };
