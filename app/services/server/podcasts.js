@@ -59,7 +59,13 @@ const
         collected = _concat(collected,data);
       } catch (e) {
         next = false; // escape from do...while loop
-        log('error', `Failed to get podcasts from RDC API - page number ${params.page.number}`, e);
+        log('error', `Failed to get podcasts from RDC API`, {
+          params,
+          error:{
+            message: e.message,
+            stack: e.stack
+          }
+        });
       }
     } while (next);
 
@@ -98,7 +104,13 @@ const
         await dbRaw('DELETE FROM podcasts');
         await dbRaw(insertSql, values);
       } catch (err) {
-        log('error', `There was a problem updating database with podcast data. Values: ${values}`, err);
+        log('error', `Cannot update podcast sitemap data.`, {
+          values,
+          error: {
+            message: err.message,
+            stack: err.stack
+          }
+        });
       }
     }
   },

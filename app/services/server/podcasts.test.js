@@ -88,6 +88,7 @@ describe('server/podcasts', () => {
      * @param {object} [opts]
      * @param {boolean} opts.isStale whether or not the current mock data should be considered stale
      * @param {object} opts.dbResponse returns the value you pass as a response from the db
+     * @param {regex} opts.dbThrows Throws an error when the attempted SQL matches a given regular expression
      * @param {boolean} opts.rdcApiThrows Whether or not the radioApiGet function should throw an error
      * @returns {Promise<{}>}
      */
@@ -101,7 +102,6 @@ describe('server/podcasts', () => {
       __.moment = sinon.stub();
       __.radioApiGet = sinon.stub();
 
-      __.dbRaw.resolves(opts.dbResponse || mockData.dbResponse);
       __.getStationsById.resolves(mockData.stations.byId);
 
       if (opts.rdcApiThrows) {
@@ -110,6 +110,11 @@ describe('server/podcasts', () => {
         });
       } else {
         __.radioApiGet.resolves(mockData.apiResponse);
+      }
+
+      __.dbRaw.resolves(opts.dbResponse || mockData.dbResponse);
+      if (opts.dbThrows) {
+        __.dbRaw.withArgs(sinon.match(opts.dbThrows)).rejects('Simulated error on',opts.dbThrows);
       }
 
       __.moment.returns({
@@ -193,6 +198,29 @@ describe('server/podcasts', () => {
 
       expect(__.log).to.be.calledWith('error', sinon.match(/Failed to get podcasts from RDC API/));
       expect(updatePodcasts).not.to.have.thrown;
+    });
+
+    describe('Handles errors thrown by db gracefully', () => {
+      it('Handles error on SELECT gracefully', async () => {
+        const { __, updatePodcasts } = await setup_updatePodcasts({ dbThrows: /SELECT/ });
+
+        expect(__.log).to.be.calledWith('error');
+        expect(updatePodcasts).not.to.have.thrown;
+      });
+
+      it('Handles error on DELETE gracefully', async () => {
+        const { __, updatePodcasts } = await setup_updatePodcasts({ isStale:true, dbThrows: /DELETE/ });
+
+        expect(__.log).to.be.calledWith('error');
+        expect(updatePodcasts).not.to.have.thrown;
+      });
+
+      it('Handles error on INSERT gracefully', async () => {
+        const { __, updatePodcasts } = await setup_updatePodcasts({ isStale:true, dbThrows: /INSERT/ });
+
+        expect(__.log).to.be.calledWith('error');
+        expect(updatePodcasts).not.to.have.thrown;
+      });
     });
   });
 });
