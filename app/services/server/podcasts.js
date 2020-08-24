@@ -59,7 +59,7 @@ const
         collected = _concat(collected,data);
       } catch (e) {
         next = false; // escape from do...while loop
-        log('error', `Failed to get podcasts from RDC API`, {
+        log('error', 'Failed to get podcasts from RDC API', {
           params,
           error:{
             message: e.message,
@@ -104,7 +104,7 @@ const
         await dbRaw('DELETE FROM podcasts');
         await dbRaw(insertSql, values);
       } catch (err) {
-        log('error', `Cannot update podcast sitemap data.`, {
+        log('error', 'Cannot update podcast sitemap data.', {
           values,
           error: {
             message: err.message,
