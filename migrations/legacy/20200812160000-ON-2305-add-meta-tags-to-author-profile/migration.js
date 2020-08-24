@@ -141,8 +141,8 @@ async function updateExistingAuthorsPages () {
       let hash = author.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/)
       const slug = hash[1] || 'general'
       if (slug) {
-        createMetaTagComponent(metaTags, slug).then(() => {
-          addComponentToContainers(
+        createMetaTagComponent(metaTags, slug).then(async () => {
+          await addComponentToContainers(
             host,
             [ author ],
             `_components/meta-tags/instances/${slug}`,
