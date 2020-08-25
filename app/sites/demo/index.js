@@ -108,6 +108,7 @@ module.exports.routes = [
         // Refer to: app/node_modules/amphora/lib/services/attachRoutes.js line 91. parseHandler().
         // We directly use amphora's renderPage() to correctly render the corresponding page reference.
         // Refer to: app/node_modules/amphora/lib/render.js line 111. renderPage().
+        // Since this is a dynamic page, we always want to show the @published version
         amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}@published`, req, res, process.hrtime());
 
       } catch (error) {
@@ -119,6 +120,7 @@ module.exports.routes = [
 
     }
   }
+  
 ];
 
 // Resolve the url to publish to
