@@ -2,4 +2,11 @@ _components:
   dynamic-meta-image:
     dynamicImageUrl: ''
     routeParam: ''
-    localsKey: ''
+    localsPath: ''
+    instances:
+      podcast-show:
+        dynamicImageUrl: '${paramValue}'
+        localsPath: 'podcast.attributes.image'
+      podcast-episode:
+        dynamicImageUrl: '${paramValue}'
+        localsPath: 'podcast.attributes.image'

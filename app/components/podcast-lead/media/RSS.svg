@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com jz-->
+    <title>RSS</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="RSS">
+            <rect id="Rectangle" stroke="#E1E1E1" fill="#FFFFFF" x="0.5" y="0.5" width="23" height="23"></rect>
+            <path d="M6.002,15.9989934 C4.895,15.9989934 3.998,16.896 3.99999334,18 C3.99999334,19.104 4.896,20.001 6.002,19.9989934 C7.105,20.001 8.002,19.105 7.99999334,18 C8.002,16.893 7.105,15.997 6.002,15.9989934 Z" id="Path" fill="#9E9E9E" fill-rule="nonzero"></path>
+            <path d="M6,4 C4.896,4 4,4.896 4,6 C4,7.104 4.896,8 6,8 C11.514,8 16,12.486 16,18 C16,19.104 16.896,20 18,20 C19.104,20 20,19.104 20,18 C20,10.28 13.72,4 6,4 Z" id="Path" fill="#9E9E9E" fill-rule="nonzero"></path>
+            <path d="M6,10 C4.896,10 4,10.896 4,12 C4,13.104 4.896,14 6,14 C8.205,14 10,15.794 10,18 C10,19.104 10.896,20 12,20 C13.104,20 14,19.104 14,18 C14,13.589 10.411,10 6,10 Z" id="Path" fill="#9E9E9E" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>

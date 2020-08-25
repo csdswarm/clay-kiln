@@ -1,0 +1,27 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
+  data-podcast-site-slug="{{ _computed.podcastSiteSlug }}"
+  class="component component--podcast-show-page podcast-show-page
+  {{ if @root.locals.edit ' editing' }}"
+>
+  {{> breadcrumbs this }}
+
+  {{> podcast-lead podcastLead }}
+  <div class="podcast-show-page-body">
+    <ul class="tabs">
+      <li class="tabs-tab tabs-tab--episodes">
+        <a href="#episodes">episodes</a>
+      </li>
+      <li class="tabs-tab tabs-tab--discover">
+        <a href="#discover">discover</a>
+      </li>
+    </ul>
+    <div class="tabbed-content">
+      <div class="tabbed-content-container tabbed-content-container--episodes">
+        {{> podcast-episode-list episodeList }}
+      </div>
+      <div class="tabbed-content-container tabbed-content-container--discover">
+        {{> podcast-discover podcastDiscover }}
+      </div>
+    </div>
+  </div>
+</section>

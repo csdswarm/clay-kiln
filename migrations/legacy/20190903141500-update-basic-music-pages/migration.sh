@@ -25,6 +25,8 @@ then
 
     clay export -y "$http://$1/_pages/station-basic-music" > layout.yml;
 
+    npm init -f;
+
     npm install yamljs;
 
     node ./modifyBasicMusic.js;

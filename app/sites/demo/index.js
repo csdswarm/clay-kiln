@@ -1,8 +1,9 @@
 'use strict';
 
-const amphoraRender = require('amphora/lib/render'),
-  axios = require('axios'),
+const axios = require('../../node_modules/axios'),
+  amphoraRender = require('../../node_modules/amphora/lib/render'),
   logger = require('../../services/universal/log'),
+  middleware = require('./middleware'),
   publishing = require('../../services/publishing'),
   { topicPagePrefixes } = require('../../services/universal/constants');
 
@@ -27,6 +28,7 @@ const dynamicTopicRoutes = {
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
     '/_components/station-front/instances',
+    '/_components/podcast-front-page/instances',
     '/_components/frequency-iframe-page/instances'
   ],
   staticTopicRoutes = {
@@ -64,6 +66,11 @@ module.exports.routes = [
   { path: '/:stationSlug/hosts/:host' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
+  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
+  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
@@ -143,7 +150,8 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getHostPageSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getHostPageSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getPodcastFrontSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [

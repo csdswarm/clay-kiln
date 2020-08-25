@@ -2,6 +2,7 @@
 
 
 const _get = require('lodash/get'),
+  _debounce = require('lodash/debounce'),
   _isEmpty = require('lodash/isEmpty'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
@@ -42,7 +43,8 @@ let refreshCount = 0,
   numStationsDirectoryInline = 1,
   adIndices = {},
   adsMounted = false,
-  prevLocation = window.location.href;
+  prevLocation = window.location.href,
+  windowWidth = 0;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -75,6 +77,8 @@ document.addEventListener('content-feed-lazy-load', () => {
 document.addEventListener('google-ad-manager-mount', () => {
   // This will allow initializeAds to trigger ad refresh
   adsMounted = true;
+  windowWidth = window.innerWidth;
+  window.addEventListener('resize', debounceRefresh());
 });
 
 // Reset data when navigating in SPA
@@ -82,7 +86,9 @@ document.addEventListener('google-ad-manager-dismount', () => {
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
+  window.removeEventListener('resize', debounceRefresh());
 });
+
 // Refreshes ads when navigating to other pages in SPA
 window.onload = function () {
   const
@@ -615,6 +621,22 @@ function resizeForSkin() {
     });
   };
 }
+
+/**
+ * @returns {function} that debounces refreshAllSlots, and verifies window.innerWith.
+ */
+function debounceRefresh() {
+  return (
+    _debounce(() => {
+      // Check for a change in screen width to prevent an unneeded refresh when scrolling on mobile.
+      if (window.innerWidth != windowWidth) {
+        windowWidth = window.innerWidth;
+        refreshAllSlots();
+      };
+    }, 500)
+  );
+}
+
 
 /**
  * Tells a list of ads to stop refreshing, whether they've loaded yet or not.
