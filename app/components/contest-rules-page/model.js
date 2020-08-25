@@ -36,7 +36,7 @@ module.exports = unityComponent({
     try {
       const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '',
         stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`,
-        contestRules = await Promise.all((await getContestRules({
+        contestRules = await (await getContestRules({
           stationCallsign: callsign
         })).map(await (async (ruleData) => ({
           ...ruleData,
@@ -47,7 +47,7 @@ module.exports = unityComponent({
           contestSlug: `${stationPath}contests/${ruleData.slug}`
         }))).filter((rulesBlock)=>{
           return moment().isAfter(rulesBlock.endDateTime,'day');
-        }));
+        });
 
       data._computed = {
         showPrivacyPolicy: !showPresentation,
