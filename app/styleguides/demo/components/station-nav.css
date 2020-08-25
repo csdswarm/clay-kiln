@@ -299,7 +299,16 @@ $caret-margin-right: em(25);
 
       .station-nav__menu-right {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
+        .station-nav__menu-right-cta {
+          display: flex;
+          align-items: center;
+          flex: 1 0 auto;
+        }
+        .station-nav__menu-right-listen {
+          display: flex;
+          align-items: flex-end;
+        }
       }
     }
 
