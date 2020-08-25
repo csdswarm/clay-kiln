@@ -7,7 +7,7 @@
 'use strict';
 const
   _get = require('lodash/get'),
-  log  = require('../../services/universal/log').setup({ file: __filename }),
+  log = require('../../services/universal/log').setup({ file: __filename }),
   moment = require('moment'),
   rest = require('../../services/universal/rest.js'),
   { getContestRules } = require('../../services/server/contest-rules'),
@@ -36,17 +36,17 @@ module.exports = unityComponent({
     try {
       const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '',
         stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`,
-        contestRules = await (await getContestRules({
+        contestRules = await Promise.all((await getContestRules({
           stationCallsign: callsign
-        })).map(await (async (ruleData) => ({
+        })).map(async (ruleData) => ({
           ...ruleData,
           stationTimeZone: locals.station.timezone,
           showHeader: true,
           showPresentation,
           description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
           contestSlug: `${stationPath}contests/${ruleData.slug}`
-        }))).filter((rulesBlock)=>{
-          return moment().isAfter(rulesBlock.endDateTime,'day');
+        }))).filter((rulesBlock) => {
+          return moment().isAfter(rulesBlock.endDateTime, 'day');
         });
 
       data._computed = {
