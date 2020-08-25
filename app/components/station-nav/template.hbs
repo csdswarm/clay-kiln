@@ -57,24 +57,35 @@
 
         {{!-- right side --}}
         <div class="station-nav__menu-right">
-          <div class="menu__listen listen">
-            <button class="listen__button button {{ _computed.playingClass }}" data-play-station="{{ _computed.station.id }}">
-              <div class="button__icon">
-                {{!-- stays static --}}
-                {{{ read 'components/station-nav/media/play_button.svg' }}}
-              </div>
-              <div class="button__text">listen</div>
-            </button>
+          <div class="station-nav__menu-right-cta">
+            {{#if (compare CTA_Options "===" 'newsletter') }}
+              <h1>newsletter</h1>
+            {{/if}}
+            {{#if (compare CTA_Options "===" 'contact') }}
+              <h1>2131321312</h1>
+            {{/if}}
           </div>
 
-          <div class="menu__listen-toggle">
-            <button class="listen-toggle--closed">
-              {{{ read 'components/station-nav/media/chevron_down.svg' }}}
-            </button>
-            <button class="listen-toggle--open">
-              {{{ read 'components/station-nav/media/chevron_up.svg' }}}
-            </button>
-            <div class="menu__triangle"></div>
+          <div class="station-nav__menu-right-listen">
+            <div class="menu__listen listen">
+              <button class="listen__button button {{ _computed.playingClass }}" data-play-station="{{ _computed.station.id }}">
+                <div class="button__icon">
+                  {{!-- stays static --}}
+                  {{{ read 'components/station-nav/media/play_button.svg' }}}
+                </div>
+                <div class="button__text">listen</div>
+              </button>
+            </div>
+
+            <div class="menu__listen-toggle">
+              <button class="listen-toggle--closed">
+                {{{ read 'components/station-nav/media/chevron_down.svg' }}}
+              </button>
+              <button class="listen-toggle--open">
+                {{{ read 'components/station-nav/media/chevron_up.svg' }}}
+              </button>
+              <div class="menu__triangle"></div>
+            </div>
           </div>
         </div>{{!-- end right side --}}
 
