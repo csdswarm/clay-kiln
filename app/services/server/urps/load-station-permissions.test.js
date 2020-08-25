@@ -12,7 +12,8 @@ const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 describe('loadStationPermissions', () => {
   const loadPermissions = sinon.spy(),
     loadStationPermissions = proxyquire('./load-station-permissions', {
-      './load-permissions': loadPermissions
+      './load-permissions': loadPermissions,
+      './utils': { USE_URPS_CORE_ID: true }
     }),
     getMockData = opts => {
       const {
@@ -54,6 +55,21 @@ describe('loadStationPermissions', () => {
     expect(loadPermissions.firstCall.args).to.deep.equal([
       session.auth,
       [nationalMarket]
+    ]);
+  });
+
+  it('calls loadPermissions with the correct arguments => USE_URPS_CODE_ID = false', async () => {
+    const { session, locals } = getMockData({ permissions: {} }),
+      loadStationPermissions = proxyquire('./load-station-permissions', {
+        './load-permissions': loadPermissions,
+        './utils': { USE_URPS_CORE_ID: false }
+      });
+
+    await loadStationPermissions(session, locals);
+
+    expect(loadPermissions.firstCall.args).to.deep.equal([
+      session.auth,
+      [rdcDomainName]
     ]);
   });
 

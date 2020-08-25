@@ -3,7 +3,7 @@
 const loadPermissions = require('./load-permissions'),
   log = require('../../universal/log').setup({ file: __filename }),
   { getStationDomainName, getStationDomain } = require('../../universal/urps'),
-  { PERM_CHECK_INTERVAL } = require('./utils');
+  { PERM_CHECK_INTERVAL, USE_URPS_CORE_ID } = require('./utils');
 
 /**
  * loads the permissions for both 'Unity App' and whatever station was
@@ -34,7 +34,9 @@ module.exports = async (session, locals) => {
     ) {
       const stationDomain = getStationDomain(stationForPermissions);
 
-      await loadPermissions(auth, [stationDomain]);
+      USE_URPS_CORE_ID
+        ? await loadPermissions(auth, [stationDomain])
+        : await loadPermissions(auth, [stationDomainName]);
     }
 
   } catch (error) {
