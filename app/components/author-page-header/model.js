@@ -49,6 +49,10 @@ module.exports = unityComponent({
       }
     }).filter(updatedLink => updatedLink);
     
+    if (_get(locals, 'params.dynamicAuthor')) {
+      data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
+    }
+
     if (_get(locals, 'params.author') && _get(data, '_computed.dynamic')) {
       data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     }

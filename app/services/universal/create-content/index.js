@@ -11,6 +11,7 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
+  slugifyService = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
@@ -20,7 +21,6 @@ const
     has,
     isFieldEmpty,
     replaceVersion,
-    textToEncodedSlug,
     uriToUrl,
     urlToElasticSearch
   } = require('../utils'),
@@ -365,6 +365,10 @@ function sanitizeByline(data) {
   data.byline = byline.filter(entry => !!entry.names);
 }
 
+function _capitalize(str) {
+  return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
+}
+
 /**
  * Iterates over the byline, cleaning and consolidating authors and sources into their own
  * property for backward compatibility and reduced development effort elsewhere
@@ -384,12 +388,16 @@ function bylineOperations(data) {
     */
     for (const author of names || []) {
       delete author.count;
-      author.slug = textToEncodedSlug(author.text);
+      author.slug = slugifyService(author.text);
+      author.name = author.name ? author.name : author.text;
+      author.text = _capitalize(author.slug.replace(/-/g, ' ').replace(/\//g,''));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
       delete host.count;
-      host.slug = textToEncodedSlug(host.text);
+      host.slug = slugifyService(host.text);
+      host.name = host.name ? host.name : host.text;
+      host.text = _capitalize(host.slug.replace(/-/g, ' ').replace(/\//g,''));
       hosts.push(host);
     }
     // do sources too
