@@ -129,42 +129,9 @@ function onePublishedArticleByUrl(url, fields, locals) {
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(url)
     ),
-    articleSyndicatedUrl = new URL(url),
-    { pathname } = articleSyndicatedUrl;
+    articleSyndication = universalQuery.getStationSyndication(canonicalUrl, url);
 
-  universalQuery.addShould(query, {
-    bool: {
-      should: [
-        {
-          bool: {
-            filter: {
-              term: { canonicalUrl }
-            }
-          }
-        },
-        {
-          nested: {
-            path: 'stationSyndication',
-            query: {
-              bool: {
-                must: [
-                  {
-                    match: {
-                      'stationSyndication.syndicatedArticleSlug': {
-                        query: pathname,
-                        operator: 'and'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
-      ],
-      minimum_should_match: 1
-    }
-  });
+  universalQuery.addShould(query, articleSyndication);
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
   }

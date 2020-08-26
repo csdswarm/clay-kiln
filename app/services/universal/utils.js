@@ -96,6 +96,20 @@ function isUrl(str) {
 }
 
 /**
+ * Determine if an url is valid using the URL constructor
+ * @param {string} str
+ * @return {Boolean}
+ */
+function isValidUrl(str) {
+  try {
+    new URL(str);
+  } catch (err) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * replace version in uri
  * e.g. when fetching @published data, or previous component data
  * @param  {string} uri
@@ -548,6 +562,7 @@ module.exports = {
   isInstance,
   isPublishedVersion,
   isUrl,
+  isValidUrl,
   listDeepObjects,
   postfix,
   prepend,
