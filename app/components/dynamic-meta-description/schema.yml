@@ -10,6 +10,12 @@ routeParam:
     input: text
     help: Define the route param whose value used for the title
 
+localsPath:
+  _label: &localsPath-label Locals Path
+  _has: &localsPath-has
+    input: text
+    help: The path on locals to the value which should replace ${paramValue} in the description
+
 description:
   _label: Description
   _subscribe: pageDescription
@@ -21,7 +27,7 @@ description:
 
 urlMatches:
   _label: Add Url Matches
-  _has: 
+  _has:
     input: complex-list
     props:
       -
@@ -37,6 +43,10 @@ urlMatches:
           input: text
           help: Define the route param whose value used for the title
       -
+        prop: localsPath
+        _label: *localsPath-label
+        _has: *localsPath-has
+      -
         prop: description
         _label: Description
         _has:
@@ -51,5 +61,6 @@ _groups:
   settings:
     fields:
       - routeParam
+      - localsPath
       - description
       - urlMatches

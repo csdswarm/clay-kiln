@@ -99,7 +99,7 @@ function processContent(obj, components) {
 }
 
 /**
- * Transforms authors and tags objects into display names.
+ * Transforms authors, hosts and tags objects into display names.
  * This must be done because ElasticSearch expects an array of strings for tags and authors, which should be their display names.
  *
  * @param {object} op
@@ -110,6 +110,10 @@ function transformAuthorsAndTags(op) {
 
   if (op.value.authors) {
     op.value.authors = op.value.authors.map(extractText);
+  }
+
+  if (op.value.hosts) {
+    op.value.hosts = op.value.hosts.map(extractText);
   }
 
   if (op.value.tags) {

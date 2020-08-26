@@ -33,9 +33,11 @@ const _get = require('lodash/get'),
     EVENT: 'event',
     EVENTSLISTING: 'events-listing-page',
     GALLERY: 'gallery',
+    HOST: 'host-page-header',
     SECTIONFRONT: 'section-front',
     STATIC_PAGES: 'static-page',
-    STATIONFRONT: 'station-front'
+    STATIONFRONT: 'station-front',
+    PODCASTFRONT: 'podcast-front-page'
   },
 
   STATUS_CODE = {
@@ -76,6 +78,7 @@ const _get = require('lodash/get'),
     'event',
     'events-listing-page',
     'gallery',
+    'host-page',
     'homepage',
     'section-front',
     'static-page',
@@ -127,6 +130,7 @@ const _get = require('lodash/get'),
 
   LOAD_MORE_LIMIT = 10,
 
+  PODCASTS = 'podcasts',
   // I realize these are defined in colors.css but that obviously isn't importable
   // so starting a mirrored object here
   COLORS = {
@@ -134,7 +138,9 @@ const _get = require('lodash/get'),
     sunsetOrange: '#FF4940',
     azureRadience: '#0099FF',
     robinsEggBlue: '#00CCB7'
-  };
+  },
+
+  topicPagePrefixes = ['topic', 'music', 'news', 'sports'];
 
 module.exports = {
   COLORS,
@@ -145,6 +151,7 @@ module.exports = {
   LOAD_MORE_LIMIT,
   MINUTE,
   PAGE_TYPES,
+  PODCASTS,
   PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
@@ -154,5 +161,6 @@ module.exports = {
   YEAR,
   contentTypes,
   msnFeed,
-  time
+  time,
+  topicPagePrefixes
 };

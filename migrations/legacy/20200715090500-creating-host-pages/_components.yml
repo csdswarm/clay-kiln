@@ -1,0 +1,78 @@
+_components:
+  more-content-feed:
+    instances:
+      host-page:
+        hostInfo: ''
+        populateFrom: host
+        locationOfContentFeed: host-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        introComponents: []
+        componentTitle: ''
+        componentTitleVisible: false
+        pageLength: 5
+        maxLength: ''
+        items: []
+        tag: ''
+        tagManual: ''
+        contentType: { article: true, gallery: true }
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        secondarySectionFrontManual: ''
+        excludeTags: []
+        excludeSectionFronts: []
+        excludeSecondarySectionFronts: []
+        excludeSubscriptions: false
+        sharethroughTag:
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
+        enableSharethrough: true
+        _version: 15
+
+  two-column-component:
+    instances:
+      host-page:
+        col1: [
+          _ref: /_components/more-content-feed/instances/host-page
+        ]
+        col2: [
+          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship,
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        ]
+
+  host-page-header:
+    instances:
+      new:
+        host: ''
+        profileImage: ''
+        scheduleTime: ''
+        bio: ''
+        facebook: ''
+        twitter: ''
+        youtube: ''
+        instagram: ''
+        email: ''
+
+  host-page:
+    instances:
+      new:
+        twoColumnComponent:
+          _ref: /_components/two-column-component/instances/host-page
+
+  dynamic-meta-title:
+    instances:
+      host-profile:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+      host:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+
+  dynamic-meta-description:
+    instances:
+      host-profile:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'
+      host:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'

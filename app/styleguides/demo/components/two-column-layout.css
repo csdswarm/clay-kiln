@@ -100,6 +100,11 @@
     .content__sidebar {
       visibility: visible;
     }
+  },
+  &[data-main-component="podcast-show-page"] {
+    .content__sidebar {
+      visibility: visible;
+    }
   }
 }
 .layout--two-column[data-main-component="contest"] {

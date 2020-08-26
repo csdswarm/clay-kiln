@@ -6,7 +6,7 @@ const db = require('../../services/server/db'),
   * @param {String} stationCallsign
   * @returns {String}
   */
-  stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stationCallsign}'`,
+  stationQuery = stationCallsign => `AND cc.data->>'stationCallsign' = '${stationCallsign}'`,
   /**
   * Queries the db for contest rules
   * @param {String} param.stationCallsign
@@ -15,31 +15,30 @@ const db = require('../../services/server/db'),
     stationCallsign = ''
   }) => {
     const contestRulesQuery = /* sql */ `
-      SELECT *
-      FROM components."contest"
+    SELECT cc.id, cc.data
+    FROM components."contest" cc
+      JOIN pages p ON cc.data->>'canonicalUrl' = p.meta->>'url'
 
-      WHERE (
-        -- ending within 30 days from now or ended within 31 days ago
+    WHERE (
+      -- ending within 30 days from now or ended within 31 days ago
+      DATE_PART(
+        'day',
+        CURRENT_TIMESTAMP - (cc.data ->> 'endDateTime')::timestamp
+      ) BETWEEN -30 and 31
+
+      -- currently active
+      OR (
         DATE_PART(
           'day',
-          CURRENT_TIMESTAMP - (data ->> 'endDateTime')::timestamp
-        ) BETWEEN -30 and 31
-
-        -- currently active
-        OR (
-          DATE_PART(
-            'day',
-            CURRENT_TIMESTAMP - (data ->> 'startDateTime')::timestamp
-          ) > 0
-          AND
-          DATE_PART(
-            'day',
-            (data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
-          ) > 0
-        )
+          CURRENT_TIMESTAMP - (cc.data ->> 'startDateTime')::timestamp
+        ) > 0
+        AND
+        DATE_PART(
+          'day',
+          (cc.data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
+        ) > 0
       )
-
-      AND id SIMILAR TO '%@published'
+    )
       ${stationQuery(stationCallsign)}
     `,
 
