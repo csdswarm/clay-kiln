@@ -36,18 +36,22 @@ module.exports = unityComponent({
     try {
       const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '',
         stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`,
-        contestRules = (await Promise.all((await getContestRules({
-          stationCallsign: callsign
-        })).map(async (ruleData) => ({
-          ...ruleData,
-          stationTimeZone: locals.station.timezone,
-          showHeader: true,
-          showPresentation,
-          description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
-          contestSlug: `${stationPath}contests/${ruleData.slug}`
-        })))).filter((rulesBlock) => {
-          return !moment().isAfter(rulesBlock.endDateTime, 'day');
-        });
+        contestRules =
+          (await Promise.all(
+            (await getContestRules({
+              stationCallsign: callsign
+            })).map(
+              async (ruleData) => ({
+                ...ruleData,
+                stationTimeZone: locals.station.timezone,
+                showHeader: true,
+                showPresentation,
+                description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
+                contestSlug: `${stationPath}contests/${ruleData.slug}`
+              }))
+          )).filter((rulesBlock) => {
+            return !moment().isAfter(rulesBlock.endDateTime, 'day');
+          });
 
       data._computed = {
         showPrivacyPolicy: !showPresentation,
