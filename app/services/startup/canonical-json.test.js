@@ -16,7 +16,11 @@ const canonicalJson = proxyquire('./canonical-json', {
       sites: { sites: () => [] }
     },
     '../server/db': {
-      get: () => Promise.resolve({}),
+      get: async uri => {
+        return uri.endsWith('/_lists/primary-section-fronts')
+          ? []
+          : {};
+      },
       getUri: uri => {
         return uri.includes('/_uris/')
           ? Promise.reject(new Error('Key not found in database'))
