@@ -1,0 +1,43 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+$default-screen-nav-width: em(1100);
+$large-screen-nav-width: em(940);
+$medium-screen-nav-width: em(728);
+
+.component--host-page {
+  margin-top: em(-30); /* to offset margin top of layout__content */
+  .host-page__host {
+    height: em(110);
+    position: relative;
+    margin: auto;
+    max-width: 100%;
+    width: $default-screen-nav-width;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    @mixin large-screen {
+      width: $large-screen-nav-width;
+    }
+    @mixin medium-screen {
+      width: $medium-screen-nav-width;
+    }
+    @media only screen and (max-width: 788px) {
+      width: 100%;
+      padding: 0 em(20);
+    }
+    .host__line {
+      width: 100%;
+      height: 0;
+      border-bottom: em(1) solid $parisPurple;
+    }
+    h1 {
+      @mixin topic-page-header-font2;
+      text-transform: capitalize;
+      position: absolute;
+      background: $white;
+      padding: 0 em(15,35) 0 0;
+    }
+  }
+}

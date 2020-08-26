@@ -2,6 +2,10 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin events-lede-font5 {
+  @mixin font CircularStd-Black, 14px, $black, -.55px, 17px;
+}
+
 .events-list {
   margin-bottom: em(20);
   &__load-more-btn {

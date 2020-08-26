@@ -1,0 +1,39 @@
+<section
+  class="component podcast-featured-strip component--podcast-featured-strip {{if showBottomBorder 'show-border-bottom' else=''}}"
+  data-uri="{{ default _ref _self }}" data-track-type="podcast-featured-strip" data-editable="items">
+  {{#if showTitle}}
+    {{#if items.length}}
+      <div class="podcast-featured-strip__header">
+        <span>{{title}}</span>
+        {{!-- TODO: ON-1567 podcast sponsorship --}}
+        {{!-- <span class="podcast-featured-strip__sponsor-label">Presented by</span>
+            <img src="" alt="" class="podcast-featured-strip__sponsor-image"> --}}
+      </div>
+    {{/if}}
+  {{/if}}
+  <ul class="podcast-featured-strip__items">
+    {{#each _computed.items as | item|}}
+    <li class="podcast-featured-strip__item">
+      <a class="podcast-featured-strip__link" href="{{ item.url }}">
+        <img src="{{ item.imageUrl }}width=220&crop=1:1,offset-y0" srcset="{{ item.imageUrl }}width=150&crop=1:1,offset-y0 150w,
+                  {{ item.imageUrl }}width=201&crop=1:1,offset-y0 210w,
+                  {{ item.imageUrl }}width=220&crop=1:1,offset-y0 220w,
+                  {{ item.imageUrl }}width=343&crop=1:1,offset-y0 343w"
+          sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 343px, 220px"
+          class="podcast-featured-strip__image" />
+      </a>
+      <div class="podcast-featured-strip__category">
+        {{item.label}}
+      </div>
+      <a class="podcast-featured-strip__link" href="{{ item.url }}">
+        <div class="podcast-featured-strip__heading">
+          {{ item.title }}
+        </div>
+      </a>
+      <div class="podcast-featured-strip__description">
+        {{ item.description}}
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+</section>

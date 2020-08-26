@@ -7,15 +7,17 @@ const rest = require('../universal/rest'),
  * call the get endpoint
  *
  * @param {string} site_slug
+ * @param {*} defaultResult
  *
  * @return {Promise<{}>}
  */
-async function get(site_slug) {
+async function get(site_slug, defaultResult = {}) {
   try {
     return await rest.get(`/station-theme/${site_slug}`);
-  } catch (e) {
-    log('error', e);
-    return {};
+  } catch (err) {
+    log('error', err);
+
+    return defaultResult;
   }
 }
 

@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _description: |
   List of podcasts -- Will autofill by category upon publish if left empty or less than 4 items.
 

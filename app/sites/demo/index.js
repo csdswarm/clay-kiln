@@ -1,21 +1,42 @@
 'use strict';
 
-const publishing = require('../../services/publishing'),
-  axios = require('../../node_modules/axios'),
+const axios = require('../../node_modules/axios'),
   amphoraRender = require('../../node_modules/amphora/lib/render'),
   logger = require('../../services/universal/log'),
+  middleware = require('./middleware'),
+  publishing = require('../../services/publishing'),
+  { topicPagePrefixes } = require('../../services/universal/constants');
+
+const dynamicTopicRoutes = {
+    national: topicPagePrefixes.map(prefix => ({
+      path: `/${prefix}/:dynamicTag`,
+      dynamicPage: 'topic'
+    })),
+    station: topicPagePrefixes.map(prefix => ({
+      path: `/:stationSlug/${prefix}/:dynamicTag`,
+      dynamicPage: 'topic'
+    }))
+  },
   log = logger.setup({ file: __filename }),
   mainComponentRefs = [
     '/_components/article/instances',
     '/_components/gallery/instances',
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
+    '/_components/host-page-header/instances',
     '/_components/contest/instances',
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
     '/_components/station-front/instances',
+    '/_components/podcast-front-page/instances',
     '/_components/frequency-iframe-page/instances'
-  ];
+  ],
+  staticTopicRoutes = {
+    national: topicPagePrefixes.map(prefix => ({ path: `/${prefix}/*` })),
+    station: topicPagePrefixes.map(prefix => ({
+      path: `/:stationSlug/${prefix}/*`
+    }))
+  };
 
 module.exports.routes = [
   // Partially static
@@ -32,14 +53,8 @@ module.exports.routes = [
   { path: '/music/gallery/:slug' },
   { path: '/news/gallery/:slug' },
   { path: '/sports/gallery/:slug' },
-  { path: '/topic/*' },
-  { path: '/music/*' },
-  { path: '/news/*' },
-  { path: '/sports/*' },
-  { path: '/:stationSlug/topic/*' },
-  { path: '/:stationSlug/music/*' },
-  { path: '/:stationSlug/news/*' },
-  { path: '/:stationSlug/sports/*' },
+  ...staticTopicRoutes.national,
+  ...staticTopicRoutes.station,
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' },
   { path: '/small-business-pulse/:slug' },
@@ -47,8 +62,15 @@ module.exports.routes = [
   { path: '/small-business-pulse/:year/:month/:day/:name' },
   { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
   { path: '/events/:slug' },
+  { path: '/hosts/:host' },
+  { path: '/:stationSlug/hosts/:host' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
+  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
+  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
+  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
@@ -58,14 +80,8 @@ module.exports.routes = [
   { path: '/stations/sports', dynamicPage: 'stations-directory' },
   { path: '/account/:dynamicPage', dynamicPage: 'home'  },
   { path: '/account/:dynamicPage/:mode', dynamicPage: 'home' },
-  { path: '/:stationSlug/topic/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/music/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/news/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/:stationSlug/sports/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/music/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/news/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
+  ...dynamicTopicRoutes.station,
+  ...dynamicTopicRoutes.national,
   { path: '/authors/:author', dynamicPage: 'author' },
   { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
@@ -73,6 +89,8 @@ module.exports.routes = [
   { path: '/contests', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
   { path: '/contests/:slug' },
+  { path: '/hosts/:host', dynamicPage: 'host' },
+  { path: '/:stationSlug/hosts/:host', dynamicPage: 'host' },
   { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
   { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
   { path: '/:stationSlug/stats/:league/:standings', dynamicPage: 'frequency-iframe-page' },
@@ -119,7 +137,7 @@ module.exports.routes = [
 
     }
   }
-  
+
 ];
 
 // Resolve the url to publish to
@@ -131,7 +149,9 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getHostPageSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getPodcastFrontSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [
