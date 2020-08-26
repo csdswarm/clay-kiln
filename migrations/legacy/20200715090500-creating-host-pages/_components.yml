@@ -2,15 +2,32 @@ _components:
   more-content-feed:
     instances:
       host-page:
-        items: []
         hostInfo: ''
-        sectionFront: ''
-        sectionFrontManual: ''
         populateFrom: host
         locationOfContentFeed: host-page
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
+        componentTitle: ''
+        componentTitleVisible: false
+        pageLength: 5
+        maxLength: ''
+        items: []
+        tag: ''
+        tagManual: ''
+        contentType: { article: true, gallery: true }
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        secondarySectionFrontManual: ''
+        excludeTags: []
+        excludeSectionFronts: []
+        excludeSecondarySectionFronts: []
+        excludeSubscriptions: false
+        sharethroughTag:
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
+        enableSharethrough: true
+        _version: 15
 
   two-column-component:
     instances:
@@ -41,7 +58,7 @@ _components:
       new:
         twoColumnComponent:
           _ref: /_components/two-column-component/instances/host-page
-  
+
   dynamic-meta-title:
     instances:
       host-profile:
