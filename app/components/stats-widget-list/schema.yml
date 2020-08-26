@@ -1,29 +1,36 @@
 _description: |
-  List of stats scoreboard widgets.
+  List of stats widgets.
 
-items:
-  _label: Items
-  _has:
-    input: complex-list
-    enforceMaxlength: false
-    props:
-      -
-        prop: url
-        _label: URL
-        _has:
-          input: content-search
-          validate:
-            required: true
+content:
+  _label: Widgets component
+  _placeholder:
+    text: Widgets component
+  _componentList:
+    fuzzy: false
+    include:
+      - instagram-post
+      - youtube
 
 title:
-  _label: LATEST SCORES
+  _label: Component's Title
   _has:
-    input: text
     validate:
-      required: true
+      required: false
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
 
+titleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+  
 _groups:
   settings:
+    _label: Component's Title
     fields:
       - title
-      - items
+      - titleVisible
+

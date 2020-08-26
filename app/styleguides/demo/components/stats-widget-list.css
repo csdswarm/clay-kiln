@@ -24,11 +24,7 @@
         @mixin stats-widget-list-font1;
     }
 
-    &__items {
+    &__content {
         margin: em(5, 14);
-    }
-
-    &__item {
-        margin-top: em(10, 14);
     }
 }
