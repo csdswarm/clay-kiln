@@ -42,23 +42,28 @@ module.exports = {
   },
   // stations (stationSyndication) - station content
   station: {
-    createObj: station => [
-      { match: { stationCallsign: station } },
-      {
-        nested: {
-          path: 'stationSyndication',
-          query: {
-            bool: {
-              should: [
-                { match: { 'stationSyndication.callsign': station } },
-                { match: { 'stationSyndication.callsign.normalized': station } }
-              ],
-              minimum_should_match: 1
+    createObj: station => ({
+      bool: {
+        should: [
+          { match: { stationCallsign: station } },
+          {
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                bool: {
+                  should: [
+                    { match: { 'stationSyndication.callsign': station } },
+                    { match: { 'stationSyndication.callsign.normalized': station } }
+                  ],
+                  minimum_should_match: 1
+                }
+              }
             }
           }
-        }
+        ],
+        minimum_should_match: 1
       }
-    ]
+    })
   },
   // genres syndicated to (genreSyndication)
   genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
