@@ -34,7 +34,7 @@ class StationsCarousel {
       mediumSmall: 480
     };
 
-    this.hammerTime.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+    this.hammerTime.get('swipe').set({ threshold: 5, velocity: 0.075 });
 
     if (this.filterStationsBy == 'section-front') {
       this.filterByValue = this.sectionFront;
@@ -71,9 +71,9 @@ class StationsCarousel {
         this.stationsVisible = 2;
       }
       if (this.windowWidth < this.windowSizes.medium) {
-        
+
         let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
-        
+
         if (this.stationsVisible === 4 && calculatedImageSize > 160) {
           calculatedImageSize = 160; // clamping per design
         }
