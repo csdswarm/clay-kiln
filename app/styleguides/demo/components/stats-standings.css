@@ -1,0 +1,26 @@
+@import "_global/colors";
+
+.component--stats-standings {
+  .standings-container{
+    border: em(1) solid #EDE5E5;
+    padding: em(10);
+  }
+
+  .stats__preview{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $hawkesBlue;
+    padding: em(20);
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: end;
+      span {
+        color: $denim;
+      }
+    }
+  }
+}
