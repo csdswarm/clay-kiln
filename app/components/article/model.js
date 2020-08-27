@@ -38,6 +38,7 @@ const _get = require('lodash/get'),
 
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
+    console.log('DEBUG:::::::::::::::::::::: rendering....', data.stationSyndication);
     locals.loadedIds.push(uri);
     await autoLink(data, [
       'sectionFront',
@@ -51,6 +52,7 @@ module.exports = unityComponent({
     return data;
   },
   save: async (uri, data, locals) => {
+    console.log('DEBUG:::::::::::::::::::::: saving....');
     data.dateModified = (new Date()).toISOString();
 
     defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);

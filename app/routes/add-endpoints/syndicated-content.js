@@ -30,6 +30,7 @@ async function addSyndicationEntry(uri, syndicationEntry) {
   const data = await db.get(uri);
 
   updateStationSyndicationType(data);
+  data.stationSyndication = data.stationSyndication.filter(syndicated => !syndicated.exclude);
   data.stationSyndication.push({ ...syndicationEntry });
   addStationSyndicationSlugs(data);
 
@@ -45,8 +46,12 @@ async function removeSyndicationEntry(uri, callsign) {
   const data = await db.get(uri),
     stationSyndication = data.stationSyndication.filter(syndicated => syndicated.callsign !== callsign );
 
-  data.stationSyndication = stationSyndication;
-
+  data.stationSyndication = stationSyndication.filter(syndicated => syndicated.exclude !== callsign );
+  // Adds an entry to handle manually unsyndicated.
+  data.stationSyndication.push({
+    exclude: callsign,
+    source: 'unsubscribed'
+  });
   await db.put(uri, data);
 }
 

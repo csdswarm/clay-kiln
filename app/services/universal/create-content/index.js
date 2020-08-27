@@ -578,6 +578,7 @@ function doNotPublishToANF(data) {
 }
 
 function render(ref, data, locals) {
+  console.log('DEBUG:::::::::::::::::::::: render triggered');
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
@@ -640,6 +641,7 @@ function assignStationInfo(uri, data, locals) {
 }
 
 async function save(uri, data, locals) {
+  console.log('DEBUG:::::::::::::::::::::: saving triggered....' );
   const isClient = typeof window !== 'undefined',
     componentName = getComponentName(uri);
 

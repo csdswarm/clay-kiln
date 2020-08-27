@@ -10,6 +10,7 @@ const
     findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
     inStation: stationSlug => data => {
+      // TODO: revisar este tema.
       /*
         This method is being used both for checking if an article belongs to or is syndicated to a
         station, but with a syndication entry we can't assume it belongs to national when stationSlug
