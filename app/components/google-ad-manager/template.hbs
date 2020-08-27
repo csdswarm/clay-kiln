@@ -16,7 +16,7 @@
   data-aps-load-timeout="{{ @root.locals.site.apsLoadTimeout }}"
   data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
   data-gam-station-data="{{ _computed.station }}"
-  class="component component--google-ad-manager google-ad-manager--{{adSize}}{{#if sticky }} sticky {{#if hasStationNav}}sticky--station-nav{{/if}}{{/if}}{{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
+  class="component component--google-ad-manager google-ad-manager--{{adSize}}{{#if sticky }} sticky {{#if hasStationNav}}sticky--station-nav{{/if}}{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
   {{#unless @root.locals.edit}}
     {{#if (compare adSize "outOfPage")}}
