@@ -37,9 +37,9 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
 
 module.exports.render = async (ref, data, locals) => {
   // as log as there is an station id, get the theme
-  if (locals.station.id) {
-    let theme = {};
+  let theme = defaultTheme;
 
+  if (locals.station.id) {
     try {
       theme = await get(locals.station.site_slug, defaultTheme);
     } catch (err) {
@@ -47,12 +47,12 @@ module.exports.render = async (ref, data, locals) => {
 
       theme = defaultTheme;
     }
-
-    data.theme = {
-      ...theme,
-      ...themeRGBColors(theme)
-    };
   }
+
+  data.theme = {
+    ...theme,
+    ...themeRGBColors(theme)
+  };
 
   return data;
 };
