@@ -18,6 +18,12 @@ function applyFilterByType(query, filter, conditionType = 'default') {
   const isDeprecatedFilter = conditionType === 'default';
 
   for (const [filterKey, filterVal] of Object.entries(filter)) {
+    // ?filter[isStationFeed]=true is deprecated.  We should instead
+    //   use ?isStationFeed=true
+    if (filterKey === 'isStationFeed') {
+      continue;
+    }
+
     const aCondition = conditions[filterKey],
       appliedConditionType = isDeprecatedFilter
         ? aCondition.filterConditionType || 'addShould'
