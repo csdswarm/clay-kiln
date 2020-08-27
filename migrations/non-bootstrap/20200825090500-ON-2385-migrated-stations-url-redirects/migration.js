@@ -1,5 +1,5 @@
 'use strict'
-
+const { bluebird } = require('../../utils/base');
 const {
   usingDb,
   parseHost
@@ -99,23 +99,21 @@ async function getAllMigratedContent (db, host) {
     `)
 
     return (
-      result.rows
-        .map(({ id, redirect, meta }) => {
-          console.log('Data received:', { id, redirect, meta })
-          let path = JSON.parse(redirect)
+      bluebird.map(
+        result.rows,
+        ({ id, redirect, meta }) => {
+          let path = JSON.parse(redirect);
+
           meta.url = path[0];
 
-          console.log('Processed data:', {id, meta})
           return ({id, path, meta})
-        })
+        },
+        { concurrency: 2 }
+        )
         .filter(
           ({id}) =>
             //   skip bad rows comming from different hosts
-            id.startsWith(host) &&
-            // skip the default instance, just in case
-            !id.includes('/_pages/new') &&
-            // and finally we can exclude published instances 
-            !id.endsWith('@published')
+            id.startsWith(host) 
         )
     )
 }
@@ -128,15 +126,18 @@ async function updateMigratedMetaUrls (pageId, data = '') {
 async function updateMigratedPages () {
   await usingDb(async db => {
     const migratedItems = (await getAllMigratedContent(db, host));
-
-    migratedItems.map(async ({id, meta}) => {
-      if (id) {
-        try {
-          await updateMigratedMetaUrls(id, meta)
-        } catch (error) {
-          console.log(error)
+    bluebird.map(
+      migratedItems,
+      async ({ id, meta }) => {
+        if (id) {
+          try {
+            await updateMigratedMetaUrls(id, meta)
+          } catch (error) {
+            console.log(error)
+          }
         }
-      }
-    })
+      },
+      { concurrency: 2 }
+    )
   })
 }
