@@ -16,7 +16,7 @@
   }
   .layout__content,
   .layout__bottomSection {
-    z-index: 3;
+    z-index: 2;
     position: relative;
     .full-width {
       width: 100vw;
