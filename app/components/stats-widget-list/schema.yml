@@ -8,8 +8,7 @@ content:
   _componentList:
     fuzzy: false
     include:
-      - instagram-post
-      - youtube
+      - stats-standings
 
 title:
   _label: Component's Title
