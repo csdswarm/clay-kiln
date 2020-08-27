@@ -1,7 +1,7 @@
 <section class="component podcast-list component--podcast-list podcast-list--{{ sectionFront }}" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-list__item">
-      <a class="podcast-list__link outbound-link" href="{{ item.podcast.url }}">
+      <a class="podcast-list__link" href="{{ item.podcast.url }}">
         {{#ifAll @first ../showTitle}}
           <div class="podcast-list__tag"
             style="background-color: {{ if ../primaryColor ../primaryColor else=''}}; color: {{ if ../isTitleFontColorDark '#000000' else=''}}">

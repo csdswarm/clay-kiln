@@ -1,14 +1,15 @@
 'use strict';
 
-
-const defaultTheme = {
+const log = require('../../services/universal/log').setup({ file: __filename }),
+  { get } = require('../../services/server/stationThemingApi'),
+  defaultTheme = {
     primaryColor: '#1F055E',
     secondaryColor: '#3C00B7',
     tertiaryColor: '#393939',
     primaryFontColor: '#FFFFFF',
     secondaryFontColor: '#000000'
   },
-  { get } = require('../../services/server/stationThemingApi'),
+
   /**
    * returns a copy of themes with keys appended 'RGB' and the value of the key as an RGB string
    *
@@ -40,8 +41,10 @@ module.exports.render = async (ref, data, locals) => {
     let theme = {};
 
     try {
-      theme = await get(locals.station.site_slug) || defaultTheme;
-    } catch (e) {
+      theme = await get(locals.station.site_slug, defaultTheme);
+    } catch (err) {
+      log('error', err);
+
       theme = defaultTheme;
     }
 
@@ -53,3 +56,5 @@ module.exports.render = async (ref, data, locals) => {
 
   return data;
 };
+
+Object.assign(module.exports, { defaultTheme });

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="wplyr-cntrl-btn" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>wplyr-cntrl-btn</title>
+    <desc>Created with Sketch.</desc>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g class="pause">
+            <g class="pau-bg" fill="#FFFFFF" stroke="#979797">
+                <circle class="Oval" cx="16" cy="16" r="15.5"></circle>
+            </g>
+            <polygon class="wplyr-cntrl-symbol" stroke="none" fill="#3C00B7" fill-rule="nonzero" points="14.0687835 9.98148186 14.5687835 21.8910057 10.4814819 22.3910057 9.98148186 10.4814819"></polygon>
+            <polygon class="wplyr-cntrl-symbol" stroke="none" fill="#3C00B7" fill-rule="nonzero" points="21.5185189 9.98148186 22.0185189 21.8910057 17.9312173 22.3910057 17.4312173 10.4814819"></polygon>
+        </g>
+        <g class="play">
+            <g class="ply-bg" fill="#FFFFFF" stroke="#979797">
+                <circle class="Oval" cx="16" cy="16" r="15.5"></circle>
+            </g>
+            <path d="M13.0874802,8.26892602 L22.2632801,15.609566 C22.4789111,15.7820707 22.5138718,16.0967169 22.341367,16.3123479 C22.3183011,16.3411803 22.2921125,16.3673689 22.2632801,16.3904348 L13.0874802,23.7310747 C12.8718492,23.9035795 12.557203,23.8686188 12.3846982,23.6529879 C12.313773,23.5643313 12.2751327,23.4541761 12.2751327,23.3406403 L12.2751327,8.65936042 C12.2751327,8.38321805 12.4989903,8.15936042 12.7751327,8.15936042 C12.8886684,8.15936042 12.9988237,8.1980008 13.0874802,8.26892602 Z" class="wplyr-cntrl-symbol" fill="#3C00B7"></path>
+        </g>
+    </g>
+</svg>

@@ -218,3 +218,14 @@ module.exports['14.0'] = (uri, data) => {
 };
 
 module.exports['15.0'] = addTextTags;
+
+module.exports['16.0'] = (uri, data) => {
+  if (data.hosts === undefined) {
+    data.hosts = [];
+  }
+  if (!data.byline[0].hosts) {
+    data.byline[0].hosts = [];
+  }
+
+  return data;
+};
