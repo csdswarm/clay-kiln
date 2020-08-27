@@ -1,8 +1,8 @@
 <div data-uri="{{ default _ref _self }}" class="stats-widget-list{{ if @root.locals.edit ' editing' }}">
     <div class="stats-widget-list__container">
         <div class="stats-widget-list__title" data-editable="settings">
-            {{#ifAny @root.locals.edit title titleVisible}}
-            <span data-editable="title">{{{ title }}}</span>
+            {{#ifAny @root.locals.edit titleVisible}}
+            <span>{{{ title }}}</span>
             {{/ifAny}}
         </div>
         <div class="stats-widget-list__content" data-editable="content">
