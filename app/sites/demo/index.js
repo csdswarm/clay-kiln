@@ -70,7 +70,6 @@ module.exports.routes = [
   { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
   { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
   { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
