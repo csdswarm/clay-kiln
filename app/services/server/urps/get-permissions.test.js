@@ -3,7 +3,7 @@
 const proxyquire = require('proxyquire').noCallThru(),
   sinon = require('sinon'),
   { expect } = require('chai'),
-  { unityAppDomain, unityAppDomainName } = require('../../universal/urps');
+  { unityAppDomain, unityAppDomainName, nationalMarket } = require('../../universal/urps');
 
 
 describe('getPermissions', () => {
@@ -12,7 +12,7 @@ describe('getPermissions', () => {
     createUnityPermissions = sinon.spy(),
     USE_URPS_CORE_ID = true,
     idToken = 'idToken',
-    stationDomainNames = [unityAppDomain],
+    stationDomainNames = [nationalMarket],
     getPermissions = proxyquire('./get-permissions', {
       './get-from-urps': getFromUrps,
       './utils': { createUnityPermissions, USE_URPS_CORE_ID }

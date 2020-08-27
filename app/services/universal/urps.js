@@ -66,6 +66,9 @@ function getStationDomainName(station) {
 * @returns {Object}
 */
 function getStationDomain(station) {
+  // we use the National market to store permissions for RDC.  Even though unity
+  //   models RDC as a station, urps preferred not to have a fake station on
+  //   their end.
   if (station.id === DEFAULT_STATION.id) {
     return nationalMarket;
   }
