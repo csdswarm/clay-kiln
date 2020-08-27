@@ -20,6 +20,7 @@ const
   {
     has,
     isFieldEmpty,
+    textToEncodedSlug,
     replaceVersion,
     uriToUrl,
     urlToElasticSearch
@@ -387,17 +388,21 @@ function bylineOperations(data) {
       on save as to not affect rendering.
     */
     for (const author of names || []) {
+      const slug = slugifyService(author.text);
+
       delete author.count;
-      author.slug = slugifyService(author.text);
+      author.slug = textToEncodedSlug(author.text);
       author.name = author.name ? author.name : author.text;
-      author.text = _capitalize(author.slug.replace(/-/g, ' ').replace(/\//g,''));
+      author.text = _capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
+      const slug = slugifyService(host.text);
+
       delete host.count;
       host.slug = slugifyService(host.text);
       host.name = host.name ? host.name : host.text;
-      host.text = _capitalize(host.slug.replace(/-/g, ' ').replace(/\//g,''));
+      host.text = _capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
       hosts.push(host);
     }
     // do sources too
