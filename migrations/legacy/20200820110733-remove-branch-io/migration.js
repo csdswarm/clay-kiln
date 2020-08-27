@@ -30,10 +30,15 @@ function removeBranchIoComponents(page, branchIOInstance) {
 async function getAllPagesWithBranchIOHead(db, host) {
   const query = `SELECT p.id, p.data
       FROM pages p
-      WHERE data#>>'{head}' LIKE '%branch-io-head%'`,
+      WHERE id ~ '@published$' 
+      AND data->>'head' ~ 'branch-io-head'`,
     result = await db.query(query);
 
-  return result.rows;
+  return result.rows
+    .filter(({ id }) => (
+      id.startsWith('dev-clay.radio.com')
+    ))
+    .map((row) => Object.assign({}, row, { id: row.id.replace('@published', '') }))
 }
 
 async function getPagesUsingBranchIO() {
@@ -41,11 +46,11 @@ async function getPagesUsingBranchIO() {
     await usingDb(async db => {
       const pages = await getAllPagesWithBranchIOHead(db, host);
 
-      return Promise.map(pages, ({ id, data: { head }}) => {
+      return Promise.map(pages, ({ id, data: { head } }) => {
         const branchIOInstance = head.filter(instance => instance.includes('branch-io-head'));
-      
+
         return removeBranchIoComponents(id, branchIOInstance);
-      }, { concurrency: 10 })
+      }, { concurrency: 5 })
     })
   } catch (error) {
     console.log('error', error);
