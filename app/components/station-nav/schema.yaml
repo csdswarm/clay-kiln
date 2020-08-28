@@ -200,7 +200,7 @@ CTA_Options:
         value: contact
     help: Which CTA would you like to show?
 
-CTA_NewsletterSettings:
+CTA_NewsletterUrl:
   _label: CTA Newsletter URL
   _has:
     input: text
@@ -222,7 +222,7 @@ CTA_ContactInfoTelephone:
     values:
       - contact
 
-CTA_ContactInfoText:
+CTA_ContactInfoSms:
   _label: CTA Contact Text
   _has:
     input: text
@@ -237,7 +237,7 @@ _groups:
   CTA_ContactInfoSettings:
     fields:
       - CTA_ContactInfoTelephone
-      - CTA_ContactInfoText
+      - CTA_ContactInfoSms
   settings:
     fields:
       - stationLogo (Main Nav & Drawer)
@@ -246,6 +246,6 @@ _groups:
       - podcastsUrl (Listen Nav Drawer)
       - featuredLinks (Listen Nav Drawer)
       - CTA_Options (Connect CTA Drawer)
-      - CTA_NewsletterSettings (Connect CTA Drawer)
+      - CTA_NewsletterUrl (Connect CTA Drawer)
       - CTA_ContactInfoTelephone (Connect CTA Drawer)
-      - CTA_ContactInfoText (Connect CTA Drawer)
+      - CTA_ContactInfoSms (Connect CTA Drawer)
