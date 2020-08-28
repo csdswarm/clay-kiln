@@ -44,9 +44,6 @@ fi
 sed -i '' "s/$SEARCH/$REPLACE/g" "$MODIFIED"
 
 # add an update query to the end of the SQL file to handle reencoding the uris table
-echo "UPDATE public.uris SET id = '$REPLACE/_uris/'||ENCODE(CONVERT_TO(url, 'UTF-8'), 'BASE64');" >> "$MODIFIED"
+echo "UPDATE public.uris SET id = REPLACE('$REPLACE/_uris/'||ENCODE(CONVERT_TO(url, 'UTF-8'), 'BASE64'), E '\n', '');" >> "$MODIFIED"
 
-echo "Modified backup created: $MODIFIED. Now importing."
-
-# shellcheck source=/dev/null.
-. "$SCRIPT_DIR/import_db.sh" "$MODIFIED" "$DB"
+echo "Modified backup created: $MODIFIED."
