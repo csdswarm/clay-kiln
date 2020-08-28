@@ -25,6 +25,11 @@ module.exports = stationizedComponent({
     if (!data.podcastsUrl) { // This should validates against null, undefined and blank values
       data.podcastsUrl = '/audio';
     }
+
+    // if the phone number doesn't start with 1 add a 1
+    if (data.CTA_ContactInfoTelephone) {
+      data._computed.CTA_ContactInfoTelephone = data.CTA_ContactInfoTelephone.charAt(0) !== '1' ? `1${data.CTA_ContactInfoTelephone}` : data.CTA_ContactInfoTelephone;
+    }
     return data;
   }
 });
