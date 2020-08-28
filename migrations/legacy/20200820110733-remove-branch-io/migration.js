@@ -36,7 +36,7 @@ async function getAllPagesWithBranchIOHead(db, host) {
 
   return result.rows
     .filter(({ id }) => (
-      id.startsWith('dev-clay.radio.com')
+      id.startsWith(host)
     ))
     .map((row) => Object.assign({}, row, { id: row.id.replace('@published', '') }))
 }
