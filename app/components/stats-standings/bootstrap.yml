@@ -1,0 +1,5 @@
+_components:
+  stats-standings:
+    sport: ''
+    league: ''
+    teamId: ''
