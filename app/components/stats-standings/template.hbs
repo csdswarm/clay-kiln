@@ -4,18 +4,16 @@
   <link type="text/css" rel="stylesheet"
     href="https://widgets-assets.stats.com/css/widgets-{{ sport }}-standings-mini.min.css" media="all">
   <div id="shs-{{ sport }}-standings-mini" data-shs-client-id="{{ _computed.clientId }}" data-shs-league="{{ league }}"
-    data-shs-teamid="{{ teamId }}" class="standings-container">
+    data-shs-teamid="{{ teamId }}" class="stats-standings__container">
     <script type="text/javascript" src="https://widgets-assets.stats.com/shs-widgets/js/core.min.js"></script>
     <script type="text/javascript" src="https://widgets-assets.stats.com/js/{{ sport }}-standings-mini.min.js"></script>
   </div>
   {{else}}
   {{#ifAll sport league teamId}}
-  <div class="stats__preview">
-    <div>
-      <span>Sport: {{ sport }}</span><br />
-      <span>League: {{ league }}</span><br />
-      <span>Team ID: {{ teamId }}</span>
-    </div>
+  <div class="stats-standings__preview">
+      <div>Sport: {{ sport }}</div>
+      <div>League: {{ league }}</div>
+      <div>Team ID: {{ teamId }}</div>
   </div>
   {{/ifAll}}
   {{/unless}}
