@@ -12,6 +12,10 @@ content:
 
 title:
   _label: Component's Title
+  _placeholder:
+    height: 40px
+    text: Component's Title
+    required: true
   _has:
     validate:
       required: false

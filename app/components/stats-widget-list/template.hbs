@@ -2,7 +2,7 @@
     <div class="stats-widget-list__container">
         <div class="stats-widget-list__title" data-editable="settings">
             {{#ifAny @root.locals.edit titleVisible}}
-            <span>{{{ title }}}</span>
+            <span data-editable="title">{{{ title }}}</span>
             {{/ifAny}}
         </div>
         <div class="stats-widget-list__content" data-editable="content">

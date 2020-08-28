@@ -1,10 +1,10 @@
 _components:
   stats-widget-list:
-    title: 'LATEST SCORES'
+    title: ''
     titleVisible: true
     content: []
     instances:
       new:
-        title: 'LATEST SCORES'
+        title: ''
         titleVisible: true
         content: []
