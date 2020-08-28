@@ -46,6 +46,14 @@
   @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
 }
 
+@define-mixin station-listen-nav-cta1{
+  @mixin font CircularStd-Medium, 12px, $white, inherit, 15px;
+}
+
+@define-mixin station-listen-nav-cta2{
+  @mixin font CircularStd-Medium, 14px, $white, inherit, 17.71px;
+}
+
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
 $logo-margin-right: em(60);
@@ -303,7 +311,48 @@ $caret-margin-right: em(25);
         .station-nav__menu-right-cta {
           display: flex;
           align-items: center;
+          justify-content: flex-end;
           flex: 1 0 auto;
+        }
+        .station-nav__cta {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          &--newsletter {
+            @mixin station-listen-nav-cta1;
+          }
+          &--contact {
+            @mixin station-listen-nav-cta2;
+          }
+        }
+        .station-nav__cta-link {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: inherit;
+          &--newsletter {
+            text-transform: uppercase;
+          }
+        }
+        .station-nav__cta-link-icon,  .station-nav__cta-link-text {
+          display: flex;
+        }
+        .station-nav__cta-link-icon {
+          &--newsletter {
+            height: em(12, 12);
+            margin-right: em(6, 12);
+          }
+          &--chevron-right {
+            margin-left: em(4, 12);
+          }
+          &--tel {
+            height: em(14, 14);
+            margin-right: em(6, 14);
+          }
+          &--sms {
+            height: em(12, 14);
+            margin-right: em(6, 14);
+          }
         }
         .station-nav__menu-right-listen {
           display: flex;

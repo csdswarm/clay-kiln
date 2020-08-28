@@ -57,14 +57,40 @@
 
         {{!-- right side --}}
         <div class="station-nav__menu-right">
+          {{!-- CTA --}}
           <div class="station-nav__menu-right-cta">
             {{#if (compare CTA_Options "===" 'newsletter') }}
-              <h1>newsletter</h1>
+              <div class="station-nav__cta station-nav__cta--newsletter">
+                <a class="station-nav__cta-link station-nav__cta-link--newsletter" href="{{ CTA_NewsletterUrl }}">
+                  <span class="station-nav__cta-link-icon station-nav__cta-link-icon--tel">
+                    {{{ read "components/station-nav/media/icon-email.svg" }}}
+                  </span>
+                  <span class="station-nav__cta-link-text station-nav__cta-link-text--newsletter">
+                    Newsletters
+                  </span>
+                  <span class="station-nav__cta-link-icon station-nav__cta-link-icon--chevron-right">
+                    {{{ read "components/station-nav/media/icon-chevron-right.svg" }}}
+                  </span>
+                </a>
+              </div>
             {{/if}}
             {{#if (compare CTA_Options "===" 'contact') }}
-              <h1>2131321312</h1>
+              <div class="station-nav__cta station-nav__cta--contact">
+                <a class="station-nav__cta-link station-nav__cta-link--tel" href="tel:{{ _computed.CTA_ContactInfoTelephone }}">
+                  <span class="station-nav__cta-link-icon station-nav__cta-link-icon--tel">
+                    {{{ read "components/station-nav/media/icon-tel.svg" }}}
+                  </span>
+                  <span class="station-nav__cta-link-text station-nav__cta-link-text--tel">{{ _computed.CTA_ContactInfoTelephone }}</span>
+                </a>
+                <a class="station-nav__cta-link" href="sms:{{ CTA_ContactInfoSms }}">
+                  <span class="station-nav__cta-link-icon station-nav__cta-link-icon--sms">
+                    {{{ read "components/station-nav/media/icon-sms.svg" }}}
+                  </span>
+                  <span class="station-nav__cta-link-text station-nav__cta-link-sms">{{ CTA_ContactInfoSms }}</span>
+                </a>
+              </div>
             {{/if}}
-          </div>
+          </div>{{!-- end CTA --}}
 
           <div class="station-nav__menu-right-listen">
             <div class="menu__listen listen">
