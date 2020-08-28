@@ -2,8 +2,25 @@
 
 const _flow = require('lodash/flow'),
   _upperFirst = require('lodash/upperFirst'),
+  _intersection = require('loadash/intersection'),
+  _mergeWith = require('lodash/mergeWith'),
+  _isArray = require('lodash/isArray'),
   { sportsList, leagueList } = require('../universal/stats'),
   allowedFields = ['sport', 'league', 'teamId'];
+
+function addFieldRequired() {
+  return {
+    validate: {
+      required: true
+    }
+  };
+}
+
+function concatArrays(objValue, srcValue) {
+  if (_isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
 
 function createSelect(options, toUpperCase = false) {
   return {
@@ -15,16 +32,9 @@ function createSelect(options, toUpperCase = false) {
   };
 }
 
-function addFieldRequired() {
-  return {
-    validate: {
-      required: true
-    }
-  };
-}
 
 function getSchemaFields(schema) {
-  return Object.keys(schema).filter(field => allowedFields.includes(field));
+  return _intersection(Object.keys(schema), allowedFields);
 }
 
 // we separate these since the stats components can be sport wide, league wide, etc.
@@ -39,6 +49,7 @@ function addSport(schema) {
     }
   };
 }
+
 function addLeague(schema) {
   return {
     ...schema,
@@ -64,22 +75,21 @@ function addTeam(schema) {
 }
 
 function addSettingsGroup(schema) {
-  return {
-    ...schema,
-    _groups: {
-      settings: {
-
-        fields: [
-          ...getSchemaFields(schema)
-        ],
-        _placeholder: {
-          text: schema.schemaName,
-          height: '30px',
-          ifEmpty: getSchemaFields(schema).join(' or ')
+  const schemaFields = getSchemaFields(schema),
+    statsSettingsGroup = {
+      _groups: {
+        settings: {
+          fields: schemaFields,
+          _placeholder: {
+            text: schema.schemaName,
+            height: '30px',
+            ifEmpty: schemaFields.join(' or ')
+          }
         }
       }
-    }
-  };
+    };
+
+  return _mergeWith({}, statsSettingsGroup, schema, concatArrays);
 }
 
 function applySportProps(schema) {
