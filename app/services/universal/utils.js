@@ -6,6 +6,7 @@ const
   _identity = require('lodash/identity'),
   _isArray = require('lodash/isArray'),
   _isEmpty = require('lodash/isEmpty'),
+  _isFunction = require('lodash/isFunction'),
   _isNull = require('lodash/isNull'),
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
@@ -528,9 +529,30 @@ function includesAny(iterable1, iterable2) {
   return false;
 }
 
+/**
+ * Iterates over all prototype properties and binds any functions to itself
+ *
+ * The purpose is to reduce _bindAll boilerplate which usually binds every
+ *   instance function.
+ *
+ * @param {*} obj
+ */
+function bindInstanceFunctions(obj) {
+  const proto = obj.constructor.prototype;
+
+  for (const key of Object.getOwnPropertyNames(proto)) {
+    const val = obj[key];
+
+    if (key !== 'constructor' && _isFunction(val)) {
+      obj[key] = val.bind(obj);
+    }
+  }
+}
+
 module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
+  bindInstanceFunctions,
   boolKeys,
   boolObjectToArray,
   cleanUrl,
