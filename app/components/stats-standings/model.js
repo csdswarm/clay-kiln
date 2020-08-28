@@ -1,10 +1,12 @@
 'use strict';
 
-const { unityComponent } = require('../../services/universal/amphora');
+
+const { clientId } = require('../../services/universal/stats'),
+  { unityComponent } = require('../../services/universal/amphora');
 
 module.exports = unityComponent({
   render: (uri, data) => {
-    Object.assign(data._computed, { clientId: 'entercom' });
+    Object.assign(data._computed, { clientId });
 
     return data;
   }
