@@ -1,6 +1,8 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _filter = require('lodash/filter'),
+  _isEmpty = require('lodash/isEmpty'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
   { uriToUrl } = require('../../services/universal/utils'),
@@ -30,8 +32,22 @@ async function addSyndicationEntry(uri, syndicationEntry) {
   const data = await db.get(uri);
 
   updateStationSyndicationType(data);
-  data.stationSyndication = data.stationSyndication.filter(syndicated => !syndicated.exclude);
-  data.stationSyndication.push({ ...syndicationEntry });
+  const unsubscribed = _filter(data.stationSyndication, { callsign: syndicationEntry.callsign, unsubscribed: true });
+
+
+  if (!_isEmpty(unsubscribed)) {
+    data.stationSyndication.forEach(syndication => {
+      if (syndication.callsign === syndicationEntry.callsign) {
+        syndication.unsubscribed = false;
+        syndication.sectionFront = syndicationEntry.sectionFront;
+        syndicationEntry.secondarySectionFront
+          ? syndication.secondarySectionFront = syndicationEntry.secondarySectionFront
+          : delete syndication.secondarySectionFront;
+      }
+    });
+  } else {
+    data.stationSyndication.push({ ...syndicationEntry });
+  }
   addStationSyndicationSlugs(data);
 
   await db.put(uri, data);
@@ -44,14 +60,14 @@ async function addSyndicationEntry(uri, syndicationEntry) {
  */
 async function removeSyndicationEntry(uri, callsign) {
   const data = await db.get(uri),
-    stationSyndication = data.stationSyndication.filter(syndicated => syndicated.callsign !== callsign );
+    stationSyndication = data.stationSyndication.map(syndicated => {
+      if (syndicated.callsign === callsign) {
+        syndicated.unsubscribed = true;
+      }
+      return syndicated;
+    });
 
-  data.stationSyndication = stationSyndication.filter(syndicated => syndicated.exclude !== callsign );
-  // Adds an entry to handle manually unsyndicated.
-  data.stationSyndication.push({
-    exclude: callsign,
-    source: 'unsubscribed'
-  });
+  data.stationSyndication = stationSyndication;
   await db.put(uri, data);
 }
 

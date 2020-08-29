@@ -285,6 +285,7 @@
       openModal(contentId) {
         this.resetSyndicationLoading();
         this.selectedContentId = contentId;
+        console.log('DEBUG:::::::::::::::::::::: contentId', contentId);
         this.selectedSectionFronts = {};
         this.$refs.syndicationModal.open();
       },
