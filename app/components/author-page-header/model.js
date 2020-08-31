@@ -2,14 +2,12 @@
 
 const
   _get = require('lodash/get'),
+  capitalize = require('../../services/universal/capitalize'),
   createContent = require('../../services/universal/create-content'),
   { assignStationInfo } = require('../../services/universal/create-content'),
   { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
 
-  _capitalize = (str) => {
-    return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
-  },
   socialLinks = [
     {
       type: 'facebook',
@@ -50,11 +48,11 @@ module.exports = unityComponent({
     }).filter(updatedLink => updatedLink);
     
     if (_get(locals, 'params.dynamicAuthor')) {
-      data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
+      data.author = capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
     }
 
     if (_get(locals, 'params.author') && _get(data, '_computed.dynamic')) {
-      data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
+      data.author = capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     }
 
     assignStationInfo(ref, data, locals);

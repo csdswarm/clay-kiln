@@ -4,6 +4,7 @@ const
   _get = require('lodash/get'),
   applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
+  capitalize = require('../capitalize'),
   circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
@@ -11,7 +12,7 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
-  slugifyService = require('../slugify'),
+  slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
@@ -20,8 +21,8 @@ const
   {
     has,
     isFieldEmpty,
-    textToEncodedSlug,
     replaceVersion,
+    textToEncodedSlug,
     uriToUrl,
     urlToElasticSearch
   } = require('../utils'),
@@ -366,10 +367,6 @@ function sanitizeByline(data) {
   data.byline = byline.filter(entry => !!entry.names);
 }
 
-function _capitalize(str) {
-  return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
-}
-
 /**
  * Iterates over the byline, cleaning and consolidating authors and sources into their own
  * property for backward compatibility and reduced development effort elsewhere
@@ -388,21 +385,21 @@ function bylineOperations(data) {
       on save as to not affect rendering.
     */
     for (const author of names || []) {
-      const slug = slugifyService(author.text);
+      const slug = slugify(author.text);
 
       delete author.count;
       author.slug = textToEncodedSlug(author.text);
       author.name = author.name ? author.name : author.text;
-      author.text = _capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
+      author.text = capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
-      const slug = slugifyService(host.text);
+      const slug = slugify(host.text);
 
       delete host.count;
-      host.slug = slugifyService(host.text);
+      host.slug = textToEncodedSlug(host.text);
       host.name = host.name ? host.name : host.text;
-      host.text = _capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
+      host.text = capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
       hosts.push(host);
     }
     // do sources too
