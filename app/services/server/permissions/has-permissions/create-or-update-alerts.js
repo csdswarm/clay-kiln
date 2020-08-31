@@ -29,7 +29,7 @@ function createOrUpdateAlert(action) {
       hasPermission = user.can(action).a('global-alert').for(unityApp).value;
       permissionMessage = hasPermission.message;
     } else {
-      const station = (await getAllStations({ locals })).byCallsign[callsign];
+      const station = callsign === 'NATL-RC' ? locals.station : (await getAllStations({ locals })).byCallsign[callsign];
 
       if (!station) {
         res.status(400);

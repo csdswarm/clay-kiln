@@ -1,0 +1,233 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin host-page-header-font1 {
+  @mixin font CircularStd-Black, 35px, $mineShaft, -.58px, 42px;
+}
+@define-mixin host-page-header-font2 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.33px, 22px;
+}
+@define-mixin host-page-header-font3 {
+  @mixin font ProximaNova-Regular, 18px, $black, inherit, 28px;
+}
+@define-mixin host-page-header-font4 {
+  @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
+}
+
+.host-page-header {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding: em(30);
+    background: $white;
+    width: em(1160);
+    margin: auto;
+
+    @mixin large-screen {
+        width: em(1000);
+    }
+    @mixin medium-screen {
+        width: calc(100% - em(60));
+        max-width: em(728);
+    }
+    @mixin medium-small-screen {
+        width: calc(100% - em(40));
+        padding: 0 em(20);
+    }
+
+    &__left-content {
+        width: em(800);
+        padding-right: em(30);
+
+        @mixin large-screen {
+            width: em(640);
+        }
+
+        @mixin medium-screen {
+            width: 100%;
+            padding-right: 0;
+        }
+    }
+
+    &__right-content {
+        position: absolute;
+        padding: em(30);
+        top: 0;
+        right: 0;
+
+        @mixin medium-screen {
+            display: none;
+        }
+    }
+
+    @mixin medium-screen {
+        flex-direction: column;
+    }
+    &__host-info-container {
+        display: flex;
+        margin-bottom: em(14);
+        @mixin medium-small-screen {
+            flex-wrap: wrap;
+        }
+    }
+    &__img-container {
+        flex: 0 0 33%;
+        @mixin medium-small-screen {
+            flex: 0 0 100%;
+        }
+    }
+    &__host-img {
+        width: 100%;
+        border: em(1) solid $alto;
+    }
+    &__text-container {
+        display: flex;
+        flex: auto;
+        padding-left: em(20);
+        flex-direction: column;
+        justify-content: center;
+        @mixin medium-small-screen {
+            padding-left: em(0);
+            padding-top: em(20);
+        }
+    }
+    &__dynamic-container {
+        height: em(110);
+        position: relative;
+        margin: auto;
+        max-width: 100%;
+        width: em(1100);
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    &__line {
+        width: 100%;
+        height: 0;
+        border-bottom: em(1) solid theme(primaryColor, $parisM);
+    }
+    &__dynamic-name {
+        @mixin topic-page-header-font2;
+        position: absolute;
+        background: $white;
+        padding: 0 em(15,35) 0 0;
+    }
+    &__name {
+        @mixin host-page-header-font1;
+    }
+    &__schedule {
+        margin-bottom: em(14, 20);
+        @mixin host-page-header-font2;
+    }
+    &__social-container {
+        display: block;
+        @mixin host-page-header-font4;
+        @mixin only-medium-screen {
+            display: none;
+        }
+        /* This is a BEM combinator hack right now - adding to retro to discuss */
+        /* Share component needs to have added functionality to accomodate this need - added car to sprint retro */
+        .component--share {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+    &__social-container--md-sm-screen {
+        display: none;
+        @mixin only-medium-screen {
+            display: block;
+            margin-bottom: em(20);
+        }
+    }
+    &__bio-text-container {
+        padding-bottom: em(38);
+    }
+    &__bio-text {
+        margin-bottom: em(14);
+        &.paragraph > p {
+            margin-bottom: em(18);
+        }
+        &.paragraph :last-child {
+            margin-bottom: 0;
+        }
+    }
+    &__links {
+        display: flex;
+    }
+    &__links-host-name {
+        @mixin host-page-header-font4;
+    }
+    &__link {
+        /* Set each item to constant 40x40px, including border */
+        width: em(40);
+        height: em(40);
+        border: em(1) solid $alto;
+        box-sizing: border-box;
+        /* Center image, set size to 20x20px, and don't repeat it */
+        background: center/em(20) em(20) no-repeat;
+
+        /* Move each item but first up 1px to create 1px border */
+        &:not(:first-child) {
+            margin-top: em(-1);
+        }
+        /* Show the item's border on hover so it can be recolored properly */
+        &:hover,
+        &:active {
+            z-index: 1;
+        }
+    }
+    &__link-- {
+        &facebook {
+            background-image: url("/media/components/host-page-header/facebook.svg");
+            background-size: auto em(22); /* Increase FB image height to 22px */
+            &:hover,
+            &:active {
+                background-color: $chambray;
+                border-color: $chambray;
+                background-image: url("/media/components/host-page-header/facebook--hover.svg");
+            }
+        }
+        &twitter {
+            background-image: url("/media/components/host-page-header/twitter.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $cerulean;
+                border-color: $cerulean;
+                background-image: url("/media/components/host-page-header/twitter--hover.svg");
+            }
+        }
+        &instagram {
+            background-image: url("/media/components/host-page-header/instagram.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $redViolet;
+                border-color: $redViolet;
+                background-image: url("/media/components/host-page-header/instagram--hover.svg");
+            }
+        }
+        &youtube {
+            background-image: url("/media/components/host-page-header/youtube.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $red;
+                border-color: $red;
+                background-image: url("/media/components/host-page-header/youtube--hover.svg");
+            }
+        }
+        &email {
+            background-image: url("/media/components/host-page-header/email.svg");
+            &:hover,
+            &:active {
+                background-color: $parisM;
+                border-color: $parisM;
+                background-image: url("/media/components/host-page-header/email--hover.svg");
+            }
+        }
+    }
+}
+
+

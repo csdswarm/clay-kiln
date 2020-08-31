@@ -23,6 +23,7 @@ if [[ $(curl "$http://$1/_components/station-footer/instances" 2>&1) == *"statio
 then
     echo "Section Front 3 station footer already exists";
 else
+    npm init -f;
     npm i yamljs;
     clay export -y "$http://$1/_layouts/one-column-layout/instances/station" > layout.yml;
     node ./modifyLayout.js;
@@ -30,5 +31,5 @@ else
     cat ./components.yml | clay import -y -k demo "$http://$1";
     cat ./layout.yml | clay import -y -k demo "$http://$1";
 
-    rm -rf ./node_modules package-lock.json layout.yml
+    rm -rf ./node_modules package*.json layout.yml
 fi

@@ -1,0 +1,13 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--podcast-episode-page {
+  &.podcast-episode-page {
+
+  }
+}
+
+.layout--two-column[data-main-component="podcast-episode-page"] .layout__content .content__sidebar {
+    visibility: visible;
+}

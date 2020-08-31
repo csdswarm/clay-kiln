@@ -2,6 +2,7 @@
 const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
   { getComponentName } = require('clayutils'),
   fetchStationFeeds = require('../../../server/fetch-station-feeds'),
+  transformStationFeed = require('../../../universal/transform-station-feed'),
   getS3StationFeedImgUrl = require('../../../server/get-s3-station-feed-img-url'),
   _get = require('lodash/get'),
   { DEFAULT_RADIOCOM_LOGO, DEFAULT_STATION } = require('../../../universal/constants'),
@@ -15,26 +16,12 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
    * @returns {Promise}
    */
   renderRssFeed = async (data, locals, numberOfArticles = 5) => {
-    const feed = await fetchStationFeeds(data, locals),
-      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, numberOfArticles) : [];
-
     data._computed.station = locals.station.name;
-    data._computed.articles = await Promise.all(nodes.map(async (item) => {
-      const feedImgUrl = _get(item, "node['OG Image'].src"),
-        s3FeedImgUrl = feedImgUrl
-          ? await getS3StationFeedImgUrl(feedImgUrl, locals, {
-            shouldAddAmphoraTimings: true,
-            amphoraTimingLabelPrefix: 'render station'
-          })
-          : DEFAULT_RADIOCOM_LOGO;
-
-      return {
-        feedImgUrl: s3FeedImgUrl,
-        externalUrl: item.node.URL,
-        primaryHeadline: item.node.field_engagement_title || item.node.title
-      };
-    })
-    );
+    data._computed.articles = (await transformStationFeed(
+      locals,
+      await fetchStationFeeds(data, locals),
+      numberOfArticles
+    )).items;
     return data;
   },
   /**
@@ -61,7 +48,7 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
           locals
         ),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
-      
+
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
         const feedImgUrl = _get(item, "node['OG Image'].src"),
           s3FeedImgUrl = feedImgUrl
@@ -74,7 +61,8 @@ const { getSectionFrontName, retrieveList } = require('../../../server/lists'),
         return {
           feedImgUrl: s3FeedImgUrl,
           externalUrl: item.node.URL,
-          primaryHeadline: item.node.field_engagement_title || item.node.title
+          primaryHeadline: item.node.field_engagement_title || item.node.title,
+          date: item['Post date']
         };
       }));
     } else {

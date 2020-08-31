@@ -12,6 +12,8 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
+npm init -f;
+
 npm i yamljs;
 
 stationFront="_components/section-front/instances/station-basic-music"
@@ -21,5 +23,5 @@ clay export -y "$http://$1/$stationFront" > ./stationFront.yml
 node ./modifyComponentInstance.js "$1"
 
 cat ./stationFront.yml | clay import -k demo -y $1
-rm -rf ./stationFront.yml ./node_modules ./package-lock.json
+rm -rf ./stationFront.yml ./node_modules ./package*.json
 printf "\n\n\n\n"
