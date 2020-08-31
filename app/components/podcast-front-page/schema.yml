@@ -1,7 +1,18 @@
+_version: 1.0
+_confirmRemoval: true
+
 _description: |
-  landing page featuring podcasts
+  Landing page featuring podcasts
+
+enableHero:
+  _label: Enable hero carousel
+  _has: checkbox
+
+pageHeader:
+  - /_components/topic-page-header/instances/new
 
 hero:
+  enabled: enableHero
   _label: Podcast Front Hero
   _placeholder:
     text: Podcast Front Hero
@@ -22,3 +33,8 @@ content:
     include:
       - podcast-featured-strip
       - podcast-category-strip
+
+_groups:
+  settings:
+    fields:
+    - enableHero

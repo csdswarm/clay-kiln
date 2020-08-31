@@ -1,9 +1,17 @@
 <div class="component component--podcast-front-page podcast-front-page" data-uri="{{ default _ref _self }}">
+  {{#if enableHero}}
   {{#ifAny hero.length @root.locals.edit }}
   <div class="full-width" data-editable="hero">
     {{> component-list hero }}
   </div>
   {{/ifAny}}
+  {{else}}
+  <div  class="component component--page-header">
+    <div class="page-header__banner">
+      <h1>Podcasts</h1>
+    </div>
+  </div>
+  {{/if}}
   <div data-editable="content">
     {{> component-list content }}
   </div>
