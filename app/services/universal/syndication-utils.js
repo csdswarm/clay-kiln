@@ -10,7 +10,6 @@ const
     findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
     inStation: stationSlug => data => {
-      // TODO: revisar este tema.
       /*
         This method is being used both for checking if an article belongs to or is syndicated to a
         station, but with a syndication entry we can't assume it belongs to national when stationSlug
@@ -77,9 +76,29 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   };
 }
 
+/**
+   * Removes unsubscribed elements from the subscriptions entries
+   * @param {Array} unsubscribed
+   * @param {Array} subscriptions
+   * @return {Array} filteredStationSubscribed
+   *
+   */
+function filterUnsubscribedEntries(unsubscribed, subscriptions) {
+  let filteredStationSubscribed = subscriptions;
+  
+  unsubscribed.forEach(syndicationEntry => {
+    filteredStationSubscribed = subscriptions.filter(subscription => {
+      return subscription.callsign !== syndicationEntry.callsign;
+    });
+  });
+  
+  return filteredStationSubscribed;
+}
+
 module.exports = {
   _internals: __,
   syndicationUrlPremap,
+  filterUnsubscribedEntries,
   findSyndicatedStation,
   generateSyndicationSlug
 };

@@ -271,5 +271,40 @@ describe('universal', () => {
         });
       });
     });
+
+    describe('filterUnsubscribedEntries', () => {
+      const subscriptions =  [
+          {
+            stationSlug: 'station-a',
+            callsign: 'callsign-a',
+            syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
+            source: 'content subscription'
+          },
+          {
+            stationSlug: 'station-b',
+            callsign: 'callsign-b',
+            syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
+            source: 'editorial feed'
+          },
+          {
+            stationSlug: 'station-b',
+            callsign: 'callsign-b',
+            syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
+            source: 'manual syndication'
+          }
+        ],
+        unsubscribed = [
+          {
+            stationSlug: 'station-b',
+            callsign: 'callsign-b',
+            syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
+            source: 'editorial feed'
+          }
+        ];
+
+      it('should filter elements that match callsign from the subscription array', () => {
+        expect(syndicationUtils.filterUnsubscribedEntries(unsubscribed, subscriptions)).to.have.length(1);
+      });
+    });
   });
 });

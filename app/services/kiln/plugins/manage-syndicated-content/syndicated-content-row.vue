@@ -179,7 +179,7 @@
        * fronts before creating the syndication
        */
       onSyndicate() {
-        this.$emit('createSyndication', this.content._id);
+        this.$emit('createSyndication', this.content);
       },
       /**
        * unpublish syndicated station from content

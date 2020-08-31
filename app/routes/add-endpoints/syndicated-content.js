@@ -3,6 +3,7 @@
 const _get = require('lodash/get'),
   _filter = require('lodash/filter'),
   _isEmpty = require('lodash/isEmpty'),
+  _reject = require('lodash/reject'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
   { uriToUrl } = require('../../services/universal/utils'),
@@ -39,16 +40,13 @@ async function addSyndicationEntry(uri, syndicationEntry) {
     data.stationSyndication.forEach(syndication => {
       if (syndication.callsign === syndicationEntry.callsign) {
         syndication.unsubscribed = false;
-        syndication.sectionFront = syndicationEntry.sectionFront;
-        syndicationEntry.secondarySectionFront
-          ? syndication.secondarySectionFront = syndicationEntry.secondarySectionFront
-          : delete syndication.secondarySectionFront;
+        // Keep previous sectionFront.
       }
     });
   } else {
     data.stationSyndication.push({ ...syndicationEntry });
+    addStationSyndicationSlugs(data);
   }
-  addStationSyndicationSlugs(data);
 
   await db.put(uri, data);
 }
@@ -67,7 +65,8 @@ async function removeSyndicationEntry(uri, callsign) {
       return syndicated;
     });
 
-  data.stationSyndication = stationSyndication;
+  // removes manual syndications from entry.
+  data.stationSyndication = _reject(stationSyndication, { source: 'manual syndication' });
   await db.put(uri, data);
 }
 
