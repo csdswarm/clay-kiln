@@ -2,9 +2,9 @@
 
 const
   _get = require('lodash/get'),
-  capitalize = require('../../services/universal/capitalize'),
   createContent = require('../../services/universal/create-content'),
   { assignStationInfo } = require('../../services/universal/create-content'),
+  { capitalize } = require('../../services/universal/capitalize'),
   { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
 

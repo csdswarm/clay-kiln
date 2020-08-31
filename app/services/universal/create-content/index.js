@@ -4,7 +4,6 @@ const
   _get = require('lodash/get'),
   applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
-  capitalize = require('../capitalize'),
   circulationService = require('../circulation'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
@@ -16,6 +15,7 @@ const
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
+  { capitalize } = require('../capitalize'),
   { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
