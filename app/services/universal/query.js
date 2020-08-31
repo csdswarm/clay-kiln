@@ -535,39 +535,32 @@ function getStationSyndication(canonicalUrl, url) {
     articleSyndicatedUrl = isUrl ? new URL(url) : url,
     { pathname = `${url}` } = articleSyndicatedUrl;
 
-  return {
+  return [{
     bool: {
-      should: [
-        {
-          bool: {
-            filter: {
-              term: { canonicalUrl }
-            }
-          }
-        },
-        {
-          nested: {
-            path: 'stationSyndication',
-            query: {
-              bool: {
-                must: [
-                  {
-                    match: {
-                      'stationSyndication.syndicatedArticleSlug': {
-                        query: pathname,
-                        operator: 'and'
-                      }
-                    }
-                  }
-                ]
+      filter: {
+        term: { canonicalUrl }
+      }
+    }
+  },
+  {
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.syndicatedArticleSlug': {
+                  query: sanitizeSearchTerm(pathname),
+                  operator: 'and'
+                }
               }
             }
-          }
+          ]
         }
-      ],
-      minimum_should_match: 1
+      }
     }
-  };
+  }];
 }
 
 

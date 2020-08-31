@@ -52,41 +52,19 @@
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
   const { sanitizeSearchTerm } = queryService;
-  const nationalStationSlug = DEFAULT_STATION.site_slug;
-  // this query says
-  //   "match if stationSlug doesn't exist or it's an empty slug"
-  //   currently I think national stations shouldn't have a stationSlug, but
-  //   because I'm setting stationSlug to an empty string as a national slug
-  //   identifier, I wanted to make sure we checked that as well.
-  const matchNationalStation = [
-    {
+
+  const ELASTIC_FIELDS = [
+      'date',
+      'canonicalUrl',
+      'seoHeadline',
+      'stationSyndication',
+      'stationSlug'
+    ],
+    nationalMustNot = {
       bool: {
         must_not: { exists: { field: "stationSlug" } }
       }
-    },
-    { match: { stationSlug: nationalStationSlug } },
-    {
-      nested: {
-        path: "stationSyndication",
-        query: {
-          bool: {
-            must: [
-              { 
-                match: { "stationSyndication.stationSlug": nationalStationSlug }
-              },
-            ],
-          },
-        },
-      },
-    },
-  ],
-  ELASTIC_FIELDS = [
-    'date',
-    'canonicalUrl',
-    'seoHeadline',
-    'stationSyndication',
-    'stationSlug'
-  ];
+    }
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -98,57 +76,12 @@
         initialStationSlug: '',
       };
     },
-    watch: {
-      data(val) {
-        this.searchText = val || '';
-        this.performSearch();
-      }
-    },
     computed: {
       ...mapGetters(stationSelect.storeNs, ['selectedStation']),
       isNationalSelected() {
         return !(this.selectedStation
           ? this.selectedStation.slug
           : this.initialStationSlug);
-      },
-      getStationFilter() {
-        return this.isNationalSelected
-          ? matchNationalStation
-          : [
-              {
-                match: { stationSlug: this.getStationSlug },
-              },
-              {
-                nested: {
-                  path: "stationSyndication",
-                  query: {
-                    bool: {
-                      must: [
-                        { match: { "stationSyndication.stationSlug": this.getStationSlug },
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            ];
-      },
-      getStationNestedQuery() {
-        return {
-            path: "stationSyndication",
-            query: {
-              bool: {
-                must: [
-                  { 
-                    match: { "stationSyndication.stationSlug": this.getStationSlug },
-                  },
-                  {
-                    match: { "stationSyndication.syndicatedArticleSlug": this.getSyndicatedArticleSlug }
-                  }
-                ],
-              },
-          },
-        }
       },
       getStationSlug() {
         return this.selectedStation
@@ -158,10 +91,7 @@
       getSyndicatedArticleSlug() {
         const searchString = this.searchText.replace(/^https?:\/\//, ''),
           host = isUrl(this.searchText) ? searchString.split('/')[0] : '';
-        return {
-          query: searchString.replace(host, ''),
-          operator: "and"
-        }
+        return searchString.replace(`${host}/`, '');
       },
       showResults() {
         return this.loading || this.searchResults.length !== 0;
@@ -191,40 +121,76 @@
           query = queryService('published-content', locals),
             // if there are no search text yet, pass in * to get the top 10 most recent
             searchString = this.searchText || '*',
-            searchCondition = {
-              bool: {
-                should: [
-                  {
+            searchCondition = [
+              {
+                query_string: {
+                  query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
+                  fields: ["authors", "canonicalUrl", "tags", "teaser"]
+                }
+              }, 
+              {
+                nested: {
+                  path: "stationSyndication",
+                  query: {
                     bool: {
-                      must: [{
-                        query_string: {
-                          query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
-                          fields: ["authors", "canonicalUrl", "tags", "teaser"]
+                      must: [
+                        {
+                          match: {
+                            "stationSyndication.syndicatedArticleSlug": {
+                              query: sanitizeSearchTerm(`/${this.getSyndicatedArticleSlug}`),
+                              operator: "and"
+                            }
+                          }
                         }
-                      },
-                      {
-                        match: { stationSlug: this.getStationSlug }
-                      }],
+                      ]
                     }
-                  }, 
-                  {
-                    nested: this.getStationNestedQuery
                   }
-                ],
-                minimum_should_match: 1
+                }
               }
-            }
+            ],
+            filterShould= [{
+                match: {
+                  stationSlug: this.getStationSlug
+                },
+              },
+              {
+                nested: {
+                  path: "stationSyndication",
+                  query: {
+                    bool: {
+                      should: [
+                        {
+                          match: {
+                            "stationSyndication.stationSlug": this.getStationSlug
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }],
+            shouldIncludeNationalMustNot = this.isNationalSelected ? [...filterShould, nationalMustNot] : filterShould,
+            filterCondition = [
+              {
+                bool: {
+                  should: shouldIncludeNationalMustNot,
+                  minimum_should_match: 1
+                }
+              }
+            ];
+
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
         queryService.addShould(query, searchCondition);
+        queryService.addMinimumShould(query, 1);
+        queryService.addFilter(query, filterCondition)
         queryService.addSort(query, { date: { order: 'desc' } });
-
+        
         const results = await queryService.searchByQuery(
           query,
           locals,
           { shouldDedupeContent: false }
         );
-
         // format the date using the same format as clay-kiln
         return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }));
       },
@@ -254,7 +220,7 @@
        * determines if the search should take place based on the current input
        */
       inputOnchange() {
-        if (this.searchTextparams === '' || !this.searchText || this.searchText.length > 2) {
+        if (!this.searchText || this.searchText.length > 2) {
           if(isUrl(this.searchText)){
             this.commitFormData();
           }
@@ -270,13 +236,17 @@
        * @param selected
        */
       selectItem(selected) {
-        const { canonicalUrl, stationSlug, stationSyndication } = selected, 
+        const { canonicalUrl, stationSlug = '', stationSyndication } = selected, 
           { protocol, host } = new URL(canonicalUrl),
           syndicationToStation = (stationSyndication || []).find(syndication => syndication.stationSlug === this.getStationSlug);
 
-        this.searchText = this.getStationSlug !== stationSlug ?
-        `${protocol}//${host}${syndicationToStation ? syndicationToStation.syndicatedArticleSlug: ''}`:
-        canonicalUrl;
+        this.searchText = 
+          this.getStationSlug !== stationSlug 
+            ? `${protocol}//${host}${
+                syndicationToStation
+                  ? syndicationToStation.syndicatedArticleSlug 
+                  : ''}`
+            : canonicalUrl;
         this.searchResults = [selected];
         this.commitFormData();
       }
