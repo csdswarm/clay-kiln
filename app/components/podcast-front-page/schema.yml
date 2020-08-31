@@ -1,15 +1,16 @@
 _version: 1.0
-_confirmRemoval: true
-
 _description: |
-  Landing page featuring podcasts
+  landing page featuring podcasts
+
+title:
+  _label: Title to show when the hero carousel is disabled
+  _has: 
+    input: text
 
 enableHero:
   _label: Enable hero carousel
   _has: checkbox
 
-pageHeader:
-  - /_components/topic-page-header/instances/new
 
 hero:
   enabled: enableHero
@@ -37,4 +38,5 @@ content:
 _groups:
   settings:
     fields:
-    - enableHero
+      - enableHero
+      - title

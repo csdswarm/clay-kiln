@@ -6,10 +6,11 @@
   </div>
   {{/ifAny}}
   {{else}}
-  <div  class="component component--page-header">
-    <div class="page-header__banner">
-      <h1>Podcasts</h1>
-    </div>
+  <div class="component component--page-header {{ if @root.locals.edit ' editing' }}"
+    data-editable="settings">
+      <div class="page-header__banner">
+        <h1>{{#if title }}{{ title }}{{else}}Podcasts{{/if}}</h1>
+      </div>
   </div>
   {{/if}}
   <div data-editable="content">
