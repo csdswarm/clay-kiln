@@ -2,7 +2,7 @@
 
 const _flow = require('lodash/flow'),
   _upperFirst = require('lodash/upperFirst'),
-  _intersection = require('loadash/intersection'),
+  _intersection = require('lodash/intersection'),
   _mergeWith = require('lodash/mergeWith'),
   _isArray = require('lodash/isArray'),
   { sportsList, leagueList } = require('../universal/stats'),
