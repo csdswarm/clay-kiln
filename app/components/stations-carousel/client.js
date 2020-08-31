@@ -359,8 +359,13 @@ class StationsCarousel {
         this.createPaginationDots();
       }
       this.hammerTime.on('pan', function (e) {
+        if (!e.isFinal) {
+          return;
+          // using pan as opposed to panleft or panright because it allows for wider
+          // variations in user movements and short-circuiting until final
+        }
         e.preventDefault();
-        if (e.isFinal && Math.abs(e.deltaX) > hammerDeltaXThreshold) {
+        if (Math.abs(e.deltaX) > hammerDeltaXThreshold) {
           this.getPage(e, this, e.direction);
         }
       }.bind(this));
