@@ -3,7 +3,10 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   radioApiService = require('../../services/client/radioApi'),
   Hammer = require('hammerjs'),
-  localStorage = window.localStorage;
+  localStorage = window.localStorage,
+  hammerDirectionLeft = 2,
+  hammerDirectionRight = 4,
+  hammerDeltaXThreshold = 5;
 
 
 class StationsCarousel {
@@ -222,14 +225,15 @@ class StationsCarousel {
    * Show new page results on click of arrows or pagination dots
    * @param {object} event
    * @param {object} _this
+   * @param {object} hammerDirection
    * @function
    */
-  getPage(event, _this) {
+  getPage(event, _this, hammerDirection) {
     const leftArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'left',
       rightArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'right',
       dotEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-page') !== null,
-      swipeLeftEvent = event ? event.type == 'swipeleft' : false,
-      swipeRightEvent = event ?  event.type == 'swiperight' : false;
+      swipeLeftEvent = event ? hammerDirection == hammerDirectionLeft : false,
+      swipeRightEvent = event ?  hammerDirection == hammerDirectionRight : false;
 
     // within this context we navigate with dots and swipe gestures
     if (_this.windowWidth < _this.windowSizes.medium) {
@@ -354,11 +358,11 @@ class StationsCarousel {
       if (this.windowWidth < this.windowSizes.medium) {
         this.createPaginationDots();
       }
-      this.hammerTime.on('swipeleft', function (e) {
-        this.getPage(e, this);
-      }.bind(this));
-      this.hammerTime.on('swiperight', function (e) {
-        this.getPage(e, this);
+      this.hammerTime.on('pan', function (e) {
+        e.preventDefault();
+        if (e.isFinal && Math.abs(e.deltaX) > hammerDeltaXThreshold) {
+          this.getPage(e, this, e.direction);
+        }
       }.bind(this));
       this.leftArrow.addEventListener('click', function (e) {
         this.getPage(e, this);
