@@ -423,6 +423,11 @@
       padding: em(20);
     }
 
+    .advanced-image-upload__file-check-error {
+      color: #f44336;
+      font-size: .875em;
+    }
+
   }
 
 }

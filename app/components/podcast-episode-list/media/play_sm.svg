@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 60.1 (101010) - https://sketch.com -->
+    <title>C56D6A6F-9E57-4A2E-9712-CC086EAE67C2</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <circle id="path-1" cx="16" cy="16" r="16"></circle>
+        <filter x="-9.4%" y="-9.4%" width="118.8%" height="118.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.17504529 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="breaks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1279-1024-Podcast-Page" transform="translate(-607.000000, -705.000000)">
+            <g id="section-/-station-page-/-podcast_info" transform="translate(42.000000, 673.000000)">
+                <g id="player-/-btn-/-btn_playGeneric" transform="translate(567.000000, 34.000000)">
+                    <g>
+                        <g id="Oval">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                            <circle stroke="#979797" stroke-width="1" stroke-linejoin="square" fill="#FFFFFF" fill-rule="evenodd" cx="16" cy="16" r="15.5"></circle>
+                        </g>
+                        <g class="svg-play-symbol" transform="translate(7.619048, 7.619048)" fill="#3C00B7" fill-rule="evenodd">
+                            <path d="M5.46843218,0.649878019 L14.6442321,7.99051798 C14.8598631,8.16302275 14.8948238,8.47766894 14.722319,8.6932999 C14.6992531,8.72213226 14.6730645,8.7483209 14.6442321,8.77138679 L5.46843218,16.1120267 C5.25280121,16.2845315 4.93815503,16.2495708 4.76565025,16.0339399 C4.69472503,15.9452833 4.65608466,15.8351281 4.65608466,15.7215923 L4.65608466,1.04031242 C4.65608466,0.764170049 4.87994228,0.540312424 5.15608466,0.540312424 C5.2696204,0.540312424 5.37977566,0.5789528 5.46843218,0.649878019 Z" id="Shape"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -230,7 +230,7 @@ const { getComponentInstance } = require('clayutils'),
 
     const { currentTarget } = event,
       drawerItem = currentTarget.closest('.drawer__item');
-    
+
     if (!drawerItem.classList.contains(active)) {
       // Close dropdown of all categories
       for (const item of mobileNavItems) {

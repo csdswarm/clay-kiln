@@ -101,6 +101,7 @@ const
     },
     filters: {
       ...getAuthor(data, locals),
+      ...getHost(data, locals),
       contentTypes: boolObjectToArray(data.contentType),
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
@@ -141,6 +142,10 @@ const
       filterCondition: 'must',
       unique: true,
       createObj: contentType => ({ match: { contentType } })
+    },
+    host: {
+      filterCondition: 'must',
+      createObj: host => ({ match: { 'hosts.normalized': host } })
     },
     sectionFronts: {
       filterCondition: 'must',
@@ -363,6 +368,22 @@ const
     return { author };
   },
   /**
+   * Pull host from locals
+   *
+   * @param {object} data
+   * @param {object} locals
+   *
+   * @return {string} host
+   */
+  getHost = (data, locals) => {
+    const host = _get(locals, 'host') || _get(locals, 'params.host');
+
+    // Used for load-more queries
+    data.host = host;
+
+    return { host };
+  },
+  /**
    * Pull stationSlug from local params if dynamic station page
    * or locals station object
    *
@@ -397,16 +418,21 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
-    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
-      tags = tags.split(',');
+    
+    if (tags === '') {
+      return [];
     }
 
     // split comma separated tags (for load-more get queries)
-    data.tag = tags;
+    if (typeof tags === 'string' && tags.includes(',')) {
+      tags = tags.split(',');
+    }
 
-    if (tags === '') {
-      return [];
+    // Check for tags in the case of one column layouts, and retain the correct formatting for updating the tags for kiln's UI
+    if (typeof tags === 'string') {
+      data.tag = [{ text: tags }];
+    } else if (Array.isArray(tags)) {
+      data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
     }
 
     return tags;

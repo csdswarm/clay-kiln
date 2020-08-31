@@ -31,7 +31,7 @@ const _get = require('lodash/get'),
 
     data.dynamicTagPage = _get(locals, 'params.dynamicTag', _get(locals, 'params.stationSlug'));
 
-    if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0) {
+    if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0 && data.populateFrom !== 'host') {
       sendError(`${data.populateFrom} not found`, 404);
     }
 

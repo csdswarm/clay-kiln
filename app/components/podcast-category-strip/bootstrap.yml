@@ -1,0 +1,12 @@
+_components:
+  podcast-category-strip:
+    category: null
+    categoryNameOverride: ''
+    disableBottomBorder: false
+    curatedPodcasts: []
+    instances:
+      new:
+        category: null
+        categoryNameOverride: ''
+        disableBottomBorder: false
+        curatedPodcasts: []
