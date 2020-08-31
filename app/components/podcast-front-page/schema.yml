@@ -13,7 +13,6 @@ enableHero:
 
 
 hero:
-  enabled: enableHero
   _label: Podcast Front Hero
   _placeholder:
     text: Podcast Front Hero
