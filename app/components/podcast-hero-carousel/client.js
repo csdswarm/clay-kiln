@@ -257,7 +257,9 @@ class PodcastHeroCarouselController {
    * @param {Event} e - the event object
    */
   onComponentClick(e) {
-    if (this.view.isAnimating) return;  // short-circuit if currently animating
+    if (this.view.isAnimating) {
+      return;  // short-circuit if currently animating
+    }
 
     // directional buttons
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
@@ -271,7 +273,9 @@ class PodcastHeroCarouselController {
           newSlideIndex < this.model.slideIndex ? 'left' : 'right'
         ];
 
-      if (newSlideIndex === this.model.slideIndex) return;  // short-circuit if same as current slide
+      if (newSlideIndex === this.model.slideIndex) {
+        return;  // short-circuit if same as current slide
+      }
       this.model.updateSlideIndex(carouselDirectionalObject, newSlideIndex);
       this.view.onClickDirectionButton(carouselDirectionalObject);
       this.view.setActiveMacro(newSlideIndex);
@@ -342,7 +346,9 @@ class PodcastHeroCarouselController {
    * Contains the logic for the swiping left
    */
   onSwipeLeft() {
-    if (this.view.isAnimating) return;
+    if (this.view.isAnimating) {
+      return;
+    }
 
     this.transitionDirection(carouselDirectionalObjects.right);
   }
@@ -351,7 +357,9 @@ class PodcastHeroCarouselController {
    * Contains the logic for the swiping right
    */
   onSwipeRight() {
-    if (this.view.isAnimating) return;
+    if (this.view.isAnimating) {
+      return;
+    }
 
     this.transitionDirection(carouselDirectionalObjects.left);
   }
