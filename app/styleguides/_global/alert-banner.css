@@ -11,10 +11,12 @@ $mobile-text-line-height: em(17);
   max-width: em(1100);
   position: relative;
   overflow: hidden;
-  margin: em(20) auto;
+  margin: auto;
+  margin-bottom: em(20);
   min-height: $heading-height;
 
   @mixin medium-small-screen {
+    margin-top: em(20);
     margin-bottom: 0;
 
     .layout--one-column & {
