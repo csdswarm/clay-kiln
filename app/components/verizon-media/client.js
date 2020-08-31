@@ -64,8 +64,8 @@ class VerizonMedia extends Video {
     }
   }
   /**
-* @override
-*/
+   * @override
+   */
   addEvent(type, listener, options) {
     // proxy events through the node
     this.getNode().addEventListener(type, listener, options);

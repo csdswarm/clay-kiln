@@ -6,31 +6,48 @@ const { toTitleCase } = require('../../services/universal/utils'),
   _flow = require('lodash/flow'),
   _get = require('lodash/get');
 
+const paramVal = '${paramValue}';
+
+/**
+ * gets the computed description from either data or the url match, each will
+ *   have potential properties 'description', 'localsPath' and 'routeParam'
+ *
+ * @param {object} obj - either the component data or the successful url match
+ * @param {string} obj.description
+ * @param {string} [obj.localsPath]
+ * @param {string} [obj.routeParam]
+ * @param {object} locals
+ * @returns {string}
+ */
+function getComputedDescription({ description, localsPath, routeParam } = {}, locals) {
+  const localsVal = localsPath
+    ? _get(locals, localsPath)
+    : undefined;
+
+  let computedDescription = description;
+
+  if (routeParam && _get(locals, 'params')) {
+    computedDescription = description.replace(
+      paramVal,
+      _flow(hypensToSpaces, toTitleCase)(locals.params[routeParam])
+    );
+  } else if (localsVal) {
+    computedDescription = description.replace(
+      paramVal,
+      toTitleCase(localsVal)
+    );
+  }
+
+  return computedDescription;
+}
+
 module.exports = unityComponent({
   render: (ref, data, locals) => {
-    const urlMatch = data.urlMatches.find(({ urlString }) => matcher(urlString, locals.url));
+    const urlMatch = data.urlMatches.find(
+      ({ urlString }) => matcher(urlString, locals.url)
+    );
 
-    let description;
-
-    if (urlMatch) {
-      if (urlMatch.routeParam && locals && locals.params) {
-        description = urlMatch.description.replace('${paramValue}', _flow(hypensToSpaces, toTitleCase)(locals.params[urlMatch.routeParam]));
-      } else {
-        description = urlMatch.description;
-      }
-    } else if (data.routeParam && locals && locals.params) {
-      description = data.description.replace('${paramValue}', _flow(hypensToSpaces, toTitleCase)(locals.params[data.routeParam]));
-    } else if (data.localsKey && locals) {
-      const value = _get(locals, data.localsKey);
-
-      if (value) {
-        description = data.description.replace('${paramValue}', toTitleCase(value));
-      }
-    }
-    
-    data._computed = Object.assign(data._computed, {
-      description: description || data.description
-    });
+    data._computed.description = getComputedDescription(urlMatch || data, locals);
 
     return data;
   }

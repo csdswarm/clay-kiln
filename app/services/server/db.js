@@ -5,7 +5,7 @@ const utils = require('../universal/utils'),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
   DATA_STRUCTURES = [
-    'alert', 'apple_news', 'editorial_group', 'station_themes', 'valid_source'
+    'alert', 'ap_subscriptions', 'apple_news', 'editorial_group', 'station_themes', 'valid_source'
   ],
   /**
    * Check Postgres to see if the table exists
@@ -71,7 +71,7 @@ const utils = require('../universal/utils'),
     var tableName;
 
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      if (key.indexOf(`/_${DATA_TYPE}`) > -1) {
+      if (key.includes(`_${DATA_TYPE}`)) {
         tableName = DATA_TYPE;
       }
     });
@@ -188,16 +188,16 @@ const utils = require('../universal/utils'),
   };
 
 module.exports = {
-  getUri: uri => db.get(uri),
+  checkTableExists,
+  createTable,
+  DATA_STRUCTURES,
   del,
+  ensureTableExists,
   get,
+  getComponentData,
+  getUri: uri => db.get(uri),
   post,
   put,
   raw: db.raw,
-  uriToUrl: utils.uriToUrl,
-  checkTableExists,
-  createTable,
-  ensureTableExists,
-  DATA_STRUCTURES,
-  getComponentData
+  uriToUrl: utils.uriToUrl
 };

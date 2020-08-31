@@ -22,4 +22,6 @@ module.exports.getEventSlugUrl = urlPub.getEventSlugUrl;
 module.exports.getEventsListingUrl = urlPub.getEventsListingUrl;
 module.exports.getStationFrontSlugUrl = urlPub.getStationFrontSlugUrl;
 module.exports.getStaticPageSlugUrl = urlPub.getStaticPageSlugUrl;
+module.exports.getPodcastFrontSlugUrl = urlPub.getPodcastFrontSlugUrl;
 module.exports.addLastModified = addLastModified;
+module.exports.getHostPageSlugUrl = urlPub.getHostPageSlugUrl;

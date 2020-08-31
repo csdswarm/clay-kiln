@@ -7,6 +7,6 @@ const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'
 module.exports = (schema) => {
   applyContentLogic(schema);
   autoFillRecircImg(schema);
-  
+
   return syncFields(schema, syncHeadlines('gallery'));
 };
