@@ -11,11 +11,7 @@ content:
       - stats-standings
 
 title:
-  _label: Component's Title
-  _placeholder:
-    height: 40px
-    text: Component's Title
-    required: true
+  _label: Stats List Title
   _has:
     validate:
       required: false
@@ -25,14 +21,18 @@ title:
     input: text
 
 titleVisible:
-  _label: Show Component's Title
+  _label: Show Stats List Title
   _has:
     input: checkbox
     help: Show or hide the title displayed on the component's view
   
 _groups:
   settings:
-    _label: Component's Title
+    _label: Stats List Title
+    _placeholder:
+      text: Stats List Title
+      height: 40px
+      ifEmpty: title
     fields:
       - title
       - titleVisible
