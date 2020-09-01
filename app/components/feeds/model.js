@@ -196,12 +196,40 @@ module.exports.render = async (ref, data, locals) => {
             nested: {
               path: 'stationSyndication',
               query: {
+                
                 bool: {
-                  should: [
-                    { match: { 'stationSyndication.callsign': station } },
-                    { match: { 'stationSyndication.callsign.normalized': station } }
-                  ],
-                  minimum_should_match: 1
+                  must: [
+                    {
+                      bool: {
+                        should: [
+                          { match: { 'stationSyndication.callsign': station } },
+                          { match: { 'stationSyndication.callsign.normalized': station } }
+                        ],
+                        minimum_should_match: 1
+                      }
+                    },
+                    {
+                      bool: {
+                        should: [
+                          {
+                            match: {
+                              'stationSyndication.unsubscribed': false
+                            }
+                          },
+                          {
+                            bool: {
+                              must_not: {
+                                exists: {
+                                  field: 'stationSyndication.unsubscribed'
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        minimum_should_match: 1
+                      }
+                    }
+                  ]
                 }
               }
             }

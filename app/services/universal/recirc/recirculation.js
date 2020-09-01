@@ -272,6 +272,34 @@ const
   }),
 
   /**
+   * Adds an extra condition for only subscribed content
+   * @returns {(*|{bool: { should: [{ match: {'stationSyndication.unsubscribed': false}}]}})[]}
+   */
+  subscribedContentOnly = () => (
+    {
+      bool: {
+        should: [
+          {
+            match: {
+              'stationSyndication.unsubscribed': false
+            }
+          },
+          {
+            bool: {
+              must_not: {
+                exists: {
+                  field: 'stationSyndication.unsubscribed'
+                }
+              }
+            }
+          }
+        ],
+        minimum_should_match: 1
+      }
+    }
+  ),
+
+  /**
    * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
    * @param {string} stationSlug - The station to filter by
    * @returns {(*|{nested: {path: string, query: {match: {'stationSyndication.stationSlug': *}}}})[]}
@@ -280,8 +308,15 @@ const
     nested: {
       path: 'stationSyndication',
       query: {
-        match: {
-          'stationSyndication.stationSlug': stationSlug
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            ...subscribedContentOnly
+          ]
         }
       }
     }
