@@ -5,6 +5,7 @@ const
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
   apNewsImporter = require('./ap-news-importer'),
+  updatePageMetadata = require('./update-page-metadata'),
 
   { expect } = chai;
 
@@ -232,6 +233,8 @@ describe('server', () => {
 
         __.getAllStations.bySlug = stubs.bySlug;
 
+        __.updatePageMetadata = options.updatePageMetadata || updatePageMetadata;
+
         const result = await importArticle(apMeta, stationMappings, locals);
 
         return {
@@ -327,6 +330,32 @@ describe('server', () => {
         expect(result).to.have.property('article');
         expect(stubs.createPage).to.have.been.calledOnceWith(`${HOST}/_pages/`, sinon.match.object, stationSlug, locals);
         expect(stubs.dbGet).to.have.been.calledWith(sinon.match('_pages/new-two-col'));
+      });
+
+      it('updates the page meta components when a new article is created', async () => {
+        const updatePageMetadata = sinon.spy(),
+          { result } = await setup_importArticle({
+            apMeta: {
+              altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+            },
+            stationMappings: {
+              'test-station': [],
+              'second-station': []
+            },
+            stationsBySlug: {
+              'test-station': {},
+              'second-station': {}
+            },
+            updatePageMetadata
+          }),
+          { metaDescription, metaImage, metaTitle } = result;
+
+        expect(updatePageMetadata).to.have.been.calledOnce;
+        expect(updatePageMetadata).to.have.been.calledWithMatch({
+          metaDescription,
+          metaImage,
+          metaTitle
+        });
       });
 
       it('traps errors when checking for existing elastic content', async () => {
@@ -579,7 +608,7 @@ describe('server', () => {
                         <ol>${BULLETS}</ol>
                         <p>${P_TEXT}</p>
                         ${PRE_TEXT}
-                        ${TABLE_TEXT}                 
+                        ${TABLE_TEXT}
                         <ul>${BULLETS}</ul>
                       </block>
                     </nitf>`
@@ -757,11 +786,11 @@ describe('server', () => {
       describe.skip('not publishable', () => {
         // TODO: write tests for unpublishable content
         it('unpublishes if the article exists', async () => {
-          
+
         });
-        
+
         it('does nothing if the article does not exists', async () => {
-          
+
         });
       });
     });

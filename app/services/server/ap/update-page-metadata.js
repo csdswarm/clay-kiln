@@ -2,7 +2,10 @@
 
 const axios = require('axios');
 
-const { CLAY_SITE_PROTOCOL: protocol } = process.env;
+const {
+  CLAY_ACCESS_KEY: accessKey,
+  CLAY_SITE_PROTOCOL: protocol
+} = process.env;
 
 /**
  * updates the page's meta data components
@@ -31,7 +34,7 @@ function update(metaData) {
   const { _ref, ...data } = metaData;
 
   return axios.put(`${protocol}://${_ref}`, data, {
-    headers: { Authorization: 'token accesskey' }
+    headers: { Authorization: `token ${accessKey}` }
   });
 }
 

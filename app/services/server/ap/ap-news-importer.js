@@ -45,7 +45,8 @@ const
     restPut,
     restReq,
     saveApPicture,
-    searchByQuery
+    searchByQuery,
+    updatePageMetadata
   },
 
   getComponentBase = _memoize((name, { site: { host } }) => __.dbGet(`${host}/_components/${name}`)),
@@ -496,7 +497,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     body: JSON.stringify(meta)
   });
 
-  await updatePageMetadata(newArticleData);
+  await __.updatePageMetadata(newArticleData);
 
   await restPut(`${pageUrl}@published`, {}, true);
 
