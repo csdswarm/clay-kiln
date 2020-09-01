@@ -10,6 +10,7 @@ const _castArray = require('lodash/castArray'),
     file: __filename,
     component: 'feeds'
   }),
+  { subscribedContentOnly } = require('../../services/universal/recirc/recirculation'),
   { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
 
 /**
@@ -208,27 +209,7 @@ module.exports.render = async (ref, data, locals) => {
                         minimum_should_match: 1
                       }
                     },
-                    {
-                      bool: {
-                        should: [
-                          {
-                            match: {
-                              'stationSyndication.unsubscribed': false
-                            }
-                          },
-                          {
-                            bool: {
-                              must_not: {
-                                exists: {
-                                  field: 'stationSyndication.unsubscribed'
-                                }
-                              }
-                            }
-                          }
-                        ],
-                        minimum_should_match: 1
-                      }
-                    }
+                    ...subscribedContentOnly
                   ]
                 }
               }

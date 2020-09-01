@@ -275,29 +275,27 @@ const
    * Adds an extra condition for only subscribed content
    * @returns {(*|{bool: { should: [{ match: {'stationSyndication.unsubscribed': false}}]}})[]}
    */
-  subscribedContentOnly = () => (
-    {
-      bool: {
-        should: [
-          {
-            match: {
-              'stationSyndication.unsubscribed': false
-            }
-          },
-          {
-            bool: {
-              must_not: {
-                exists: {
-                  field: 'stationSyndication.unsubscribed'
-                }
+  subscribedContentOnly = [{
+    bool: {
+      should: [
+        {
+          match: {
+            'stationSyndication.unsubscribed': false
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSyndication.unsubscribed'
               }
             }
           }
-        ],
-        minimum_should_match: 1
-      }
+        }
+      ],
+      minimum_should_match: 1
     }
-  ),
+  }],
 
   /**
    * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
@@ -681,5 +679,6 @@ module.exports = {
   getStationSlug,
   makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
-  sectionOrTagCondition
+  sectionOrTagCondition,
+  subscribedContentOnly
 };
