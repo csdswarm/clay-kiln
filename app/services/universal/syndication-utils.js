@@ -87,7 +87,7 @@ function filterUnsubscribedEntries(unsubscribed, subscriptions) {
   let filteredStationSubscribed = subscriptions;
   
   unsubscribed.forEach(syndicationEntry => {
-    filteredStationSubscribed = subscriptions.filter(subscription => {
+    filteredStationSubscribed = filteredStationSubscribed.filter(subscription => {
       return subscription.callsign !== syndicationEntry.callsign;
     });
   });
