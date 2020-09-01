@@ -261,16 +261,6 @@ export default {
     },
 
     async importContent() {
-      const payload = {
-        apMeta: this.article,
-        stationMappings: {
-          [this.station.value]: {
-            sectionFront: this.primarySectionFront.value,
-            secondarySectionFront: this.secondarySectionFront.value,
-          },
-        },
-        locals: window.kiln.locals,
-      };
       try {
         this.isSubmitting = true;
         const response = await axios.post(AP_MEDIA_API_IMPORT, {

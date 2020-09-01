@@ -7,6 +7,7 @@ const
   cheerio = require('cheerio'),
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
+  updatePageMetadata = require('./update-page-metadata'),
   { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
   { assignDimensionsAndFileSize } = require('../../universal/image-utils'),
   { del: dbDel, get: dbGet, post: dbPost, put: dbPut, raw: dbRaw } = require('../db'),
@@ -17,6 +18,7 @@ const
   { DEFAULT_STATION } = require('../../universal/constants'),
 
   log = logger.setup({ file: __filename }),
+  metaComponents = ['description', 'image', 'tags', 'title', 'url'],
   PROTOCOL = _get(process, 'env.CLAY_SITE_PROTOCOL', 'https'),
   QUERY_TEMPLATE = {
     index: 'published-content',
@@ -126,11 +128,11 @@ async function getArticleData(pageData) {
     articleRef = main.find(text => text.includes('_components/article')),
     [
       article,
-      [metaDescription, metaImage, metaTags, metaTitle]
+      [metaDescription, metaImage, metaTags, metaTitle, metaUrl]
     ] = [
       { _ref: articleRef, ...await dbGet(articleRef) },
       await Promise.all(head
-        .filter(text => ['description', 'image', 'tags', 'title'].some(name => text.includes('meta-' + name)))
+        .filter(text => metaComponents.some(name => text.includes('meta-' + name)))
         .sort()
         .map(_ref => ({ _ref, ...dbGet(_ref) })))
     ];
@@ -141,6 +143,7 @@ async function getArticleData(pageData) {
     metaImage,
     metaTags,
     metaTitle,
+    metaUrl,
     pageData
   };
 }
@@ -273,7 +276,7 @@ function integrateArticleStations(article, newStations) {
 function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
   const
     { altids, ednote, headline, headline_extended, uri, version } = apMeta,
-    { article, metaDescription, metaImage, metaTitle } = articleData,
+    { article, metaDescription, metaImage, metaTags, metaTitle, metaUrl } = articleData,
     { etag, itemid } = altids,
     {
       secondarySectionFront,
@@ -327,12 +330,18 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       ...metaImage,
       imageUrl
     },
+    metaTags: {
+      ...metaTags
+    },
     metaTitle: {
       ...metaTitle,
       kilnTitle: headline,
       ogTitle: headline,
       title: headline,
       twitterTitle: headline
+    },
+    metaUrl: {
+      ...metaUrl
     }
   };
 }
@@ -364,7 +373,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
       await resolveImage(associations),
       await resolveArticleSubComponents(article)
     ],
-  
+
     // updateTags
     tagSlugs = tags.items.map(({ slug }) => slug),
     newTags = _get(apMeta, 'subject', [])
@@ -394,10 +403,10 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
         ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
       ]
     };
-  
+
   // set subArticleData
   await assignDimensionsAndFileSize(image.url, newFeedImage);
-  
+
   const { _ref, ...props } = newFeedImage,
     imgRef = _ref.replace(/feed-image/, 'image');
 
@@ -470,7 +479,7 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   await restPut(`${PROTOCOL}://${articleRef}`, newArticleInfo, true);
 
   // update meta/title and publish
-  const { _ref: pageRef = '', ...pageInfo } = pageData,
+  const { _ref: pageRef = '' } = pageData,
     pageUrl = `${PROTOCOL}://${pageRef.replace(/@published/, '')}`,
     meta = await restGet(`${pageUrl}/meta`);
 
@@ -487,7 +496,9 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
     body: JSON.stringify(meta)
   });
 
-  await restPut(`${pageUrl}@published`, pageInfo, true);
+  await updatePageMetadata(newArticleData);
+
+  await restPut(`${pageUrl}@published`, {}, true);
 
   newArticleData.pageData = { _ref: pageRef };
 
@@ -528,14 +539,17 @@ async function importArticle(apMeta, stationMappings, locals) {
   }
 
   const
-    articleData = await getArticleData(preExistingArticle || await createNewArticle(stationMappings, locals)),
+    page = preExistingArticle || await createNewArticle(stationMappings, locals),
+    articleData = await getArticleData(page),
     newStations = await getNewStations(articleData.article, stationMappings),
     isModifiedByAP = apMeta.altids.etag !== _get(articleData, 'article.ap.etag'),
     {
       article,
       metaDescription,
       metaImage,
+      metaTags,
       metaTitle,
+      metaUrl,
       pageData
     } = isModifiedByAP || newStations
       ? await mapApDataToArticle(apMeta, articleData, newStations, locals)
@@ -547,7 +561,9 @@ async function importArticle(apMeta, stationMappings, locals) {
     isModifiedByAP,
     metaDescription,
     metaImage,
+    metaTags,
     metaTitle,
+    metaUrl,
     newStations,
     pageRef: pageData._ref.replace('@published', ''),
     preExistingArticle
