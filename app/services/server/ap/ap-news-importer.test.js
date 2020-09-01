@@ -1,11 +1,11 @@
 /* eslint-disable max-nested-callbacks */
 'use strict';
 const
+  _noop = require('lodash/noop'),
   chai = require('chai'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
   apNewsImporter = require('./ap-news-importer'),
-  updatePageMetadata = require('./update-page-metadata'),
 
   { expect } = chai;
 
@@ -233,7 +233,7 @@ describe('server', () => {
 
         __.getAllStations.bySlug = stubs.bySlug;
 
-        __.updatePageMetadata = options.updatePageMetadata || updatePageMetadata;
+        __.updatePageMetadata = options.updatePageMetadata || _noop;
 
         const result = await importArticle(apMeta, stationMappings, locals);
 
