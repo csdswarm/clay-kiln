@@ -17,8 +17,8 @@
             </picture>
             <div class="section-lead__details">
               {{#if ../_computed.useContentLabel}}
-                <span class="details__content-label  details__content-label--top">
-                  {{ article.label }}
+                <span class="details__content-label details__content-label--top">
+                  {{ default article.curatedOverride article.label }}
                   <span class="details__time">{{ timeAgoTimestamp article.date }}</span>
                 </span>
               {{/if}}
@@ -31,7 +31,7 @@
               <h3 class="details__title">{{ article.primaryHeadline }}</h3>
               {{#if ../_computed.useContentLabel}}
                 <span class="details__content-label details__content-label--bottom">
-                  {{ article.label }}
+                  {{ default article.curatedOverride article.label }}
                   <span class="details__time">{{ timeAgoTimestamp article.date }}</span>
                 </span>
               {{/if}}
