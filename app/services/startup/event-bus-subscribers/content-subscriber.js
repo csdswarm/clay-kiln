@@ -192,8 +192,6 @@ async function handlePublishStationSyndication(page) {
         return __.setUri(redirectUri, url);
       });
 
-    // TODO: how should i handle syndication when sectionFront changes.
-
     await Promise.all(queue);
     await Promise.all(updateDeprecatedUrls);
   }
