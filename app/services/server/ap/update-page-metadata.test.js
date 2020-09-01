@@ -10,14 +10,28 @@ chai.use(sinonChai);
 const getUpdatePageMetadata = ({ put }) => {
     return proxyquire('./update-page-metadata', { axios: { put } });
   },
-  {
-    CLAY_ACCESS_KEY: accessKey,
-    CLAY_SITE_PROTOCOL: protocol
-  } = process.env,
+  accessKey = 'some access key',
+  protocol = 'https',
   { expect } = chai,
   headers = { headers: { Authorization: `token ${accessKey}` } };
 
+let oldAccessKey,
+  oldProtocol;
+
 describe('update-page-metadata', () => {
+  before(() => {
+    oldAccessKey = process.env.CLAY_ACCESS_KEY;
+    oldProtocol = process.env.CLAY_SITE_PROTOCOL;
+
+    process.env.CLAY_ACCESS_KEY = accessKey;
+    process.env.CLAY_SITE_PROTOCOL = protocol;
+  });
+
+  after(() => {
+    process.env.CLAY_ACCESS_KEY = oldAccessKey;
+    process.env.CLAY_SITE_PROTOCOL = oldProtocol;
+  });
+
   it('should PUT to the meta components', () => {
     const put = sinon.spy(),
       mockArticleData = getMockArticleData(),
