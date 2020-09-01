@@ -27,6 +27,19 @@ function removeBranchIoComponents(page, branchIOInstance) {
   })
 }
 
+async function getAllArchivedPages(db, host) {
+  const archivedQuery = `SELECT p.id, p.data
+      FROM pages p
+      WHERE (meta->>'published')::boolean IS false
+      AND (meta->>'archived')::boolean IS true`,
+    archivedResult = await db.query(archivedQuery);
+
+  return archivedResult.rows
+    .filter(({ id }) => (
+      id.startsWith(host)
+    )).map(({id}) => id.slice((host).length))
+}
+
 async function getAllPagesWithBranchIOHead(db, host) {
   const query = `SELECT p.id, p.data
       FROM pages p
@@ -35,22 +48,28 @@ async function getAllPagesWithBranchIOHead(db, host) {
     result = await db.query(query);
 
   return result.rows
-    .filter(({ id }) => (
-      id.startsWith(host)
-    ))
+    .filter(({ id }) => (id.startsWith(host)))
     .map((row) => Object.assign({}, row, { id: row.id.replace('@published', '') }))
+    .map((row) => Object.assign({}, row, { id: row.id.slice((host).length) }))
 }
 
 async function getPagesUsingBranchIO() {
   try {
     await usingDb(async db => {
-      const pages = await getAllPagesWithBranchIOHead(db, host);
+      const archivedPages = await getAllArchivedPages(db, host),
+        pages = await getAllPagesWithBranchIOHead(db, host);
 
-      return Promise.map(pages, ({ id, data: { head } }) => {
-        const branchIOInstance = head.filter(instance => instance.includes('branch-io-head'));
+      return Promise.map(pages, async ({ id, data: { head } }) => {
+        if (!archivedPages.includes(id)) {
+          const branchIOInstance = head
+            .filter(instance => instance.includes('branch-io-head'))
+            .map((row) => row.replace('@published', ''))
+            .map((row) => row.slice((host).length))
 
-        return removeBranchIoComponents(id, branchIOInstance);
-      }, { concurrency: 5 })
+          return await removeBranchIoComponents(id, branchIOInstance);
+        }
+      }, { concurrency: 5 }
+    )
     })
   } catch (error) {
     console.log('error', error);
