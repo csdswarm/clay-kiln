@@ -141,7 +141,7 @@ async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip })
   queryService.addMust(query, {
     range: {
       startDate: {
-        gte: new Date().toISOString()
+        gte: moment().startOf('day').toISOString()
       }
     }
   });
