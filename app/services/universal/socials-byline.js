@@ -109,7 +109,11 @@ function createAuthorHostHtml(data, options) {
   const nameOrText = data.name || data.text,
     link = slugifyService(nameOrText),
     name = data.isHost ? 'host' : 'author',
-    linkAuthorHostPage = `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/${name}s/${link}`;
+    { isContentFromAP } = options,
+    linkAuthorHostPage =
+      isContentFromAP
+        ? `${options.authorHost + (options.siteSlug ? `/${options.siteSlug}` : '')}/${name}s/${link}`
+        : `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/${name}s/${link}`;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
