@@ -10,7 +10,7 @@ const
   componentClassName = 'podcast-episode-list',
   { utils } = require('../../services/client/utils'),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
-  loadMoreAmount = 20;
+  { loadMoreAmount } = require('./constants');
 
 let
   $one, $all;
