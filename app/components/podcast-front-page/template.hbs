@@ -1,13 +1,5 @@
 <div class="component component--podcast-front-page podcast-front-page" data-uri="{{ default _ref _self }}">
 
-  {{#if _computed.primaryColor }}
-  <style>
-    :root {
-      --theme-primaryColor: {{ _computed.primaryColor }};
-    }
-  </style>
-  {{/if}}
-
   {{#if enableHero}}
   {{#ifAny hero.length @root.locals.edit }}
   <div class="full-width" data-editable="hero">
@@ -15,14 +7,11 @@
   </div>
   {{/ifAny}}
   {{else}}
-  <div class="component component--page-header {{ if @root.locals.edit ' editing' }}"
-    data-editable="settings">
-      <div class="page-header__banner">
-        <h1>{{#if title }}{{ title }}{{else}}Podcasts{{/if}}</h1>
-      </div>
+  <div class="podcast-front-page__header-banner">
+    <h1>{{#if title }}{{ title }}{{else}}Podcasts{{/if}}</h1>
   </div>
   {{/if}}
-  
+
   <div data-editable="content">
     {{> component-list content }}
   </div>
