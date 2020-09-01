@@ -76,9 +76,29 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   };
 }
 
+/**
+   * Removes unsubscribed elements from the subscriptions entries
+   * @param {Array} unsubscribed
+   * @param {Array} subscriptions
+   * @return {Array} filteredStationSubscribed
+   *
+   */
+function filterUnsubscribedEntries(unsubscribed, subscriptions) {
+  let filteredStationSubscribed = subscriptions;
+  
+  unsubscribed.forEach(syndicationEntry => {
+    filteredStationSubscribed = subscriptions.filter(subscription => {
+      return subscription.callsign !== syndicationEntry.callsign;
+    });
+  });
+  
+  return filteredStationSubscribed;
+}
+
 module.exports = {
   _internals: __,
   syndicationUrlPremap,
+  filterUnsubscribedEntries,
   findSyndicatedStation,
   generateSyndicationSlug
 };

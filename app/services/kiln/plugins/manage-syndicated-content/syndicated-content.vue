@@ -47,12 +47,14 @@
           :options="stationSectionFronts.primaryOptions"
           :value="selectedSectionFronts.primary"
           :invalid="invalidSectionFront"
+          :disabled="selectedSectionFronts.disabled"
           @input="updateSectionFront('primary', ...arguments)"/>
         <ui-select
           :placeholder="'Secondary Section Front'"
           :hasSearch="true"
           :options="stationSectionFronts.secondaryOptions"
           :value="selectedSectionFronts.secondary"
+          :disabled="selectedSectionFronts.disabled"
           @input="updateSectionFront('secondary', ...arguments)"/>
       </template>
       <div class="syndication-modal__buttons">
@@ -79,6 +81,7 @@
   import queryService from '../../../client/query';
   import { retrieveList } from '../../../client/lists';
   import { isUrl } from '../../../universal/utils';
+  import { findSyndicatedStation } from '../../../universal/syndication-utils';
 
   const { UiButton, UiIconButton, UiTextbox, UiModal, UiSelect } = window.kiln.utils.components,
     { locals } = window.kiln,
@@ -282,10 +285,19 @@
           this.$set(selectedItem, 'syndicationLoading', loading);
         }
       },
-      openModal(contentId) {
+      openModal(content) {
         this.resetSyndicationLoading();
-        this.selectedContentId = contentId;
+        this.selectedContentId = content._id;
+        const { slug, name, callsign } = this.stationFilter;
+        const findSyndication = findSyndicatedStation(slug);
+        const syndicatedStation = findSyndication(content.stationSyndication);
+
         this.selectedSectionFronts = {};
+        if (syndicatedStation) {
+          this.selectedSectionFronts.primary = syndicatedStation.sectionFront;
+          this.selectedSectionFronts.secondary = syndicatedStation.secondarySectionFront;
+          this.selectedSectionFronts.disabled = true;
+        }
         this.$refs.syndicationModal.open();
       },
       closeModal() {

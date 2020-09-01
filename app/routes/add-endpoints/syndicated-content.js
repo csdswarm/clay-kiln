@@ -1,6 +1,9 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _filter = require('lodash/filter'),
+  _isEmpty = require('lodash/isEmpty'),
+  _reject = require('lodash/reject'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
   { uriToUrl } = require('../../services/universal/utils'),
@@ -30,8 +33,20 @@ async function addSyndicationEntry(uri, syndicationEntry) {
   const data = await db.get(uri);
 
   updateStationSyndicationType(data);
-  data.stationSyndication.push({ ...syndicationEntry });
-  addStationSyndicationSlugs(data);
+  const unsubscribed = _filter(data.stationSyndication, { callsign: syndicationEntry.callsign, unsubscribed: true });
+
+
+  if (!_isEmpty(unsubscribed)) {
+    data.stationSyndication.forEach(syndication => {
+      if (syndication.callsign === syndicationEntry.callsign) {
+        syndication.unsubscribed = false;
+        // Keep previous sectionFront.
+      }
+    });
+  } else {
+    data.stationSyndication.push({ ...syndicationEntry });
+    addStationSyndicationSlugs(data);
+  }
 
   await db.put(uri, data);
 }
@@ -43,10 +58,15 @@ async function addSyndicationEntry(uri, syndicationEntry) {
  */
 async function removeSyndicationEntry(uri, callsign) {
   const data = await db.get(uri),
-    stationSyndication = data.stationSyndication.filter(syndicated => syndicated.callsign !== callsign );
+    stationSyndication = data.stationSyndication.map(syndicated => {
+      if (syndicated.callsign === callsign) {
+        syndicated.unsubscribed = true;
+      }
+      return syndicated;
+    });
 
-  data.stationSyndication = stationSyndication;
-
+  // removes manual syndications from entry.
+  data.stationSyndication = _reject(stationSyndication, { source: 'manual syndication' });
   await db.put(uri, data);
 }
 

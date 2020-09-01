@@ -1,6 +1,9 @@
 'use strict';
 
 const _reject = require('lodash/reject'),
+  _filter = require('lodash/filter'),
+  _concat = require('lodash/concat'),
+  { filterUnsubscribedEntries } = require('../syndication-utils'),
   getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
 
 /**
@@ -11,14 +14,18 @@ const _reject = require('lodash/reject'),
 async function applyContentSubscriptions(data, locals) {
   if (['article', 'gallery'].includes(data.contentType)) {
     const stationsSubscribed = await getStationsSubscribed(data, locals),
+      unsubscribed = _filter(
+        data.stationSyndication,
+        { unsubscribed: true, source: 'content subscription' }
+      ),
       syndicatedStations = _reject(
         data.stationSyndication,
         { source: 'content subscription' }
-      );
-
-    data.stationSyndication = syndicatedStations.concat(
-      stationsSubscribed
-    );
+      ),
+      // remove elements from the content subscription that matches unsubscribed ones.
+      filteredStationSubscribed = filterUnsubscribedEntries(unsubscribed, stationsSubscribed);
+    
+    data.stationSyndication = _concat(unsubscribed, syndicatedStations, filteredStationSubscribed);
   }
 }
 
