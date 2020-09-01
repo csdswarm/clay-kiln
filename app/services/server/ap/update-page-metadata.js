@@ -13,14 +13,15 @@ const {
  * note: meta-url and meta-tags do not need to be updated since the default
  *   values suffice
  *
- * @param {object} updatedArticleData
+ * @param {object} articleData
  * @returns {Promise<object[]>}
  */
-function updatePageMetaData({ metaDescription, metaImage, metaTitle }) {
+function updatePageMetaData(articleData) {
   return Promise.all([
-    update(metaDescription),
-    update(metaImage),
-    update(metaTitle)
+    update(articleData.metaDescription),
+    update(articleData.metaImage),
+    update(articleData.metaTags),
+    update(articleData.metaTitle)
   ]);
 }
 

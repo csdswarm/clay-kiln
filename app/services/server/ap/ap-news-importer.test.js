@@ -348,12 +348,13 @@ describe('server', () => {
             },
             updatePageMetadata
           }),
-          { metaDescription, metaImage, metaTitle } = result;
+          { metaDescription, metaImage, metaTags, metaTitle } = result;
 
         expect(updatePageMetadata).to.have.been.calledOnce;
         expect(updatePageMetadata).to.have.been.calledWithMatch({
           metaDescription,
           metaImage,
+          metaTags,
           metaTitle
         });
       });

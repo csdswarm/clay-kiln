@@ -25,7 +25,7 @@ describe('update-page-metadata', () => {
 
     fn(mockArticleData);
 
-    expect(put).to.have.callCount(3);
+    expect(put).to.have.callCount(4);
 
     expect(put.getCall(0).args).to.deep.equal([
       `${protocol}://description-ref`,
@@ -40,6 +40,12 @@ describe('update-page-metadata', () => {
     ]);
 
     expect(put.getCall(2).args).to.deep.equal([
+      `${protocol}://tags-ref`,
+      { tags: 'some tags' },
+      headers
+    ]);
+
+    expect(put.getCall(3).args).to.deep.equal([
       `${protocol}://title-ref`,
       { title: 'some title' },
       headers
@@ -51,6 +57,7 @@ function getMockArticleData() {
   return {
     metaDescription: { _ref: 'description-ref', description: 'some description' },
     metaImage: { _ref: 'image-ref', image: 'some image' },
+    metaTags: { _ref: 'tags-ref', tags: 'some tags' },
     metaTitle: { _ref: 'title-ref', title: 'some title' }
   };
 }

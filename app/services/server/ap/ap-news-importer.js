@@ -267,15 +267,18 @@ function integrateArticleStations(article, newStations) {
  * Given existing article data and ap meta data, maps any updated values to the article data and returns the
  * new article data.
  * (NOTE: does not map external items at this time)
- * @param {object} apMeta
- * @param {object} lead
- * @param {object} image
- * @param {object} articleData
- * @param {object[]} newStations
+ * @param {object} argsObj
+ * @param {object} argsObj.apMeta
+ * @param {object} argsObj.articleData
+ * @param {object} argsObj.image
+ * @param {object} argsObj.lead
+ * @param {object[]} argsObj.newArticleTagItems
+ * @param {object[]} argsObj.newStations
  * @returns {object}
  */
-function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
+function mapMainArticleData(argsObj) {
   const
+    { apMeta, lead, image, articleData, newArticleTagItems, newStations } = argsObj,
     { altids, ednote, headline, headline_extended, uri, version } = apMeta,
     { article, metaDescription, metaImage, metaTags, metaTitle, metaUrl } = articleData,
     { etag, itemid } = altids,
@@ -332,7 +335,14 @@ function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
       imageUrl
     },
     metaTags: {
-      ...metaTags
+      ...metaTags,
+      authors: article.authors,
+      contentTagItems: newArticleTagItems,
+      contentType: article.contentType,
+      noIndexNoFollow: article.noIndexNoFollow,
+      publishDate: article.date,
+      secondarySectionFront: article.secondarySectionFront,
+      sectionFront: article.sectionFront
     },
     metaTitle: {
       ...metaTitle,
@@ -381,8 +391,6 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
       .filter(({ creator }) => creator === 'Machine')
       .map(({ name }) => ({ text: name, slug: slugifyService(name) })),
 
-    // setMainArticleData
-    newArticleData = mapMainArticleData({ apMeta, lead, image, articleData, newStations }),
     newFeedImage = {
       _ref: article.feedImg._ref,
       ...feedImg,
@@ -403,7 +411,15 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
         ...tags.items,
         ...newTags.filter(({ slug }) => !tagSlugs.includes(slug))
       ]
-    };
+    },
+    newArticleData = mapMainArticleData({
+      apMeta,
+      articleData,
+      image,
+      lead,
+      newArticleTagItems: newArticleTags.items,
+      newStations
+    });
 
   // set subArticleData
   await assignDimensionsAndFileSize(image.url, newFeedImage);
