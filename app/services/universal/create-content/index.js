@@ -390,7 +390,7 @@ function bylineOperations(data) {
       delete author.count;
       author.slug = textToEncodedSlug(author.text);
       author.name = author.name ? author.name : author.text;
-      author.text = capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
+      author.text = capitalize(slug.replace(/-/g, ' '));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
@@ -399,7 +399,7 @@ function bylineOperations(data) {
       delete host.count;
       host.slug = textToEncodedSlug(host.text);
       host.name = host.name ? host.name : host.text;
-      host.text = capitalize(slug.replace(/-/g, ' ').replace(/\//g,''));
+      host.text = capitalize(slug.replace(/-/g, ' '));
       hosts.push(host);
     }
     // do sources too
