@@ -8,7 +8,6 @@
 const
   _get = require('lodash/get'),
   log = require('../../services/universal/log').setup({ file: __filename }),
-  moment = require('moment'),
   rest = require('../../services/universal/rest.js'),
   { getContestRules } = require('../../services/server/contest-rules'),
   { isPresentationMode } = require('../../services/universal/contest-rules-page'),
@@ -34,11 +33,13 @@ module.exports = unityComponent({
       showPresentation = isPresentationMode(locals.url);
 
     try {
-      const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '',
+      const
+        stationSlugContext = station.site_slug ? `${station.site_slug}/` : '',
         stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`,
         contestRules =
-          (await Promise.all(
+          await Promise.all(
             (await getContestRules({
+              openOnly: showPresentation,
               stationCallsign: callsign
             })).map(
               async (ruleData) => ({
@@ -49,9 +50,7 @@ module.exports = unityComponent({
                 description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
                 contestSlug: `${stationPath}contests/${ruleData.slug}`
               }))
-          )).filter((rulesBlock) => {
-            return !moment().isAfter(rulesBlock.endDateTime, 'day');
-          });
+          );
 
       data._computed = {
         showPrivacyPolicy: !showPresentation,
