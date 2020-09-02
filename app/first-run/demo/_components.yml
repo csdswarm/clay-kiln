@@ -315,6 +315,33 @@ _components:
         componentTitleVisible: false
         locationOfContentFeed: topic-page
         filterSecondarySectionFronts: {}
+      host-page:
+        hostInfo: ''
+        populateFrom: host
+        locationOfContentFeed: host-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        introComponents: []
+        componentTitle: ''
+        componentTitleVisible: false
+        pageLength: 5
+        maxLength: ''
+        items: []
+        tag: ''
+        tagManual: ''
+        contentType: { article: true, gallery: true }
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        secondarySectionFrontManual: ''
+        excludeTags: []
+        excludeSectionFronts: []
+        excludeSecondarySectionFronts: []
+        excludeSubscriptions: false
+        sharethroughTag:
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
+        enableSharethrough: true
+        _version: 15
 
   two-column-component:
     instances:
@@ -341,6 +368,12 @@ _components:
           - _ref: /_components/more-content-feed/instances/topic-page
         col2:
           - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+      host-page:
+        col1:
+          - _ref: /_components/more-content-feed/instances/host-page
+        col2: [
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship,
           - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
 
   author-page:
@@ -391,9 +424,12 @@ _components:
       curated-topic:
         routeParam: 'tag'
         suffix: ' | RADIO.COM'
-      topic:
-        suffix: " | RADIO.COM"
-        routeParam: dynamicTag
+      host-profile:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
+        host:
+          routeParam: 'host'
+          suffix: ' | RADIO.COM'
       station:
         suffix: " - LISTEN LIVE | RADIO.COM"
         localsKey: station.name
@@ -441,6 +477,12 @@ _components:
         urlMatches: []
         description: "${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports,
           News, Podcasts"
+      host-profile:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'
+        host:
+          description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+          routeParam: 'host'
       station:
         localsKey: station.description
         urlMatches: []
@@ -741,7 +783,7 @@ _components:
     instances:
       google-news-feed:
         meta:
-          link: https://clay.radio.com
+          link: https://www.radio.com
           title: Radio.com Google News Feed
           renderer: rss
           contentType: rss
@@ -768,14 +810,10 @@ _components:
                           noIndexNoFollow: true
                 - match:
                     contentType: article
-                - terms:
-                    contentType:
-                      - article
-                      - gallery
         transform: article
       msn:
         meta:
-          link: https://clay.radio.com
+          link: https://www.radio.com
           title: Radio.com Msn Rss Feed
           renderer: rss
           contentType: rss
@@ -802,6 +840,19 @@ _components:
                         noIndexNoFollow: true
         format: msn
         transform: article
+      frequency:
+        meta:
+          title: Radio.com Frequency Feed
+          renderer: freq
+          contentType: application/rss+xml
+          description: Most recent content from Radio.com
+          fileExtension: freq
+        index: published-content
+        query:
+          size: 20
+          sort:
+            date: desc
+        transform: content
       postup:
         attr:
           xmlns:radio: https://clay.radio.com
@@ -841,7 +892,7 @@ _components:
           opt:
             - snf:logo:
                 - url: https://images.radio.com/aiu-media/rdclogo290x50-8a7d28ca-8a39-49f5-9c39-97147503755d.png
-          link: https://clay.radio.com
+          link: https://www.radio.com
           title: RADIO.COM
           renderer: rss
           contentType: rss
@@ -855,11 +906,6 @@ _components:
           query:
             bool:
               filter:
-                - terms:
-                    sectionFront:
-                      - music
-                      - news
-                      - sports
                 - match:
                     feeds.smartNews: true
                 - bool:
@@ -1676,3 +1722,22 @@ _components:
         playerBorderBottom: false
         playerBorderTopCTA: Watch
         previousTypeRelated: false
+
+  host-page-header:
+    instances:
+      new:
+        host: ''
+        profileImage: ''
+        scheduleTime: ''
+        bio: ''
+        facebook: ''
+        twitter: ''
+        youtube: ''
+        instagram: ''
+        email: ''
+
+  host-page:
+    instances:
+      new:
+        twoColumnComponent:
+          _ref: /_components/two-column-component/instances/host-page

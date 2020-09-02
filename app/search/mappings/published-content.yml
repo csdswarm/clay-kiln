@@ -59,6 +59,10 @@ settings:
 _doc:
   dynamic: 'false'
   properties:
+    ap:
+      properties:
+        itemid:
+          type: keyword
     authors:
       type: keyword
       fields:
@@ -208,6 +212,12 @@ _doc:
         normalized:
           type: text
           analyzer: station_analyzer
+    hosts:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: author_analyzer
     lead:
       type: nested
       dynamic: 'true'

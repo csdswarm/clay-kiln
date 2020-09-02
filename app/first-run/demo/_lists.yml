@@ -54,11 +54,15 @@ _lists:
           title: Event
         - id: events-listing
           title: Events Listing
+        - id: host-profile,
+          title: Host Page
     - id: section-front
       title: 2. Section Front
       children:
         - id: section-front
           title: Section Front
+        - id: podcast-front
+          title: Podcast Front
     - id: station-front
       title: 3. Station Front
       children:
@@ -155,3 +159,27 @@ _lists:
     - wichita
     - neworleans
     - wilkesbarre
+  ap-media-entitlements:
+    - name: AP Top News - Business - Stories
+      value: 42428
+    - name: AP Top News - Entertainment - Stories
+      value: 42429
+    - name: AP Top News - International - Stories
+      value: 42430
+    - name: AP Top News - Health - Stories
+      value: 42431
+    - name: AP Top News - Strange - Stories
+      value: 42432
+    - name: AP Top News - Political - Stories
+      value: 42433
+    - name: AP Top News - Science - Stories
+      value: 42434
+    - name: AP Top News - Sports - Stories
+      value: 42435
+    - name: AP Top News - Technology - Stories
+      value: 42436
+    - name: AP Top News - General - Stories
+      value: 42437
+    - name: AP Top News - US Headlines - Stories
+      value: 42438
+  listen-only-station-style: []
