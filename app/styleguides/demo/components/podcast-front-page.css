@@ -3,10 +3,10 @@
 @import "_global/colors";
 
 @define-mixin podcast-front-header-font1 {
-  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 90px;
+  @mixin font CircularStd-Black, 35px, theme(primaryColor, $parisM), -.55px, 90px;
 }
 @define-mixin podcast-front-header-font2 {
-  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 42px;
+  @mixin font CircularStd-Black, 35px, theme(primaryColor, $parisM), -.55px, 42px;
 }
 
 @define-mixin podcast-front-font1 {
@@ -41,14 +41,12 @@
   &__header-banner {
     h1 {
       @mixin podcast-front-header-font1;
-      z-index: 2;
       margin:0 auto em(20, 35) auto;
       text-transform: capitalize;
       display: table;
       white-space: nowrap;
       width: em(1100, 35);
       padding-right: em(15, 35);
-      color: theme(primaryColor, $parisM);
 
       @mixin large-screen {
         width: em(940, 35);
