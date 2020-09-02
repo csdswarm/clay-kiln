@@ -1,4 +1,4 @@
-<div class="component component--podcast-front-page podcast-front-page" data-uri="{{ default _ref _self }}">
+<div class="component component--podcast-front podcast-front" data-uri="{{ default _ref _self }}">
 
   {{#if enableHero}}
   {{#ifAny hero.length @root.locals.edit }}
@@ -7,7 +7,7 @@
   </div>
   {{/ifAny}}
   {{else}}
-  <div class="podcast-front-page__header-banner">
+  <div class="podcast-front__header-banner">
     <h1>{{#if title }}{{ title }}{{else}}Podcasts{{/if}}</h1>
   </div>
   {{/if}}

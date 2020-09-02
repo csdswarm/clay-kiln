@@ -13,8 +13,8 @@
   @mixin font CircularStd-Black, 14px, $white, -0.55px, 17px;
 }
 
-.component--podcast-front-page {
-  &.podcast-front-page {
+.component--podcast-front {
+  &.podcast-front {
     display: flex;
     flex-direction: column;
 
@@ -37,7 +37,7 @@
   }
 }
 
-.podcast-front-page {
+.podcast-front {
   &__header-banner {
     h1 {
       @mixin podcast-front-header-font1;
