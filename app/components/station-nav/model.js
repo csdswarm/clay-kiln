@@ -27,8 +27,8 @@ module.exports = stationizedComponent({
     }
 
     // if the phone number doesn't start with 1 add a 1
-    if (data.CTA_ContactInfoTelephone) {
-      data._computed.CTA_ContactInfoTelephone = data.CTA_ContactInfoTelephone.charAt(0) !== '1' ? `1${data.CTA_ContactInfoTelephone}` : data.CTA_ContactInfoTelephone;
+    if (data.CtaContactInfoTelephone) {
+      data._computed.CtaContactInfoTelephone = data.CtaContactInfoTelephone.charAt(0) !== '1' ? `1${data.CtaContactInfoTelephone}` : data.CtaContactInfoTelephone;
     }
     return data;
   }
