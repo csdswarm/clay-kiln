@@ -1,88 +1,128 @@
 _components:
+  google-ad-manager:
+    instances:
+      billboardTop:
+        _version: 1
+        adLocation: atf
+        adPosition: top
+        adSize: billboard
+      mediumRectangleTop:
+        _version: 1
+        adLocation: atf
+        adPosition: rec
+        adSize: medium-rectangle
+  meta-description:
+    instances:
+      legal:
+        _computed:
+          parents: []
+        _version: 1
+        componentVariation: meta-description
+        defaultDescription: entercom-legal | RADIO.COM
+        description: entercom-legal | RADIO.COM
+  meta-image:
+    instances:
+      legal:
+        _version: 3
+        defaultImageUrl: ''
+        imageUrl: ''
+  meta-tags:
+    instances:
+      legal:
+        _version: 1
+        authors: []
+        automatedPublishDate: ''
+        contentType: ''
+        metaTags:
+          - content: home
+            name: 'cXenseParse:recs:category'
+          - content: NATL-RC
+            name: station-call-letters
+          - content: music
+            data-was-imported: false
+            name: 'nmc:cat'
+          - content: aaa
+            data-was-imported: false
+            name: 'nmc:genre'
+          - content: homepage
+            data-was-imported: false
+            name: 'nmc:pid'
+          - content: natlrc
+            data-was-imported: false
+            name: 'nmc:station'
+          - content: sectionfront/homepage
+            data-was-imported: false
+            name: 'nmc:tag'
+          - content: home
+            name: 'branch:deeplink:unity_site_categories'
+          - content: Radio.com
+            name: 'branch:deeplink:station_name'
+        publishDate: ''
+        secondarySectionFront: ''
+        sectionFront: home
+        unusedTags:
+          - property: 'og:type'
+            type: property
+          - property: 'article:author:name'
+            type: property
+          - property: 'article:published_time'
+            type: property
+          - name: robots
+            type: name
+          - name: 'nmc:author'
+            type: name
+          - name: 'nmc:market'
+            type: name
   meta-title:
     instances:
       legal:
-        title: Entercom Legal | RADIO.COM
-        ogTitle: Entercom Legal | RADIO.COM
-        kilnTitle: Entercom Legal | RADIO.COM
-        twitterTitle: Entercom Legal | RADIO.COM
+        _version: 1
         componentVariation: meta-title
         defaultKilnTitle: Entercom Legal | RADIO.COM
         defaultOgTitle: Entercom Legal | RADIO.COM
         defaultTitle: Entercom Legal | RADIO.COM
         defaultTwitterTitle: Entercom Legal | RADIO.COM
-        _version: 1
-  meta-description:
-    instances:
-      legal:
-        description: entercom-legal | RADIO.COM
-        componentVariation: meta-description
-        defaultDescription: entercom-legal | RADIO.COM
-        _version: 1
-        _computed:
-          parents: []
-  meta-image:
-    instances:
-      legal:
-        _version: 3
-        imageUrl: ''
-        defaultImageUrl: ''
+        kilnTitle: Entercom Legal | RADIO.COM
+        ogTitle: Entercom Legal | RADIO.COM
+        title: Entercom Legal | RADIO.COM
+        twitterTitle: Entercom Legal | RADIO.COM
   meta-url:
     instances:
       legal:
-        url: ''
         _version: 2
-        syndicatedUrl: ''
         componentVariation: meta-url
         defaultSyndicatedUrl: ''
         defaultUrl: ''
-  meta-tags:
+        syndicatedUrl: ''
+        url: ''
+  paragraph:
     instances:
-      legal:
-        authors: []
-        _version: 1
-        metaTags:
-          - name: 'cXenseParse:recs:category'
-            content: home
-          - name: station-call-letters
-            content: NATL-RC
-          - name: 'nmc:cat'
-            content: music
-            data-was-imported: false
-          - name: 'nmc:genre'
-            content: aaa
-            data-was-imported: false
-          - name: 'nmc:pid'
-            content: homepage
-            data-was-imported: false
-          - name: 'nmc:station'
-            content: natlrc
-            data-was-imported: false
-          - name: 'nmc:tag'
-            content: sectionfront/homepage
-            data-was-imported: false
-          - name: 'branch:deeplink:unity_site_categories'
-            content: home
-          - name: 'branch:deeplink:station_name'
-            content: Radio.com
-        unusedTags:
-          - type: property
-            property: 'og:type'
-          - type: property
-            property: 'article:author:name'
-          - type: property
-            property: 'article:published_time'
-          - type: name
-            name: robots
-          - type: name
-            name: 'nmc:author'
-          - type: name
-            name: 'nmc:market'
-        contentType: ''
-        publishDate: ''
-        sectionFront: home
-        automatedPublishDate: ''
-        secondarySectionFront: ''
+      legal-1:
+        componentVariation: paragraph
+        text: >-
+          <a href="#ip-contact-us-support"><strong
+          >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
+          </strong><a
+          href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
+          | </strong><a
+          href="http://www.entercom.com/terms-and-conditions"><strong
+          >Terms&nbsp;of&nbsp;Service</strong></a>
+      legal-3:
+        componentVariation: paragraph
+        text: RADIO.COM App &amp; Player - Contact and Support
+      legal-4:
+        text: >-
+          If you are experiencing any issues and need support for the RADIO.COM
+          app or desktop player, please reach out to us at <a
+          href="mailto:support@radio.com" >support@radio.com</a>.
+      legal-6:
+        componentVariation: paragraph
+        text: Public Inspection File - Help
+      legal-7:
+        text: >-
+          If you need help accessing the file due to a disability, please
+          contact <a href="mailto:publicfileinfo@entercom.com"
+          >publicfileinfo@entercom.com</a>
   static-page:
     instances:
       legal:
@@ -95,62 +135,22 @@ _components:
           - _ref: /_components/subheader/instances/legal-5
           - _ref: /_components/paragraph/instances/legal-6
           - _ref: /_components/paragraph/instances/legal-7
-        ogTitle: Entercom Legal
         headline: Entercom Legal
-        slugLock: true
         kilnTitle: Entercom Legal
-        pageTitle: Entercom Legal
-        twitterTitle: Entercom Legal
-        shortHeadline: Entercom Legal
-        primaryHeadline: Entercom Legal
         manualSlugUnlock: false
-        plaintextShortHeadline: Entercom Legal
+        ogTitle: Entercom Legal
+        pageTitle: Entercom Legal
         plaintextPrimaryHeadline: Entercom Legal
-  paragraph:
-    instances:
-      legal-1:
-        text: >-
-          <a href="#ip-contact-us-support"><strong
-          >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
-          </strong><a
-          href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
-          | </strong><a
-          href="http://www.entercom.com/terms-and-conditions"><strong
-          >Terms&nbsp;of&nbsp;Service</strong></a>
-        componentVariation: paragraph
-      legal-3:
-        text: RADIO.COM App &amp; Player - Contact and Support
-        componentVariation: paragraph
-      legal-4:
-        text: >-
-          If you are experiencing any issues and need support for the RADIO.COM
-          app or desktop player, please reach out to us at <a
-          href="mailto:support@radio.com" >support@radio.com</a>.
-      legal-6:
-        text: Public Inspection File - Help
-        componentVariation: paragraph
-      legal-7:
-        text: >-
-          If you need help accessing the file due to a disability, please
-          contact <a href="mailto:publicfileinfo@entercom.com"
-          >publicfileinfo@entercom.com</a>
+        plaintextShortHeadline: Entercom Legal
+        primaryHeadline: Entercom Legal
+        shortHeadline: Entercom Legal
+        slugLock: true
+        twitterTitle: Entercom Legal
   subheader:
     instances:
       legal-2:
-        text: Contact Us &amp; Support
         anchorId: ip-contact-us-support
+        text: Contact Us &amp; Support
       legal-5:
-        text: Public File
         anchorId: ip-public-file
-  google-ad-manager:
-    instances:
-      mediumRectangleTop:
-        adSize: medium-rectangle
-        _version: 1
-        adLocation: atf
-        adPosition: rec
-      billboardTop:
-        adSize: billboard
-        _version: 1
-        adLocation: atf
-        adPosition: top
+        text: Public File

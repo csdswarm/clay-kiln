@@ -1,47 +1,47 @@
 _pages:
   home:
+    banner:
+      - /_components/alert-banner/instances/default
+    customUrl: /
     head:
       - /_components/meta-title/instances/home
       - /_components/meta-description/instances/home
       - /_components/meta-url/instances/home
       - /_components/meta-tags/instances/general
-    main:
-      - /_components/homepage/instances/home
-    banner:
-      - /_components/alert-banner/instances/default
     layout: /_layouts/one-column-layout/instances/general
-    customUrl: '/'
-    secondary: []
-    pageHeader: []
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/homepage/instances/home
+    pageHeader: []
+    secondary: []
   legal:
+    customUrl: /legal
     head:
       - /_components/meta-title/instances/legal
       - /_components/meta-description/instances/legal
       - /_components/meta-image/instances/legal
       - /_components/meta-url/instances/legal
       - /_components/meta-tags/instances/legal
+    layout: /_layouts/two-column-layout/instances/static-page
     main:
       - /_components/static-page/instances/legal
-    layout: /_layouts/two-column-layout/instances/static-page
-    tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangleTop
-    customUrl: /legal
     pageHeader:
       - /_components/google-ad-manager/instances/billboardTop
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
   newsletter-subscribe:
+    customUrl: /newsletter/subscribe
     head:
       - /_components/meta-title/instances/newsletter-subscribe
       - /_components/meta-description/instances/newsletter-subscribe
       - /_components/meta-image/instances/newsletter-subscribe
       - /_components/meta-url/instances/newsletter-subscribe
       - /_components/meta-tags/instances/newsletter-subscribe
+    layout: /_layouts/two-column-layout/instances/static-page
     main:
       - /_components/static-page/instances/newsletter-subscribe
-    layout: /_layouts/two-column-layout/instances/static-page
-    tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangleTop
-    customUrl: /newsletter/subscribe
     pageHeader:
       - /_components/google-ad-manager/instances/billboardTop
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop

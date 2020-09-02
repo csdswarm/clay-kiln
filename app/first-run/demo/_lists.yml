@@ -1,80 +1,29 @@
 _lists:
-  tags: []
+  ap-media-entitlements:
+    - name: AP Top News - Business - Stories
+      value: 42428
+    - name: AP Top News - Entertainment - Stories
+      value: 42429
+    - name: AP Top News - International - Stories
+      value: 42430
+    - name: AP Top News - Health - Stories
+      value: 42431
+    - name: AP Top News - Strange - Stories
+      value: 42432
+    - name: AP Top News - Political - Stories
+      value: 42433
+    - name: AP Top News - Science - Stories
+      value: 42434
+    - name: AP Top News - Sports - Stories
+      value: 42435
+    - name: AP Top News - Technology - Stories
+      value: 42436
+    - name: AP Top News - General - Stories
+      value: 42437
+    - name: AP Top News - US Headlines - Stories
+      value: 42438
   authors: []
-  sources: []
   bookmarks: []
-  filterTag: []
-  entercom-domains:
-    - 1thingus.com
-    - entercom.com
-    - culinarykitchenchicago.com
-    - dfwrestaurantweek.com
-    - musictowndetroit.com
-    - mensroomlive.com
-    - jimrome.com
-    - radio.com
-  freq_editorial_feeds:
-    - AC
-    - Adult Hits
-    - Alternative
-    - CHR / Top 40
-    - Classic Hits
-    - Classic Rock
-    - Country
-    - Hip Hop
-    - Hot AC
-    - Hot AC / Top 40 / CHR
-    - News/Talk
-    - R and B
-    - Rock
-    - Sports
-    - Throwbacks
-    - Trending
-    - Urban
-  corporate_websites:
-    - ImListening
-    - 1Thing
-  new-pages:
-    - id: General-content
-      title: 1. General Content
-      children:
-        - id: new-two-col
-          title: Article
-        - id: curated-topic
-          title: Content Collection
-        - id: gallery
-          title: Gallery
-        - id: new-static-page
-          title: Static Page
-        - id: author-profile
-          title: Author Page
-        - id: contest
-          title: Contest
-        - id: event
-          title: Event
-        - id: events-listing
-          title: Events Listing
-        - id: host-profile
-          title: Host Page
-    - id: section-front
-      title: 2. Section Front
-      children:
-        - id: section-front
-          title: Section Front
-        - id: podcast-front
-          title: Podcast Front
-    - id: station-front
-      title: 3. Station Front
-      children:
-        - id: station-front
-          title: Station Front
-  brightcove_tertiary_categories:
-    - food
-    - drink
-    - travel
-    - home
-    - health
-    - environment
   brightcove_music_entertainment_secondary_categories:
     - awards
     - performance
@@ -90,18 +39,6 @@ _lists:
     - country
     - classicrock
     - latino
-  brightcove_sports_secondary_categories:
-    - nfl
-    - nhl
-    - mlb
-    - nba
-    - ncaafootball
-    - ncaabasketball
-    - mma-wwe
-    - tennis
-    - golf
-    - soccer
-    - unrelatedsports
   brightcove_news_lifestyle_secondary_categories:
     - national
     - lasvegas
@@ -159,29 +96,92 @@ _lists:
     - wichita
     - neworleans
     - wilkesbarre
-  ap-media-entitlements:
-    - name: AP Top News - Business - Stories
-      value: 42428
-    - name: AP Top News - Entertainment - Stories
-      value: 42429
-    - name: AP Top News - International - Stories
-      value: 42430
-    - name: AP Top News - Health - Stories
-      value: 42431
-    - name: AP Top News - Strange - Stories
-      value: 42432
-    - name: AP Top News - Political - Stories
-      value: 42433
-    - name: AP Top News - Science - Stories
-      value: 42434
-    - name: AP Top News - Sports - Stories
-      value: 42435
-    - name: AP Top News - Technology - Stories
-      value: 42436
-    - name: AP Top News - General - Stories
-      value: 42437
-    - name: AP Top News - US Headlines - Stories
-      value: 42438
+  brightcove_sports_secondary_categories:
+    - nfl
+    - nhl
+    - mlb
+    - nba
+    - ncaafootball
+    - ncaabasketball
+    - mma-wwe
+    - tennis
+    - golf
+    - soccer
+    - unrelatedsports
+  brightcove_tertiary_categories:
+    - food
+    - drink
+    - travel
+    - home
+    - health
+    - environment
+  corporate_websites:
+    - ImListening
+    - 1Thing
+  entercom-domains:
+    - 1thingus.com
+    - entercom.com
+    - culinarykitchenchicago.com
+    - dfwrestaurantweek.com
+    - musictowndetroit.com
+    - mensroomlive.com
+    - jimrome.com
+    - radio.com
+  filterTag: []
+  freq_editorial_feeds:
+    - AC
+    - Adult Hits
+    - Alternative
+    - CHR / Top 40
+    - Classic Hits
+    - Classic Rock
+    - Country
+    - Hip Hop
+    - Hot AC
+    - Hot AC / Top 40 / CHR
+    - News/Talk
+    - R and B
+    - Rock
+    - Sports
+    - Throwbacks
+    - Trending
+    - Urban
   listen-only-station-style: []
+  new-pages:
+    - children:
+        - id: new-two-col
+          title: Article
+        - id: curated-topic
+          title: Content Collection
+        - id: gallery
+          title: Gallery
+        - id: new-static-page
+          title: Static Page
+        - id: author-profile
+          title: Author Page
+        - id: contest
+          title: Contest
+        - id: event
+          title: Event
+        - id: events-listing
+          title: Events Listing
+        - id: host-profile
+          title: Host Page
+      id: General-content
+      title: 1. General Content
+    - children:
+        - id: section-front
+          title: Section Front
+        - id: podcast-front
+          title: Podcast Front
+      id: section-front
+      title: 2. Section Front
+    - children:
+        - id: station-front
+          title: Station Front
+      id: station-front
+      title: 3. Station Front
   primary-section-fronts: []
   secondary-section-fronts: []
+  sources: []
+  tags: []
