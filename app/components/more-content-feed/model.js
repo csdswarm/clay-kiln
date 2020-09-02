@@ -21,6 +21,21 @@ const _get = require('lodash/get'),
     return _get(lead, '[0]._ref') ? _get(lead, '[0]._ref').split('/')[2] : lead;
   },
   /**
+   * Coerces tag data to an array so we can
+   * have a consistent format when processing
+   * tag data.
+   *
+   * @param {tag} Array | Object
+   * @returns {Array<Object>}
+   */
+  tagToArray = (tag) => {
+    if (Array.isArray(tag)) {
+      return tag;
+    }
+
+    return [tag];
+  },
+  /**
    * @param {string} ref
    * @param {object} data
    * @param {object} locals
@@ -41,6 +56,8 @@ const _get = require('lodash/get'),
       showContentLabels: data.populateFrom === 'all-content' || data.populateFrom === 'author' || data.populateFrom === 'host'
     });
 
+    data._computed.tag = tagToArray(data.tag)
+      .map(({ text }) => text).join(',');
     // ON-1995: The data.station property is not filled when is done using the migration script and older components may no have the property set properly.
     data._computed.applyStationTheme = _get(locals, 'station.id') !== DEFAULT_STATION.id;
     return data;
