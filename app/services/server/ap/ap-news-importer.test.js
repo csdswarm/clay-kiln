@@ -1,7 +1,7 @@
 /* eslint-disable max-nested-callbacks */
 'use strict';
-const
-  _noop = require('lodash/noop'),
+
+const _noop = require('lodash/noop'),
   chai = require('chai'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
@@ -475,35 +475,9 @@ describe('server', () => {
               { text: 'Tragedy', slug: 'tragedy' }
             ]
           });
-
         });
 
-        it('maps AP data to meta title', async () => {
-          const
-            expectedTitle = 'You can go your own way!',
-            { result } = await setup_modifiedByAP({ apMeta: { headline: expectedTitle } }),
-            { metaTitle } = result;
-
-          expect(metaTitle).to.deep.include({
-            kilnTitle: expectedTitle,
-            ogTitle: expectedTitle,
-            title: expectedTitle,
-            twitterTitle: expectedTitle
-          });
-        });
-
-        it('maps AP data to meta description', async () => {
-          const
-            expected = 'You can go your own way, but it might be really, really far!',
-            { result } = await setup_modifiedByAP({ apMeta: { headline_extended: expected } }),
-            { metaDescription } = result;
-
-          expect(metaDescription).to.deep.include({
-            description: expected
-          });
-        });
-
-        it('maps AP image data to the article and meta-image', async () => {
+        it('maps AP image data to the article', async () => {
           const
             imageTitle = 'Something is on Fire',
             newImageUrl = 'https://images.radio.com/aiu-media/SomethingIsOnFire4832149-43125-5415.jpg',
@@ -538,7 +512,7 @@ describe('server', () => {
                 url: newImageUrl
               }
             }),
-            { article, metaImage } = result;
+            { article } = result;
 
           expect(article).to.deep.include({
             feedImgUrl: newImageUrl
@@ -565,10 +539,6 @@ describe('server', () => {
 
           expect(article.sideShare).to.deep.include({
             pinImage: newImageUrl
-          });
-
-          expect(metaImage).to.deep.include({
-            imageUrl: newImageUrl
           });
         });
 

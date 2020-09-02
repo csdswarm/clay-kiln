@@ -49,19 +49,35 @@ describe('update-page-metadata', () => {
 
     expect(put.getCall(1).args).to.deep.equal([
       `${protocol}://image-ref`,
-      { image: 'some image' },
+      { imageUrl: 'some image' },
       headers
     ]);
 
     expect(put.getCall(2).args).to.deep.equal([
       `${protocol}://tags-ref`,
-      { tags: 'some tags' },
+      {
+        authors: [{
+          slug: 'the-associated-press',
+          text: 'The Associated Press'
+        }],
+        contentTagItems: 'some items',
+        contentType: 'article',
+        noIndexNoFollow: true,
+        publishDate: 'some date',
+        secondarySectionFront: 'a secondary section front',
+        sectionFront: 'a section front'
+      },
       headers
     ]);
 
     expect(put.getCall(3).args).to.deep.equal([
       `${protocol}://title-ref`,
-      { title: 'some title' },
+      {
+        kilnTitle: 'some headline',
+        ogTitle: 'some headline',
+        title: 'some headline',
+        twitterTitle: 'some headline'
+      },
       headers
     ]);
   });
@@ -69,9 +85,20 @@ describe('update-page-metadata', () => {
 
 function getMockArticleData() {
   return {
-    metaDescription: { _ref: 'description-ref', description: 'some description' },
-    metaImage: { _ref: 'image-ref', image: 'some image' },
-    metaTags: { _ref: 'tags-ref', tags: 'some tags' },
-    metaTitle: { _ref: 'title-ref', title: 'some title' }
+    article: {
+      contentType: 'article',
+      date: 'some date',
+      feedImgUrl: 'some image',
+      headline: 'some headline',
+      pageDescription: 'some description',
+      secondarySectionFront: 'a secondary section front',
+      sectionFront: 'a section front',
+      tags: { items: 'some items' }
+    },
+
+    metaDescription: { _ref: 'description-ref' },
+    metaImage: { _ref: 'image-ref' },
+    metaTags: { _ref: 'tags-ref' },
+    metaTitle: { _ref: 'title-ref' }
   };
 }

@@ -1,9 +1,10 @@
 'use strict';
-const
 
+const
   _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   _memoize = require('lodash/memoize'),
+  _pick = require('lodash/pick'),
   cheerio = require('cheerio'),
   logger = require('../../universal/log'),
   slugifyService = require('../../universal/slugify'),
@@ -267,20 +268,17 @@ function integrateArticleStations(article, newStations) {
  * Given existing article data and ap meta data, maps any updated values to the article data and returns the
  * new article data.
  * (NOTE: does not map external items at this time)
- * @param {object} argsObj
- * @param {object} argsObj.apMeta
- * @param {object} argsObj.articleData
- * @param {object} argsObj.image
- * @param {object} argsObj.lead
- * @param {object[]} argsObj.newArticleTagItems
- * @param {object[]} argsObj.newStations
+ * @param {object} apMeta
+ * @param {object} articleData
+ * @param {object} image
+ * @param {object} lead
+ * @param {object[]} newStations
  * @returns {object}
  */
-function mapMainArticleData(argsObj) {
+function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
   const
-    { apMeta, lead, image, articleData, newArticleTagItems, newStations } = argsObj,
     { altids, ednote, headline, headline_extended, uri, version } = apMeta,
-    { article, metaDescription, metaImage, metaTags, metaTitle, metaUrl } = articleData,
+    { article } = articleData,
     { etag, itemid } = altids,
     {
       secondarySectionFront,
@@ -326,34 +324,13 @@ function mapMainArticleData(argsObj) {
       stationSyndication,
       teaser: headline
     },
-    metaDescription: {
-      ...metaDescription,
-      description: headline_extended
-    },
-    metaImage: {
-      ...metaImage,
-      imageUrl
-    },
-    metaTags: {
-      ...metaTags,
-      authors: article.authors,
-      contentTagItems: newArticleTagItems,
-      contentType: article.contentType,
-      noIndexNoFollow: article.noIndexNoFollow,
-      publishDate: article.date,
-      secondarySectionFront: article.secondarySectionFront,
-      sectionFront: article.sectionFront
-    },
-    metaTitle: {
-      ...metaTitle,
-      kilnTitle: headline,
-      ogTitle: headline,
-      title: headline,
-      twitterTitle: headline
-    },
-    metaUrl: {
-      ...metaUrl
-    }
+    ..._pick(articleData, [
+      'metaDescription',
+      'metaImage',
+      'metaTags',
+      'metaTitle',
+      'metaUrl'
+    ])
   };
 }
 
@@ -417,7 +394,6 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
       articleData,
       image,
       lead,
-      newArticleTagItems: newArticleTags.items,
       newStations
     });
 

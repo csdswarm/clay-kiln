@@ -1,6 +1,7 @@
 'use strict';
 
-const axios = require('axios');
+const _merge = require('lodash/merge'),
+  axios = require('axios');
 
 const {
   CLAY_ACCESS_KEY: accessKey,
@@ -13,16 +14,54 @@ const {
  * note: meta-url and meta-tags do not need to be updated since the default
  *   values suffice
  *
- * @param {object} articleData
+ * @param {object} articleData - this is mutated with the derived meta properties
  * @returns {Promise<object[]>}
  */
-function updatePageMetaData(articleData) {
+function updatePageMetadata(articleData) {
+  mergeDerivedProperties(articleData);
+
   return Promise.all([
     update(articleData.metaDescription),
     update(articleData.metaImage),
     update(articleData.metaTags),
     update(articleData.metaTitle)
   ]);
+}
+
+/**
+ * merges the meta properties into the article
+ *
+ * @param {object} articleData - this is mutated
+ */
+function mergeDerivedProperties(articleData) {
+  const { article } = articleData;
+
+  _merge(articleData, {
+    metaDescription: {
+      description: article.pageDescription
+    },
+    metaImage: {
+      imageUrl: article.feedImgUrl
+    },
+    metaTags: {
+      authors: [{
+        slug: 'the-associated-press',
+        text: 'The Associated Press'
+      }],
+      contentTagItems: article.tags.items,
+      contentType: article.contentType,
+      noIndexNoFollow: true,
+      publishDate: article.date,
+      secondarySectionFront: article.secondarySectionFront,
+      sectionFront: article.sectionFront
+    },
+    metaTitle: {
+      kilnTitle: article.headline,
+      ogTitle: article.headline,
+      title: article.headline,
+      twitterTitle: article.headline
+    }
+  });
 }
 
 /**
@@ -39,4 +78,4 @@ function update(metaData) {
   });
 }
 
-module.exports = updatePageMetaData;
+module.exports = updatePageMetadata;
