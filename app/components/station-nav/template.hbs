@@ -77,7 +77,7 @@
             {{#if (compare CtaOptions "===" 'contact') }}
               <div class="station-nav__cta station-nav__cta--contact">
                 {{#if _computed.CtaContactInfoTelephone}}
-                  <a class="station-nav__cta-link station-nav__cta-link--tel" href="tel:{{ _computed.CtaContactInfoTelephone }}">
+                  <a class="station-nav__cta-link station-nav__cta-link--tel" href="tel:+{{ _computed.CtaContactInfoTelephone }}">
                     <span class="station-nav__cta-link-icon station-nav__cta-link-icon--tel">
                       {{{ read "components/station-nav/media/icon-tel.svg" }}}
                     </span>
@@ -85,7 +85,7 @@
                   </a>
                 {{/if}}
                 {{#if CtaContactInfoSms}}
-                  <a class="station-nav__cta-link" href="sms:{{ CtaContactInfoSms }}">
+                  <a class="station-nav__cta-link" href="sms:+{{ CtaContactInfoSms }}">
                     <span class="station-nav__cta-link-icon station-nav__cta-link-icon--sms">
                       {{{ read "components/station-nav/media/icon-sms.svg" }}}
                     </span>
