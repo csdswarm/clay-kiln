@@ -2,6 +2,7 @@
 
 const
   { DEFAULT_STATION } = require('./constants'),
+  _differenceBy = require('lodash/differenceBy'),
   { prettyJSON } = require('./utils'),
   findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
   slugify = require('./slugify'),
@@ -84,8 +85,7 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
    *
    */
 function filterUnsubscribedEntries(unsubscribed, subscriptions) {
-  
-  return subscriptions.filter(subscription => unsubscribed.every(({ callsign }) => subscription.callsign !== callsign));
+  return _differenceBy(subscriptions, unsubscribed, 'callsign');
 }
 
 module.exports = {

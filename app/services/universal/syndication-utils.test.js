@@ -275,6 +275,12 @@ describe('universal', () => {
     describe('filterUnsubscribedEntries', () => {
       const subscriptions =  [
           {
+            stationSlug: 'station-b',
+            callsign: 'callsign-b',
+            syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
+            source: 'content subscription'
+          },
+          {
             stationSlug: 'station-a',
             callsign: 'callsign-a',
             syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
@@ -284,13 +290,13 @@ describe('universal', () => {
             stationSlug: 'station-b',
             callsign: 'callsign-b',
             syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
-            source: 'editorial feed'
+            source: 'manual syndication'
           },
           {
             stationSlug: 'station-b',
             callsign: 'callsign-b',
             syndicatedArticleSlug: '/my-primary-front/amazing-stuff',
-            source: 'manual syndication'
+            source: 'ap feed'
           }
         ],
         unsubscribed = [
