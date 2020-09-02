@@ -81,7 +81,7 @@
                     <span class="station-nav__cta-link-icon station-nav__cta-link-icon--tel">
                       {{{ read "components/station-nav/media/icon-tel.svg" }}}
                     </span>
-                    <span class="station-nav__cta-link-text station-nav__cta-link-text--tel">{{ _computed.CtaContactInfoTelephone }}</span>
+                    <span class="station-nav__cta-link-text station-nav__cta-link-text--tel">{{ CtaContactInfoTelephoneDisplay }}</span>
                   </a>
                 {{/if}}
                 {{#if CtaContactInfoSms}}
@@ -89,7 +89,7 @@
                     <span class="station-nav__cta-link-icon station-nav__cta-link-icon--sms">
                       {{{ read "components/station-nav/media/icon-sms.svg" }}}
                     </span>
-                    <span class="station-nav__cta-link-text station-nav__cta-link-sms">{{ CtaContactInfoSms }}</span>
+                    <span class="station-nav__cta-link-text station-nav__cta-link-sms">{{ CtaContactInfoSmsDisplay }}</span>
                   </a>
                 {{/if}}
               </div>
