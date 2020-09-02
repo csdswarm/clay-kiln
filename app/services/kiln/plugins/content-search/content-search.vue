@@ -4,6 +4,11 @@
 </docs>
 <template>
     <div class="content-search">
+        <station-select
+          class="content-search__station-select"
+          :initialSelectedSlug="initialStationSlug"
+          :onChange="stationChanged"
+        />
         <ui-textbox
                 floating-label
                 :label="schema._label"
@@ -40,50 +45,26 @@
   import { isUrl } from '../../../../services/universal/utils';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
+  import stationSelect from '../../shared-vue-components/station-select'
+  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
+  import { mapGetters } from 'vuex';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
   const { sanitizeSearchTerm } = queryService;
-  const nationalStationSlug = DEFAULT_STATION.site_slug;
-  // this query says
-  //   "match if stationSlug doesn't exist or it's an empty slug"
-  //   currently I think national stations shouldn't have a stationSlug, but
-  //   because I'm setting stationSlug to an empty string as a national slug
-  //   identifier, I wanted to make sure we checked that as well.
-  const matchNationalStation = [
-    {
+
+  const ELASTIC_FIELDS = [
+      'date',
+      'canonicalUrl',
+      'seoHeadline',
+      'stationSyndication',
+      'stationSlug'
+    ],
+    nationalMustNot = {
       bool: {
         must_not: { exists: { field: "stationSlug" } }
       }
-    },
-    { match: { stationSlug: nationalStationSlug } }
-  ];
-
-  /**
-   * returns an array which will be put into an elasticsearch `should` array
-   *   meant to match any station we have access to.
-   *
-   * I'm pretty sure this needs to be a function because window.kiln.locals is
-   *
-   * @returns {object}
-   */
-  const getMatchStationsIHaveAccessTo = () => {
-    const { locals } = window.kiln;
-
-    const matchStations = _.chain(locals.stationsIHaveAccessTo)
-      // omit the national
-      .omit(nationalStationSlug)
-      .map(station => ({ match: { stationSlug: station.slug } }))
-      .value();
-
-    if (locals.stationsIHaveAccessTo[nationalStationSlug]) {
-      matchStations.push(...matchNationalStation)
     }
-
-    return matchStations;
-  };
-
-  const matchStationsIHaveAccessTo = getMatchStationsIHaveAccessTo();
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -91,17 +72,28 @@
       return {
         searchResults: [],
         loading: false,
-        searchText: this.data || ''
+        searchText: this.data || '',
+        initialStationSlug: '',
       };
     },
-    watch: {
-      data(val) {
-        this.searchText = val || '';
-        this.performSearch();
-      }
-    },
     computed: {
-      showResults: function () {
+      ...mapGetters(stationSelect.storeNs, ['selectedStation']),
+      isNationalSelected() {
+        return !(this.selectedStation
+          ? this.selectedStation.slug
+          : this.initialStationSlug);
+      },
+      getStationSlug() {
+        return this.selectedStation
+          ? this.selectedStation.slug
+          : this.initialStationSlug
+      },
+      getSyndicatedArticleSlug() {
+        const searchString = this.searchText.replace(/^https?:\/\//, ''),
+          host = isUrl(this.searchText) ? searchString.split('/')[0] : '';
+        return searchString.replace(`${host}/`, '');
+      },
+      showResults() {
         return this.loading || this.searchResults.length !== 0;
       }
     },
@@ -109,11 +101,15 @@
      * lifecycle method that will populate the results from an existing url or display the most recent 10 items published
      */
     created() {
-        this.performSearch();
+      this.initialStationSlug = window.kiln.locals.station.site_slug;
+      this.performSearch();
     },
     methods: {
+      stationChanged() {
+        this.performSearch();
+      },
       commitFormData() {
-          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
+        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
       },
       /**
        * search the published_content index the search string
@@ -124,29 +120,77 @@
         const { locals } = window.kiln,
           query = queryService('published-content', locals),
             // if there are no search text yet, pass in * to get the top 10 most recent
-            searchString = this.searchText || '*';
+            searchString = this.searchText || '*',
+            searchCondition = [
+              {
+                query_string: {
+                  query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
+                  fields: ["authors", "canonicalUrl", "tags", "teaser"]
+                }
+              }, 
+              {
+                nested: {
+                  path: "stationSyndication",
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          match: {
+                            "stationSyndication.syndicatedArticleSlug": {
+                              query: sanitizeSearchTerm(`/${this.getSyndicatedArticleSlug}`),
+                              operator: "and"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            filterShould= [{
+                match: {
+                  stationSlug: this.getStationSlug
+                },
+              },
+              {
+                nested: {
+                  path: "stationSyndication",
+                  query: {
+                    bool: {
+                      should: [
+                        {
+                          match: {
+                            "stationSyndication.stationSlug": this.getStationSlug
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }],
+            shouldIncludeNationalMustNot = this.isNationalSelected ? [...filterShould, nationalMustNot] : filterShould,
+            filterCondition = [
+              {
+                bool: {
+                  should: shouldIncludeNationalMustNot,
+                  minimum_should_match: 1
+                }
+              }
+            ];
 
         queryService.addSize(query, 10);
-        queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
-        queryService.addFilter(query, {
-          bool: {
-            must: [{
-              query_string: {
-                query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
-                fields: ["authors", "canonicalUrl", "tags", "teaser"]
-              }
-            }],
-            should: matchStationsIHaveAccessTo
-          }
-        });
-        queryService.addSort(query, { date: { order: 'desc'} });
-
+        queryService.onlyWithTheseFields(query, ELASTIC_FIELDS);
+        queryService.addShould(query, searchCondition);
+        queryService.addMinimumShould(query, 1);
+        queryService.addFilter(query, filterCondition)
+        queryService.addSort(query, { date: { order: 'desc' } });
+        
         const results = await queryService.searchByQuery(
           query,
           locals,
           { shouldDedupeContent: false }
         );
-
         // format the date using the same format as clay-kiln
         return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }));
       },
@@ -165,7 +209,7 @@
 
         this.loading = false;
         if (!this.searchResults.length) {
-            this.commitFormData();
+          this.commitFormData();
         }
       },
       /**
@@ -176,9 +220,9 @@
        * determines if the search should take place based on the current input
        */
       inputOnchange() {
-        if (this.searchTextparams === '' || !this.searchText || this.searchText.length > 2) {
+        if (!this.searchText || this.searchText.length > 2) {
           if(isUrl(this.searchText)){
-              this.commitFormData();
+            this.commitFormData();
           }
           this.debouncePerformSearch();
         } else {
@@ -192,7 +236,17 @@
        * @param selected
        */
       selectItem(selected) {
-        this.searchText = selected.canonicalUrl;
+        const { canonicalUrl, stationSlug = '', stationSyndication } = selected, 
+          { protocol, host } = new URL(canonicalUrl),
+          syndicationToStation = (stationSyndication || []).find(syndication => syndication.stationSlug === this.getStationSlug);
+
+        this.searchText = 
+          this.getStationSlug !== stationSlug 
+            ? `${protocol}//${host}${
+                syndicationToStation
+                  ? syndicationToStation.syndicatedArticleSlug 
+                  : ''}`
+            : canonicalUrl;
         this.searchResults = [selected];
         this.commitFormData();
       }
@@ -200,7 +254,8 @@
     components: {
       UiButton,
       UiProgressCircular,
-      UiTextbox
+      UiTextbox,
+      'station-select': StationSelectInput
     }
   }
 </script>

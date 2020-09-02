@@ -155,7 +155,7 @@ describe(dirname, function () {
         const q = fn('http://page-url', [], locals);
 
         expect(q.index).to.equal('published-content');
-        expect(q.body.query.bool.filter.term).to.have.property('canonicalUrl');
+        expect(q.body.query.bool.should[0].bool.filter.term).to.have.property('canonicalUrl');
       });
 
       it('applies provided fields', function () {
