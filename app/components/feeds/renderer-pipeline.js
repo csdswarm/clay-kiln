@@ -20,8 +20,14 @@ async function rendererPipeline(ref, data, locals, prefix) {
     utmParams = { utmSource: meta.utmSource || 'nym', utmMedium: meta.utmMedium || 'f1' },
     mapper = (feed) => ({ meta: data.meta, feed, attr }),
     entryMapper = (entry) => Object.assign(generateLink(entry), utmParams),
-    errorHandler = (error) => {
-      log('error', 'Error rendering feed data', error);
+    errorHandler = (err) => {
+      log('error', 'Error rendering feed data', {
+        error: {
+          message: err.message,
+          stack: err.stack
+        },
+        http: { url: locals.url }
+      });
     };
 
   return h(results)
