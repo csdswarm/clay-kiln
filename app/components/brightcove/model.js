@@ -1,11 +1,51 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _isArray = require('lodash/isArray'),
+  _isPlainObject = require('lodash/isPlainObject'),
   { SERVER_SIDE } = require('../../services/universal/constants'),
   apiHelper = require('../../services/universal/brightcove-proxy-helper'),
   db = require('../../services/server/db'),                                         // Only used server-side
   log = require('../../services/universal/log').setup({ file: __filename }),  // Only used server-side
   radioApi = require('../../services/server/radioApi') ;                            // Only used server-side
+
+/**
+ * This is for debugging only
+ *
+ * @param obj
+ * @returns {boolean}
+ */
+function containsNullPrototype(obj) {
+  if (hasNullPrototype(obj)) {
+    return true;
+  }
+
+  if (_isPlainObject(obj)) {
+    for (const key in obj) {
+      if (containsNullPrototype(obj[key])) {
+        return true;
+      }
+    }
+  } else if (_isArray(obj)) {
+    for (const el of obj) {
+      if (containsNullPrototype(el)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * This is for debugging only
+ *
+ * @param obj
+ * @returns {boolean}
+ */
+function hasNullPrototype(obj) {
+  return _isPlainObject(obj) && !obj.constructor;
+}
 
 module.exports = {
   save: async (ref, data) => {
@@ -24,7 +64,14 @@ module.exports = {
       // Update this component instance
       db.put(ref, data)
         .catch(e => {
-          log('error', `Could not update Brightcove component video views: ${ref}`, e);
+          log('error', `Could not update Brightcove component video views: ${ref}`, {
+            error: {
+              message: e.message,
+              stack: e.stack
+            },
+            data,
+            hasNullPrototype: containsNullPrototype(data)
+          });
         });
     }
 
