@@ -44,6 +44,9 @@ async function addSyndicationEntry(uri, syndicationEntry) {
       }
     });
   } else {
+    // This avoids adding duplicated entries for the same station.
+    //  A manual syndication entry will be added only when no other tool like ap news, editorial feed
+    //  or content subscriptions has an entry for this station.
     data.stationSyndication.push({ ...syndicationEntry });
     addStationSyndicationSlugs(data);
   }
