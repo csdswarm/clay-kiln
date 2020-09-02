@@ -68,7 +68,7 @@ function addCondition(query, queryParamVal, aCondition, conditionType) {
     localQuery = nested
       ? queryService.newNestedQuery(nested)
       : query,
-    items = typeof item === 'string'
+    items = typeof queryParamVal === 'string'
       ? queryParamVal.split(',')
       : [queryParamVal];
 
