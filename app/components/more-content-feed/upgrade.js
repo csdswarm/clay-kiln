@@ -1,10 +1,15 @@
 'use strict';
 
-const _get = require('lodash/get'),
+const
+  _get = require('lodash/get'),
+  {
+    getComponentInstance,
+    putComponentInstance
+  } = require('../../services/server/publish-utils'),
+  { getComponentVersion } = require('clayutils'),
   addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
   db = require('amphora-storage-postgres'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
-  { getComponentVersion } = require('clayutils');
+  filterToExcludes = require('../../services/universal/component-upgrades/filter-to-excludes');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -158,11 +163,7 @@ module.exports['9.0'] = async function (uri, data) {
   }
 };
 
-module.exports['10.0'] = async function (uri, data) {
-  const { filterTags, filterSecondarySectionFronts, ...restOfData } = data;
-
-  return { ...restOfData, excludeTags: filterTags, excludeSecondarySectionFronts: filterSecondarySectionFronts };
-};
+module.exports['10.0'] = filterToExcludes;
 
 module.exports['11.0'] = function (uri, data) {
   data.componentTitleVisible = false;
@@ -186,5 +187,22 @@ module.exports['13.0'] = function (uri, data) {
 module.exports['14.0'] = function (uri, data) {
   delete data.tagInfo;
 
+  return data;
+};
+
+module.exports['15.0'] = (uri, data) => {
+  // Account for inccorrect formatting of data.tagManual in the database for previously created content.
+  // Instances of data.tag that do not return an empty array, or properly formatted tag array will break the kiln UI.
+  // e.g. tag array: data.tagManual: [] || data.tagManual: [{ text: 'tag' }].
+  if (!data.tagManual || data.tagManual.length === 0) {
+    data.tagManual = [];
+    return data;
+  } else if (Array.isArray(data.tagManual)) {
+    data.tagManual = data.tagManual.map((tag) => typeof tag === 'string' ? { text: tag } : tag);
+    return data;
+  } else if (typeof data.tagManual === 'string') {
+    data.tagManual = [{ text: data.tagManual }];
+    return data;
+  }
   return data;
 };

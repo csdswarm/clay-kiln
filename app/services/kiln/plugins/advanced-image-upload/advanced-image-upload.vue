@@ -31,6 +31,7 @@
       accept="image/*"
       @change="localFileAttached">
     </ui-fileupload>
+    <p v-if="failedFileCheck" class="advanced-image-upload__file-check-error">Image is too small and does not meet design requirements (must be at least 430 x 430 pixels)</p>
     <ui-button v-if="showDelete"
       icon="delete"
       buttonType="button"
@@ -72,13 +73,20 @@ export default {
   data() {
     return {
       imageUrl: this.data || '', // Set passed data "prop" as local data so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-      fileUploadButtonDisabled: false
+      fileUploadButtonDisabled: false,
+      image: {
+        size: '',
+        width: '',
+        height: ''
+      },
+      verifiedfile: false,
+      failedFileCheck: false
     };
   },
   computed: {
     showDelete() {
       return this.data && this.args.enableDelete;
-    }
+    },
   },
   methods: {
     /**
@@ -94,30 +102,31 @@ export default {
      *
      * @param {array} files - FileList array of files.
      */
-    localFileAttached(files) {
+    async localFileAttached(files) {
       // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
+      const file = files[0]
+      if(!file || file.type.indexOf('image/') !== 0) return;
 
-      const file = files[0];
-
-      // If file attached, exec upload logic.
-      if (file) {
-
-        /*
-        Send file name and type to backend so backend can generate aws pre-signed request url.
-        This allows us to keep our aws secret on the backend, while still uploading directly
-        from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing
-        attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
-        */
-        uploadFile(file)
-          .then((s3) => {
-            // Build the full s3 image url.
-            this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
-          })
-          .catch(console.error)
-          .finally(() => {
-            this.fileUploadButtonDisabled = false; // Re-enable file upload button.
-          });
+      try {
+        const image = await this.getImageDimensions(file);
+        const valid = this.checkImageDimemsions(image);
+        // If file attached, exec upload logic.
+        if (file && valid) {
+          /*
+          Send file name and type to backend so backend can generate aws pre-signed request url.
+          This allows us to keep our aws secret on the backend, while still uploading directly
+          from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing
+          attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
+          */
+          const s3 = await uploadFile(file);
+          // Build the full s3 image url.
+          this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.fileUploadButtonDisabled = false; // Re-enable file upload button.
       }
     },
     setImageUrl(imageUrl) {
@@ -134,6 +143,38 @@ export default {
       this.$refs.fileUploadButton.$refs.input.value = null;
 
       this.setImageUrl('');
+    },
+    getImageDimensions(file) {
+      return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.onload = evt => {
+        const image = new Image();
+        image.src = evt.target.result;
+        image.onload = () => {
+          resolve({width: image.width, height: image.height})
+        }
+      }
+      reader.readAsDataURL(file);
+      reader.onerror = evt => {
+        console.error(evt);
+        reject(new Error(evt))
+      }
+
+      })
+    },
+    checkImageDimemsions({width, height}) {
+      const hero =  window.location.hash.indexOf("podcast-hero-carousel");
+      if(hero <= 0) {
+        this.failedFileCheck = false;
+        return true;
+      };
+      if((width < 430) || (height < 430)) {
+        this.failedFileCheck = true;
+        this.fileUploadButtonDisabled = false;
+        return false;
+      }
+      this.failedFileCheck = false;
+      return true;
     }
   },
   components: {

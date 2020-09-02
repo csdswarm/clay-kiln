@@ -79,16 +79,10 @@ export default {
     },
 
     initSelectedItem() {
-      let searchPredicate = this.stationsBySlug[nationalSlug]
-        ? item => item.value.slug === nationalSlug
-        // otherwise just get the first one
-        : item => item;
-
-      if (this.initialSelectedSlug) {
-        searchPredicate = item => item.value.slug === this.initialSelectedSlug;
-      } else if (this.initialSelectedCallsign) {
-        searchPredicate = item => item.value.callsign === this.initialSelectedCallsign;
-      }
+      const activeStation = this.$store.state
+        .locals.station;
+      const searchPredicate = item => 
+        item.value.slug == activeStation.site_slug;
 
       this.$store.commit(`${storeNs}/_setSelectedItem`, this.items.find(searchPredicate) || {});
     }

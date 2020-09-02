@@ -70,7 +70,7 @@
   }
 
   .layout__content {
-    z-index: 3;
+    z-index: 2;
     position: relative;
 
     .content__main,
@@ -97,6 +97,11 @@
     }
   },
   &[data-main-component="contest"] {
+    .content__sidebar {
+      visibility: visible;
+    }
+  },
+  &[data-main-component="podcast-show-page"] {
     .content__sidebar {
       visibility: visible;
     }

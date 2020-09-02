@@ -26,6 +26,8 @@ then
 else
   clay export -y "$http://$1/_components/station-nav/instances/new" > component.yml;
 
+  npm init -f;
+
   npm install yamljs;
 
   node ./modifyStationNav.js;

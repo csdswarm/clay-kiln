@@ -52,4 +52,4 @@ EXPOSE 3001
 
 USER node
 
-CMD ["pm2-runtime", "app.js", "--instances", "2"]
+CMD ["pm2-runtime", "app.js", "--instances", "2", "--node-args='--max-http-header-size=100000'"]

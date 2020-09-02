@@ -10,6 +10,7 @@
 }
 
 .component--topic-page-header {
+  padding-top: em(20);
   h1 {
     @mixin topic-page-header-font2;
     z-index: 2;

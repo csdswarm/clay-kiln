@@ -53,6 +53,27 @@ class ClientPlayerInterface {
 
   /**
    *
+   * Adds events related to podcast episode player
+   *
+   * @param {Node} doc
+   * @returns {Node} - document with events attached
+   */
+  addEventListenerEpisode(doc) {
+    // Attach play button click handlers
+    doc.querySelectorAll('[data-play-episode]').forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
+
+        this[playbackStatus](null, element.dataset.playPodcast, element.dataset.playEpisode, true);
+      });
+    });
+    return doc;
+  }
+
+  /**
+   *
    * Load different player library depending on environment.
    *
    * @returns {string} - The web player environment namespace.
@@ -137,10 +158,13 @@ class ClientPlayerInterface {
    * playback with the currently loaded station.
    *
    * @param {number} stationId - The station to play
+   * @param {number} podcastId - The podcast to play
+   * @param {number} episodeId - The episode to play
+   * @param {boolean} playPodcast - Play podcast
    * @returns {Promise<any>} - Passed in stationId or null
    */
-  play(stationId = null) {
-    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { stationId, playbackStatus: 'play' });
+  play(stationId = null, podcastId = null, episodeId = null) {
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { stationId, playbackStatus: 'play', podcastId, episodeId });
   }
 
   /**

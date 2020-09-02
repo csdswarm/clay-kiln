@@ -11,21 +11,21 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
-  slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
-  { DEFAULT_STATION } = require('../constants'),
-  { PAGE_TYPES } = require('../constants'),
+  { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
-    uriToUrl,
-    replaceVersion,
     has,
     isFieldEmpty,
+    replaceVersion,
     textToEncodedSlug,
+    uriToUrl,
     urlToElasticSearch
-  } = require('../utils');
+  } = require('../utils'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -331,6 +331,11 @@ function standardizePageData(data, componentName) {
     case PAGE_TYPES.STATIC_PAGES:
       data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
       break;
+    case PAGE_TYPES.HOST:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.host;
+      data.slug = sanitize.cleanSlug(data.host);
+      break;
     default:
   }
 }
@@ -367,9 +372,9 @@ function sanitizeByline(data) {
  * @param {object} data
  */
 function bylineOperations(data) {
-  const authors = [], sources = [];
+  const authors = [], sources = [], hosts = data.hosts ? data.hosts : [];
 
-  for (const { names, sources: bylineSources } of data.byline || []) {
+  for (const { names, sources: bylineSources, hosts: bylineHosts } of data.byline || []) {
     /*
       Originally a NYMag legacy thing, since we converted the original
       `authors` array into a more complex `byline` structure,
@@ -382,14 +387,18 @@ function bylineOperations(data) {
       author.slug = textToEncodedSlug(author.text);
       authors.push(author);
     }
+    for (const host of bylineHosts || []) {
+      delete host.count;
+      host.slug = textToEncodedSlug(host.text);
+      hosts.push(host);
+    }
     // do sources too
     for (const source of bylineSources || []) {
       delete source.count;
       sources.push(source);
     }
   }
-
-  Object.assign(data, { authors, sources });
+  Object.assign(data, { authors, sources, hosts });
   sanitizeByline(data);
 }
 
@@ -462,9 +471,10 @@ function updateStationSyndicationType(data) {
  * @returns {Object}
  */
 function setNoIndexNoFollow(data) {
-  const isContentFromAP = _get(data, 'byline', [])
-    .some(({ sources = [] }) =>
-      sources.some(({ text }) => text === 'The Associated Press'));
+  const
+    containAP = ({ text }) => text.includes('Associated Press'),
+    isContentFromAP = _get(data, 'byline', [])
+      .some(({ sources = [], names = [] }) => names.some(containAP) || sources.some(containAP));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
@@ -559,17 +569,21 @@ function addStationSyndicationSlugs(data) {
       const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
 
       if (shouldSetSlug) {
-        station.syndicatedArticleSlug = '/' + [
-          station.stationSlug,
-          slugify(station.sectionFront),
-          slugify(station.secondarySectionFront),
-          station.slug || data.slug
-        ].filter(Boolean).join('/');
+        station.syndicatedArticleSlug = generateSyndicationSlug(data.slug, station);
       } else {
         delete station.syndicatedArticleSlug;
       }
       return station;
     });
+}
+
+function doNotPublishToANF(data) {
+  if (data.feeds && (data.stationSlug || data.isCloned)) {
+    data.feeds = {
+      ...data.feeds,
+      'apple-news': false
+    };
+  }
 }
 
 function render(ref, data, locals) {
@@ -579,6 +593,7 @@ function render(ref, data, locals) {
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
   renderStationSyndication(data);
+  doNotPublishToANF(data);
 
   if (locals && !locals.edit) {
     return data;

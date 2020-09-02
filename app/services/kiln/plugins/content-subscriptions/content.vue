@@ -32,11 +32,10 @@
             class="from-station-slug"
             has-search
             label="From Station"
-            placeholder="Radio.com (NATL-RC)"
 
             :options="stations"
-
-            v-model="workingSubscription.from_station_slug"
+            :value="workingFromStation"
+            @input="handleNewFromStation"
           ></ui-select>
           <ui-textbox
               error="The short description may not be more than 50 characters"
@@ -159,7 +158,7 @@
   const SubscriptionRow = require('./subscription-row.vue')
   const startCase = require('lodash/startCase')
   const axios = require('axios')
-  const PAGE_TYPES = require('../../../universal/constants').PAGE_TYPES
+  const { DEFAULT_STATION, PAGE_TYPES } = require('../../../universal/constants')
   const tableConfig = [
     {
       key: 'id',
@@ -214,19 +213,26 @@
     }
   ]
   const capitalize = require('../../../client/dom-helpers').capitalize
+  const toStationOption = station => ({
+    label: `${station.name} (${station.callsign})`,
+    value: station === DEFAULT_STATION
+      ? station.site_slug
+      : station.slug
+  })
+  const nationalFromStationOption = toStationOption(DEFAULT_STATION)
 
-// needed for using simple-list outside of kiln
-_set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
-  const style = _get(this, '$el.style')
+  // needed for using simple-list outside of kiln
+  _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
+    const style = _get(this, '$el.style')
 
-  if (style) {
-    style.height = 'auto';
-  }
-})
+    if (style) {
+      style.height = 'auto';
+    }
+  })
 
   class ContentSubscription {
     constructor (options = {
-      from_station_slug: { label: 'Radio.com (NATL-RC)', value: ''},
+      from_station_slug: nationalFromStationOption.value,
       station_slug: window.kiln.locals.station.site_slug,
       short_desc: '',
       filter: {
@@ -250,27 +256,37 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
     }
   }
 
+  const getNewWorkingSectionFrontProps = () => ({
+    workingSectionFront: '',
+    workingSecondarySectionFront: '',
+    workingExcludeSectionFronts: [],
+    workingExcludeSecondarySectionFronts: [],
+  })
+
+  const getNewWorkingProps = () => ({
+    workingSubscription: new ContentSubscription(),
+    workingTags: [],
+    workingExcludeTags: [],
+    workingFromStation: nationalFromStationOption,
+    ...getNewWorkingSectionFrontProps()
+  })
+
   export default {
     data() {
       const {
         stationForPermissions: { name: stationName }
       } = window.kiln.locals
 
-      return {
+      const initialData = {
         subscriptions: [...window.kiln.locals.contentSubscriptions],
-        workingSubscription: new ContentSubscription(),
-        workingTags: [],
-        workingExcludeTags: [],
-        workingSectionFront: '',
-        workingSecondarySectionFront: '',
-        workingExcludeSectionFronts: [],
-        workingExcludeSecondarySectionFronts: [],
         primarySectionFronts: [],
         secondarySectionFronts: [],
         stationName,
         isLoading: false,
         modalMode: null,
-      }
+      };
+
+      return Object.assign(initialData, getNewWorkingProps())
     },
     methods: {
       setSectionFrontFilter(key, option) {
@@ -279,8 +295,6 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         this.workingSubscription.filter[key] = Array.isArray(option)
           ? option.map(opt => opt.value)
           : option.value;
-
-        console.log(JSON.stringify(this.workingSubscription.filter, null, 2));
       },
       openModal (ref) {
         this.$refs[ref].open()
@@ -302,7 +316,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
-          fromStationSlug: this.workingSubscription.from_station_slug.value,
+          fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
@@ -317,11 +331,37 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
+      async handleNewFromStation(opt) {
+        this.workingFromStation = opt;
+        this.workingSubscription.from_station_slug = opt.value;
+
+        await this.loadSectionFronts();
+
+        Object.assign(this, getNewWorkingSectionFrontProps());
+
+        Object.assign(this.workingSubscription.filter, {
+          sectionFront: this.workingSectionFront,
+          secondarySectionFront: this.workingSecondarySectionFront,
+          excludeSectionFronts: this.workingExcludeSectionFronts,
+          excludeSecondarySectionFronts: this.workingExcludeSecondarySectionFronts
+        });
+      },
+      async loadSectionFronts() {
+        const slug = this.workingSubscription.from_station_slug,
+          listPrefix = slug
+            ? slug + '-'
+            : '';
+
+        await Promise.all([
+          this.loadList(`${listPrefix}primary-section-fronts`, 'primarySectionFronts'),
+          this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts')
+        ])
+      },
       updateSubscription () {
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
-          fromStationSlug: this.workingSubscription.from_station_slug.value || '',
+          fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
@@ -354,16 +394,28 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       },
       onCreate () {
         this.modalMode = 'new'
-        this.workingSubscription = new ContentSubscription()
-        this.workingTags = []
-        this.workingExcludeTags = []
+        Object.assign(this, getNewWorkingProps())
+        this.loadSectionFronts()
         this.openModal('subscriptionModal')
       },
       onEditSubscriptionRow (subscription) {
         this.modalMode = 'edit'
-        this.workingSubscription = { ...subscription }
-        this.workingTags = subscription.filter.tags.map(t => ({text: t}))
-        this.workingExcludeTags = subscription.filter.excludeTags.map(t => ({text: t}))
+
+        const { filter } = subscription;
+
+        Object.assign(this, {
+          workingSubscription: { ...subscription },
+          workingTags: filter.tags.map(t => ({text: t})),
+          workingExcludeTags: filter.excludeTags.map(t => ({text: t})),
+          workingFromStation: this.stations.find(({ value }) => value === subscription.from_station_slug),
+          workingSectionFront: filter.sectionFront,
+          workingSecondarySectionFront: filter.secondarySectionFront,
+          workingExcludeSectionFronts: filter.excludeSectionFronts,
+          workingExcludeSecondarySectionFronts: filter.excludeSecondarySectionFronts
+        });
+
+        this.loadSectionFronts()
+
         this.openModal('subscriptionModal')
       },
       onDeleteSubscriptionRow (subscription) {
@@ -374,11 +426,20 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         this.deleteSubscription(this.workingSubscription.id)
       },
       async loadList(listName, dataKey) {
-        const { data } = await axios.get(`/_lists/${listName}`)
+        let items = []
 
-        this[dataKey] = data.map(item => ({
-          label: item.name,
-          value: item.value
+        try {
+          items = (await axios.get(`/_lists/${listName}`)).data
+        } catch (err) {
+          // if it's a 404 then we should use the empty list - otherwise rethrow
+          if (_get(err, 'response.status') !== 404) {
+            throw err
+          }
+        }
+
+        this[dataKey] = items.map(({ name, value }) => ({
+          label: name,
+          value
         }))
       },
       hookDataToTags() {
@@ -405,8 +466,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       }
     },
     mounted () {
-      this.loadList('primary-section-fronts', 'primarySectionFronts')
-      this.loadList('secondary-section-fronts', 'secondarySectionFronts')
+      this.loadSectionFronts()
     },
     created () {
       this.hookDataToTags()
@@ -458,14 +518,12 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         }
       },
       includeSectionFronts () {
-        return this.workingSubscription.filter.populateFrom === 'section-front'
-          || this.workingSubscription.filter.populateFrom === 'section-front-and-tag'
-          || this.workingSubscription.filter.populateFrom === 'section-front-or-tag'
+        return ['section-front', 'section-front-and-tag', 'section-front-or-tag']
+          .includes(this.workingSubscription.filter.populateFrom);
       },
       includeSectionTags () {
-        return this.workingSubscription.filter.populateFrom === 'tag'
-          || this.workingSubscription.filter.populateFrom === 'section-front-and-tag'
-          || this.workingSubscription.filter.populateFrom === 'section-front-or-tag'
+        return ['tag', 'section-front-and-tag', 'section-front-or-tag']
+          .includes(this.workingSubscription.filter.populateFrom);
       },
       simpleListArgs() {
         return {
@@ -478,9 +536,15 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         }
       },
       stations () {
-        return Object.values(window.kiln.locals.stationsIHaveAccessTo).map(station => {
-          return { label: `${station.name} (${station.callsign})`, value: station.slug }
-        })
+        const stationOptions = Object.assign(
+          // even if the user doesn't have access to the national station, they
+          //   should still be able to subscribe to it
+          { [DEFAULT_STATION.site_slug]: DEFAULT_STATION },
+
+          window.kiln.locals.stationsIHaveAccessTo
+        )
+
+        return Object.values(stationOptions).map(toStationOption)
       }
     },
     components: {
@@ -497,4 +561,3 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
     }
   }
 </script>
-

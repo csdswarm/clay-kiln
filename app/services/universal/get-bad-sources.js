@@ -20,7 +20,14 @@ module.exports = async (text, locals) => {
     ),
     // query the DB
     validSources = (await db.get(`${process.env.CLAY_SITE_HOST}/_valid_source/items`, locals, noItems)).items,
-    isUntrusted = src => !validSources.some(validSrc => src.includes(validSrc));
+    isUntrusted = src => {
+      // We allow scripts without a `src` attribute because we assume
+      // it is an inline script
+      const hasSrcAttr = !!src;
+
+      return hasSrcAttr &&
+        !validSources.some(validSrc => src.includes(validSrc));
+    };
 
   return sources.filter(isUntrusted);
 };

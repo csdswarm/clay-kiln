@@ -47,7 +47,7 @@ async function updateMetaTitle () {
 
   _set(
     payload,
-    '_components.dynamic-meta-title.instances.station.metaLocalsKey',
+    '_components.dynamic-meta-title.instances.station.metaLocalsPath',
     [ 'station.name', 'station.slogan' ]
   );
 

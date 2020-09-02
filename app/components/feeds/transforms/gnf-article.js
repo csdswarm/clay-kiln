@@ -16,13 +16,12 @@ const format = require('date-fns/format'),
  */
 module.exports = async (data, locals) => {
   const {
-      canonicalUrl,
       content,
       feedImgUrl,
       headline,
+      link,
       seoDescription
     } = data,
-    link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
         title: { _cdata: headline }
@@ -34,7 +33,7 @@ module.exports = async (data, locals) => {
         pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ') // Date format must be RFC 822 compliant
       },
       {
-        guid: canonicalUrl
+        guid: link
       },
       {
         description: { _cdata: seoDescription }
