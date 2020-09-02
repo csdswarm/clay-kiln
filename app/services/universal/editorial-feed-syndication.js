@@ -2,11 +2,11 @@
 
 const
   _concat = require('lodash/concat'),
+  _differenceBy = require('lodash/differenceBy'),
   _intersection = require('lodash/intersection'),
   _filter = require('lodash/filter'),
   _reject = require('lodash/reject'),
   { boolObjectToArray } = require('./utils'),
-  { filterUnsubscribedEntries } = require('./syndication-utils'),
   getEditorialGroups = require('../server/get-editorial-groups');
 
 /**
@@ -23,7 +23,7 @@ async function addStationsByEditorialGroup(data, locals) {
       ),
       selectedStations = _reject(data.stationSyndication, { source: 'editorial feed' }),
       // remove elements from the content subscription that matches unsubscribed ones.
-      filteredStationSubscribed = filterUnsubscribedEntries(unsubscribed, syndicatedStations);
+      filteredStationSubscribed = _differenceBy(unsubscribed, syndicatedStations, 'callsign');
 
     data.stationSyndication = _concat(unsubscribed, selectedStations, filteredStationSubscribed);
   }
