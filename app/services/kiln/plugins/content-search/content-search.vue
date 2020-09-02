@@ -43,6 +43,7 @@
   import axios from 'axios';
   import queryService from '../../../client/query';
   import { isUrl } from '../../../../services/universal/utils';
+  import { subscribedContentOnly } from '../../../universal/recirc/recirculation';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
   import { DEFAULT_STATION } from '../../../../services/universal/constants';
   import stationSelect from '../../shared-vue-components/station-select'
@@ -158,12 +159,13 @@
                   path: "stationSyndication",
                   query: {
                     bool: {
-                      should: [
+                      must: [
                         {
                           match: {
                             "stationSyndication.stationSlug": this.getStationSlug
                           }
-                        }
+                        },
+                        ...subscribedContentOnly
                       ]
                     }
                   }
