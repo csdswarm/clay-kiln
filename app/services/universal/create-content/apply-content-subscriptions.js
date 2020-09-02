@@ -3,7 +3,7 @@
 const _reject = require('lodash/reject'),
   _filter = require('lodash/filter'),
   _concat = require('lodash/concat'),
-  { filterUnsubscribedEntries } = require('../syndication-utils'),
+  _differenceBy = require('lodash/differenceBy'),
   getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
 
 /**
@@ -23,7 +23,7 @@ async function applyContentSubscriptions(data, locals) {
         { source: 'content subscription' }
       ),
       // remove elements from the content subscription that matches unsubscribed ones.
-      filteredStationSubscribed = filterUnsubscribedEntries(unsubscribed, stationsSubscribed);
+      filteredStationSubscribed = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
     
     data.stationSyndication = _concat(unsubscribed, syndicatedStations, filteredStationSubscribed);
   }
