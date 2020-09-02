@@ -41,11 +41,11 @@ _lists:
         - id: new-two-col
           title: Article
         - id: curated-topic
-          title: New Curated Page
+          title: Content Collection
         - id: gallery
           title: Gallery
         - id: new-static-page
-          title: New Static Page
+          title: Static Page
         - id: author-profile
           title: Author Page
         - id: contest
@@ -54,7 +54,7 @@ _lists:
           title: Event
         - id: events-listing
           title: Events Listing
-        - id: host-profile,
+        - id: host-profile
           title: Host Page
     - id: section-front
       title: 2. Section Front
@@ -183,3 +183,5 @@ _lists:
     - name: AP Top News - US Headlines - Stories
       value: 42438
   listen-only-station-style: []
+  primary-section-fronts: []
+  secondary-section-fronts: []

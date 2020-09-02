@@ -125,19 +125,3 @@ _components:
         text: <div id="postup-newsletter"></div>
         isIframe: false
         componentVariation: html-embed
-_pages:
-  newsletter-subscribe:
-    head:
-      - /_components/meta-title/instances/newsletter-subscribe
-      - /_components/meta-description/instances/newsletter-subscribe
-      - /_components/meta-image/instances/newsletter-subscribe
-      - /_components/meta-url/instances/newsletter-subscribe
-      - /_components/meta-tags/instances/newsletter-subscribe
-    main:
-      - /_components/static-page/instances/newsletter-subscribe
-    layout: /_layouts/two-column-layout/instances/static-page
-    tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangleTop
-    customUrl: /newsletter/subscribe
-    pageHeader:
-      - /_components/google-ad-manager/instances/billboardTop

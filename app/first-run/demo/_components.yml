@@ -372,8 +372,8 @@ _components:
       host-page:
         col1:
           - _ref: /_components/more-content-feed/instances/host-page
-        col2: [
-          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship,
+        col2:
+          - _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
           - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
 
   author-page:
@@ -424,12 +424,12 @@ _components:
       curated-topic:
         routeParam: 'tag'
         suffix: ' | RADIO.COM'
+      host:
+        routeParam: 'host'
+        suffix: ' | RADIO.COM'
       host-profile:
         routeParam: 'host'
         suffix: ' | RADIO.COM'
-        host:
-          routeParam: 'host'
-          suffix: ' | RADIO.COM'
       station:
         suffix: " - LISTEN LIVE | RADIO.COM"
         localsKey: station.name
@@ -456,9 +456,9 @@ _components:
             urlString: "/stations/news-talk"
           - suffix: The Best Sports Radio Stations – RADIO.COM
             urlString: "/stations/sports"
-        topic:
-          routeParam: 'dynamicTag'
-          suffix: ' | RADIO.COM'
+      topic:
+        routeParam: 'dynamicTag'
+        suffix: ' | RADIO.COM'
 
   dynamic-meta-description:
     instances:
@@ -477,12 +477,12 @@ _components:
         urlMatches: []
         description: "${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports,
           News, Podcasts"
+      host:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'host'
       host-profile:
         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
         routeParam: 'host'
-        host:
-          description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
-          routeParam: 'host'
       station:
         localsKey: station.description
         urlMatches: []

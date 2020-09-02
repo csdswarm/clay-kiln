@@ -304,20 +304,3 @@ _components:
         secondarySectionFrontManual: null
         filterSecondarySectionFronts: {}
         excludeSecondarySectionFronts: null
-_pages:
-  home:
-    head:
-      - /_components/meta-title/instances/home
-      - /_components/meta-description/instances/home
-      - /_components/meta-url/instances/home
-      - /_components/meta-tags/instances/general
-    main:
-      - /_components/homepage/instances/home
-    banner:
-      - /_components/alert-banner/instances/default
-    layout: /_layouts/one-column-layout/instances/general
-    customUrl: '/'
-    secondary: []
-    pageHeader: []
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
