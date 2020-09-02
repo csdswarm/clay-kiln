@@ -275,7 +275,7 @@ function integrateArticleStations(article, newStations) {
  * @param {object[]} newStations
  * @returns {object}
  */
-function mapMainArticleData({ apMeta, lead, image, articleData, newStations }) {
+function mapMainArticleData({ apMeta, articleData, image, lead, newStations }) {
   const
     { altids, ednote, headline, headline_extended, uri, version } = apMeta,
     { article } = articleData,
