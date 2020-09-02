@@ -23,7 +23,7 @@ async function addStationsByEditorialGroup(data, locals) {
       ),
       selectedStations = _reject(data.stationSyndication, { source: 'editorial feed' }),
       // remove elements from the content subscription that matches unsubscribed ones.
-      filteredStationSubscribed = _differenceBy(unsubscribed, syndicatedStations, 'callsign');
+      filteredStationSubscribed = _differenceBy(syndicatedStations, unsubscribed, 'callsign');
 
     data.stationSyndication = _concat(unsubscribed, selectedStations, filteredStationSubscribed);
   }

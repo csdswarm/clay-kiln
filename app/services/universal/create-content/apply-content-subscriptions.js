@@ -23,7 +23,7 @@ async function applyContentSubscriptions(data, locals) {
         { source: 'content subscription' }
       ),
       // remove elements from the content subscription that matches unsubscribed ones.
-      filteredStationSubscribed = _differenceBy(unsubscribed, stationsSubscribed, 'callsign');
+      filteredStationSubscribed = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
     
     data.stationSyndication = _concat(unsubscribed, syndicatedStations, filteredStationSubscribed);
   }
