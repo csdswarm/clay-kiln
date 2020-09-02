@@ -337,6 +337,11 @@ class PodcastHeroCarouselController {
    * @param {object} aCarouselDirectionalObject
    */
   transitionDirection(aCarouselDirectionalObject) {
+    if (this.view.isAnimating) {
+      return;
+    }
+
+    this.timer.reset();
     this.view.onClickDirectionButton(aCarouselDirectionalObject);
     this.model.updateSlideIndex(aCarouselDirectionalObject);
     this.view.setActiveMacro(this.model.slideIndex);
@@ -346,10 +351,6 @@ class PodcastHeroCarouselController {
    * Contains the logic for the swiping left
    */
   onSwipeLeft() {
-    if (this.view.isAnimating) {
-      return;
-    }
-
     this.transitionDirection(carouselDirectionalObjects.right);
   }
 
@@ -357,10 +358,6 @@ class PodcastHeroCarouselController {
    * Contains the logic for the swiping right
    */
   onSwipeRight() {
-    if (this.view.isAnimating) {
-      return;
-    }
-
     this.transitionDirection(carouselDirectionalObjects.left);
   }
 
