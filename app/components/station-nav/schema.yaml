@@ -185,7 +185,7 @@ listenNav:
     include:
       - station-listen-nav
 
-CTA_Options:
+CtaOptions:
   _has:
     input: radio
     options:
@@ -200,44 +200,44 @@ CTA_Options:
         value: contact
     help: Which CTA would you like to show?
 
-CTA_NewsletterUrl:
+CtaNewsletterUrl:
   _label: CTA Newsletter URL
   _has:
     input: text
     type: url
   _reveal:
-    field: CTA_Options
+    field: CtaOptions
     operator: ===
     values:
       - newsletter
 
-CTA_ContactInfoTelephone:
+CtaContactInfoTelephone:
   _label: CTA Contact Telephone
   _has:
     input: text
     type: tel
   _reveal:
-    field: CTA_Options
+    field: CtaOptions
     operator: ===
     values:
       - contact
 
-CTA_ContactInfoSms:
+CtaContactInfoSms:
   _label: CTA Contact Text
   _has:
     input: text
     type: tel
   _reveal:
-    field: CTA_Options
+    field: CtaOptions
     operator: ===
     values:
       - contact
 
 _groups:
-  CTA_ContactInfoSettings:
+  CtaContactInfoSettings:
     fields:
-      - CTA_ContactInfoTelephone
-      - CTA_ContactInfoSms
+      - CtaContactInfoTelephone
+      - CtaContactInfoSms
   settings:
     fields:
       - stationLogo (Main Nav & Drawer)
@@ -245,7 +245,7 @@ _groups:
       - hidePodcastsLink (Listen Nav Drawer)
       - podcastsUrl (Listen Nav Drawer)
       - featuredLinks (Listen Nav Drawer)
-      - CTA_Options (Connect CTA Drawer)
-      - CTA_NewsletterUrl (Connect CTA Drawer)
-      - CTA_ContactInfoTelephone (Connect CTA Drawer)
-      - CTA_ContactInfoSms (Connect CTA Drawer)
+      - CtaOptions (Connect CTA Drawer)
+      - CtaNewsletterUrl (Connect CTA Drawer)
+      - CtaContactInfoTelephone (Connect CTA Drawer)
+      - CtaContactInfoSms (Connect CTA Drawer)
