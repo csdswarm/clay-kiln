@@ -80,19 +80,12 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
    * Removes unsubscribed elements from the subscriptions entries
    * @param {Array} unsubscribed
    * @param {Array} subscriptions
-   * @return {Array} filteredStationSubscribed
+   * @return {Array} filteredSubscriptions
    *
    */
 function filterUnsubscribedEntries(unsubscribed, subscriptions) {
-  let filteredStationSubscribed = subscriptions;
   
-  unsubscribed.forEach(syndicationEntry => {
-    filteredStationSubscribed = filteredStationSubscribed.filter(subscription => {
-      return subscription.callsign !== syndicationEntry.callsign;
-    });
-  });
-  
-  return filteredStationSubscribed;
+  return subscriptions.filter(subscription => unsubscribed.every(({ callsign }) => subscription.callsign !== callsign));
 }
 
 module.exports = {
