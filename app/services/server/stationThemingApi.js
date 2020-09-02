@@ -9,12 +9,13 @@ const db = require('./db'),
    * retrieves the current station theme
    *
    * @param {string} siteSlug
+   * @param {*} defaultResult
    * @return {object}
    */
-  get = async (siteSlug) => {
+  get = async (siteSlug, defaultResult) => {
     const key = `${CLAY_SITE_HOST}/_station_themes/${siteSlug}`;
 
-    return await db.get(key);
+    return await db.get(key, {}, defaultResult);
   },
   /**
    * Add routes for station themes

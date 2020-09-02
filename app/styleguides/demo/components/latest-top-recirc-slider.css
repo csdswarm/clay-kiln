@@ -2,134 +2,145 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-top-recirc-slider-font1 {
+  @mixin font CircularStd-Black, 12px, color: theme(primaryColor, $purple), -.2px, 14px;
+}
+@define-mixin latest-top-recirc-slider-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
 $controls-width: 70px;
 $controls-width-half: 35px;
 $thumbnail-width: 50px;
 $thumbnail-continer-width: 70px;
 
 .latest-top-recirc-slider {
+  height: em(71, 16);
+  overflow: hidden;
+  &__slider-container {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: 99;
+    background: $white;
     height: em(71, 16);
+    display: flex;
+    border-top: 1px solid $60gray;
+    border-bottom: 1px solid $60gray;
+  }
+  &__controls-container {
+    background: theme(secondaryColor,$purple);
+    height: 100%;
+    flex: 0 0 em($controls-width, 16);
+    display: flex;
+    z-index: 2;
+    @mixin medium-small-screen {
+      display: none;
+    }
+  }
+  &__control {
+    width: em($controls-width-half, 16);
+    height: 100%;
+    background: center no-repeat;
+    background-size: em(12, 16);
+    cursor: pointer;
+    transition: background-size 125ms ease;
+    &--left {
+      background-image: url("/media/components/latest-top-recirc-slider/left-icon.svg");
+    }
+    &--right {
+      border-left: 1px solid $white;
+      background-image: url("/media/components/latest-top-recirc-slider/right-icon.svg");
+    }
+    &:hover {
+      background-size: em(16, 16);
+    }
+  }
+  &__control:hover {
+    background-size: em(16, 16);
+  }
+  &__items-container {
+    height: 100%;
+    display: flex;
+    /* can't use flex shorthand with calc here because of IE11 bug */
+    flex-grow: 0;
+    flex-shrink: 1;
+    transform: translateX(0);
+    transition: transform 125ms ease;
+    user-select: none;
+    z-index: 1;
+    width: calc(100% - em($controls-width, 16));
+    @mixin medium-small-screen {
+      flex: 0 0 100%;
+    }
+  }
+  &__item-container {
+    background: $white;
+    display: flex;
+    flex: 0 0 20%;
+    border-left: 1px solid $silver;
+    border-right: 1px solid $silver;
     overflow: hidden;
-    &__slider-container {
-        position: fixed;
-        width: 100%;
-        left: 0;
-        z-index: 99;
-        background: $white;
-        height: em(71, 16);
-        display: flex;
-        border-top: 1px solid $60gray;
-        border-bottom: 1px solid $60gray;
+    @mixin large-screen {
+      flex: 0 0 25%;
     }
-    &__controls-container {
-        background: $purple;
-        height: 100%;
-        flex: 0 0 em($controls-width, 16);
-        display: flex;
-        z-index: 2;
-        @mixin medium-small-screen {
-            display: none;
-        }
+    @mixin medium-screen {
+      flex: 0 0 33.3333%;
     }
-    &__control {
-        width: em($controls-width-half, 16);
-        height: 100%;
-        background: center no-repeat;
-        background-size: em(12, 16);
-        cursor: pointer;
-        transition: background-size 125ms ease;
-        &--left {
-            background-image: url("/media/components/latest-top-recirc-slider/left-icon.svg");
-        }
-        &--right {
-            border-left: 1px solid $white;
-            background-image: url("/media/components/latest-top-recirc-slider/right-icon.svg");
-        }
-        &:hover {
-            background-size: em(16, 16);
-        }
+    @mixin medium-small-screen {
+      flex: 0 0 70%;
     }
-    &__control:hover {
-        background-size: em(16, 16);
+  }
+  &__item-link {
+    display: flex;
+    text-decoration: none;
+    color: theme(primaryColor, $purple);
+  }
+  &__item-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 em($thumbnail-continer-width, 16);
+    @mixin medium-small-screen {
+      display: none;
     }
-    &__items-container {
-        height: 100%;
-        display: flex;
-        /* can't use flex shorthand with calc here because of IE11 bug */
-        flex-grow: 0;
-        flex-shrink: 1;
-        transform: translateX(0);
-        transition: transform 125ms ease;
-        user-select: none;
-        z-index: 1;
-        width: calc(100% - em($controls-width, 16));
-        @mixin medium-small-screen {
-            flex: 0 0 100%;
-        }
+  }
+  &__item-img {
+    width: em($thumbnail-width, 16);
+  }
+  &__item-text {
+    padding: em(10, 16) em(10, 16) em(10, 16) 0;
+    @mixin medium-small-screen {
+      padding: em(10, 16);
     }
-    &__item-container {
-        background: $white;
-        display: flex;
-        flex: 0 0 20%;
-        border-left: 1px solid $silver;
-        border-right: 1px solid $silver;
-        overflow: hidden;
-        @mixin large-screen {
-            flex: 0 0 25%;
-        }
-        @mixin medium-screen {
-            flex: 0 0 33.3333%;
-        }
-        @mixin medium-small-screen {
-            flex: 0 0 70%;
-        }
+  }
+  &__item-category {
+    @mixin latest-top-recirc-slider-font1;
+    text-transform: uppercase;
+    &--music {
+      color: theme(primaryColor, $sunsetOrange);
+  }
+    &--sports {
+      color: theme(primaryColor, $azureRadience);
     }
-    &__item-link {
-        display: flex;
-        text-decoration: none;
+    &--news {
+      color: theme(primaryColor, $lightningYellow);
     }
-    &__item-img-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex: 0 0 em($thumbnail-continer-width, 16);
-        @mixin medium-small-screen {
-            display: none;
-        }
-    }
-    &__item-img {
-        width: em($thumbnail-width, 16);
-    }
-    &__item-text {
-        padding: em(10, 16) em(10, 16) em(10, 16) 0;
-        @mixin medium-small-screen {
-            padding: em(10, 16);
-        }
-    }
-    &__item-category {
-        @mixin latest-top-recirc-slider-font1;
-        text-transform: uppercase;
-        &--music {
-            color: $sunsetOrange;
-        }
-        &--sports {
-            color: $azureRadience;
-        }
-        &--news {
-            color: $lightningYellow;
-        }
-    }
-    &__item-title {
-        @mixin latest-top-recirc-slider-font2;
-        max-height: em(36, 14);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        /* autoprefixer: off */
-        -webkit-box-orient: vertical;
-        /* autoprefixer: on */
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+  }
+  &__item-title {
+    @mixin latest-top-recirc-slider-font2;
+    max-height: em(36, 14);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   &.empty:not(.editing) {
     display: none;
@@ -137,23 +148,24 @@ $thumbnail-continer-width: 70px;
 }
 
 .editing .latest-top-recirc-slider {
-    &__slider-container {
-        top: em(116, 16);
-        @mixin medium-screen {
-            top: em(102, 16);
-        }
+  &__slider-container {
+    top: em(116, 16);
+    @mixin medium-screen {
+      top: em(102, 16);
     }
+  }
 }
 
 /*  Reset behavior of radioCom top nav bar */
 .latest-top-recirc-slider__slider-container.reset-slider-top-nav {
-    position: unset;
-  }
+  position: unset;
+}
 
 .latest-top-recirc-slider__slider-container.sticky-latest-recirc-slider-bar {
     position: fixed;
     top: em(130);
+
     @mixin medium-small-screen {
         top: em(110);
     }
-  }
+}

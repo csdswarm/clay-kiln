@@ -100,11 +100,10 @@ $caret-margin-right: em(25);
     position: relative;
     width: 100%;
     z-index: 100;
-    
+
     .station-nav__menu {
       background: $station-primaryColor;
       display: flex;
-      align-items: flex-end;
       width: 100%;
       padding: 0 calc((100% - $default-screen-nav-width) / 2);
       @mixin large-screen {
@@ -112,6 +111,10 @@ $caret-margin-right: em(25);
       }
       @mixin medium-screen {
         padding: 0 calc((100% - $medium-screen-nav-width) / 2);
+        height: em(130);
+      }
+      @mixin medium-small-screen {
+        height: em(110);
       }
       @mixin nav-mobile-breakpoint {
         padding: 0 em(20);
@@ -123,6 +126,9 @@ $caret-margin-right: em(25);
         margin-right: $caret-margin-right;
         @mixin medium-screen {
           display: flex;
+        }
+        @mixin small-screen {
+          margin-right: em(6);
         }
         button {
           @mixin button-reset;
@@ -145,18 +151,26 @@ $caret-margin-right: em(25);
           }
         }
       }
+
       .menu__image-anchor {
-        margin-right: $logo-margin-right;
-        margin-bottom: em(15);
-        margin-top: em(15);
+        margin-bottom: em(0);
+        margin-top: em(8);
+        @mixin medium-screen {
+          margin-bottom: em(4);
+          margin-top: em(4);
+        }
       }
       .menu__image {
         display: block;
-        width: $station-logo-width-height;
-        height: $station-logo-width-height;
+        height: em(80);
+        @mixin medium-screen {
+          height: em(100);
+        }
         @mixin medium-small-screen {
-          width: $station-logo-width-height-med-screen;
-          height: $station-logo-width-height-med-screen;
+          height: em(96);
+        }
+        @mixin small-screen {
+          height: em(68);
         }
       }
 
@@ -271,6 +285,21 @@ $caret-margin-right: em(25);
           bottom: 0;
           display: none;
         }
+      }
+
+      .station-nav__menu-left {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        .station-nav__menu-logo-container {
+          display: flex;
+        }
+      }
+
+      .station-nav__menu-right {
+        display: flex;
+        align-items: flex-end;
       }
     }
 
