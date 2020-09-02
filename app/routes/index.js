@@ -160,6 +160,7 @@ module.exports = router => {
   addEndpoints.alerts(router);
   addEndpoints.apSubscriptions(router);
   addEndpoints.createPage(router);
+  addEndpoints.cloneContent(router);
   addEndpoints.imageInfo(router, checkAuth);
   addEndpoints.contentSubscription(router);
   ensureStationOnCustomUrl(router);

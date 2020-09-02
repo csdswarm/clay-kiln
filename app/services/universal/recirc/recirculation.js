@@ -32,7 +32,8 @@ const
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
   { unityComponent } = require('../amphora'),
-
+  fetchStationFeeds = require('../../server/fetch-station-feeds'),
+  transformStationFeed = require('../../universal/transform-station-feed'),
   log = logger.setup({ file: __filename }),
   index = 'published-content',
   DEFAULT_CONTENT_KEY = 'articles',
@@ -45,8 +46,59 @@ const
     'sectionFront'
   ],
   DEFAULT_MAX_ITEMS = 10,
+
+  /**
+   * Fetches the rss data for a station feed and
+   * transforms it to a recirculation-compatible format.
+   *
+   * @param   {object}   config
+   * @param   {object}   config.data
+   * @param   {object}   config.locals
+   * @param   {number}   config.numberOfArticles
+   * @param   {number}   config.page
+   * @param   {function} config.mapResultsToTemplate
+   * @returns {object}
+   */
+  fetchAndTransformStationFeed = async ({
+    data,
+    locals,
+    numberOfArticles,
+    page,
+    mapResultsToTemplate
+  }) => {
+    const feed = await fetchStationFeeds(data, locals),
+      {
+        items: nextContent,
+        hasMoreItems: moreContent
+      } = await transformStationFeed(
+        locals,
+        feed,
+        numberOfArticles,
+        page
+      );
+
+    return {
+      content: await Promise.all(
+        nextContent.map(({
+          primaryHeadline,
+          externalUrl,
+          feedImgUrl,
+          date
+        }) => mapResultsToTemplate(locals, {
+          primaryHeadline,
+          feedImgUrl,
+          canonicalUrl: externalUrl,
+          date
+        }))
+      ),
+      moreContent
+    };
+  },
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => ({
+    pagination: {
+      page: 0
+    },
     filters: {
       ...getAuthor(data, locals),
       ...getHost(data, locals),
@@ -542,32 +594,53 @@ const
         return render(uri, data, locals);
       }
 
-      try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS, isRdcContent = false } = _merge(
-            defaultMapDataToFilters(uri, data, locals),
-            await mapDataToFilters(uri, data, locals)
-          ),
-          itemsNeeded = maxItems > curated.length ? maxItems - curated.length : 0,
-          { content, totalHits } = await fetchRecirculation(
-            {
-              filters,
-              excludes,
-              elasticFields: esFields,
-              pagination,
-              maxItems: itemsNeeded,
-              shouldAddAmphoraTimings,
-              isRdcContent
-            },
-            locals);
+      const {
+          filters = {}, excludes = {}, pagination = {}, curated,
+          maxItems = DEFAULT_MAX_ITEMS, isRdcContent = false
+        } = _merge(
+          defaultMapDataToFilters(uri, data, locals),
+          await mapDataToFilters(uri, data, locals)
+        ),
+        itemsNeeded = maxItems > curated.length ? maxItems - curated.length : 0;
 
-        data._computed = Object.assign(data._computed || {}, {
-          [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
-              .slice(0, maxItems)
-              .map(async (item) => mapResultsToTemplate(locals, item))),
-          initialLoad: !pagination.page,
-          moreContent: totalHits > maxItems
-        });
+      try {
+        const isFromRss = data.populateFrom === 'rss-feed';
+
+        if (isFromRss) {
+          const { content, moreContent } = await fetchAndTransformStationFeed({
+            data, locals,
+            numberOfArticles: itemsNeeded,
+            page: pagination.page,
+            mapResultsToTemplate
+          });
+
+          data._computed = Object.assign(data._computed || {}, {
+            [contentKey]: [...curated, ...content],
+            initialLoad: !pagination.page,
+            moreContent
+          });
+
+        } else {
+
+          const { content, totalHits } = await fetchRecirculation({
+            filters,
+            excludes,
+            elasticFields: esFields,
+            pagination,
+            maxItems: itemsNeeded,
+            shouldAddAmphoraTimings,
+            isRdcContent
+          }, locals);
+
+          data._computed = Object.assign(data._computed || {}, {
+            [contentKey]: await Promise.all(
+              [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
+                .slice(0, maxItems)
+                .map(async (item) => mapResultsToTemplate(locals, item))),
+            initialLoad: !pagination.page,
+            moreContent: totalHits > maxItems
+          });
+        }
       } catch (e) {
         log('error', `There was an error querying items from elastic - ${e.message}`, e);
       }
