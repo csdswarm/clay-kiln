@@ -109,16 +109,15 @@ function createAuthorHostHtml(data, options) {
   const nameOrText = data.name || data.text,
     link = slugifyService(nameOrText),
     name = data.isHost ? 'host' : 'author',
-    { isContentFromAP } = options,
-    linkAuthorHostPage =
-      isContentFromAP
-        ? `${options.authorHost + (options.siteSlug ? `/${options.siteSlug}` : '')}/${name}s/${link}`
-        : `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/${name}s/${link}`;
+    { authorHost, isContentFromAP, linkClass, nameClass, siteSlug, stationSlug } = options,
+    slug = isContentFromAP ? siteSlug : stationSlug,
+    linkAuthorHostPage = `${authorHost + (slug ? `/${slug}` : '')}/${name}s/${link}`;
+
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
-    `<a href="//${linkAuthorHostPage}" rel="author" class="${options.linkClass ? options.linkClass : name + '__anchor'}">` +
-    `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
+    `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
+    `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
     `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
 }
