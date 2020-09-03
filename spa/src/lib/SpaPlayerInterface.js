@@ -11,6 +11,7 @@ import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
 import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 import recentPodcasts from '../../../app/services/client/recentPodcasts.js'
+import _get from 'lodash/get'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
 const sessionStorage = window.sessionStorage
@@ -78,10 +79,10 @@ class SpaPlayerInterface {
    * @returns {boolean} - whether or not to automatically boot the player.
    */
   autoBootPlayer (path) {
-    const matchedStationDetailRoute = path.match(/^\/podcasts\/(.+)\/(.+)$/) || path.match(/^\/(.+)\/listen$/)
+    const matchedAutoPlayRoute = path.match(/\/?([\w-]+)?\/podcasts\/([\w-]+)\/([\w-]+)/) || path.match(/^\/(.+)\/listen$/)
     const playerWasActive = this.playerSession.playerState === 'play'
 
-    if (matchedStationDetailRoute || playerWasActive) {
+    if (matchedAutoPlayRoute || playerWasActive) {
       return true
     } else {
       return false
@@ -340,9 +341,11 @@ class SpaPlayerInterface {
    */
   extractPodcastEpisodeIdFromSpaPayload () {
     const episodeDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'podcast-episode-page')
+    const podcastId = _get(episodeDetailData, '_computed.podcast.id')
+    const episodeId = _get(episodeDetailData, '_computed.episode.id')
 
-    if (episodeDetailData && episodeDetailData.episode && episodeDetailData.podcast) {
-      return { podcastId: episodeDetailData.podcast.id, episodeId: episodeDetailData.episode.id }
+    if (episodeDetailData && podcastId && episodeId) {
+      return { podcastId, episodeId }
     } else {
       return {}
     }
