@@ -108,3 +108,5 @@ nginx/certs/
 #SOPS & .env files
 **/unencrypted.yml
 app/.env
+
+utility/backups/

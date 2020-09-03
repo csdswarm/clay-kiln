@@ -578,22 +578,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||| Author Page Header Fonts Styleguide  ||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin author-page-header-font1 {
-  @mixin font CircularStd-Black, 35px, $mineShaft, -.58px, 42px;
-}
-@define-mixin author-page-header-font2 {
-  @mixin font CircularStd-Black, 20px, $redViolet, -.33px, 22px;
-}
-@define-mixin author-page-header-font3 {
-  @mixin font ProximaNova-Regular, 18px, $black, inherit, 28px;
-}
-@define-mixin author-page-header-font4 {
-  @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Permissions Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin permissions-font1 {
