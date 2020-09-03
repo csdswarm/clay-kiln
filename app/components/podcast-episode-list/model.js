@@ -80,7 +80,10 @@ function getEpisodesInShow(locals) {
       if (locals.podcast) {
         return { ...response, data: response.data || [] };
       } else {
-        return getMissingPodcast(locals, podcastSiteSlug, response.data || []);
+        return {
+          ...response,
+          ...getMissingPodcast(locals, podcastSiteSlug, response.data || [])
+        };
       }
     });
 }
