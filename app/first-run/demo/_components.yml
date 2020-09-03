@@ -1164,6 +1164,32 @@ _components:
           _ref: /_components/google-ad-manager/instances/sharethroughTag
         tag: ''
         tagManual: ''
+      section-front:
+        tag: []
+        items: []
+        content: []
+        station:
+        _version: 15
+        lazyLoads: 2
+        tagManual: []
+        filterTags: []
+        pageLength: 10
+        contentType:
+          article: true
+          gallery: true
+        initialLoad: true
+        moreContent: true
+        populateFrom: section-front
+        sectionFront: ''
+        componentTitle: MORE from RADIO.COM
+        introComponents: []
+        sharethroughTag:
+          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+        enableSharethrough: true
+        primarySectionFront:
+        componentTitleVisible: false
+        locationOfContentFeed: section-front
+        filterSecondarySectionFronts: {}
       station-basic-music:
         _version: 14
         componentTitle: MORE from RADIO.COM
@@ -1639,6 +1665,12 @@ _components:
           - _ref: >-
               /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
           - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+      section-front:
+        col1:
+          - _ref: www.radio.com/_components/more-content-feed/instances/section-front
+        col2:
+          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
       station-front:
         col1:
           - _ref: /_components/more-content-feed/instances/station-basic-music
