@@ -25,7 +25,7 @@ module.exports.save = (ref, data, locals) => {
   }
 
   const cleanRoutes = [ ...locals.routes.map(route => route.replace(/\/:.+/, '')),
-      ...['/js/.*', '/css/.*', '/fonts/.*', '/media/.*', '/_.*', '/404'] ],
+      ...['/js/.*', '/css/.*', '/fonts/.*', '/_.*', '/404'] ],
     blockedPaths = Array.from(new Set(cleanRoutes));
 
   // do not allow any redirects that are direct preset routes
