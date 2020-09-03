@@ -89,7 +89,11 @@ module.exports = unityComponent({
 
     data._computed.category = _get(podcastData, 'category.0.name');
     data._computed.title = podcastData.title;
-    data._computed.description = stripHtml(podcastData.description);
+
+    if (podcastData.description) {
+      data._computed.description = stripHtml(podcastData.description);
+    }
+
     data._computed.imageURL = podcastData.image;
 
     if (episodeData) {
