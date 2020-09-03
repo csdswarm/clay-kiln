@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _has = require('lodash/has'),
   { SERVER_SIDE } = require('../../services/universal/constants'),
   apiHelper = require('../../services/universal/brightcove-proxy-helper'),
   db = require('../../services/server/db'),                                         // Only used server-side
@@ -17,12 +18,7 @@ const _get = require('lodash/get'),
  * @param {String} url
  */
 function sanitizeLocals(data, url) {
-  const dataHasLocals = Object
-    .prototype
-    .hasOwnProperty
-    .call(data, 'locals');
-
-  if (dataHasLocals) {
+  if (_has(data, 'locals')) {
     const message = [
       `\`locals\` is being set on \`data\` at url \`${url}\`.`,
       'It has been removed to prevent it from causing issues.'
