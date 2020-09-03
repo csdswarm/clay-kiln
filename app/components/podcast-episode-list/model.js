@@ -152,7 +152,7 @@ module.exports = unityComponent({
     const { data: episodes, meta: { count: episodeCount } } = await getEpisodesInShow(locals),
       PODCAST_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
 
-    data._computed.showEpisodeBtn = episodeCount > loadMoreAmount;
+    data._computed.showLoadMoreBtn = episodeCount > loadMoreAmount;
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
         { attributes } = episodeData,
