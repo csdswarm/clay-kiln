@@ -23,7 +23,7 @@ async function run() {
     const migratedStations = await getMigratedStations(envInfo),
       secondarySFMappings = await getSecondarySFMappings(),
       secondarySectionFronts = getSecondarySFList(migratedStations, secondarySFMappings),
-      [{ listToUpdate, listToRemove }] = await getListsToAddAndRemove(secondarySectionFronts);
+      [[ {listToUpdate, listToRemove} ]] = await getListsToAddAndRemove(secondarySectionFronts);
       
     await updateArticles(listToRemove);
     await updateSecondarySectionFronts(listToUpdate);
@@ -129,21 +129,20 @@ async function getListsToAddAndRemove(listToUpdate) {
 
   return Promise.all(Object.entries(listDifferences)
     .map(([key, values]) => {
-      values.map(async(row) => {
+      return Promise.all(values.map(async (row) => {
         if (secondaryNatMapping.filter((secondary) => secondary === row.value).length > 0) {
           const isThereASectionFront = await getSecondarySFFromValue(row),
-            index = values.indexOf(row);
+            index = values.indexOf(row),
+            stationSlug = key.replace('-secondary-section-fronts', '');
 
-          if(!isThereASectionFront){
-            listToRemove.push(row);
+          if (!isThereASectionFront) {
+            listToRemove.push({...row, stationSlug});
             values.splice(index, 1);
           }
+          return { listToUpdate, listToRemove };
         }
-      })
-      listToUpdate[key] = [...listToUpdate[key], ...values]
-      return { listToUpdate, listToRemove };
+      }))
     })
-
   )
 }
 
@@ -164,7 +163,6 @@ async function updateArticles(lists) {
             await republishArticles(url);
 
           } catch (e) {
-            console.log('db error', JSON.stringify(e.params.payload, null, 2));
             console.log('db error', e);
           }
         })
@@ -187,6 +185,11 @@ async function getPublishedContent(list) {
             {
               "match": {
                 "secondarySectionFront": list.value
+              }
+            },
+            {
+              "match": {
+                "stationSlug": list.stationSlug
               }
             }
           ]
@@ -236,13 +239,14 @@ async function getSecondarySFFromValue(row) {
     AND (data->>'primary')::boolean IS false
     AND id ~ '@published$'`;
 
-  return usingDb(async db => {
-    const sectionFronts = await db.query(query).then(results => _get(results, 'rows'))
-
-    if (sectionFronts.length > 0) {
-      return true;
-    } else{
-      return false;
-    }
+  let sectionFronts;
+  await usingDb(async db => {
+    sectionFronts = await db.query(query).then(results => _get(results, 'rows'))
   });
+
+  if (sectionFronts.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
