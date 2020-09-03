@@ -35,7 +35,7 @@ module.exports = unityComponent({
     if (!locals || !locals.params) {
       return data;
     }
-    
+
     const componentClass = classnames({
         editing: locals.edit
       }),
@@ -45,12 +45,14 @@ module.exports = unityComponent({
         locals.podcast || podcasts.getPodcastShow(locals, dynamicSlug),
         locals.episode || podcasts.getPodcastEpisode(locals, dynamicEpisode)
       ]);
-    
+
     Object.assign(locals, { podcast, episode, contentType });
 
     data._computed = {
       componentClass,
-      stationSlug: _get(locals, 'params.stationSlug')
+      stationSlug: _get(locals, 'params.stationSlug'),
+      podcast: locals.podcast,
+      episode: locals.episode
     };
     await addBreadcrumbs(data, locals);
     return data;
