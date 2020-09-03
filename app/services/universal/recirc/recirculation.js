@@ -87,6 +87,25 @@ const
     feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
   }),
+  /**
+   * Handles inserting stationSlug into a values list for multiple section fronts
+   * @param {string} key
+   * @param {function} createObj
+   * @param {boolean} [includeSyndicated]
+   * @param {string} [stationSlug]
+   * @returns {function(*=): (*)}
+   */
+  listFilter = ({ key, createObj, includeSyndicated, stationSlug }) => value => {
+    if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+      return createObj(
+        value,
+        stationSlug,
+        includeSyndicated
+      );
+    } else {
+      return createObj(value);
+    }
+  },
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
     author: {
@@ -118,6 +137,8 @@ const
       ].filter(Boolean))
     },
     secondarySectionFronts: {
+      filterCondition: 'must',
+      unique: true,
       createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
@@ -305,14 +326,24 @@ const
 
     if (Array.isArray(value)) {
       if (unique && value.length) {
-        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
+        const items = value.map(listFilter({
+          createObj,
+          includeSyndicated,
+          key,
+          stationSlug
+        }));
+
+        queryService[getQueryType(condition)](query, minimumShouldMatch(items));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
     } else {
       if (!createObj || !value) {
         if (key === 'stationSlug') {
-          queryService[getQueryType('must')](query, queryFilters.stationSlug.createObj(''));
+          queryService[getQueryType('must')](
+            query,
+            queryFilters.stationSlug.createObj(DEFAULT_STATION.site_slug)
+          );
         }
         return;
       }
@@ -465,8 +496,9 @@ const
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
+    const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
+
     Object.entries(filters).forEach(([key, value]) => {
-      const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
 
       switch (key) {
         case 'sectionFronts':
@@ -496,7 +528,13 @@ const
       }
       addCondition(query, key, value);
     });
-    Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
+    Object.entries(excludes)
+      .forEach(([key, value]) => {
+        if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+          value = { value, stationSlug };
+        }
+        addCondition(query, key, value, 'mustNot');
+      });
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
