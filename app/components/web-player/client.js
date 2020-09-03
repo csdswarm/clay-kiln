@@ -117,7 +117,7 @@ function syncPlayerButtons(currentStationId, playingClass) {
 }
 
 /**
- * Hide mobile sticky ad when the wbplayer is launched.
+ * Hide mobile sticky ad when the webplayer is launched.
  *
  * @param {string} playerState
  */
