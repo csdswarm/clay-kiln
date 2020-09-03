@@ -35,12 +35,14 @@ const _get = require('lodash/get'),
     }
   },
   /**
-   * Remove ads on article content, both injected or manually added
+   * Remove ads injected on article content
    * @param {object} data
    * @returns {Void}
    */
   removeAdsFromArticleContent = data => {
-    data.content = data.content.filter(component => !component._ref.includes('/_components/google-ad-manager'));
+    data.content = data.content.filter(
+      component => !component._ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')
+    );
   };
 
 module.exports = unityComponent({
@@ -55,7 +57,7 @@ module.exports = unityComponent({
       injectAdsToArticleContent(data);
     }
 
-    createContent.render(uri, data, locals);
+    await createContent.render(uri, data, locals);
     return data;
   },
   save: async (uri, data, locals) => {

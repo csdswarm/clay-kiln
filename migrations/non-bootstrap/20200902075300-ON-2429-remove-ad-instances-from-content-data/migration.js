@@ -8,7 +8,7 @@ const {
   formatAxiosError,
   parseHost,
   usingDb
-} = require('../migration-utils').v1;
+} = require('../../legacy/migration-utils').v1;
 
 const host = process.argv[2] || 'clay.radio.com',
   { http } = parseHost(host);
@@ -18,7 +18,7 @@ removeAdsFromExistingArticles()
   .catch(err => console.error(formatAxiosError(err, { includeStack: true })));
 
 async function removeAdsFromExistingArticles() {
-  await usingDb(db => getAllArticleIds(db).then(updateArticleInstances));
+  await usingDb(db => getArticlesData(db).then(updateArticleInstances));
 }
 
 async function updateArticleInstances(articles) {
@@ -37,7 +37,7 @@ async function updateArticleInstances(articles) {
   );
 }
 
-async function getAllArticleIds (db) {
+async function getArticlesData(db) {
   const result = await db.query(`
       select id, data
       from components.article
