@@ -69,7 +69,6 @@ module.exports = {
               message: e.message,
               stack: e.stack
             },
-            data,
             hasNullPrototype: containsNullPrototype(data)
           });
         });
