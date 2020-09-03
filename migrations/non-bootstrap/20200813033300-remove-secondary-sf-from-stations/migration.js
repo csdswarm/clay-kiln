@@ -244,9 +244,5 @@ async function getSecondarySFFromValue(row) {
     sectionFronts = await db.query(query).then(results => _get(results, 'rows'))
   });
 
-  if (sectionFronts.length > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return sectionFronts.length ? true : false
 }
