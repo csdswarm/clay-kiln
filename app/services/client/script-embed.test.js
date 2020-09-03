@@ -11,7 +11,7 @@ const expect = require('chai').expect,
 
 global.document = dom.defaultView.document;
 global.DOMParser = dom.defaultView.DOMParser;
-const { duplicateScript } = require('./client');
+const { duplicateScript } = require('./script-embed');
 
 chai.use(sinonChai);
 
@@ -21,7 +21,7 @@ describe(dirname, function () {
 
   describe(filename, function () {
     describe('duplicate script', function () {
-      it('it should duplicate script without attributes', function () {
+      it('should duplicate script without attributes', function () {
         const script = document.createElement('script');
           
         script.innerHTML = '<script>(function(){ console.log(`Im a IIFE function`);})()</script>';
@@ -32,7 +32,7 @@ describe(dirname, function () {
         expect(Array.from(duplicatedSCript.attributes).length).to.equal(1);
       });
 
-      it('it should duplicate script with attributes', function () {
+      it('should duplicate script with attributes', function () {
         const script = document.createElement('script');
           
         script.innerHTML = '<script>/**/</script>';

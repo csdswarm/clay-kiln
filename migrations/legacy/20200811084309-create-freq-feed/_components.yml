@@ -1,0 +1,16 @@
+_components:
+  feeds:
+    instances:
+      frequency:
+        meta:
+          title: Radio.com Frequency Feed
+          renderer: freq
+          contentType: application/rss+xml
+          description: Most recent content from Radio.com
+          fileExtension: freq
+        index: published-content
+        query:
+          size: 20
+          sort:
+            date: desc
+        transform: content

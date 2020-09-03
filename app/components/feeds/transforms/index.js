@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+  'freq-content': require('./freq-content'),
   'gnf-article': require('./gnf-article'),
   'msn-article': require('./msn-article'),
   'postup-article': require('./postup-article'),
