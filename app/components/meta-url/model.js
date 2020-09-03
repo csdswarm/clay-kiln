@@ -1,17 +1,11 @@
 'use strict';
 
-const _indexOf = require('lodash/indexOf'),
-  { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save'),
+const { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save'),
+  getBaseUrlFromLocals = require('../../services/universal/get-base-url-from-locals'),
   helpers = require('./helpers');
 
 module.exports.render = (ref, data, locals) => {
-  if (locals && locals.url) {
-    const fullUrl = locals.url.replace('http:', 'https:'),
-      params = _indexOf(fullUrl, '?'),
-      clearQueryParams = params > 0 ? fullUrl.substring(0, params) : fullUrl;
-
-    data.localUrl = clearQueryParams;
-  }
+  data.localUrl = getBaseUrlFromLocals(locals);
   return data;
 };
 
