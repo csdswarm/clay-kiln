@@ -3,6 +3,7 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   { playingClass } = require('../../services/universal/spaLocals'),
+  { sendError } = require('../../services/universal/cmpt-error'),
   _get = require('lodash/get'),
   qs = require('querystring'),
   format = require('date-fns/format'),
@@ -73,6 +74,10 @@ module.exports = unityComponent({
     }
 
     const podcastData = _get(locals, 'podcast.attributes');
+
+    if (!podcastData) {
+      sendError('Podcast not found', 404);
+    }
 
     podcastData.id = locals.podcast.id;
 
