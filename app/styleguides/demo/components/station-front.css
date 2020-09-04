@@ -4,7 +4,10 @@
 @import "_global/mixins";
 
 .component--station-front {
-  margin-top: em(30);
+  @mixin medium-small-screen {
+    margin-top: em(30);
+  }
+
   .station-front__settings {
     padding: em(20);
     outline: 1px solid $boulder;

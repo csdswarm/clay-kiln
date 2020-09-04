@@ -7,3 +7,7 @@
 
   }
 }
+
+.layout--two-column[data-main-component="podcast-episode-page"] .layout__content .content__sidebar {
+    visibility: visible;
+}
