@@ -44,7 +44,7 @@ module.exports['3.0'] = (uri, data) => {
  **/
 module.exports['4.0'] = (uri, data) => {
   data.localsPath = data.localsPath || data.localsKey;
-  data.metaLocalsPath = data.metaLocalsPath || data.metaLocalskey;
+  data.metaLocalsPath = data.metaLocalsPath || data.metaLocalsKey;
 
   return data;
 };

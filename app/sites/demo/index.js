@@ -28,6 +28,7 @@ const dynamicTopicRoutes = {
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
     '/_components/station-front/instances',
+    '/_components/static-page/instances',
     '/_components/podcast-front-page/instances',
     '/_components/frequency-iframe-page/instances'
   ],
@@ -70,7 +71,6 @@ module.exports.routes = [
   { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: middleware.podcastMiddleware },
   { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
   { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: middleware.episodeMiddleware },
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
   { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
@@ -109,24 +109,25 @@ module.exports.routes = [
         // Retrieve all listen only stations from the database,
         // filter the results, and return the correct page reference as page.
         const page = await axios.get(`${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/_lists/listen-only-station-style`)
-          .then((response) => {
-            const listenOnlyStationSlugs = response.data.map((station) => {
-              return station.siteSlug;
-            });
+            .then((response) => {
+              const listenOnlyStationSlugs = response.data.map((station) => {
+                return station.siteSlug;
+              });
 
-            if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
-              return 'station-detail-listen-only';
-            } else {
-              return 'station';
-            };
-          });
+              if (listenOnlyStationSlugs.includes(res.locals.station.site_slug)) {
+                return 'station-detail-listen-only';
+              } else {
+                return 'station';
+              };
+            }),
+          showPublished = !res.locals.edit;
 
         // It is not possible to modify dynamicPage through amphora's middleware property
         // as the dynamicPage is already defined on the route when the route is added through amphora.
         // Refer to: app/node_modules/amphora/lib/services/attachRoutes.js line 91. parseHandler().
         // We directly use amphora's renderPage() to correctly render the corresponding page reference.
         // Refer to: app/node_modules/amphora/lib/render.js line 111. renderPage().
-        amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}`, req, res, process.hrtime());
+        amphoraRender.renderPage(`${res.locals.site.host}/_pages/${page}${showPublished ? '@published' : ''}`, req, res, process.hrtime());
 
       } catch (error) {
         log('An error occured getting the listen only station style list. \n ERROR: ', error);
@@ -142,6 +143,7 @@ module.exports.routes = [
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [
+  (uri, data, locals) => publishing.getStaticPageSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),

@@ -1,4 +1,5 @@
 'use strict';
+
 const YAML = require('../../app/node_modules/yamljs');
 
 const DEFAULT_HEADERS = {
