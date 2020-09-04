@@ -2,7 +2,6 @@
 
 const _reject = require('lodash/reject'),
   _filter = require('lodash/filter'),
-  _concat = require('lodash/concat'),
   _differenceBy = require('lodash/differenceBy'),
   getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
 
@@ -14,18 +13,12 @@ const _reject = require('lodash/reject'),
 async function applyContentSubscriptions(data, locals) {
   if (['article', 'gallery'].includes(data.contentType)) {
     const stationsSubscribed = await getStationsSubscribed(data, locals),
-      unsubscribed = _filter(
-        data.stationSyndication,
-        { unsubscribed: true, source: 'content subscription' }
-      ),
       syndicatedStations = _reject(
         data.stationSyndication,
         { source: 'content subscription' }
-      ),
-      // remove elements from the content subscription that matches unsubscribed ones.
-      filteredStationSubscribed = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
+      );
     
-    data.stationSyndication = _concat(unsubscribed, syndicatedStations, filteredStationSubscribed);
+    data.stationSyndication = syndicatedStations.concat(stationsSubscribed);
   }
 }
 
@@ -36,21 +29,30 @@ async function applyContentSubscriptions(data, locals) {
  * @returns {array}
  */
 async function getStationsSubscribed(data, locals) {
-  const stations = await getStationsSubscribedToContent(data, locals);
+  const stations = await getStationsSubscribedToContent(data, locals),
 
-  return (stations || []).map(station => {
-    const { sectionFront, secondarySectionFront } = data,
-      { callsign, name: stationName, site_slug: stationSlug } = station;
+    stationsSubscribed = (stations || []).map(station => {
+      const { sectionFront, secondarySectionFront } = data,
+        { callsign, name: stationName, site_slug: stationSlug } = station;
 
-    return {
-      callsign,
-      stationName,
-      stationSlug,
-      ...sectionFront && { sectionFront },
-      ...secondarySectionFront && { secondarySectionFront },
-      source: 'content subscription'
-    };
-  });
+      return {
+        callsign,
+        stationName,
+        stationSlug,
+        ...sectionFront && { sectionFront },
+        ...secondarySectionFront && { secondarySectionFront },
+        source: 'content subscription'
+      };
+    }),
+    unsubscribed = _filter(
+      data.stationSyndication,
+      { unsubscribed: true, source: 'content subscription' }
+    ),
+
+    // remove elements from the content subscription that matches unsubscribed ones.
+    filteredStationSubscribed = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
+    
+  return unsubscribed.concat(filteredStationSubscribed);
 }
 
 module.exports = applyContentSubscriptions;

@@ -65,10 +65,13 @@ async function removeSyndicationEntry(uri, callsign) {
       if (syndicated.callsign === callsign) {
         syndicated.unsubscribed = true;
       }
+
       return syndicated;
     });
 
-  // removes manual syndications from entry.
+  // We are only updating unsubscribed property for entries related to any other syndication tool like
+  //  content subscriptions, editorial feed, ap news. Manual syndications are removed from stationSyndication entries to avoid
+  //  duplicated entries when content is syndicated using one of this tools.
   data.stationSyndication = _reject(stationSyndication, { source: 'manual syndication' });
   await db.put(uri, data);
 }
