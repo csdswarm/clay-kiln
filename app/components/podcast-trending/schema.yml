@@ -1,0 +1,23 @@
+_description: |
+  Trending Podcasts List -- 6 items required
+
+curatedItems:
+  _label: Curated Trending Podcasts
+  _placeholder:
+    height: 600px;
+    text: Trending Podcasts List -- 6 items required
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      required: true
+      min: 6
+      max: 6
+    props:
+      -
+        prop: podcast
+        _label: URL
+        _has:
+          input: podcast-select
+          validate:
+            required: true

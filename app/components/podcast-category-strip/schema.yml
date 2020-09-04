@@ -1,0 +1,49 @@
+_description: |
+  List of podcasts under category
+
+category:
+  _label: Category to filter podcasts by
+  _has:
+    input: podcast-category-select
+    validate:
+      required: true
+
+categoryNameOverride:
+  _label: Name to override category name for display purposes
+  _has:
+    input: text
+    validate:
+      max: 80
+
+disableBottomBorder:
+  _label: Disable the border at the bottom?
+  _has: checkbox
+
+curatedPodcasts:
+  _label: Podcasts
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 7
+    props:
+    -
+      prop: podcast
+      _label: URL
+      _has:
+        input: podcast-select
+        validate:
+          required: true
+
+_groups:
+  settings:
+    fields:
+      - category
+      - categoryNameOverride
+      - disableBottomBorder
+      - curatedPodcasts
+    _label: Podcast Category Strip Settings
+    _placeholder:
+      height: 300px
+      text: Podcast Category Strip
+      ifEmpty: category

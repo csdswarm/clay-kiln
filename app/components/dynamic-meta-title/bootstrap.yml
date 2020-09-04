@@ -2,5 +2,12 @@ _components:
   dynamic-meta-title:
     routeParam: ''
     suffix: ''
-    localsKey: ''
+    localsPath: ''
     urlMatches: []
+    instances:
+      podcast-show:
+        description: '${paramValue}'
+        localsPath: 'podcast.attributes.title'
+      podcast-episode:
+        description: '${paramValue]'
+        localsPath: 'episode.attributes.title'

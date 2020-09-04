@@ -1,0 +1,14 @@
+_description: |
+  Display a set of podcasts. Currently supports recently played podcasts.
+
+
+title:
+  _label: Title for the set of podcasts]
+  _has:
+    input: static
+
+
+setType:
+  _label: the type of content this set will display
+  _has:
+    input: static

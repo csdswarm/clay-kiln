@@ -1,0 +1,7 @@
+_description: |
+  Content for the "Discover" tab of a podcast landing page
+
+recentPodcast:
+  _component:
+    include:
+      - podcast-set

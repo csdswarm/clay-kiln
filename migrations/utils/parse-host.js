@@ -51,7 +51,7 @@ function parseHost_v1(host) {
  * @param {string} host,
  * @returns {object}
  */
-function parseHost_v2(host) {
+function parseHost_v2(host = DEFAULT_HOST) {
   return Object.assign({ host }, parseHost_v1(host));
 }
 

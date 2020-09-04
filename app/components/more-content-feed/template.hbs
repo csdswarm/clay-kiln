@@ -53,7 +53,7 @@
                 data-track-component-title="More Content Feed"
                 data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
-                  {{#ifAll (compare ../populateFrom 'all-content') feedItem.sectionFront}}
+                  {{#ifAll ../_computed.showContentLabels feedItem.label}}
                     <span class="thumb__section-front">{{{ feedItem.label }}}</span>
                   {{/ifAll}}
                   {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
@@ -107,7 +107,7 @@
           {{/each}}
 {{#if _computed.moreContent}}
     <li class="links__link--loadmore"
-        {{#if tag}}data-tag="{{ tag}}"{{/if}}
+        {{#if tag}}data-tag="{{ _computed.tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
         {{#if author}}data-author="{{ author }}"{{/if}}
         {{#if _computed.stationId}}data-station="{{ _computed.stationId }}"{{/if}}>

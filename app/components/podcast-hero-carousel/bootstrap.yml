@@ -1,0 +1,6 @@
+_components:
+  podcast-hero-carousel:
+    slides: []
+    instances:
+      new:
+        slides: []

@@ -1,0 +1,9 @@
+_components:
+  podcast-set:
+    allowed: true
+    instances:
+      default:
+        allowed: true
+      recent:
+        title: Recent Podcasts
+        setType: recent
