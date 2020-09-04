@@ -16,7 +16,7 @@ const {_has, _set, elasticsearch, parseHost} = require('../migration-utils').v1,
       {
         shouldUpdate: currentMappings => !_has(currentMappings, indexPath),
         updateMappings: mappings => {
-          return _set(mappings, [...indexPath.split(/\./g), 'type'], 'keyword');
+          return _set(mappings, [...indexPath.split(/\./g), 'type'], 'boolean');
         }
       });
 
