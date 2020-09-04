@@ -1,3 +1,5 @@
 <!-- data-uri="{{{ default _ref _self }}}" -->
-<link rel="canonical" href="{{ default syndicatedUrl url }}">
-<meta property="og:url" content="{{ url }}">
+{{#unless @root.locals.edit}}
+  <link rel="canonical" href="{{ default syndicatedUrl url }}">
+  <meta property="og:url" content="{{ localUrl }}">
+{{/unless}}
