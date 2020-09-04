@@ -30,6 +30,7 @@ const
       _source: false
     }
   },
+  { ensureSyndicatedUrl } = updatePageMetadata,
 
   __ = {
     assignDimensionsAndFileSize,
@@ -38,6 +39,7 @@ const
     dbPost,
     dbPut,
     dbRaw,
+    ensureSyndicatedUrl,
     getAllStations,
     getApArticleBody,
     log,
@@ -494,6 +496,8 @@ async function mapApDataToArticle(apMeta, articleData, newStations, locals) {
   await restPut(`${pageUrl}@published`, {}, true);
 
   newArticleData.pageData = { _ref: pageRef };
+
+  await __.ensureSyndicatedUrl(newArticleData);
 
   return newArticleData;
 }

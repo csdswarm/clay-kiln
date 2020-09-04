@@ -234,6 +234,7 @@ describe('server', () => {
         __.getAllStations.bySlug = stubs.bySlug;
 
         __.updatePageMetadata = options.updatePageMetadata || _noop;
+        __.ensureSyndicatedUrl = options.ensureSyndicatedUrl || _noop;
 
         const result = await importArticle(apMeta, stationMappings, locals);
 
@@ -356,6 +357,31 @@ describe('server', () => {
           metaImage,
           metaTags,
           metaTitle
+        });
+      });
+
+      it('calls ensureSyndicatedUrl correctly when a new article is created', async () => {
+        const ensureSyndicatedUrl = sinon.spy(),
+          { result } = await setup_importArticle({
+            apMeta: {
+              altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+            },
+            stationMappings: {
+              'test-station': [],
+              'second-station': []
+            },
+            stationsBySlug: {
+              'test-station': {},
+              'second-station': {}
+            },
+            ensureSyndicatedUrl
+          }),
+          { metaUrl, pageRef } = result;
+
+        expect(ensureSyndicatedUrl).to.have.been.calledOnce;
+        expect(ensureSyndicatedUrl).to.have.been.calledWithMatch({
+          metaUrl,
+          pageData: { _ref: pageRef }
         });
       });
 
@@ -786,7 +812,8 @@ function buildApData(idPostFix, host, data) {
       TITLE: `${host}/_components/meta-title/instances/${INSTANCE_ID}`,
       DESCRIPTION: `${host}/_components/meta-description/instances/${INSTANCE_ID}`,
       IMAGE: `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
-      TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
+      TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`,
+      URL: `${host}/_components/meta-url/instances/${INSTANCE_ID}`
     };
 
   return {

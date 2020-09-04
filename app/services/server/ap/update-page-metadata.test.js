@@ -8,7 +8,15 @@ const chai = require('chai'),
 chai.use(sinonChai);
 
 const getUpdatePageMetadata = ({ put }) => {
-    return proxyquire('./update-page-metadata', { axios: { put } });
+    return proxyquire('./update-page-metadata', {
+      'amphora-storage-postgres': {
+        raw: getMockPublishedMetaUrl
+      },
+      axios: {
+        get: getMockPageMetaData,
+        put
+      }
+    });
   },
   accessKey = 'some access key',
   protocol = 'https',
@@ -81,6 +89,38 @@ describe('update-page-metadata', () => {
       headers
     ]);
   });
+
+  describe('ensureSyndicatedUrl', () => {
+    it('should syndicate both the latest and published meta-url components', async () => {
+      const put = sinon.spy(),
+        mockArticleData = getMockArticleData(),
+        { ensureSyndicatedUrl } = getUpdatePageMetadata({ put });
+
+      await ensureSyndicatedUrl(mockArticleData);
+
+      expect(put).to.have.callCount(2);
+
+      expect(put.getCall(0).args).to.deep.equal([
+        `${protocol}://url-ref`,
+        { syndicatedUrl: 'some syndicated url' },
+        headers
+      ]);
+
+      expect(put.getCall(1).args).to.deep.equal([
+        `${protocol}://url-ref@published`,
+        {
+          _version: 2,
+          date: 'some date',
+          defaultDate: 'some date',
+          defaultSyndicatedUrl: 'some syndicated url',
+          defaultUrl: 'some url',
+          syndicatedUrl: 'some syndicated url',
+          url: 'some url'
+        },
+        headers
+      ]);
+    });
+  });
 });
 
 function getMockArticleData() {
@@ -99,6 +139,28 @@ function getMockArticleData() {
     metaDescription: { _ref: 'description-ref' },
     metaImage: { _ref: 'image-ref' },
     metaTags: { _ref: 'tags-ref' },
-    metaTitle: { _ref: 'title-ref' }
+    metaTitle: { _ref: 'title-ref' },
+    metaUrl: { _ref: 'url-ref' },
+    pageData: { _ref: 'page-ref' }
   };
+}
+
+function getMockPublishedMetaUrl() {
+  return {
+    rows: [
+      {
+        data: {
+          _version: 2,
+          date: 'some date',
+          defaultDate: 'some date',
+          defaultUrl: 'some url',
+          url: 'some url'
+        }
+      }
+    ]
+  };
+}
+
+function getMockPageMetaData() {
+  return { data: { url: 'some syndicated url' } };
 }

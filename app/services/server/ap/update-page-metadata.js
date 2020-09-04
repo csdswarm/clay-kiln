@@ -1,7 +1,8 @@
 'use strict';
 
 const _merge = require('lodash/merge'),
-  axios = require('axios');
+  axios = require('axios'),
+  db = require('amphora-storage-postgres');
 
 const {
   CLAY_ACCESS_KEY: accessKey,
@@ -78,4 +79,78 @@ function update(metaData) {
   });
 }
 
+/**
+ * gets the originally published url for a station
+ *
+ * note: I think the term 'syndicatedUrl' sounds backwards but it is what it is.
+ *
+ * @param {object} pageData
+ */
+async function getSyndicatedUrl(pageData) {
+  const pageRef = pageData._ref.replace('@published', ''),
+    { data } = await axios.get(`${protocol}://${pageRef}/meta`);
+
+  return data.url;
+}
+
+/**
+ * returns the object representing the published metaUrl
+ *
+ * @param {object} metaUrl
+ * @returns {object}
+ */
+async function getPublishedMetaUrl(metaUrl) {
+  const _ref = metaUrl._ref + '@published',
+    dbResult = await db.raw(
+      `
+        select data
+        from components."meta-url"
+        where id = ?
+      `,
+      [_ref]
+    ),
+    publishedMetaUrl = Object.assign({ _ref }, dbResult.rows[0].data);
+
+  return publishedMetaUrl;
+}
+
+/**
+ * sets metaUrl.syndicatedUrl if not already
+ *
+ * note: this must be done after publish to ensure we have a published url to
+ *   set it to.  This means we need to update both the latest and published
+ *   versions of the component.
+ *
+ * @param {object} articleData - this is mutated to ensure metaUrl.syndicatedUrl exists
+ */
+async function ensureSyndicatedUrl(articleData) {
+  const { metaUrl, pageData } = articleData;
+
+  if (metaUrl.syndicatedUrl) {
+    return;
+  }
+
+  const [syndicatedUrl, publishedMetaUrl] = await Promise.all([
+    getSyndicatedUrl(pageData),
+    getPublishedMetaUrl(metaUrl)
+  ]);
+
+  Object.assign(metaUrl, { syndicatedUrl });
+
+  Object.assign(publishedMetaUrl, {
+    // ideally we'd keep the _version property in the meta components so
+    //   upgrades aren't ran multiple times.  Til that gets refactored however,
+    //   we need to explicitly add defaultSyndicatedUrl here.
+    defaultSyndicatedUrl: syndicatedUrl,
+    syndicatedUrl
+  });
+
+  await Promise.all([
+    update(metaUrl),
+    update(publishedMetaUrl)
+  ]);
+}
+
 module.exports = updatePageMetadata;
+
+Object.assign(module.exports, { ensureSyndicatedUrl });
