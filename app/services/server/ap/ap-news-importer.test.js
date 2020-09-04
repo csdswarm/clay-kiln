@@ -422,6 +422,8 @@ describe('server', () => {
               seoHeadline: expectedTitle,
               shortHeadline: expectedTitle,
               slug: 'something-tragic-happened',
+              stationLogoUrl: '',
+              stationURL: '',
               teaser: expectedTitle
             };
 
