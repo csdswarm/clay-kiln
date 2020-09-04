@@ -1,8 +1,7 @@
 'use strict';
 
-const { isArray } = require('util');
-
-const { clayExport, clayImport } = require('../../utils/migration-utils').v1,
+const { bluebird } = require('../../utils/base'),
+  { clayExport, clayImport } = require('../../utils/migration-utils').v1,
   { esQuery } = require('../../utils/migration-utils').v2,
   { v1: parseHost } = require('../../utils/parse-host'),
 
@@ -80,27 +79,25 @@ function getSecondarySFList(migratedStations, secondarySFMappings) {
 async function getDifferenceBetweenLists(secondarySectionFronts) {
   let listDifferences = {};
 
-  return Promise.all(Object.keys(secondarySectionFronts)
-    .map(async (item) => {
-      let data;
+  return bluebird.map(Object.keys(secondarySectionFronts), async item => {
+    let data;
 
-      try {
-        data = await clayExport({ componentUrl: `${host}/_lists/${item}` });
-      } catch(e) {
-        console.log('_list error', e)
-      }
+    try {
+      data = await clayExport({ componentUrl: `${host}/_lists/${item}` });
+    } catch(e) {
+      console.log('_list error', e)
+    }
 
-      const list = _get(data, `data._lists.${item}`, []),
-        newList = _get(secondarySectionFronts, item),
-        listDifference = list.filter(({ value: id1 }) => !newList.some(({ value: id2 }) => id2 === id1));
+    const list = _get(data, `data._lists.${item}`, []),
+      newList = _get(secondarySectionFronts, item),
+      listDifference = list.filter(({ value: id1 }) => !newList.some(({ value: id2 }) => id2 === id1));
 
-      if (listDifference.length > 0) {
-        addItemsToObject(listDifferences, item, listDifference);
-      }
+    if (listDifference.length > 0) {
+      addItemsToObject(listDifferences, item, listDifference);
+    }
 
-      return listDifferences;
-    })
-  )
+    return listDifferences;
+  }, { concurrency: 5 })
 }
 
 function getSecondaryNationalMapping() {
@@ -114,10 +111,10 @@ function getSecondaryNationalMapping() {
 
 function addItemsToObject(secondarySectionFronts, stationSSFront, secondarySectionFront) {
   return secondarySectionFronts[stationSSFront]
-    ? isArray(secondarySectionFront)
+    ? Array.isArray(secondarySectionFront)
       ? secondarySectionFronts[stationSSFront] = [...secondarySectionFronts[stationSSFront], ...secondarySectionFront]
       : secondarySectionFronts[stationSSFront].push(secondarySectionFront)
-    : isArray(secondarySectionFront)
+    : Array.isArray(secondarySectionFront)
       ? secondarySectionFronts[stationSSFront] = secondarySectionFront
       : secondarySectionFronts[stationSSFront] = [secondarySectionFront];
 }
@@ -129,7 +126,7 @@ async function getListsToAddAndRemove(listToUpdate) {
 
   return Promise.all(Object.entries(listDifferences)
     .map(([key, values]) => {
-      return Promise.all(values.map(async (row) => {
+      return bluebird.map(values, async row => {
         if (secondaryNatMapping.filter((secondary) => secondary === row.value).length > 0) {
           const isThereASectionFront = await getSecondarySFFromValue(row),
             index = values.indexOf(row),
@@ -141,13 +138,13 @@ async function getListsToAddAndRemove(listToUpdate) {
           }
           return { listToUpdate, listToRemove };
         }
-      }))
+      }, { concurrency: 5 })
     })
   )
 }
 
 async function updateArticles(lists) {
-  return Promise.all(lists.map(async (list) => {
+  return bluebird.map(lists, list => {
     const hits = getPublishedContent(list);
 
     _get(hits, 'hits', []).map(async (article) => {
@@ -168,8 +165,7 @@ async function updateArticles(lists) {
         })
       )
     })
-  })
-  )
+  }, { concurrency: 5 })
 }
 
 async function getPublishedContent(list) {
