@@ -1,8 +1,9 @@
 'use strict';
 
-const httpGet = require('./http-get').v1,
-  httpRequest = require('./http-request').v1,
-  ensureStartsWith = require('./ensure-starts-with').v1;
+const ensureStartsWith = require('../ensure-starts-with').v1,
+  httpGet = require('../http-get').v1,
+  httpRequest = require('../http-request').v1,
+  { axios } = require('../base');
 
 /**
  * Returns a readable helper to avoid constructing the requests manually
@@ -100,6 +101,64 @@ const makeHttpEs_v1 = parsedHost => {
   };
 };
 
+/**
+ * This function is expected to work in the same way the previous version does, but now
+ * is using axios for handling the different requests made to elasticsearch endpoints.
+ *
+ * @param {object} parsedHost - should be passed only the es server info so that hostname,
+ * http and port could be extracted from there
+ * @returns {object}
+ */
+const makeHttpEs_v2 = ({ hostname, http, port }) => {
+  if (!hostname || !http) {
+    throw new Error(
+      'make sure to pass hostname and http as params'
+    );
+  }
+
+  const validResponseTypes = new Set(['json', 'text']),
+    validResponseTypesStr = Array.from(validResponseTypes).join(', '),
+    makeRequest = (method, preferredResponseType = '') => {
+      return async(args) => {
+        args = typeof args === 'string'
+          ? { restOfUrl: args }
+          : args;
+
+        const { body, headers } = args,
+          responseType = preferredResponseType || args.responseType || 'json',
+          restOfUrl = ensureStartsWith('/')(args.restOfUrl);
+
+        if (!validResponseTypes.has(responseType)) {
+          throw new Error(
+            `responseType must be one of: ${validResponseTypesStr}`
+            + `\nthe default is json`
+            + '\nresponseType given: ' + responseType
+          );
+        }
+
+        const { data } = await axios({
+          url: `${http}://${hostname}:${port}${restOfUrl}`,
+          method,
+          responseType,
+          headers,
+          data: body
+        });
+
+        return data;
+      };
+    };
+
+  return {
+    get: {
+      asText: makeRequest('GET', 'text'),
+      asJson: makeRequest('GET')
+    },
+    post: makeRequest('POST'),
+    put: makeRequest('PUT')
+  };
+};
+
 module.exports = {
   v1: makeHttpEs_v1,
+  v2: makeHttpEs_v2
 };

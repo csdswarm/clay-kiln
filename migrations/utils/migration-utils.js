@@ -22,6 +22,7 @@
 const esQuery = require('./es-query'),
   parseHost = require('./parse-host'),
   usingDb = require('./using-db'),
+  elasticsearch = require('./elasticsearch'),
   v1 = {
     ...(require('./base')),
     ...(require('./execute-sql').v1),
@@ -30,7 +31,7 @@ const esQuery = require('./es-query'),
     clayExport: require('./clay-export').v1,
     clayImport: require('./clay-import').v1,
     dbCursor: require('./db-cursor').v1,
-    elasticsearch: require('./elasticsearch').v1,
+    elasticsearch: elasticsearch.v1,
     ensureStartsWith: require('./ensure-starts-with').v1,
     esQuery: esQuery.v1,
     formatAxiosError: require('./format-axios-error').v1,
@@ -39,7 +40,6 @@ const esQuery = require('./es-query'),
     parseHost: parseHost.v1,
     removeComponentsFromContainers: require('./remove-components-from-containers').v1,
     republish: require('./republish').v1,
-    removeComponentsFromContainers: require('./remove-components-from-containers').v1,
     retrieveList: require('./list-retrieve').v1,
     updateList: require('./list-update').v1,
     usingDb: usingDb.v1,
@@ -47,10 +47,11 @@ const esQuery = require('./es-query'),
   v2 = {
     esQuery: esQuery.v2,
     parseHost: parseHost.v2,
-    usingDb: usingDb.v2
+    usingDb: usingDb.v2,
+    elasticsearch: elasticsearch.v2,
   };
 
 module.exports = {
   v1,
-  v2,
+  v2
 };
