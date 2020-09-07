@@ -10,6 +10,7 @@ const _castArray = require('lodash/castArray'),
     file: __filename,
     component: 'feeds'
   }),
+  { subscribedContentOnly } = require('../../services/universal/recirc/recirculation'),
   { CLAY_SITE_PROTOCOL: protocol, CLAY_SITE_HOST: host } = process.env;
 
 /**
@@ -196,12 +197,20 @@ module.exports.render = async (ref, data, locals) => {
             nested: {
               path: 'stationSyndication',
               query: {
+                
                 bool: {
-                  should: [
-                    { match: { 'stationSyndication.callsign': station } },
-                    { match: { 'stationSyndication.callsign.normalized': station } }
-                  ],
-                  minimum_should_match: 1
+                  must: [
+                    {
+                      bool: {
+                        should: [
+                          { match: { 'stationSyndication.callsign': station } },
+                          { match: { 'stationSyndication.callsign.normalized': station } }
+                        ],
+                        minimum_should_match: 1
+                      }
+                    },
+                    ...subscribedContentOnly
+                  ]
                 }
               }
             }

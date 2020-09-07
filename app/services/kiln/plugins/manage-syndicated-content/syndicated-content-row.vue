@@ -100,7 +100,7 @@
           selectedStationSlug = this.selectedStation.slug,
           findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(content.stationSyndication),
-          syndicationStatus = syndicatedStation ? 'published' : 'available';
+          syndicationStatus = syndicatedStation && !syndicatedStation.unsubscribed ? 'published' : 'available';
 
         this.unpublishLoading = false;
 
@@ -179,7 +179,7 @@
        * fronts before creating the syndication
        */
       onSyndicate() {
-        this.$emit('createSyndication', this.content._id);
+        this.$emit('createSyndication', this.content);
       },
       /**
        * unpublish syndicated station from content
