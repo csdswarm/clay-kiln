@@ -128,11 +128,10 @@ function onePublishedArticleByUrl(url, fields, locals) {
   const query = newQueryWithCount('published-content', null, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(url)
-    );
+    ),
+    articleSyndication = universalQuery.getStationSyndication(canonicalUrl, url);
 
-  universalQuery.addFilter(query, {
-    term: { canonicalUrl }
-  });
+  universalQuery.addShould(query, articleSyndication);
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
   }
