@@ -14,11 +14,16 @@ const _differenceBy = require('lodash/differenceBy'),
  */
 async function addStationsByEditorialGroup(data, locals) {
   if (['article', 'gallery'].includes(data.contentType) && locals.station) {
-    const stationsSubscribed = await getSyndicatedStations(data),
-      syndicatedStations = _reject(data.stationSyndication, { source: 'editorial feed' });
-
-
-    data.stationSyndication = syndicatedStations.concat(stationsSubscribed);
+    const editorialSyndicationEntries = await getSyndicatedStations(data),
+      otherSyndicationEntries = _reject(data.stationSyndication, { source: 'editorial feed' }),
+      unsubscribedSyndicationEntries = _filter(
+        data.stationSyndication,
+        { unsubscribed: true, source: 'editorial feed' }
+      );
+    
+    // stationSyndication entries must contain any entry unrelated to editorial feed,
+    //  syndication entries with the property 'unsubscribed=true' and a set of filtered editorial fetched from db.
+    data.stationSyndication = otherSyndicationEntries.concat(unsubscribedSyndicationEntries, editorialSyndicationEntries);
   }
 }
 
@@ -61,14 +66,14 @@ async function getSyndicatedStations(data) {
         };
       }
     }).filter(Boolean),
-    unsubscribed = _filter(
+    unsubscribedSyndicationEntries = _filter(
       data.stationSyndication,
       { unsubscribed: true, source: 'editorial feed' }
     ),
-    // remove elements from the content subscription that matches unsubscribed ones.
-    filteredStationSubscribed = _differenceBy(syndicatedStations, unsubscribed, 'callsign');
+    // remove elements from the editorialSyndicationEntries that matches unsubscribed ones.
+    filteredSyndicationEntries = _differenceBy(syndicatedStations, unsubscribedSyndicationEntries, 'callsign');
 
-  return unsubscribed.concat(filteredStationSubscribed);
+  return filteredSyndicationEntries;
 }
 
 module.exports.addStationsByEditorialGroup = addStationsByEditorialGroup;
