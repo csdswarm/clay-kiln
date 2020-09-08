@@ -1,8 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _filter = require('lodash/filter'),
-  _isEmpty = require('lodash/isEmpty'),
   _reject = require('lodash/reject'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
@@ -33,23 +31,8 @@ async function addSyndicationEntry(uri, syndicationEntry) {
   const data = await db.get(uri);
 
   updateStationSyndicationType(data);
-  const unsubscribed = _filter(data.stationSyndication, { callsign: syndicationEntry.callsign, unsubscribed: true });
-
-
-  if (!_isEmpty(unsubscribed)) {
-    data.stationSyndication.forEach(syndication => {
-      if (syndication.callsign === syndicationEntry.callsign) {
-        syndication.unsubscribed = false;
-        // Keep previous sectionFront.
-      }
-    });
-  } else {
-    // This avoids adding duplicated entries for the same station.
-    //  A manual syndication entry will be added only when no other tool like ap news, editorial feed
-    //  or content subscriptions has an entry for this station.
-    data.stationSyndication.push({ ...syndicationEntry });
-    addStationSyndicationSlugs(data);
-  }
+  data.stationSyndication.push({ ...syndicationEntry });
+  addStationSyndicationSlugs(data);
 
   await db.put(uri, data);
 }
@@ -60,19 +43,18 @@ async function addSyndicationEntry(uri, syndicationEntry) {
  * @param  {string} callsign
  */
 async function removeSyndicationEntry(uri, callsign) {
-  const data = await db.get(uri),
-    stationSyndication = data.stationSyndication.map(syndicated => {
-      if (syndicated.callsign === callsign) {
-        syndicated.unsubscribed = true;
-      }
+  const data = await db.get(uri);
 
-      return syndicated;
-    });
+  data.stationSyndication.forEach(syndicated => {
+    if (syndicated.callsign === callsign) {
+      syndicated.unsubscribed = true;
+    }
+  });
 
   // We are only updating unsubscribed property for entries related to any other syndication tool like
   //  content subscriptions, editorial feed, ap news. Manual syndications are removed from stationSyndication entries to avoid
-  //  duplicated entries when content is syndicated using one of this tools.
-  data.stationSyndication = _reject(stationSyndication, { callsign, source: 'manual syndication' });
+  //  duplicated entries when content is syndicated using one of this tools again.
+  data.stationSyndication = _reject(data.stationSyndication, { callsign, source: 'manual syndication' });
   await db.put(uri, data);
 }
 
