@@ -18,7 +18,10 @@ removeAdsFromExistingArticles()
   .catch(err => console.error(formatAxiosError(err, { includeStack: true })));
 
 async function removeAdsFromExistingArticles() {
-  await usingDb(db => getArticlesData(db).then(updateArticleInstances));
+  await usingDb(db => getArticlesData(db)
+    .then(updateArticleInstances)
+    .then(number => console.log(`${number} articles were updated...`))
+  );
 }
 
 async function updateArticleInstances(articles) {
@@ -29,12 +32,14 @@ async function updateArticleInstances(articles) {
 
   await bluebird.map(
     articles,
-    ({ id, data }) => {
+    async ({ id, data }) => {
       data.content = data.content.filter(component => !component._ref.includes('/_components/google-ad-manager'));
-      axios.put(`${http}://${id}`, data, { headers }).catch(err => console.log(err));
+      await axios.put(`${http}://${id}`, data, { headers }).catch(err => console.log(err));
     },
-    { concurrency: 10 }
+    { concurrency: 5 }
   );
+
+  return articles.length;
 }
 
 async function getArticlesData(db) {
