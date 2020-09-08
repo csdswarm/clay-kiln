@@ -1,6 +1,5 @@
 'use strict';
 
-
 const { clientId } = require('../../services/universal/stats'),
   { unityComponent } = require('../../services/universal/amphora');
 
