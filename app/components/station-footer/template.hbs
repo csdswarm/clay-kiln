@@ -16,7 +16,7 @@
         {{/each}}
       </div>
       <div>
-        <div class="station-footer__links">
+        <div class="station-footer__links" data-editable="footerLinks">
           {{#each footerLinks as |link|}}
             <a class="station-footer__link" href="{{ link.url }}" title="{{ link.url }}">{{ link.text }}</a>
           {{/each}}
