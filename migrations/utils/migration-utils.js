@@ -42,6 +42,7 @@ const esQuery = require('./es-query'),
     republish: require('./republish').v1,
     retrieveList: require('./list-retrieve').v1,
     setAwsToken: require('./set-aws-token').v1,
+    setDbCredentials: require('./set-db-credentials').v1,
     updateList: require('./list-update').v1,
     usingDb: usingDb.v1,
   },
@@ -50,9 +51,13 @@ const esQuery = require('./es-query'),
     parseHost: parseHost.v2,
     usingDb: usingDb.v2,
     elasticsearch: elasticsearch.v2,
+  },
+  v3 = {
+    usingDb: usingDb.v3
   };
 
 module.exports = {
   v1,
-  v2
+  v2,
+  v3,
 };
