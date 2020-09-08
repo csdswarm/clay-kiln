@@ -47,7 +47,7 @@ module.exports = router => {
       res.send(result.rows[0]);
     }
   }));
-  router.get('/rdc/station-migration/generic-page-info', wrapInTryCatch(async (req, res) => {
+  router.get('/rdc/generic-page-info', wrapInTryCatch(async (req, res) => {
     preventFastlyCache(res);
 
     const result = await db.raw(`
