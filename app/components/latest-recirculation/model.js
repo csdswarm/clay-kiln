@@ -43,7 +43,7 @@ const db = require('../../services/server/db'),
       start = new Date();
 
     try {
-      const trendingRecircData = await db.get(trendingRecircRef);
+      const trendingRecircData = await db.get(trendingRecircRef, locals);
 
       return trendingRecircData.items;
     } catch (e) {

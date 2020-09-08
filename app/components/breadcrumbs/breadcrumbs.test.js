@@ -227,6 +227,85 @@ describe(dirname, function () {
       ]);
     });
 
+    it('should remove sectionFront and secondarySectionFront from breadcrumbs when matching syndication source content subscription', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'modern',
+          secondarySectionFront: 'fashion',
+          stationSyndication: [{
+            callsign: 'STATION-Y',
+            stationSlug: 'stationy',
+            stationName: 'Station Y',
+            sectionFront: 'primary',
+            secondarySectionFront: 'secondary',
+            source: 'content subscription'
+          }]
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Primary Section Front', value: 'primary' },
+        { name: 'Secondary Section Front', value: 'secondary' },
+        { name: 'Primary Section X', value: 'primarysectionx' },
+        { name: 'Secondary Section X', value: 'secondarysectionx' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'stationy',
+        callsign: 'STATION-Y',
+        name: 'Station Y'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Station Y', url: '//somehost.com/stationy', hidden: false }
+      ]);
+    });
+
+    it('should assign breadcrumb when content syndicated to an empty slug - for RDC content', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'primarysectionx',
+          secondarySectionFront: 'primarysectionx',
+          stationSyndication: [{
+            callsign: 'RDC',
+            stationSlug: '',
+            stationName: 'Radio.com',
+            sectionFront: 'news',
+            source: 'manual syndication'
+          }]
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Primary Section Front', value: 'primary' },
+        { name: 'Secondary Section Front', value: 'secondary' },
+        { name: 'Primary Section X', value: 'primarysectionx' },
+        { name: 'Secondary Section X', value: 'primarysectionx' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'',
+        callsign: 'RDC',
+        name: 'Radio.com'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'News', url: '//somehost.com/news', hidden: false }
+      ]);
+    });
+
     it('extends each link with the slug before it', async () => {
       const data = { a: 'ay', b: 'bee', c: 'cee' },
         props = ['a', 'b', 'c'];

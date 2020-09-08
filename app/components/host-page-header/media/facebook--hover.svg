@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="30px" viewBox="0 0 16 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g class="hover" id="Nav/Footer" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1440-Footer" transform="translate(-637.000000, -581.000000)" fill="#FEFEFE">
+            <g id="footer" transform="translate(0.000000, 540.000000)">
+                <g id="Group-7" transform="translate(637.000000, 41.000000)">
+                    <path d="M14.7050079,16.3160829 L15.3925485,10.9829973 L10.1114931,10.9829973 L10.1114931,7.57781288 C10.1114931,6.0340983 10.5421351,4.98188237 12.7562018,4.98188237 L15.5779058,4.98002416 L15.5779058,0.210443185 C15.0905881,0.145405556 13.4158692,0 11.4633467,0 C7.39152653,0 4.60559324,2.48583109 4.60559324,7.05054353 L4.60559324,10.9829973 L0,10.9829973 L0,16.3160829 L4.60559324,16.3160829 L4.60559324,30 L10.1114931,30 L10.1114931,16.3160829 L14.7050079,16.3160829 Z" id="Fill-2"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

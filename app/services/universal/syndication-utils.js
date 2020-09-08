@@ -4,6 +4,8 @@ const
   { DEFAULT_STATION } = require('./constants'),
   { prettyJSON } = require('./utils'),
   findSyndicatedStation = station => syndications => syndications.find(__.inStation(station)),
+  slugify = require('./slugify'),
+
   __ =  {
     findSyndicatedStation,
     getOrigin: uri => new URL(uri).origin,
@@ -24,6 +26,23 @@ const
   };
 
 /**
+ * Composes a syndicatedArticleSlug given the main article slug, the station and the section front(s)
+ * @param {string} slug
+ * @param {string} stationSlug
+ * @param {string?} sectionFront
+ * @param {string?} secondarySectionFront
+ * @returns {string}
+ */
+function generateSyndicationSlug(slug, { stationSlug, sectionFront, secondarySectionFront }) {
+  return '/' + [
+    stationSlug,
+    slugify(sectionFront),
+    slugify(secondarySectionFront),
+    slug
+  ].filter(Boolean).join('/');
+}
+
+/**
  * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
  * the syndicationUrl, so hyperlinks stay on the current site.
  *
@@ -40,8 +59,8 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
   return article => {
     const item = { ...article };
 
-    if (!isRdcContent && !isInStation(item)) {
-      if (noContent(item.stationSyndication)) {
+    if (!isInStation(item)) {
+      if (!isRdcContent && noContent(item.stationSyndication)) {
         throw new Error(`Article is not in target station, and has no stationSyndication: ${prettyJSON(article)}`);
       } else {
         const { syndicatedArticleSlug = '', sectionFront = '' } = syndicatedStation(item.stationSyndication) || {};
@@ -60,5 +79,6 @@ function syndicationUrlPremap(stationSlug, isRdcContent = false) {
 module.exports = {
   _internals: __,
   syndicationUrlPremap,
-  findSyndicatedStation
+  findSyndicatedStation,
+  generateSyndicationSlug
 };

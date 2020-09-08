@@ -99,7 +99,7 @@ function processContent(obj, components) {
 }
 
 /**
- * Transforms authors and tags objects into display names.
+ * Transforms authors, hosts and tags objects into display names.
  * This must be done because ElasticSearch expects an array of strings for tags and authors, which should be their display names.
  *
  * @param {object} op
@@ -112,6 +112,10 @@ function transformAuthorsAndTags(op) {
     op.value.authors = op.value.authors.map(extractText);
   }
 
+  if (op.value.hosts) {
+    op.value.hosts = op.value.hosts.map(extractText);
+  }
+
   if (op.value.tags) {
     const data = JSON.parse(op.value.tags.data);
 
@@ -120,6 +124,29 @@ function transformAuthorsAndTags(op) {
     }
   }
 
+  return op;
+}
+
+/**
+ * section fronts are always searched against with lower case values. Make sure that they are
+ * always lower case going into elastic.
+ * @param { object } op
+ * @returns { object }
+ */
+function transformSectionFronts(op) {
+  const
+    data = op.value,
+    downCaseSectionFronts = obj =>
+      ['sectionFront', 'secondarySectionFront'].forEach(key => {
+        if (typeof obj[key] === 'string') {
+          obj[key] = obj[key].toLowerCase();
+        }
+      });
+
+  downCaseSectionFronts(data);
+
+  (data.stationSyndication || []).forEach(downCaseSectionFronts);
+  
   return op;
 }
 
@@ -153,6 +180,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(transformAuthorsAndTags)
+    .map(transformSectionFronts)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()

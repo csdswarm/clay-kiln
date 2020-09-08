@@ -40,7 +40,6 @@ async function run() {
   const pageTypes = [
     'section-front',
     'station-front',
-    'gallery',
     'topic-page',
     'static-page',
     'event',
@@ -58,7 +57,7 @@ JOIN
 ON
   public.pages.data->'main'->>0 = components."page-type".id
 WHERE
-  public.pages.id LIKE '%@published'
+  public.pages.id NOT LIKE '%@published'
   AND components."page-type".data->>'stationSlug' = '${stationSlug}'
 `;
 
@@ -67,44 +66,121 @@ WHERE
       return queryForPageType.replace(/page-type/g, pageType)
     }).join(`
 UNION
-`);
-    const replaceHostDeep = object => {
-      const newObject = _.clone(object);
+`),
+      replaceHostDeep = object => {
+        const newObject = _.clone(object);
 
-      _.each(object, (value, key) => {
-        if (typeof value === 'string' && value.includes(fromEnv)) {
-          newObject[key] = value.replace(new RegExp(fromEnv, 'g'), toEnv);
-        } else if (typeof value === 'object') {
-          newObject[key] = replaceHostDeep(value);
-        }
-      });
-
-      return newObject;
-    }
-
-    const pageRecords = await db.query(query);
-    await bluebird.map(
-      pageRecords.rows,
-      async pageRecord => {
-        const { id } = pageRecord;
-        try {
-          const exportedPage = await clayExport({ componentUrl: id });
-          if (exportedPage) {
-            const pageData = replaceHostDeep(exportedPage.data);
-            const importResult = await clayImport({
-              payload: pageData,
-              hostUrl: toEnv === 'clay.radio.com' ?
-                  `http://${toEnv}`
-                : `https://${toEnv}`,
-              publish: true
-            })
-            if (importResult.result === 'fail') {
-              console.log(result);
-            }
+        _.each(object, (value, key) => {
+          if (typeof value === 'string' && value.includes(fromEnv)) {
+            newObject[key] = value.replace(new RegExp(`https*://${fromEnv}`, 'g'), `${toEnvHttp}://${toEnv}`);
+          } else if (typeof value === 'object') {
+            newObject[key] = replaceHostDeep(value);
           }
-        } catch(e) { console.error(e.stack) }
+        });
+
+        return newObject;
       },
-      { concurrency: 2 }
-    );
+
+      getURLFromPageData = pageData => {
+        const pageDataObjValues = _.values(pageData._pages)[0],
+          pickedURLObj = _.pick(pageDataObjValues, 'url');
+        
+        return _.get(pickedURLObj, 'url');
+      },
+
+      recursiveImport = async (pageData, numTried = 0, maxTries = 3) => {
+        return clayImport({
+            payload: pageData,
+            hostUrl: `${toEnvHttp}://${toEnv}`,
+            publish: true
+          })
+          .then(importResult => importResult)
+          .catch(async e => {
+            const updatedNumTried = numTried + 1;
+            const limiter = 100;
+            
+            await new Promise(resolve => setTimeout(resolve, limiter));
+            
+            if (updatedNumTried < maxTries) {
+              return recursiveImport(pageData, updatedNumTried, maxTries);
+            }
+            
+            console.error('Import step failed:', e.error);
+            return null;
+          });
+      },
+
+      transformCustomUrlToUrl = async (id, pageData) => {
+        // check if any customUrls -> change to url
+        const newID = id.replace(fromEnv, toEnv).replace('@published',''),
+        { data } = await axios.get(`${toEnvHttp}://${newID}`);
+
+        if (data.customUrl) {
+          delete data.customUrl;
+          data.url = getURLFromPageData(pageData);
+          await axios.put(`${toEnvHttp}://${newID}`, data, { headers });
+          await axios.put(`${toEnvHttp}://${newID}@published`, {}, { headers });
+        }
+      },
+
+      portStationTheme = async () => {
+        const { data } = await axios.get(`${fromEnvHttp}://${fromEnv}/station-theme/${stationSlug}`);
+        let themeExistsInToEnv;
+
+        const pageRecords = await db.query(query);
+        await bluebird.map(
+          pageRecords.rows,
+          async pageRecord => {
+            const { id } = pageRecord;
+            try {
+              await axios.get(`${toEnvHttp}://${toEnv}/station-theme/${stationSlug}`);
+              themeExistsInToEnv = true;
+            } catch (e) {
+              themeExistsInToEnv = false;
+            }
+            const options = {
+                method: themeExistsInToEnv ? 'PUT' : 'POST',
+                headers,
+                data,
+                url: `${toEnvHttp}://${toEnv}/station-theme/${stationSlug}`
+              };
+              
+            return axios(options)
+              .then(({ status, data: updatedData }) => {
+                if (status === 200) console.log('station theme updated to ', updatedData);
+              })
+              .catch(e => console.error('station theme was not updated', e.stack));
+          }
+        )
+      },
+
+      pageRecords = await db.query(query);
+    
+    try {
+      await bluebird.map(
+        pageRecords.rows,
+        async pageRecord => {
+          const { id } = pageRecord;
+          
+          clayExport({ componentUrl: id })
+            .catch(e => console.log('Failed to export', id, e))
+            .then(exportedPage => replaceHostDeep(exportedPage.data))
+            .catch(e => console.log('Failed to replace host', id, e))
+            .then(async pageData => { return { pageData, importResult: await recursiveImport(pageData) } })
+            .catch(e => console.log('Failed to import', id, e))
+            .then(async ({ pageData, importResult }) => {
+              if (importResult) {
+                await transformCustomUrlToUrl(id, pageData);
+              }
+            })
+            .catch(e => console.log('Failed to transform custom url to url', id, e));
+        },
+        { concurrency: 2 }
+      );
+
+      await portStationTheme();
+    } catch (e) {
+      console.error(e.stack);
+    }
   });
 }
