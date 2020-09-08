@@ -14,6 +14,7 @@
       <span class="page-list-header page-list-header-title">Title</span>
       <span class="page-list-header page-list-header-byline">Byline</span>
       <span class="page-list-header page-list-header-status">Status</span>
+      <span class="page-list-header page-list-override__header-source">Source</span>
       <span class="page-list-header page-list-header-collaborators">Collaborators</span>
     </div>
     <div class="page-list-readout">
@@ -22,6 +23,7 @@
         :key="pageIndex"
         :page="page"
         :isPopoverOpen="isPopoverOpen"
+        :stationFilter="selectedStation"
         @setQuery="setQuery"
         @setStatus="selectStatus"></page-list-item>
       <div class="page-list-load-more" v-if="showLoadMore">
@@ -36,193 +38,198 @@
   import axios from 'axios';
   import { DEFAULT_STATION } from '../../../universal/constants';
   import { mapGetters } from 'vuex';
+  import { filterMainStation, syndicatedStationFilter } from '../../../universal/recirc/recirculation';
   import stationSelect from '../../shared-vue-components/station-select';
   import StationSelectInput from '../../shared-vue-components/station-select/input.vue';
   import statusSelector from './status-selector.vue';
   import pageListItem from './page-list-item.vue';
-  const { searchRoute } = window.kiln.utils.references;
-  const { UiButton, UiIconButton, UiTextbox } = window.kiln.utils.components;
-  const { uriToUrl } = window.kiln.utils.urls;
 
-  const DEFAULT_QUERY_SIZE = 50;
+  const { searchRoute } = window.kiln.utils.references,
+    { UiButton, UiIconButton, UiTextbox } = window.kiln.utils.components,
+    { uriToUrl } = window.kiln.utils.urls,
 
-  /**
-   * build the query to send to elastic
-   * @param  {string} queryText
-   * @param  {string} queryUser
-   * @param {number} offset
-   * @param {object} statusFilter
-   * @param {boolean} isMyPages
-   * @param {string} username
-   * @return {object}
-   */
-  function buildQuery({ queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations }) { // eslint-disable-line
-    let query = {
-      index: 'pages',
-      body: {
-        size: DEFAULT_QUERY_SIZE,
-        from: offset,
-        sort: {
-          updateTime: {
-            order: 'desc'
+    DEFAULT_QUERY_SIZE = 50,
+
+    /****** HELPER METHODS TO BUILD ES QUERY ******/
+
+    /**
+     * return match condition for my pages and user searches
+     * @param {boolean} isMyPages
+     * @param {string} queryUser
+     * @param {string} username
+     * @return {object}
+     */
+    buildUsernameFilter = (isMyPages, username, queryUser) => {
+      let condition;
+
+      if (isMyPages && queryUser) {
+        condition = { terms: { 'users.username': [username, queryUser] } };
+      } else if (isMyPages) {
+        condition = { term: { 'users.username': username } };
+      } else if (queryUser) {
+        condition = { term: { 'users.username': queryUser } };
+      } else {
+        return;
+      }
+
+      return {
+        nested: {
+          path: 'users',
+          query: condition
+        }
+      };
+    },
+    /**
+     * return match condition for search query text
+     * @param {string} queryText
+     * @return {object}
+     */
+    buildSearchFilter = (queryText) => {
+      if (queryText) {
+        return {
+          multi_match: {
+            query: queryText,
+            fields: ['authors^2', 'title'], // favor authors, then title
+            type: 'phrase_prefix'
+          }
+        };
+      }
+    },
+    /**
+     * return match condition for station(s) selected
+     * @param {object} stationFilter
+     * @param {boolean} hasNationalStationAccess
+     * @param {array} stations
+     * @return {object}
+     */
+    buildStationFilter = (stationFilter, hasNationalStationAccess, stations) => {
+      let matchStation;
+
+      if (stationFilter) {
+        matchStation = filterMainStation(stationFilter.slug);
+        matchStation.bool.should.push(syndicatedStationFilter(stationFilter.slug));
+      } else {
+        matchStation = { bool: { should: matchAllStations(hasNationalStationAccess, stations), minimum_should_match: 1 }};
+      }
+
+      return matchStation;
+    },
+    /**
+     * return match condition for all stations assigned to the current user
+     * @param {boolean} hasNationalStationAccess
+     * @param {array} stations
+     * @return {array}
+     */
+    matchAllStations = (hasNationalStationAccess, stations) => {
+      return [
+        { terms: { stationSlug: stations } },
+        hasNationalStationAccess && {
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSlug'
+              }
+            }
+          }
+        }
+      ].filter(Boolean);
+    },
+    /**
+     * update the query object according to the filtered status
+     * @param {object} query
+     * @param {object} statusFilter
+     * @return {void}
+     */
+    buildStatusFilter = (query, statusFilter) => {
+      // when the 'all' status is selected, it allows draft, published, and scheduled pages
+      // (but NOT archived)
+      if (statusFilter === 'all') {
+        query.body.query.bool.must.push({
+          term: { archived: false }
+        });
+      } else if (statusFilter === 'draft') {
+        query.body.query.bool.must.push({
+          term: { published: false }
+        }, {
+          term: { archived: false } // only drafts can be archived, but we need to explicitly NOT include archived pages when looking at drafts in the list
+        });
+
+        query.body.query.bool.should = [];
+        // look for either explicitly not scheduled pages or pages where scheduled is not set at all
+        query.body.query.bool.should.push({
+          term: { scheduled: false }
+        });
+        query.body.query.bool.should.push({
+          bool: {
+            must_not: {
+              exists: {
+                field: 'scheduled'
+              }
+            }
+          }
+        });
+        query.body.query.bool.minimum_should_match = 1;
+      } else if (statusFilter === 'published') {
+        query.body.query.bool.must.push({
+          term: { published: true }
+        });
+        // also sort by last published timestamp
+        query.body.sort = {
+          publishTime: { order: 'desc' }
+        };
+      } else if (statusFilter === 'scheduled') {
+        query.body.query.bool.must.push({
+          term: { scheduled: true }
+        });
+        // also sort by last scheduled time
+        query.body.sort = {
+          scheduledTime: { order: 'desc' }
+        };
+      } else if (statusFilter === 'archived') {
+        query.body.query.bool.must.push({
+          term: { archived: true }
+        });
+      }
+    },
+    /**
+     * build the query to send to elastic
+     * @param {string} queryText
+     * @param {string} queryUser
+     * @param {number} offset
+     * @param {object} statusFilter
+     * @param {boolean} isMyPages
+     * @param {string} username
+     * @return {object}
+     */
+    buildQuery = ({ queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations }) => { // eslint-disable-line
+      const query = {
+          index: 'pages',
+          body: {
+            size: DEFAULT_QUERY_SIZE,
+            from: offset,
+            sort: {
+              updateTime: {
+                order: 'desc'
+              }
+            },
+            query: {}
           }
         },
-        query: {}
-      }
+        filterByUser = buildUsernameFilter(isMyPages, username, queryUser),
+        filterBySearch = buildSearchFilter(queryText),
+        filterByStation = buildStationFilter(stationFilter, hasNationalStationAccess, stations);
+
+      _.set(query, 'body.query.bool.must', []);
+      _.set(query, 'body.query.bool.must_not', []);
+
+      filterByUser && query.body.query.bool.must.push(filterByUser);
+      filterBySearch && query.body.query.bool.must.push(filterBySearch);
+      query.body.query.bool.must.push(filterByStation);
+      buildStatusFilter(query, statusFilter);
+
+      return query;
     };
 
-    _.set(query, 'body.query.bool.must', []);
-    _.set(query, 'body.query.bool.must_not', []);
-
-    // filter for only "My Pages", and filter users
-    if (isMyPages && queryUser) {
-      query.body.query.bool.must.push({
-        nested: {
-          path: 'users',
-          query: {
-            terms: {
-              'users.username': [username, queryUser]
-            }
-          }
-        }
-      });
-    } else if (isMyPages) {
-      query.body.query.bool.must.push({
-        nested: {
-          path: 'users',
-          query: {
-            term: {
-              'users.username': username
-            }
-          }
-        }
-      });
-    } else if (queryUser) {
-      query.body.query.bool.must.push({
-        nested: {
-          path: 'users',
-          query: {
-            term: {
-              'users.username': queryUser
-            }
-          }
-        }
-      });
-    }
-
-    if (stationFilter) {
-      const stationMatch = {
-        bool: {
-          should: [{
-            term: {
-              stationSlug: stationFilter.slug
-            }
-          }],
-          minimum_should_match: 1
-        },
-      };
-
-      // for RDC pages we also search for results that have no stationSlug
-      if (stationFilter.slug === DEFAULT_STATION.site_slug) {
-        stationMatch.bool.should.push({
-          bool: {
-            must_not: {
-              exists: {
-                field: 'stationSlug'
-              }
-            }
-          }
-        });
-      }
-      query.body.query.bool.must.push(stationMatch);
-    } else {
-      const stationAccess = {
-        bool: {
-          should: [{
-            terms: {
-              stationSlug: stations
-            }
-          }]
-        }
-      }
-      if (hasNationalStationAccess) {
-        stationAccess.bool.should.push({
-          bool: {
-            must_not: {
-              exists: {
-                field: 'stationSlug'
-              }
-            }
-          }
-        });
-      }
-      query.body.query.bool.must.push(stationAccess);
-    }
-
-    // filter by search string
-    if (queryText) {
-      query.body.query.bool.must.push({
-        multi_match: {
-          query: queryText,
-          fields: ['authors^2', 'title'], // favor authors, then title
-          type: 'phrase_prefix'
-        }
-      });
-    }
-
-    // filter by selected status
-    // when the 'all' status is selected, it allows draft, published, and scheduled pages
-    // (but NOT archived)
-    if (statusFilter === 'all') {
-      query.body.query.bool.must.push({
-        term: { archived: false }
-      });
-    } else if (statusFilter === 'draft') {
-      query.body.query.bool.must.push({
-        term: { published: false }
-      }, {
-        term: { archived: false } // only drafts can be archived, but we need to explicitly NOT include archived pages when looking at drafts in the list
-      });
-
-      query.body.query.bool.should = [];
-      // look for either explicitly not scheduled pages or pages where scheduled is not set at all
-      query.body.query.bool.should.push({
-        term: { scheduled: false }
-      });
-      query.body.query.bool.should.push({
-        bool: {
-          must_not: {
-            exists: {
-              field: 'scheduled'
-            }
-          }
-        }
-      });
-      query.body.query.bool.minimum_should_match = 1;
-    } else if (statusFilter === 'published') {
-      query.body.query.bool.must.push({
-        term: { published: true }
-      });
-      // also sort by last published timestamp
-      query.body.sort = {
-        publishTime: { order: 'desc' }
-      };
-    } else if (statusFilter === 'scheduled') {
-      query.body.query.bool.must.push({
-        term: { scheduled: true }
-      });
-      // also sort by last scheduled time
-      query.body.sort = {
-        scheduledTime: { order: 'desc' }
-      };
-    } else if (statusFilter === 'archived') {
-      query.body.query.bool.must.push({
-        term: { archived: true }
-      });
-    }
-
-    return query;
-  }
 
   export default {
     props: ['isMyPages'],

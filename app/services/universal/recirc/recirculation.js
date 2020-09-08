@@ -750,9 +750,11 @@ const
   });
 
 module.exports = {
+  filterMainStation,
   getStationSlug,
   makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
   sectionOrTagCondition,
-  subscribedContentOnly
+  subscribedContentOnly,
+  syndicatedStationFilter
 };

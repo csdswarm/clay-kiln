@@ -11,6 +11,9 @@
       <span class="status-message" :class="status">{{ statusMessage }}</span>
       <span v-if="statusTime" class="status-time">{{ statusTime }}</span>
     </div>
+    <div class="page-list-override__item-source">
+      <span>{{ source }}</span>
+    </div>
     <div class="page-list-item-collaborators">
       <collaborator class="page-list-item-collaborator" v-for="user in users" :user="user" :key="user.username" @select="filterUser"></collaborator>
     </div>
@@ -73,7 +76,7 @@
     const site = sites[page.siteSlug];
 
     return uriToUrl(page.uri, {
-      protocol: 'http:', // note: assumes http (until we have protocol in site configs)
+      protocol: site.protocol || 'http:', // note: assumes http if protocol is not present in site config
       port: site.port.toString(),
       hostname: site.host,
       host: site.host
@@ -81,11 +84,10 @@
   }
 
   export default {
-    props: ['page', 'multipleSitesSelected', 'isPopoverOpen'],
+    props: ['page', 'multipleSitesSelected', 'isPopoverOpen', 'stationFilter'],
     computed: {
       url() {
-        const page = generatePageUrl(this.page, _.get(this.$store, 'state.allSites'))
-        return this.page.published ? (this.page.url || page) : page;
+        return this.syndication ? this.getSyndicatedUrl() : this.getPageUrl();
       },
       firstAuthor() {
         return this.page.authors.length ? _.head(this.page.authors) : 'No Byline';
@@ -131,6 +133,14 @@
       siteName() {
         return this.site && this.site.name;
       },
+      source() {
+        return this.syndication ? 'syndication' : 'original';
+      },
+      syndication() {
+        return this.stationFilter && (this.page.stationSyndication || []).find(
+          syndication => syndication.stationSlug === this.stationFilter.slug
+        );
+      },
       title() {
         return this.page.title ? _.truncate(this.page.title, { length: 75 }) : 'No Title';
       },
@@ -157,6 +167,16 @@
       },
       filterUser(username) {
         this.$emit('setQuery', `user:${username}`);
+      },
+      getPageUrl() {
+        const page = generatePageUrl(this.page, _.get(this.$store, 'state.allSites'));
+        return this.page.published ? (this.page.url || page) : page;
+      },
+      getSyndicatedUrl() {
+        const { host, protocol = 'http' } = this.site,
+          syndicatedArticleSlug = this.syndication && this.syndication.syndicatedArticleSlug || '';
+
+        return `${protocol}://${host}${syndicatedArticleSlug}`;
       }
     },
     components: {
