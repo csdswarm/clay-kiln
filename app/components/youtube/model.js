@@ -107,15 +107,17 @@ const render = (ref, data) => {
     updateSettingsByType(data);
 
     if (data.contentId) {
-      try {
-        const previousContent = await dbGet(uri.replace('@published', ''),locals);
+      let previousContent;
 
-        if (previousContent.contentId && data.contentId !== previousContent.contentId) {
-          return getVideoDetails(data.contentId, data.isPlaylist)
-            .then(videoDetails => setVideoDetails(data, videoDetails));
-        }
-        return data;
+      try {
+        previousContent = await dbGet(uri.replace('@published', ''),locals);
       } catch (e) { // do nothing
+      }
+
+      // Update data if new content or if old id has been changed
+      if (!previousContent || (previousContent.contentId && data.contentId !== previousContent.contentId)) {
+        return getVideoDetails(data.contentId, data.isPlaylist)
+          .then(videoDetails => setVideoDetails(data, videoDetails));
       }
     }
 
