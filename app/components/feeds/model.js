@@ -115,24 +115,30 @@ module.exports.render = async (ref, data, locals) => {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
           items = typeof item === 'string' ? item.split(',') : [item];
 
-        items.forEach(instance => {
-          if (multiQuery) {
-            createObj(instance).forEach(cond => {
-              if (cond.nested) {
-                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), cond);
+        // type is a one-off until we agree to a syntax which allows us to
+        //   express this kind of logic moving forward
+        if (conditions === queryFilters.type) {
+          queryService[conditionType](localQuery, createObj(items));
+        } else {
+          items.forEach(instance => {
+            if (multiQuery) {
+              createObj(instance).forEach(cond => {
+                if (cond.nested) {
+                  const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), cond);
 
-                queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
-              } else {
-                queryService[conditionType](localQuery, cond);
-              }
-            });
-          } else {
-            queryService[conditionType](localQuery, createObj(instance));
-          }
-          if (conditionType === 'addShould') {
-            queryService.addMinimumShould(localQuery, 1);
-          }
-        });
+                  queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
+                } else {
+                  queryService[conditionType](localQuery, cond);
+                }
+              });
+            } else {
+              queryService[conditionType](localQuery, createObj(instance));
+            }
+            if (conditionType === 'addShould') {
+              queryService.addMinimumShould(localQuery, 1);
+            }
+          });
+        }
 
         // add nested queries back into the main query
         if (nested) {
@@ -165,7 +171,7 @@ module.exports.render = async (ref, data, locals) => {
       // contentType
       type: {
         filterConditionType: 'addMust',
-        createObj: contentType => ({ match: { contentType } })
+        createObj: contentType => ({ terms: { contentType } })
       },
       // corporate websites (corporateSyndication)
       corporate: {
