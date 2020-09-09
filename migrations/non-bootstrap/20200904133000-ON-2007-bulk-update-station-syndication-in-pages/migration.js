@@ -2,7 +2,7 @@
 
 const
   axios = require('../../../app/node_modules/axios'),
-  utils = require('../migration-utils'),
+  utils = require('../../legacy/migration-utils'),
 
   // NOTE: CONCURRENCY and PAUSE are currently arbitrary, but I felt it would be safer.
   CONCURRENCY = 1000,
