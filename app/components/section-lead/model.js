@@ -76,7 +76,6 @@ module.exports = recirculationData({
       label = getSectionFrontName(syndicatedLabel || result.sectionFront, primarySectionFronts);
 
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
     return {
       ...item,
       date: result.date,
@@ -90,7 +89,7 @@ module.exports = recirculationData({
       label,
       plaintextTitle: toPlainText(result.title),
       sectionFront: result.sectionFront,
-      stationSyndication: result.stationSyndication
+      stationSyndication: (result.stationSyndication || []).filter(syndication => syndication.stationSlug === locals.station.site_slug)
     };
   },
 
