@@ -87,6 +87,7 @@ module.exports = {
 * @returns {Promise<object>}
 */
 module.exports.getPodcastShow = async (locals, dynamicSlug) => {
+  console.log('getPodcastShow');
   const route = `podcasts?filter[site_slug]=${ dynamicSlug }`,
     { data } = await __.radioApiService.get(route, {}, null, {}, locals);
 
