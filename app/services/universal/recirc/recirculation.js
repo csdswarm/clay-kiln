@@ -9,6 +9,7 @@
  * Component expects the following fields in the schema.yml
  * populateFrom
  * contentType
+ * authors
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -95,6 +96,7 @@ const
       moreContent
     };
   },
+
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => {
     const
@@ -470,7 +472,7 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
+    
     if (tags === '') {
       return [];
     }
