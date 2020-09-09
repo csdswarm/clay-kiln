@@ -86,9 +86,6 @@
   export default {
     props: ['page', 'multipleSitesSelected', 'isPopoverOpen', 'stationFilter'],
     computed: {
-      url() {
-        return this.syndication ? this.getSyndicatedUrl() : this.getPageUrl();
-      },
       firstAuthor() {
         return this.page.authors.length ? _.head(this.page.authors) : 'No Byline';
       },
@@ -118,14 +115,9 @@
           };
         }
       },
-      status() {
-        return this.pageStatus.status;
-      },
-      statusMessage() {
-        return this.pageStatus.statusMessage;
-      },
-      statusTime() {
-        return this.pageStatus.statusTime;
+      pageUrl() {
+        const page = generatePageUrl(this.page, _.get(this.$store, 'state.allSites'));
+        return this.page.published ? (this.page.url || page) : page;
       },
       site() {
         return _.find(_.get(this.$store, 'state.allSites'), site => site.slug === this.page.siteSlug);
@@ -136,6 +128,21 @@
       source() {
         return this.syndication ? 'syndication' : 'original';
       },
+      status() {
+        return this.pageStatus.status;
+      },
+      statusMessage() {
+        return this.pageStatus.statusMessage;
+      },
+      statusTime() {
+        return this.pageStatus.statusTime;
+      },
+      syndicatedUrl() {
+        const { host, protocol = 'http' } = this.site,
+          syndicatedArticleSlug = this.syndication && this.syndication.syndicatedArticleSlug || '';
+
+        return `${protocol}://${host}${syndicatedArticleSlug}`;
+      },
       syndication() {
         return this.stationFilter && (this.page.stationSyndication || []).find(
           syndication => syndication.stationSlug === this.stationFilter.slug
@@ -143,6 +150,9 @@
       },
       title() {
         return this.page.title ? _.truncate(this.page.title, { length: 75 }) : 'No Title';
+      },
+      url() {
+        return this.syndication ? this.syndicatedUrl : this.pageUrl;
       },
       users() {
         return _.take(this.page.users, 4);
@@ -167,16 +177,6 @@
       },
       filterUser(username) {
         this.$emit('setQuery', `user:${username}`);
-      },
-      getPageUrl() {
-        const page = generatePageUrl(this.page, _.get(this.$store, 'state.allSites'));
-        return this.page.published ? (this.page.url || page) : page;
-      },
-      getSyndicatedUrl() {
-        const { host, protocol = 'http' } = this.site,
-          syndicatedArticleSlug = this.syndication && this.syndication.syndicatedArticleSlug || '';
-
-        return `${protocol}://${host}${syndicatedArticleSlug}`;
       }
     },
     components: {

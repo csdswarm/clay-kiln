@@ -60,22 +60,16 @@
      * @return {object}
      */
     buildUsernameFilter = (isMyPages, username, queryUser) => {
-      let condition;
-
-      if (isMyPages && queryUser) {
-        condition = { terms: { 'users.username': [username, queryUser] } };
-      } else if (isMyPages) {
-        condition = { term: { 'users.username': username } };
-      } else if (queryUser) {
-        condition = { term: { 'users.username': queryUser } };
-      } else {
+      if (!isMyPages && !queryUser) {
         return;
       }
 
       return {
         nested: {
           path: 'users',
-          query: condition
+          query: {
+            terms: { 'users.username': [username, queryUser].filter(Boolean) }
+          }
         }
       };
     },
@@ -199,6 +193,9 @@
      * @param {object} statusFilter
      * @param {boolean} isMyPages
      * @param {string} username
+     * @param {boolean} hasNationalStationAccess
+     * @param {object} statusFilter
+     * @param {array} stations
      * @return {object}
      */
     buildQuery = ({ queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations }) => { // eslint-disable-line
@@ -220,7 +217,6 @@
         filterByStation = buildStationFilter(stationFilter, hasNationalStationAccess, stations);
 
       _.set(query, 'body.query.bool.must', []);
-      _.set(query, 'body.query.bool.must_not', []);
 
       filterByUser && query.body.query.bool.must.push(filterByUser);
       filterBySearch && query.body.query.bool.must.push(filterBySearch);
