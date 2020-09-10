@@ -322,8 +322,10 @@ function mapMainArticleData({ apMeta, articleData, image, lead, newStations }) {
       seoHeadline: headline,
       shortHeadline: headline,
       slug: slugifyService(headline),
+      stationLogoUrl: '',
       stationSlug,
       stationSyndication,
+      stationURL: '',
       teaser: headline
     },
     ..._pick(articleData, [

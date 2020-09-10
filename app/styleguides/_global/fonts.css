@@ -624,19 +624,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||||| Podcasts Trending Podcasts Fonts Styleguide |||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin trending-podcasts-font1 {
-  @mixin font CircularStd-Book, 12px, $boulder, inherit, 18px;
-}
-@define-mixin trending-podcasts-font2 {
-  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
-}
-@define-mixin trending-podcasts-font3 {
-  @mixin font CircularStd-Medium, 16px, theme(primaryColor, $robinsEggBlue), -.26px, 19px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Mnified Content Feed Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin minified-content-feed-font1 {
