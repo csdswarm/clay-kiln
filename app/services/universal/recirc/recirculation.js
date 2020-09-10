@@ -199,18 +199,20 @@ const
     secondarySectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+      createObj: ({ sectionFront, secondarySectionFront }, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
               filterMainStation(stationSlug),
+              multiCaseFilter({ sectionFront }),
               multiCaseFilter({ secondarySectionFront })
             ]
           }
         },
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
-          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+          { 'stationSyndication.sectionFront': sectionFront },
+          secondarySectionFront,
         )
       ].filter(Boolean))
     },
@@ -323,12 +325,13 @@ const
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
    * @param {object} obj - The syndicated property and value to filter
+   * @param {string} secondarySectionFront - value for secondary section front filter
    * @returns {*|
    *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
    *   {bool: {should: Array, minimum_should_match: number}}]}}}}
    * }
    */
-  syndicatedSectionFrontFilter = (stationSlug, obj) => ({
+  syndicatedSectionFrontFilter = (stationSlug, obj, secondarySectionFront) => ({
     nested: {
       path: 'stationSyndication',
       query: {
@@ -339,8 +342,11 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(obj)
-          ]
+            multiCaseFilter(obj),
+            secondarySectionFront && multiCaseFilter(
+              { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+            )
+          ].filter(Boolean)
         }
       }
     }
@@ -586,7 +592,14 @@ const
           value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
-          value = { value, stationSlug, includeSyndicated };
+          value = {
+            value: {
+              sectionFront: filters.sectionFronts,
+              secondarySectionFront: value
+            },
+            stationSlug,
+            includeSyndicated
+          };
           break;
         case 'includeSyndicated':
           return;
@@ -606,6 +619,7 @@ const
       }
       addCondition(query, key, value);
     });
+
     Object.entries(excludes)
       .forEach(([key, value]) => {
         if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
