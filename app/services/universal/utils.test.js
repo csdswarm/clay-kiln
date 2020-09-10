@@ -69,6 +69,90 @@ describe('universal', () => {
 
     });
 
+    describe('coalesce', () => {
+      function setup_coalesce() {
+        return sinon.spy(setup_utils().coalesce);
+      }
+      
+      it('returns undefined without error if path not found', () => {
+        const
+          coalesce = setup_coalesce(),
+          expected = undefined,
+          actual = coalesce({}, 'stuff.n.things');
+
+        expect(actual).to.eql(expected);
+        expect(coalesce).not.to.have.thrown;
+      });
+      
+      it('gets paths using lodash `get` style', () => {
+        const
+          coalesce = setup_coalesce(),
+          expected = 'working',
+          obj = { stuff: { n: { things: expected } } },
+          actual = coalesce(obj, 'stuff.n.things');
+
+        expect(actual).to.eql(expected);
+      });
+
+      it('uses lodash `get`, so it can handle arrays, too', () => {
+        const
+          coalesce = setup_coalesce(),
+          expected = 'working',
+          obj = { stuff: { n: { things: expected } } },
+          actual = coalesce(obj, 'stuff/n/things'.split('/'));
+
+        expect(actual).to.eql(expected);
+      });
+
+      it('keeps checking paths until one exists', () => {
+        const
+          coalesce = setup_coalesce(),
+          expected = 'working',
+          obj = { stuff: { n: { things: expected } } },
+          actual = coalesce(obj, 'not.here', 'nor.here', 'stuff.n.things');
+
+        expect(actual).to.eql(expected);
+      });
+
+      it('returns the first matching path', () => {
+        const
+          coalesce = setup_coalesce(),
+          expected = 'working',
+          obj = { stuff: { n: { things: expected, other: 'not working' } } },
+          actual = coalesce(obj, 'not.here', 'stuff.n.things', 'stuff.n.other');
+
+        expect(actual).to.eql(expected);
+      });
+
+      it('does not get hung up on falsey values (except undefined)', () => {
+        const
+          coalesce = setup_coalesce(),
+          expectations = [ 0, '', false, null ];
+        
+        expectations.forEach(expected => {
+          const obj = { expected, other: true },
+            actual = coalesce(obj, 'expected', 'other');
+
+          expect(actual).to.eql(expected);
+        });
+
+        expect(coalesce({ a: undefined, b: 1 }, 'a', 'b')).to.eql(1);
+      });
+
+      it('does not use recursion so it won\'t overflow the stack', () => {
+        const
+          MIN_AMT_THAT_WOULD_EXCEED_RECURSION_STACK = 475,
+          coalesce = setup_coalesce(),
+          expected = 'works',
+          largeSet = [...Array(MIN_AMT_THAT_WOULD_EXCEED_RECURSION_STACK).keys()].map(n => `not.here.${n}`),
+          obj = { it: { is: { here: expected } } },
+          actual = coalesce(obj, ...largeSet, 'it.is.here');
+
+        expect(actual).to.eql(expected);
+        expect(coalesce).not.to.throw;
+      });
+    });
+    
     describe('postfix', ()=> {
       function setup_postfix() {
         const { postfix } = setup_utils();

@@ -1,8 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _isArray = require('lodash/isArray'),
-  _isPlainObject = require('lodash/isPlainObject'),
+  _has = require('lodash/has'),
   { SERVER_SIDE } = require('../../services/universal/constants'),
   apiHelper = require('../../services/universal/brightcove-proxy-helper'),
   db = require('../../services/server/db'),                                         // Only used server-side
@@ -10,41 +9,24 @@ const _get = require('lodash/get'),
   radioApi = require('../../services/server/radioApi') ;                            // Only used server-side
 
 /**
- * This is for debugging only
+ * There is an unknown issue with regards to `locals`
+ * being added to the `data` object for some reason. This block
+ * is to monkey patch and log the issue until we can determine
+ * the underlying cause.
  *
- * @param obj
- * @returns {boolean}
+ * @param {Object} data
+ * @param {String} url
  */
-function containsNullPrototype(obj) {
-  if (hasNullPrototype(obj)) {
-    return true;
+function sanitizeLocals(data, url) {
+  if (_has(data, 'locals')) {
+    const message = [
+      `\`locals\` is being set on \`data\` at url \`${url}\`.`,
+      'It has been removed to prevent it from causing issues.'
+    ].join(' ');
+
+    log('warn', message);
+    delete data.locals;
   }
-
-  if (_isPlainObject(obj)) {
-    for (const key in obj) {
-      if (containsNullPrototype(obj[key])) {
-        return true;
-      }
-    }
-  } else if (_isArray(obj)) {
-    for (const el of obj) {
-      if (containsNullPrototype(el)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-/**
- * This is for debugging only
- *
- * @param obj
- * @returns {boolean}
- */
-function hasNullPrototype(obj) {
-  return _isPlainObject(obj) && !obj.constructor;
 }
 
 module.exports = {
@@ -55,10 +37,12 @@ module.exports = {
     return data;
   },
   render: async (ref, data, locals) => {
+    sanitizeLocals(data, locals.url);
     const { video } = data;
 
     // If we're server-side and redis cache is outdated, update the views
     if (_get(video, 'id') && SERVER_SIDE && (!data.cacheExpiresAt || Date.now() > new Date(data.cacheExpiresAt))) {
+
       data.views = await apiHelper.getVideoViews(video.id);
       data.cacheExpiresAt = new Date(Date.now() + (radioApi.TTL.MIN * 5));
       // Update this component instance
@@ -68,9 +52,7 @@ module.exports = {
             error: {
               message: e.message,
               stack: e.stack
-            },
-            data,
-            hasNullPrototype: containsNullPrototype(data)
+            }
           });
         });
     }

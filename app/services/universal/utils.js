@@ -60,6 +60,29 @@ function boolKeys(obj) {
 }
 
 /**
+ * coalesce is a recursive function that finds the first matching property path (lodash style) within an object
+ * and returns the value
+ * @param { object } obj - the object to search
+ * @param { string|array } path - the property array or string
+ * @param { array } rest - any additional paths to check if the previous is not found on the object
+ * @returns {*}
+ * @example:
+ * coalesce({ stuff: { things: 'Hello' }, a: 'Bye' }, 'not.here', ['no', 'way'], 'not/here'.split('/'), 'stuff.things', 'a');
+ * // returns 'Hello';
+ */
+function coalesce(obj, path, ...rest) {
+  while (path) {
+    const value = _get(obj, path);
+
+    if (value !== undefined) {
+      return value;
+    }
+
+    [path, ...rest] = rest;
+  }
+}
+
+/**
  * determine if a field is empty
  * @param  {*}  val
  * @return {Boolean}
@@ -533,6 +556,7 @@ module.exports = {
   addLazyLoadProperty,
   boolKeys,
   boolObjectToArray,
+  coalesce,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
