@@ -13,6 +13,13 @@ primaryHeadline:
       required: true
       max: 280
     help: Write your most shareable headline
+
+isOpinion:
+  _label: Is this an opinion piece?
+  _has:
+    input: checkbox
+    help: OPINION will be appended to the article's title and a disclaimer provided by legal will be added to the bottom
+
 shortHeadline:
   _label: Twitter/Short Headline
   _has:
@@ -445,6 +452,7 @@ _groups:
 
   settings:
     fields:
+      - isOpinion
       - stationName
       - feeds
       - showSocial
