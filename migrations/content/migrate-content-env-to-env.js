@@ -37,17 +37,24 @@ async function run() {
     process.exit(1);
   }
 
-  const pageTypes = [
-    'section-front',
-    'station-front',
-    'topic-page',
-    'static-page',
-    'event',
-    'events-listing-page',
-    'contest',
-    'author-page'
-  ],
-  queryForPageType = `
+  const fromEnvHttp = parseHost(fromEnv).http,
+    toEnvHttp = parseHost(toEnv).http,
+    headers = { 
+      Authorization: 'token accesskey',
+      'Content-Type': 'application/json'
+    },
+    pageTypes = [
+      'section-front',
+      'station-front',
+      'topic-page',
+      'static-page',
+      'event',
+      'events-listing-page',
+      'contest',
+      'author-page',
+      'podcast-front-page'
+    ],
+    queryForPageType = `
 SELECT
   public.pages.id
 FROM
