@@ -1,6 +1,7 @@
 _components:
   article:
     primaryHeadline: ''
+    isOpinion: false
     headline: ''
     subHeadline: ''
     feedImg:
