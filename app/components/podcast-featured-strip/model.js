@@ -11,18 +11,18 @@ const utils = require('../../services/universal/podcast'),
 module.exports = unityComponent({
   async render(ref, data) {
     data._computed.items = data.items
-      .filter(({ podcast }) => !!podcast)
+      .filter(({ podcast }) => podcast)
       .map(({ podcast }) => {
         const {
-          imageUrl,
-          url,
-          title,
           category,
-          description,
-          customDescription,
-          shouldOverrideDescription,
           customCategoryLabel,
-          shouldOverrideCategoryLabel
+          customDescription,
+          description,
+          imageUrl,
+          shouldOverrideCategoryLabel,
+          shouldOverrideDescription,
+          title,
+          url
         } = podcast;
         
         return {
