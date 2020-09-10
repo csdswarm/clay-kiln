@@ -18,7 +18,7 @@ describe('latest-content/model.js', () => {
     it('returns data when isCustomColumns is true', async () => {
       const data = { hasCustomColumns: true };
 
-      expect(await render('some uri', data)).to.equal(data);
+      expect(await render('some uri', data)).to.deep.equal({ hasCustomColumns: true });
     });
   });
 });
