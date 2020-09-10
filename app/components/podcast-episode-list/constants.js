@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  loadMoreAmount: 20
+  pageSize: 20
 };

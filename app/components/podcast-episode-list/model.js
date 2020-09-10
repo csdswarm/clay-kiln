@@ -9,7 +9,7 @@ const
   radioApiService = require('../../services/server/radioApi'),
   { replaceWithString } = require('../../services/universal/sanitize'),
   { playingClass } = require('../../services/universal/spaLocals'),
-  { loadMoreAmount } = require('./constants');
+  { pageSize } = require('./constants');
 
 /**
  * returns a boolean for if the media is from omny
@@ -61,7 +61,7 @@ function getEpisodesInShow(locals) {
     } = _get(locals, 'query', {}),
     params = {
       'filter[podcast_site_slug]': _get(locals, 'params.dynamicSlug') || podcastSiteSlug,
-      'page[size]': loadMoreAmount,
+      'page[size]': pageSize,
       'page[number]': page
     };
 
@@ -152,7 +152,7 @@ module.exports = unityComponent({
     const { data: episodes, meta: { count: episodeCount } } = await getEpisodesInShow(locals),
       PODCAST_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
 
-    data._computed.showLoadMoreBtn = episodeCount > loadMoreAmount;
+    data._computed.showLoadMoreBtn = episodeCount > pageSize;
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
         { attributes } = episodeData,
