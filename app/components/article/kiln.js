@@ -22,13 +22,14 @@ module.exports = (schema) => {
             slug: 'opinion',
             text: 'OPINION'
           });
+          await article.saveComponent(tagsRef, tagsComponentData);
         }
       } else {
         if (hasOpinionTag) {
           tagsComponentData.items.splice(opinionTagIndex, 1);
+          await article.saveComponent(tagsRef, tagsComponentData);
         }
       }
-      await article.saveComponent(tagsRef, tagsComponentData);
     }
   }, false);
 
