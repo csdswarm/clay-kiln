@@ -17,18 +17,13 @@ const db = require('../../services/server/db'),
     const contestRulesQuery = /* sql */ `
     SELECT cc.id, cc.data FROM components."contest" cc
     JOIN pages p ON cc.data->>'canonicalUrl' = p.meta->>'url'
-    WHERE (
-    -- ending within 30 days from now or ended within 31 days ago
-    ( 
-      CURRENT_TIMESTAMP >= ((cc.data ->> 'endDateTime')::timestamp) - INTERVAL '31 day' AND
-      CURRENT_TIMESTAMP <= ((cc.data ->> 'endDateTime')::timestamp) + INTERVAL '30 day'
-    ) 
+    WHERE 
+    -- shows all the contests including those past 31 days after they ended.
+      DATE((cc.data ->> 'endDateTime')::timestamp) >= DATE(CURRENT_DATE - INTERVAL '31 day')
     OR 
-    -- currently active
-    (
-      CURRENT_TIMESTAMP >= ((cc.data ->> 'startDateTime')::timestamp) AND
-      CURRENT_TIMESTAMP <= ((cc.data ->> 'endDateTime')::timestamp)
-    ))
+    -- show all active contests
+      CURRENT_DATE <= DATE(((cc.data ->> 'endDateTime')::timestamp))
+    
       ${stationQuery(stationCallsign)}
     `,
 
