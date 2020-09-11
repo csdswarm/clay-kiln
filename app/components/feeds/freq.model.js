@@ -1,6 +1,6 @@
 'use strict';
 
-const { rendererPipeline } = require('./utils');
+const rendererPipeline = require('./renderer-pipeline');
 
 /**
  * Run the feed instance through the transform

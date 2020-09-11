@@ -107,19 +107,22 @@ const render = (ref, data) => {
     updateSettingsByType(data);
 
     if (data.contentId) {
-      const previousContent = await dbGet(uri.replace('@published', ''),locals);
+      let previousContent;
 
-      if (previousContent.contentId && data.contentId !== previousContent.contentId) {
+      try {
+        previousContent = await dbGet(uri.replace('@published', ''),locals);
+      } catch (e) { // do nothing
+      }
+
+      // Update data if new content or if old id has been changed
+      if (!previousContent || (previousContent.contentId && data.contentId !== previousContent.contentId)) {
         return getVideoDetails(data.contentId, data.isPlaylist)
           .then(videoDetails => setVideoDetails(data, videoDetails));
-      } else {
-        return data;
       }
     }
 
     // Missing contentId is technically not invalid. Do not show an error.
     data.videoValid = true;
-
     return data;
   };
 

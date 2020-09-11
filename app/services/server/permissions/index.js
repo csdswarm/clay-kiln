@@ -1,35 +1,39 @@
 'use strict';
 
-const express = require('express'),
+const
+  _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
+  _pick = require('lodash/pick'),
+  _set = require('lodash/set'),
+  addPermissions = require('../../universal/user-permissions'),
+  addToLocals = require('./add-to-locals'),
+  amphoraFiles = require('amphora-fs'),
+  appRoot = require('app-root-path'),
+  express = require('express'),
+  getPageTemplateIds = require('../get-page-template-ids'),
+  hasPermissions = require('./has-permissions'),
   log = require('../../universal/log').setup({ file: __filename }),
+  path = require('path'),
+  updateLocals = require('./update-locals'),
+  urps = require('../urps'),
+  YAML = require('yamljs'),
+  { getComponentData } = require('../db'),
   {
     getComponentName,
+    getListInstance,
     getPageInstance,
     isComponent,
-    isPage,
-    isPublished,
-    isUri,
-    isPageMeta,
     isList,
-    getListInstance
+    isPage,
+    isPageMeta,
+    isPublished,
+    isUri
   } = require('clayutils'),
-  urps = require('../urps'),
-  addPermissions = require('../../universal/user-permissions'),
-  _set = require('lodash/set'),
-  _get = require('lodash/get'),
-  appRoot = require('app-root-path'),
-  amphoraFiles = require('amphora-fs'),
-  path = require('path'),
-  YAML = require('yamljs'),
-  componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
-  hasPermissions = require('./has-permissions'),
-  { getComponentData } = require('../db'),
-  addToLocals = require('./add-to-locals'),
-  updateLocals = require('./update-locals'),
-  getPageTemplateIds = require('../get-page-template-ids'),
-  { wrapInTryCatch } = require('../../startup/middleware-utils'),
-  { refreshPath } = require('../../../routes/add-endpoints/refresh-permissions');
+  { refreshPath } = require('../../../routes/add-endpoints/refresh-permissions'),
+  { wrapInTryCatch } = require('../../startup/middleware-utils');
+
+const componentsToCheck = getComponentsWithPermissions();
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -42,16 +46,16 @@ function getComponentsWithPermissions() {
   // check each component
   amphoraFiles.getFolders([appRoot, 'components'].join(path.sep)).forEach((component) => {
     const path = amphoraFiles.getComponentPath(component),
-      schema = YAML.load(amphoraFiles.getSchemaPath(path));
+      schema = YAML.load(amphoraFiles.getSchemaPath(path)),
+      updatePermissions = _pick(schema._permission, 'update');
 
-    if (schema._permission) { // the entire component has permissions
+    if (!_isEmpty(updatePermissions)) {
       _set(obj, `${component}.component`, schema._permission);
-    } else { // a field on the component has permissions
+    } else {
       Object.keys(schema).forEach(field => {
         if (schema[field]._permission) {
           _set(obj, `${component}.field.${field}`, schema[field]._permission);
         }
-        // specific check for lists
         if (schema[field]._list_permission) {
           _set(obj, `_lists.${component}.field.${field}`, schema[field]._list_permission);
         }

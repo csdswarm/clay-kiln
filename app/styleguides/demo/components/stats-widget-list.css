@@ -1,0 +1,30 @@
+@import "_global/colors";
+
+@define-mixin stats-widget-list-font {
+    font-family: CircularStd-Medium, sans-serif;
+    font-size: 14px;
+    color: $black;
+    letter-spacing: -0.23px;
+    line-height: 17px;
+}
+
+@define-mixin stats-widget-list-font1 {
+    font-family: CircularStd-Black, sans-serif;
+    font-size: 16px;
+    color: theme(primaryColor, $parisM);
+    letter-spacing: -0.26px;
+    line-height: em(20);
+}
+
+.stats-widget-list {
+    @mixin stats-widget-list-font;
+    margin: em(5, 14) 0 em(40, 14) 0;
+
+    &__title {
+        @mixin stats-widget-list-font1;
+    }
+
+    &__content {
+        margin: em(5, 14);
+    }
+}

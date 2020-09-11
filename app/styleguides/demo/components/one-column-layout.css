@@ -5,6 +5,7 @@
 @import "_global/colors";
 @import "_global/alert-banner";
 @import "_global/layouts";
+@import "_global/permissions";
 
 .layout--one-column {
   height: 100vh;
