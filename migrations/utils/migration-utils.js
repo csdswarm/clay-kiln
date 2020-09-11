@@ -47,13 +47,14 @@ const esQuery = require('./es-query'),
     usingDb: usingDb.v1,
   },
   v2 = {
+    elasticsearch: elasticsearch.v2,
     esQuery: esQuery.v2,
     parseHost: parseHost.v2,
     usingDb: usingDb.v2,
-    elasticsearch: elasticsearch.v2,
   },
   v3 = {
-    usingDb: usingDb.v3
+    parseHost: parseHost.v3,
+    usingDb: usingDb.v3,
   };
 
 module.exports = {
