@@ -15,30 +15,20 @@ const db = require('../../services/server/db'),
     stationCallsign = ''
   }) => {
     const contestRulesQuery = /* sql */ `
-    SELECT cc.id, cc.data
-    FROM components."contest" cc
-      JOIN pages p ON cc.data->>'canonicalUrl' = p.meta->>'url'
-
+    SELECT cc.id, cc.data FROM components."contest" cc
+    JOIN pages p ON cc.data->>'canonicalUrl' = p.meta->>'url'
     WHERE (
-      -- ending within 30 days from now or ended within 31 days ago
-      DATE_PART(
-        'day',
-        CURRENT_TIMESTAMP - (cc.data ->> 'endDateTime')::timestamp
-      ) BETWEEN -30 and 31
-
-      -- currently active
-      OR (
-        DATE_PART(
-          'day',
-          CURRENT_TIMESTAMP - (cc.data ->> 'startDateTime')::timestamp
-        ) > 0
-        AND
-        DATE_PART(
-          'day',
-          (cc.data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
-        ) > 0
-      )
-    )
+    -- ending within 30 days from now or ended within 31 days ago
+    ( 
+      CURRENT_TIMESTAMP >= ((cc.data ->> 'endDateTime')::timestamp) - INTERVAL '31 day' AND
+      CURRENT_TIMESTAMP <= ((cc.data ->> 'endDateTime')::timestamp) + INTERVAL '30 day'
+    ) 
+    OR 
+    -- currently active
+    (
+      CURRENT_TIMESTAMP >= ((cc.data ->> 'startDateTime')::timestamp) AND
+      CURRENT_TIMESTAMP <= ((cc.data ->> 'endDateTime')::timestamp)
+    ))
       ${stationQuery(stationCallsign)}
     `,
 
