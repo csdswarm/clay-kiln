@@ -204,15 +204,14 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              ...multiCaseFilter({ sectionFront }),
-              ...multiCaseFilter({ secondarySectionFront })
-            ]
+              ...multiCaseFilter({ sectionFront, ...secondarySectionFront && { secondarySectionFront } })
+            ].filter(Boolean)
           }
         },
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
           { 'stationSyndication.sectionFront': sectionFront },
-          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+          secondarySectionFront && { 'stationSyndication.secondarySectionFront': secondarySectionFront }
         )
       ].filter(Boolean))
     },
@@ -312,12 +311,10 @@ const
    *                       as is and lowercase against the data
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
-  multiCaseFilter = obj => {
-    return Object.entries(obj).map(([key, value]) => minimumShouldMatch([
-      { match: { [ key ]: `${value}` } },
-      { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]));
-  },
+  multiCaseFilter = obj => Object.entries(obj).map(([key, value]) => minimumShouldMatch([
+    { match: { [ key ]: `${value}` } },
+    { match: { [ key ]: `${value}`.toLowerCase() } }
+  ])),
 
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
@@ -340,8 +337,7 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            ...multiCaseFilter(sectionFront),
-            ...secondarySectionFront && multiCaseFilter(secondarySectionFront)
+            ...multiCaseFilter({ ...sectionFront, ...secondarySectionFront })
           ].filter(Boolean)
         }
       }
@@ -588,6 +584,9 @@ const
           value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
+          if (_isEmpty(value)) {
+            return;
+          }
           value = {
             value: {
               sectionFront: filters.sectionFronts,
