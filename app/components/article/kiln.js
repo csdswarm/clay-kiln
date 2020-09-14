@@ -1,6 +1,6 @@
 'use strict';
 
-const { findIndex } = require('lodash'),
+const _findIndex = require('lodash/findIndex'),
   { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
   applyContentLogic = require('../../services/kiln/apply-content-logic'),
   autoFillRecircImg = require('../../services/kiln/shared/content-components/autofill-recirc-img-to-lead-img'),
@@ -13,7 +13,7 @@ module.exports = (schema) => {
     if (fields.includes('isOpinion')) {
       const tagsRef = data.tags._ref,
         tagsComponentData = await article.getComponentData(tagsRef),
-        opinionTagIndex = findIndex(tagsComponentData.items, ['slug', 'opinion']),
+        opinionTagIndex = _findIndex(tagsComponentData.items, ['slug', 'opinion']),
         hasOpinionTag = opinionTagIndex >= 0;
       
       if (data.isOpinion) {
