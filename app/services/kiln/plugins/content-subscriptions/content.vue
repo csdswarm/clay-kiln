@@ -37,6 +37,20 @@
             :value="workingFromStation"
             @input="handleNewFromStation"
           ></ui-select>
+          <ui-select
+            :placeholder="'Primary Section Front'"
+            :hasSearch="true"
+            :options="targetPrimarySectionFronts"
+            :value="targetWorkingSectionFront"
+
+          />
+          <ui-select
+            :placeholder="'Secondary Section Front'"
+            :hasSearch="true"
+            :options="targetSecondarySectionFronts"
+            :value="targetWorkingSecondarySectionFront"
+
+          />
           <ui-textbox
               error="The short description may not be more than 50 characters"
               help="Write a short description not more than 50 characters"
@@ -128,7 +142,7 @@
           <template v-if="modalMode === 'new'">
             <ui-button color="primary" @click="createSubscription" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
           </template>
-          <template v-else="">
+          <template v-else>
             <ui-button color="primary" @click="updateSubscription" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
@@ -259,6 +273,8 @@
   const getNewWorkingSectionFrontProps = () => ({
     workingSectionFront: '',
     workingSecondarySectionFront: '',
+    targetWorkingSectionFront: '',
+    targetWorkingSecondarySectionFront: '',
     workingExcludeSectionFronts: [],
     workingExcludeSecondarySectionFronts: [],
   })
@@ -281,6 +297,8 @@
         subscriptions: [...window.kiln.locals.contentSubscriptions],
         primarySectionFronts: [],
         secondarySectionFronts: [],
+        targetPrimarySectionFronts: [],
+        targetSecondarySectionFronts: [],
         stationName,
         isLoading: false,
         modalMode: null,
@@ -348,13 +366,19 @@
       },
       async loadSectionFronts() {
         const slug = this.workingSubscription.from_station_slug,
+          currentStationSlug = window.kiln.locals.station.site_slug,
           listPrefix = slug
             ? slug + '-'
+            : '',
+          currentStationPrefix = currentStationSlug
+            ? currentStationSlug + '-'
             : '';
 
         await Promise.all([
           this.loadList(`${listPrefix}primary-section-fronts`, 'primarySectionFronts'),
-          this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts')
+          this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts'),
+          this.loadList(`${currentStationPrefix}primary-section-fronts`, 'targetPrimarySectionFronts'),
+          this.loadList(`${currentStationPrefix}secondary-section-fronts`, 'targetSecondarySectionFronts')
         ])
       },
       updateSubscription () {
