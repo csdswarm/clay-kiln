@@ -76,6 +76,7 @@ tertiary:
       - latest-recirculation
       - google-ad-manager
       - smart-speaker
+      - stats-widget-list
 bottom:
   _componentList:
     include:

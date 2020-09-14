@@ -35,14 +35,14 @@ describe('universal', () => {
 
         expect(obj).to.have.property('a');
       });
-    
+
       it('does not invoke the callback on the property if it is not requested', () => {
         const { obj, bar } = setup_addLazyLoadProperty();
 
         expect(obj.a).to.eql('Foo');
         expect(bar).not.to.have.been.called;
       });
-    
+
       it('invokes the callback only one time when the property is accessed', () => {
         const { obj, bar } = setup_addLazyLoadProperty();
 
@@ -182,7 +182,7 @@ describe('universal', () => {
     describe('textToEncodedSlug', () => {
       function setup_textToEncodedSlug() {
         const { textToEncodedSlug } = setup_utils();
-        
+
         return { textToEncodedSlug };
       }
 
@@ -225,7 +225,7 @@ describe('universal', () => {
     describe('listDeepObjects', function () {
       function setup_listDeepObject() {
         const { listDeepObjects } = setup_utils();
-        
+
         return { listDeepObjects };
       }
 
@@ -251,6 +251,27 @@ describe('universal', () => {
           { type:'yarn' },
           { type:'sweater' }
         ]);
+      });
+    });
+
+    describe('bindInstanceFunctions', () => {
+      it('should bind class functions to the instance', () => {
+        const { bindInstanceFunctions } = setup_utils();
+
+        class SomeClass {
+          constructor() {
+            bindInstanceFunctions(this);
+            this.pass = true;
+          }
+
+          getPass() {
+            return this.pass;
+          }
+        }
+
+        const { getPass } = new SomeClass();
+
+        expect(getPass()).to.be.true;
       });
     });
   });
