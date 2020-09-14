@@ -186,7 +186,7 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ sectionFront })
+              ...multiCaseFilter({ sectionFront })
             ]
           }
         },
@@ -204,8 +204,8 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ sectionFront }),
-              multiCaseFilter({ secondarySectionFront })
+              ...multiCaseFilter({ sectionFront }),
+              ...multiCaseFilter({ secondarySectionFront })
             ]
           }
         },
@@ -313,12 +313,10 @@ const
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
   multiCaseFilter = obj => {
-    const [key, value] = Object.entries(obj)[0] || [];
-
-    return minimumShouldMatch([
+    return Object.entries(obj).map(([key, value]) => minimumShouldMatch([
       { match: { [ key ]: `${value}` } },
       { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]);
+    ]));
   },
 
   /**
@@ -342,8 +340,8 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(sectionFront),
-            secondarySectionFront && multiCaseFilter(secondarySectionFront)
+            ...multiCaseFilter(sectionFront),
+            ...secondarySectionFront && multiCaseFilter(secondarySectionFront)
           ].filter(Boolean)
         }
       }
