@@ -136,7 +136,6 @@ const
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
-    urlIsValid: validatedItem.urlIsValid,
     canonicalUrl: curatedItem.url || validatedItem.canonicalUrl,
     feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
@@ -541,6 +540,18 @@ const
   }),
 
   /**
+   * assigns urlIsValid to item if the key exists on result
+   *
+   * @param {object} result
+   * @param {object} item - this is mutated
+   */
+  handleUrlIsValid = (result, item) => {
+    if (result.hasOwnProperty('urlIsValid')) {
+      item.urlIsValid = result.urlIsValid;
+    }
+  },
+
+  /**
    * Use filters to query elastic for content
    *
    * @param {object} config
@@ -716,7 +727,14 @@ const
             [contentKey]: await Promise.all(
               [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
                 .slice(0, maxItems)
-                .map(async (item) => mapResultsToTemplate(locals, item))),
+                .map(async (result) => {
+                  const item = {};
+
+                  handleUrlIsValid(result, item);
+
+                  return mapResultsToTemplate(locals, result, item);
+                })
+            ),
             initialLoad: !pagination.page,
             moreContent: totalHits > maxItems
           });
@@ -741,6 +759,8 @@ const
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
         item.uri = result._id;
+
+        handleUrlIsValid(result, item);
 
         return mapResultsToTemplate(locals, result, item);
       }));

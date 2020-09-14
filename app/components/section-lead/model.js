@@ -63,15 +63,12 @@ module.exports = recirculationData({
     const primarySectionFronts = await retrieveList('primary-section-fronts', { locals }),
       label = getSectionFrontName(result.syndicatedLabel || result.sectionFront, primarySectionFronts);
 
-    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
     return {
       ...item,
       date: result.date,
       uri: result._id,
       primaryHeadline: result.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
       label: result.overrideLabel || label,
