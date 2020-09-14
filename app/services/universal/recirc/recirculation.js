@@ -212,7 +212,7 @@ const
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
           { 'stationSyndication.sectionFront': sectionFront },
-          secondarySectionFront,
+          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
         )
       ].filter(Boolean))
     },
@@ -324,14 +324,14 @@ const
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
-   * @param {object} obj - The syndicated property and value to filter
-   * @param {string} secondarySectionFront - value for secondary section front filter
+   * @param {object} sectionFront - The section front property and value to filter
+   * @param {object} secondarySectionFront - The secondary section front property and value to filter
    * @returns {*|
    *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
    *   {bool: {should: Array, minimum_should_match: number}}]}}}}
    * }
    */
-  syndicatedSectionFrontFilter = (stationSlug, obj, secondarySectionFront) => ({
+  syndicatedSectionFrontFilter = (stationSlug, sectionFront, secondarySectionFront) => ({
     nested: {
       path: 'stationSyndication',
       query: {
@@ -342,10 +342,8 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(obj),
-            secondarySectionFront && multiCaseFilter(
-              { 'stationSyndication.secondarySectionFront': secondarySectionFront }
-            )
+            multiCaseFilter(sectionFront),
+            secondarySectionFront && multiCaseFilter(secondarySectionFront)
           ].filter(Boolean)
         }
       }
