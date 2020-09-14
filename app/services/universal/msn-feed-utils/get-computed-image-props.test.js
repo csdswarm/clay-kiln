@@ -1,16 +1,19 @@
 'use strict';
 
-const getComputedImageProps = require('./get-computed-image-props'),
+const constants = require('../constants'),
+  getComputedImageProps = require('./get-computed-image-props'),
   { expect } = require('chai');
+
+const moreThanMaxSide = constants.msnFeed.image.required.maxSide + 1;
 
 describe('get-computed-image-props', () => {
   it('is used in msn feed even when a side is longer than max', () => {
-    let data = getMockImageData({ height: 4001 }),
+    let data = getMockImageData({ height: moreThanMaxSide }),
       result = getComputedImageProps(data, {});
 
     expect(result.useInMsnFeed).to.be.true;
 
-    data = getMockImageData({ width: 4001 });
+    data = getMockImageData({ width: moreThanMaxSide });
     result = getComputedImageProps(data, {});
 
     expect(result.useInMsnFeed).to.be.true;
