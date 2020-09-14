@@ -53,7 +53,7 @@ module.exports = router => {
     const result = await db.raw(`
       SELECT id, data, meta
       FROM pages 
-      WHERE meta->>'url' LIKE '%${req.query.url}'
+      WHERE meta->>'url' LIKE 'http%://${req.query.url}'
     `);
 
     if (!result.rows.length) {
