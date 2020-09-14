@@ -7,7 +7,8 @@
  *   consumers. e.g. /reversechron.rss?andFilter[station]=WFANAM
  */
 
-const { formatUTC } = require('../../../services/universal/dateTime');
+const { formatUTC } = require('../../../services/universal/dateTime'),
+  { subscribedContentOnly } = require('../../../services/universal/recirc/recirculation');
 
 /**
  * Formats the dates in the array then sorts them in ascending order
@@ -51,11 +52,18 @@ module.exports = {
               path: 'stationSyndication',
               query: {
                 bool: {
-                  should: [
-                    { match: { 'stationSyndication.callsign': station } },
-                    { match: { 'stationSyndication.callsign.normalized': station } }
-                  ],
-                  minimum_should_match: 1
+                  must: [
+                    {
+                      bool: {
+                        should: [
+                          { match: { 'stationSyndication.callsign': station } },
+                          { match: { 'stationSyndication.callsign.normalized': station } }
+                        ],
+                        minimum_should_match: 1
+                      }
+                    },
+                    ...subscribedContentOnly
+                  ]
                 }
               }
             }
