@@ -1,10 +1,10 @@
 'use strict';
 
-const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
-  KilnInput = window.kiln.kilnInput,
-  { findIndex } = require('lodash'),
+const { findIndex } = require('lodash'),
+  { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
   applyContentLogic = require('../../services/kiln/apply-content-logic'),
-  autoFillRecircImg = require('../../services/kiln/shared/content-components/autofill-recirc-img-to-lead-img');
+  autoFillRecircImg = require('../../services/kiln/shared/content-components/autofill-recirc-img-to-lead-img'),
+  KilnInput = window.kiln.kilnInput;
 
 module.exports = (schema) => {
   const article = new KilnInput(schema);
