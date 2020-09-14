@@ -24,7 +24,8 @@ const db = require('../../services/server/db'),
     ${ activeContestsOnly
     ? "CURRENT_DATE <= DATE(((cc.data ->> 'endDateTime')::timestamp)) "
     : "DATE((cc.data ->> 'endDateTime')::timestamp) >= DATE(CURRENT_DATE - INTERVAL '31 day') "}
-      ${stationQuery(stationCallsign)}
+      ${stationQuery(stationCallsign)} 
+      ORDER BY cc.data ->> 'startDateTime' ASC;
     `,
 
       { rows } = await db.raw(contestRulesQuery),
