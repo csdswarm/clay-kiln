@@ -10,7 +10,8 @@ const
   componentClassName = 'podcast-episode-list',
   { utils } = require('../../services/client/utils'),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
-  loadMoreAmount = 20;
+  loadMoreAmount = 20,
+  SelectBox = require('../../services/client/selectbox');
 
 let
   $one, $all;
@@ -213,8 +214,13 @@ class PodcastListComponentController {
    * mounting event handler
    */
   onMount() {
+    const selectBox = new SelectBox(this.view.elements.sortDropdown, {
+      searchable: false,
+      customClass: 'podcast-episode-list__select-box'
+    });
+
     this.view.elements.container.addEventListener('click' , this.onClick);
-    this.view.elements.sortDropdown.addEventListener('change' , this.onChange);
+    selectBox.addEventListener('change' , this.onChange);
     window.addEventListener('playbackStateChange', this.onPlaybackStateChange);
   }
   /**
@@ -278,15 +284,16 @@ class PodcastListComponentController {
   }
   /**
    * change event handler
-   * @param {Event} e // change event object
+   * @param {HTMLOptionElement} option // option el from SelectBox
    */
-  onChange(e) {
+  onChange(option) {
+    console.log('onChange(e)', option.value);
     if (this.model.isLoading) {
       return;
     }
     // need to reset the page number before the loading then increment after so
     // the load more will pick up in the right spot
-    this.model.apiParams.sortOrder = sortingValues[e.target.value];
+    this.model.apiParams.sortOrder = sortingValues[option.value];
     this.model.apiParams.pageNumber = 1;
     this.model.isLoading = true;
     this.model.getEpisodes()
