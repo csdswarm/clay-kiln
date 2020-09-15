@@ -51,7 +51,7 @@
 }
 
 @define-mixin station-listen-nav-cta2{
-  @mixin font CircularStd-Medium, 14px, $white, inherit, 17.71px;
+  @mixin font CircularStd-Medium, 11px, $white, inherit, 15.92px;
 }
 
 $station-logo-width-height: em(100);
@@ -320,9 +320,16 @@ $caret-margin-right: em(25);
           align-items: flex-end;
           &--newsletter {
             @mixin station-listen-nav-cta1;
+            text-transform: uppercase;
           }
           &--contact {
             @mixin station-listen-nav-cta2;
+            text-transform: uppercase;
+          }
+          &--has-both {
+            .station-nav__cta-link:first-of-type {
+              margin-bottom: em(6, 11);
+            }
           }
         }
         .station-nav__cta-link {
@@ -330,12 +337,19 @@ $caret-margin-right: em(25);
           align-items: center;
           text-decoration: none;
           color: inherit;
-          &--newsletter {
-            text-transform: uppercase;
-          }
+          text-align: right;
         }
-        .station-nav__cta-link-icon,  .station-nav__cta-link-text {
+        .station-nav__cta-link-icon {
           display: flex;
+        }
+        .station-nav__cta-link-text {
+          display: flex;
+          flex-direction: column;
+        }
+        .station-nav__cta-link-text-line {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
         }
         .station-nav__cta-link-icon {
           &--newsletter {
