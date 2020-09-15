@@ -1,7 +1,7 @@
 'use strict';
 
 const { bluebird } = require('../../utils/base'),
-  { clayExport, clayImport } = require('../../utils/migration-utils').v1,
+  { clayExport, clayImport, _set } = require('../../utils/migration-utils').v1,
   { esQuery } = require('../../utils/migration-utils').v2,
   { v1: parseHost } = require('../../utils/parse-host'),
 
@@ -22,7 +22,7 @@ async function run() {
     const migratedStations = await getMigratedStations(envInfo),
       secondarySFMappings = await getSecondarySFMappings(),
       secondarySectionFronts = getSecondarySFList(migratedStations, secondarySFMappings),
-      [[ {listToUpdate, listToRemove} ]] = await getListsToAddAndRemove(secondarySectionFronts);
+      [[{ listToUpdate, listToRemove }]] = await getListsToAddAndRemove(secondarySectionFronts);
       
     await updateArticles(listToRemove);
     await updateSecondarySectionFronts(listToUpdate);
@@ -84,7 +84,7 @@ async function getDifferenceBetweenLists(secondarySectionFronts) {
 
     try {
       data = await clayExport({ componentUrl: `${host}/_lists/${item}` });
-    } catch(e) {
+    } catch (e) {
       console.log('_list error', e)
     }
 
@@ -122,40 +122,54 @@ function addItemsToObject(secondarySectionFronts, stationSSFront, secondarySecti
 async function getListsToAddAndRemove(listToUpdate) {
   const [ listDifferences ] = await getDifferenceBetweenLists(listToUpdate),
     secondaryNatMapping = getSecondaryNationalMapping(),
+    lists = [],
     listToRemove = [];
 
-  return Promise.all(Object.entries(listDifferences)
-    .map(([key, values]) => {
-      return bluebird.map(values, async row => {
-        if (secondaryNatMapping.filter((secondary) => secondary === row.value).length > 0) {
-          const isThereASectionFront = await getSecondarySFFromValue(row),
-            index = values.indexOf(row),
-            stationSlug = key.replace('-secondary-section-fronts', '');
+  if (Object.entries(listDifferences).length > 0) {
+    return Promise.all(Object.entries(listDifferences)
+      .map(([key, values]) => {
+        return bluebird.map(values, async row => {
+          if (secondaryNatMapping.filter((secondary) => secondary === row.value).length === 0) {
+            const isThereASectionFront = await getSecondarySFFromValue(row),
+              index = values.indexOf(row),
+              stationSlug = key.replace('-secondary-section-fronts', '');
 
-          if (!isThereASectionFront) {
-            listToRemove.push({...row, stationSlug});
-            values.splice(index, 1);
+            if (!isThereASectionFront) {
+              listToRemove.push({...row, stationSlug});
+              values.splice(index, 1);
+            }
           }
           return { listToUpdate, listToRemove };
-        }
-      }, { concurrency: 5 })
-    })
-  )
+        }, { concurrency: 5 })
+      })
+    )
+  } else {
+    lists.push([{ listToUpdate, listToRemove }]);
+    return lists;
+  }
 }
 
 async function updateArticles(lists) {
-  return bluebird.map(lists, list => {
-    const hits = getPublishedContent(list);
+  return bluebird.map(lists, async list => {
+    const hits = await getPublishedContent(list);
 
     _get(hits, 'hits', []).map(async (article) => {
       const url = article._id,
-        { data } = await clayExport({ componentUrl: url });
+        notPublishedUrl = url.replace('@published', ''),
+        { data } = await clayExport({ componentUrl: url }),
+        { data: noPublished } = await clayExport({ componentUrl: notPublishedUrl }),
+        articles = _get(data, '_components.article.instances', {}),
+        noPublishedArticles = _get(noPublished, '_components.article.instances', {});
+        
+      Object.assign(articles, noPublishedArticles)
 
       return Promise.all(Object.entries(_get(data, '_components.article.instances', {}))
-        .map(async ([_, value]) => {
+        .map(async ([key, value]) => {
+          console.log(`Removing secondary section front '${list.value}' from article in station '${list.stationSlug}'`);
           _set(value, 'secondarySectionFront', '')
 
           try {
+            console.log(`Updating and republishing published article: ${host}/_components/article/instances/${key}`);
             await clayImport({ payload: data, hostUrl: host });
             await republishArticles(url);
 
@@ -225,20 +239,27 @@ async function updateSecondarySectionFronts(secondarySectionFronts) {
     _lists: secondarySectionFronts
   };
 
+  console.log('Secondary section fronts to update:', secondarySectionFronts);
+
   return clayImport({ payload, hostUrl: host });
 };
 
 async function getSecondarySFFromValue(row) {
   const query = `SELECT id, data
     FROM components."section-front"
-    WHERE data->>'title' = '${row.name}'
+    WHERE data->>'title' = $1
     AND (data->>'primary')::boolean IS false
     AND id ~ '@published$'`;
 
-  let sectionFronts;
-  await usingDb(async db => {
-    sectionFronts = await db.query(query).then(results => _get(results, 'rows'))
-  });
+  let sectionFronts = [];
+
+  try {
+    await usingDb(async db => {
+      sectionFronts = await db.query(query, [row.value]).then(results => _get(results, 'rows'))
+    });
+  } catch (error) {
+    console.log('error getting section front', error);
+  }
 
   return sectionFronts.length ? true : false
 }
