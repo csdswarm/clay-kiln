@@ -39,18 +39,18 @@
           ></ui-select>
           <ui-select
             :placeholder="'Primary Section Front'"
-            :hasSearch="true"
-            :options="targetPrimarySectionFronts"
-            :value="targetWorkingSectionFront"
+            hasSearch
+            :options="stationPrimarySectionFronts"
+            :value="workingSubscription.mappedSectionFronts.primarySectionFront"
+            @input="opt => updateMappedSectionFront('primarySectionFront', opt)"/>
 
-          />
           <ui-select
             :placeholder="'Secondary Section Front'"
-            :hasSearch="true"
-            :options="targetSecondarySectionFronts"
-            :value="targetWorkingSecondarySectionFront"
+            hasSearch
+            :options="stationSecondarySectionFronts"
+            :value="workingSubscription.mappedSectionFronts.secondarySectionFront"
+            @input="opt => updateMappedSectionFront('secondarySectionFront', opt)"/>
 
-          />
           <ui-textbox
               error="The short description may not be more than 50 characters"
               help="Write a short description not more than 50 characters"
@@ -83,9 +83,7 @@
             has-search
             label="Section Front"
             placeholder="Select Primary Section Front to Include"
-
             :options="primarySectionFronts"
-
             :value="workingSectionFront"
             @input="opt => setSectionFrontFilter('sectionFront', opt)"
           ></ui-select>
@@ -95,9 +93,7 @@
             has-search
             label="Secondary Section Front"
             placeholder="Select Secondary Section Front to Include"
-
             :options="secondarySectionFronts"
-
             :value="workingSecondarySectionFront"
             @input="opt => setSectionFrontFilter('secondarySectionFront', opt)"
           ></ui-select>
@@ -119,9 +115,7 @@
             label="Exclude Section Fronts"
             placeholder="Select Primary Section Fronts to Exclude"
             multiple
-
             :options="primarySectionFronts"
-
             :value="workingExcludeSectionFronts"
             @input="opt => setSectionFrontFilter('excludeSectionFronts', opt)"
           ></ui-select>
@@ -131,9 +125,7 @@
             label="Exclude Secondary Section Fronts"
             placeholder="Select Secondary Section Fronts to Exclude"
             multiple
-
             :options="secondarySectionFronts"
-
             :value="workingExcludeSecondarySectionFronts"
             @input="opt => setSectionFrontFilter('excludeSecondarySectionFronts', opt)"
           ></ui-select>
@@ -248,6 +240,10 @@
     constructor (options = {
       from_station_slug: nationalFromStationOption.value,
       station_slug: window.kiln.locals.station.site_slug,
+      mappedSectionFronts: {
+        primarySectionFront: null,
+        secondarySectionFront: null
+      },
       short_desc: '',
       filter: {
         // as currently described in get-content-subscriptions.js
@@ -267,6 +263,7 @@
       this.station_slug = options.station_slug
       this.short_desc = options.short_desc
       this.filter = { ...options.filter }
+      this.mappedSectionFronts = { ...options.mappedSectionFronts }
     }
   }
 
@@ -297,8 +294,12 @@
         subscriptions: [...window.kiln.locals.contentSubscriptions],
         primarySectionFronts: [],
         secondarySectionFronts: [],
-        targetPrimarySectionFronts: [],
-        targetSecondarySectionFronts: [],
+        stationPrimarySectionFronts: [],
+        stationSecondarySectionFronts: [],
+        mappedSectionFronts: {
+          primarySectionFront: null,
+          secondarySectionFront: null
+        },
         stationName,
         isLoading: false,
         modalMode: null,
@@ -307,6 +308,10 @@
       return Object.assign(initialData, getNewWorkingProps())
     },
     methods: {
+      updateMappedSectionFront(property, opt) {
+        this.mappedSectionFronts[property] = opt;
+        this.workingSubscription.mappedSectionFronts[property] = opt.value ? opt.value : ''
+      },
       setSectionFrontFilter(key, option) {
         this['working' + capitalize(key)] = option
 
@@ -337,7 +342,8 @@
           fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
-          filter: { ...this.workingSubscription.filter }
+          filter: { ...this.workingSubscription.filter },
+          mappedSectionFronts: { ...this.workingSubscription.mappedSectionFronts },
         }
         axios.post(`/rdc/content-subscription`, newSub)
           .then(response => {
@@ -377,8 +383,8 @@
         await Promise.all([
           this.loadList(`${listPrefix}primary-section-fronts`, 'primarySectionFronts'),
           this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts'),
-          this.loadList(`${currentStationPrefix}primary-section-fronts`, 'targetPrimarySectionFronts'),
-          this.loadList(`${currentStationPrefix}secondary-section-fronts`, 'targetSecondarySectionFronts')
+          this.loadList(`${currentStationPrefix}primary-section-fronts`, 'stationPrimarySectionFronts'),
+          this.loadList(`${currentStationPrefix}secondary-section-fronts`, 'stationSecondarySectionFronts')
         ])
       },
       updateSubscription () {
@@ -388,7 +394,8 @@
           fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
-          filter: { ...this.workingSubscription.filter }
+          filter: { ...this.workingSubscription.filter },
+          mappedSectionFronts: { ...this.workingSubscription.mappedSectionFronts },
         }
         axios.put(`/rdc/content-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
