@@ -287,7 +287,6 @@ class PodcastListComponentController {
    * @param {HTMLOptionElement} option // option el from SelectBox
    */
   onChange(option) {
-    console.log('onChange(e)', option.value);
     if (this.model.isLoading) {
       return;
     }
