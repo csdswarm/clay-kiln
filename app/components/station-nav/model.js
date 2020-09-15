@@ -30,6 +30,12 @@ module.exports = stationizedComponent({
     if (data.CtaContactInfoTelephone) {
       data._computed.CtaContactInfoTelephone = data.CtaContactInfoTelephone.charAt(0) !== '1' ? `1${data.CtaContactInfoTelephone}` : data.CtaContactInfoTelephone;
     }
+
+    // split on the space so we have 1 to n lines
+    if (data.CtaContactInfoTelephoneDisplay) {
+      data._computed.CtaContactInfoTelephoneDisplayLines = data.CtaContactInfoTelephoneDisplay.split(' ');
+    }
+
     return data;
   }
 });
