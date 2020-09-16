@@ -11,3 +11,5 @@ _components:
       podcast-episode:
         description: '${paramValue]'
         localsPath: 'episode.attributes.title'
+      podcast-front:
+        suffix: 'Listen & Download on Any Device | RADIO.COM'

@@ -11,3 +11,5 @@ _components:
       podcast-episode:
         description: '${paramValue}'
         localsPath: 'episode.attributes.description'
+      podcast-front:
+        description: 'Find your favorite podcast and listen on any device for free on the RADIO.COM app. Browse our huge collection of podcasts by category, or let us find you one.'

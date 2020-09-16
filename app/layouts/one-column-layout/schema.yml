@@ -11,6 +11,7 @@ head:
       - meta-icons
       - meta-url
       - meta-tags
+      - meta-description
 
 headLayout:
   _componentList:
