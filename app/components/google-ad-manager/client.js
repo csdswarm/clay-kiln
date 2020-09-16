@@ -412,10 +412,6 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     });
   }
 
-  if (isArticleOrGallery(pageData)) {
-    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
-  }
-
   return adTargetingData;
 }
 
