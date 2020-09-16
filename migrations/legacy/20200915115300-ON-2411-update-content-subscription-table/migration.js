@@ -7,10 +7,10 @@ usingDb(async db => {
   console.log('altering content and national subscriptions...');
   await db.query(`
     alter table national_subscriptions
-      add mapped_sectionfronts jsonb;
+      add mapped_section_fronts jsonb;
     
     alter table content_subscriptions
-      add mapped_sectionfronts jsonb;
+      add mapped_section_fronts jsonb;
   `)
 
   await addProcedures(db);

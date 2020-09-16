@@ -33,7 +33,7 @@ async function getStationsSubscribed(data, locals) {
 
   return (stations || []).map(station => {
     const { sectionFront, secondarySectionFront } = data,
-      { callsign, name: stationName, site_slug: stationSlug, mapped_sectionfronts: mappedSectionFronts } = station;
+      { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = station;
     
     /* TODO: revisit. */
 

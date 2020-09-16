@@ -41,14 +41,14 @@
             :placeholder="'Primary Section Front'"
             hasSearch
             :options="stationPrimarySectionFronts"
-            :value="workingSubscription.mappedSectionFronts.primarySectionFront"
+            :value="workingSubscription.mapped_section_fronts.primarySectionFront"
             @input="opt => updateMappedSectionFront('primarySectionFront', opt)"/>
 
           <ui-select
             :placeholder="'Secondary Section Front'"
             hasSearch
             :options="stationSecondarySectionFronts"
-            :value="workingSubscription.mappedSectionFronts.secondarySectionFront"
+            :value="workingSubscription.mapped_section_fronts.secondarySectionFront"
             @input="opt => updateMappedSectionFront('secondarySectionFront', opt)"/>
 
           <ui-textbox
@@ -240,7 +240,7 @@
     constructor (options = {
       from_station_slug: nationalFromStationOption.value,
       station_slug: window.kiln.locals.station.site_slug,
-      mappedSectionFronts: {
+      mapped_section_fronts: {
         primarySectionFront: null,
         secondarySectionFront: null
       },
@@ -263,7 +263,7 @@
       this.station_slug = options.station_slug
       this.short_desc = options.short_desc
       this.filter = { ...options.filter }
-      this.mappedSectionFronts = { ...options.mappedSectionFronts }
+      this.mapped_section_fronts = { ...options.mapped_section_fronts }
     }
   }
 
@@ -296,7 +296,7 @@
         secondarySectionFronts: [],
         stationPrimarySectionFronts: [],
         stationSecondarySectionFronts: [],
-        mappedSectionFronts: {
+        mapped_section_fronts: {
           primarySectionFront: null,
           secondarySectionFront: null
         },
@@ -309,8 +309,8 @@
     },
     methods: {
       updateMappedSectionFront(property, opt) {
-        this.mappedSectionFronts[property] = opt;
-        this.workingSubscription.mappedSectionFronts[property] = opt.value ? opt.value : ''
+        this.mapped_section_fronts[property] = opt;
+        this.workingSubscription.mapped_section_fronts[property] = opt.value ? opt.value : ''
       },
       setSectionFrontFilter(key, option) {
         this['working' + capitalize(key)] = option
@@ -343,7 +343,7 @@
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter },
-          mappedSectionFronts: { ...this.workingSubscription.mappedSectionFronts },
+          mapped_section_fronts: { ...this.workingSubscription.mapped_section_fronts },
         }
         axios.post(`/rdc/content-subscription`, newSub)
           .then(response => {
@@ -395,7 +395,7 @@
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter },
-          mappedSectionFronts: { ...this.workingSubscription.mappedSectionFronts },
+          mapped_section_fronts: { ...this.workingSubscription.mapped_section_fronts },
         }
         axios.put(`/rdc/content-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {

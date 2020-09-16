@@ -7,7 +7,7 @@ const _ = require('lodash'),
   { DEFAULT_STATION } = require('../universal/constants'),
 
   matchesOn = buildMatchesOn(),
-  stationPropsForSyndication = ['callsign', 'name', 'site_slug', 'mapped_sectionfronts'];
+  stationPropsForSyndication = ['callsign', 'name', 'site_slug', 'mapped_section_fronts'];
 
 /**
  * returns the stations which have content subscriptions matching the content
