@@ -4,7 +4,8 @@ const _ = require('lodash'),
   utils = require('../universal/utils'),
   protocol = process
     ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:`
-    : window.location.protocol;
+    : window.location.protocol,
+  { isValidUrl } = utils;
 
 /**
  * SearchOpts - options which modify the behavior of elasticsearch
@@ -528,6 +529,40 @@ function terms(key, values) {
   };
 }
 
+function getStationSyndication(canonicalUrl, url) {
+  const isUrl = isValidUrl(url),
+    articleSyndicatedUrl = isUrl ? new URL(url) : url,
+    { pathname = `${url}` } = articleSyndicatedUrl;
+
+  return [{
+    bool: {
+      filter: {
+        term: { canonicalUrl }
+      }
+    }
+  },
+  {
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.syndicatedArticleSlug': {
+                  query: sanitizeSearchTerm(pathname),
+                  operator: 'and'
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }];
+}
+
+
 module.exports = newQuery;
 
 Object.assign(module.exports, {
@@ -544,6 +579,7 @@ Object.assign(module.exports, {
   formatAggregationResults,
   formatProtocol,
   getFormatSearchResult,
+  getStationSyndication,
   matchIgnoreCase,
   matchSimple,
   moreLikeThis,
