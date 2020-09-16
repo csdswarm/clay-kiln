@@ -45,7 +45,7 @@ const
 
       return items.map(({ item }) => item);
     } catch (e) {
-      __.log('error', `Bad request getting data from search ap-media. URL: ${API_URL}`, e);
+      __.log('error', `Bad request getting data from search ap-media. URL: ${API_URL.replace(apMediaKey, '[AP_MEDIA_API_KEY]')}`, e);
       return [];
     }
   },
