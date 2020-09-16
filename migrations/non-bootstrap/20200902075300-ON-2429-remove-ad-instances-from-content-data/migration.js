@@ -1,5 +1,7 @@
 'use strict'
 
+let fetchMore = true;
+
 const { 
   bluebird,
   axios
@@ -20,7 +22,12 @@ removeAdsFromExistingArticles()
 async function removeAdsFromExistingArticles() {
   await usingDb(db => getArticlesData(db)
     .then(updateArticleInstances)
-    .then(number => console.log(`${number} articles were updated...`))
+    .then(number => {
+      console.log(`${number} articles were updated...`);
+      if (fetchMore) {
+        removeAdsFromExistingArticles();
+      }
+    })
   );
 }
 
@@ -44,10 +51,15 @@ async function updateArticleInstances(articles) {
 
 async function getArticlesData(db) {
   const result = await db.query(`
-      select id, data
-      from components.article
-      where data->>'content' like '%google-ad-manager%'
-    `)
+    select id, data
+    from components.article
+    where data->>'content' like '%google-ad-manager%'
+    LIMIT 1000
+  `);
+
+  if (result.rows.length === 0) {
+    fetchMore = false;
+  }
 
   return result.rows;
 }
