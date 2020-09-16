@@ -474,7 +474,7 @@ const
    * @return {string} host
    */
   getHost = (data, locals) => {
-    data.author = coalesce(locals, 'host', 'params.host');
+    data.host = coalesce(locals, 'host', 'params.host');
 
     return data.host;
   },
