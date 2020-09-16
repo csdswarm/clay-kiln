@@ -44,7 +44,7 @@
           <a :href="`https://apnews.com/${item.altids.itemid}`" target="_blank"
             >View</a
           >
-          <span>{{ formatStatusTime(item.versioncreated) }}</span>
+          <span>{{ formatStatusTime(item.firstcreated) }}</span>
         </div>
       </div>
     </div>
@@ -98,6 +98,7 @@ const {
 } = window.kiln.utils.components;
 import axios from 'axios';
 import moment from 'moment';
+import _sortBy from 'lodash/sortBy';
 
 const AP_MEDIA_API_SEARCH = '/rdc/ap-subscriptions/search';
 const AP_MEDIA_API_IMPORT = '/rdc/ap-subscriptions/manual-import';
@@ -233,7 +234,6 @@ export default {
       }
     },
     async searchContent() {
-      // TODO: Hit the BE Service instead of the API Directly.
       this.isLoading = true;
       try {
         const filterConditions = [
@@ -252,7 +252,9 @@ export default {
             q: filterConditions,
           },
         });
-        this.items = response.data;
+        // this is currently sorted by versioncreated, but we want to show results in desc order by publish date
+        // and ap search does not provide that, so handle it after retrieving the most recently updated items.
+        this.items = _sortBy(response.data, ['firstcreated']).reverse();
       } catch (err) {
         console.log("Something went wrong while fetching content", err);
       } finally {

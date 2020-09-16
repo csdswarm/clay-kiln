@@ -12,7 +12,7 @@ const
   apMediaKey = process.env.AP_MEDIA_API_KEY,
   log = logger.setup({ file: __filename }),
 
-  INCLUDES = 'associations,headline_extended,meta.products,renditions.nitf,versioncreated',
+  INCLUDES = 'associations,firstcreated,headline_extended,meta.products,renditions.nitf,versioncreated',
   EXCLUDES = 'subject',
   MAX_CACHE_AP_IN_SECONDS = 3 * DAY / 1000,
 
@@ -36,7 +36,7 @@ const
       return null;
     }
     const searchURL = 'https://api.ap.org/media/v/content/search?',
-      sort = 'versioncreated:desc',
+      sort = 'versioncreated:desc', // this is the only value that ap search will sort on
       API_URL = `${searchURL}apikey=${apMediaKey}&q=${filterConditions}&include=${INCLUDES}&exclude=${EXCLUDES}&page_size=100&sort=${sort}`;
 
     try {
@@ -45,7 +45,7 @@ const
 
       return items.map(({ item }) => item);
     } catch (e) {
-      __.log('error', 'Bad request getting data from search ap-media', e);
+      __.log('error', `Bad request getting data from search ap-media. URL: ${API_URL}`, e);
       return [];
     }
   },

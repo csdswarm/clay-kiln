@@ -7,6 +7,7 @@ const
   _pick = require('lodash/pick'),
   cheerio = require('cheerio'),
   logger = require('../../universal/log'),
+  moment = require('moment'),
   slugifyService = require('../../universal/slugify'),
   updatePageMetadata = require('./update-page-metadata'),
   { addLazyLoadProperty, setImmutable } = require('../../universal/utils'),
@@ -279,7 +280,7 @@ function integrateArticleStations(article, newStations) {
  */
 function mapMainArticleData({ apMeta, articleData, image, lead, newStations }) {
   const
-    { altids, ednote, headline, headline_extended, uri, version } = apMeta,
+    { altids, ednote, firstcreated, headline, headline_extended, uri, version } = apMeta,
     { article } = articleData,
     { etag, itemid } = altids,
     {
@@ -288,7 +289,8 @@ function mapMainArticleData({ apMeta, articleData, image, lead, newStations }) {
       stationSlug,
       stationSyndication
     } = integrateArticleStations(article, newStations),
-    { url: imageUrl } = image;
+    { url: imageUrl } = image,
+    published = moment.utc(firstcreated);
 
   return {
     article: {
@@ -300,6 +302,8 @@ function mapMainArticleData({ apMeta, articleData, image, lead, newStations }) {
         uri: `${uri}&include=*`,
         version
       },
+      articleDate: published.format('YYYY-MM-DD'),
+      articleTime: published.format('HH:mm'),
       byline: [
         {
           names: [{ text: 'The Associated Press', slug: 'the-associated-press' }],
