@@ -1,5 +1,13 @@
 <div class="component component--podcast-front podcast-front" data-uri="{{ default _ref _self }}">
 
+  {{#if _computed.primaryColorOverride}}
+    <style>
+      :root {
+        --theme-primaryColor: {{ _computed.primaryColorOverride }};
+      }
+    </style>
+  {{/if}}
+
   {{#if enableHero}}
     {{#ifAny hero.length @root.locals.edit }}
       <div class="full-width" data-editable="hero">

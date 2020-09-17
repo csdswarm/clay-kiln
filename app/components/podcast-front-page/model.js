@@ -1,7 +1,26 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
-  { assignStationInfo } = require('../../services/universal/create-content/index');
+  { assignStationInfo } = require('../../services/universal/create-content/index'),
+  { COLORS, DEFAULT_STATION } = require('../../services/universal/constants');
+
+/**
+ * since there is now a default theme set on all national pages (ON-2041)
+ * we will need to override the primary color when on the national podcast front
+ * to get the robinsEgg to be the primaryColor
+ *
+ * @param {Object} locals
+ * @returns {string}
+ */
+function shouldOverrideThemePrimaryColor(locals) {
+  const { station = {} } = locals;
+
+  if (station.id === DEFAULT_STATION.id) {
+    return COLORS.robinsEggBlue;
+  } else {
+    return undefined;
+  }
+}
 
 module.exports = unityComponent({
   /**
@@ -15,6 +34,13 @@ module.exports = unityComponent({
    */
   save: (uri, data, locals) => {
     assignStationInfo(uri, data, locals);
+    return data;
+  },
+  render: (uri, data, locals) => {
+    if (!locals) {
+      return;
+    }
+    data._computed.primaryColorOverride = shouldOverrideThemePrimaryColor(locals);
     return data;
   }
 });
