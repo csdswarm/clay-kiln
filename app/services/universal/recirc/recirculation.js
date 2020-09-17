@@ -345,6 +345,32 @@ const
   }),
 
   /**
+   * Adds an extra condition for only subscribed content
+   * @returns {(*|{bool: { should: [{ match: {'stationSyndication.unsubscribed': false}}]}})[]}
+   */
+  subscribedContentOnly = [{
+    bool: {
+      should: [
+        {
+          match: {
+            'stationSyndication.unsubscribed': false
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSyndication.unsubscribed'
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
+  }],
+
+  /**
    * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
    * @param {string} stationSlug - The station to filter by
    * @returns {(*|{nested: {path: string, query: {match: {'stationSyndication.stationSlug': *}}}})[]}
@@ -353,8 +379,15 @@ const
     nested: {
       path: 'stationSyndication',
       query: {
-        match: {
-          'stationSyndication.stationSlug': stationSlug
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            ...subscribedContentOnly
+          ]
         }
       }
     }
@@ -441,7 +474,7 @@ const
    * @return {string} host
    */
   getHost = (data, locals) => {
-    data.author = coalesce(locals, 'host', 'params.host');
+    data.host = coalesce(locals, 'host', 'params.host');
 
     return data.host;
   },
@@ -470,7 +503,6 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
     if (tags === '') {
       return [];
     }
@@ -754,5 +786,6 @@ module.exports = {
   getStationSlug,
   makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
-  sectionOrTagCondition
+  sectionOrTagCondition,
+  subscribedContentOnly
 };

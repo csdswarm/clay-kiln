@@ -1,6 +1,16 @@
 _description: |
   landing page featuring podcasts
 
+title:
+  _label: Title to show when the hero carousel is disabled
+  _has: 
+    input: text
+
+enableHero:
+  _label: Enable hero carousel
+  _has: checkbox
+
+
 hero:
   _label: Podcast Front Hero
   _placeholder:
@@ -22,3 +32,9 @@ content:
     include:
       - podcast-featured-strip
       - podcast-category-strip
+
+_groups:
+  settings:
+    fields:
+      - enableHero
+      - title

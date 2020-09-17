@@ -38,8 +38,19 @@ function formatSimpleByline(authorsList, hostsList) {
  * @returns {String}
  */
 function complexByline(opts) {
+
   const bylines = _.get(opts.hash, 'bylines', []),
-    options = _.pick(opts.hash, ['showSocial', 'authorHost', 'linkClass', 'nameClass', 'hideLinks', 'simpleList', 'stationSlug']);
+    options = _.pick(opts.hash, [
+      'showSocial',
+      'authorHost',
+      'linkClass',
+      'nameClass',
+      'hideLinks',
+      'simpleList',
+      'stationSlug',
+      'siteSlug',
+      'isContentFromAP'
+    ]);
 
   let names, hosts;
 
