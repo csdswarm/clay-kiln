@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A contest page that includes headline, lede, description, embed, rules & tags.
 
@@ -263,7 +264,10 @@ _groups:
       text: Contest Date Range
       height: 30px
       ifEmpty: startDate or startTime or endDate or endTime
-
+  settings:
+    fields:
+      - feeds
+      - noIndexNoFollow
 
 # Non user editable. Set by model.js. Included in schema to use _publish functionality
 contentType:
@@ -314,3 +318,27 @@ rulesBodyText:
       - italic
       - strike
       - link
+
+noIndexNoFollow:
+  _publish: noIndexNoFollow
+  _label: No Index / No Follow
+  _has: checkbox
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: false
+
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: RSS Feeds
+        value: rss
+      - name: Apple News
+        value: apple-news
+      - name: MSN
+        value: msn
+      - name: Smart News
+        value: smartNews
+    help: By default, contests are included in rss feed. Uncheck these if you don't want this contest to appear in there, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
