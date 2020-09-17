@@ -19,10 +19,19 @@ document.addEventListener('set-loaded-ids', ({ loadedIds }) => {
   setLoadedIds(loadedIds);
 });
 
+/**
+ * returns state.loadedIds
+ * @returns {string[]}
+ */
 function getLoadedIds() {
   return state.loadedIds;
 }
 
+/**
+ * Assigns state.loadedIds while removing duplicates and sorting the array
+ *
+ * @param {string[]} loadedIds
+ */
 function setLoadedIds(loadedIds) {
   state.loadedIds = _uniq(loadedIds).sort();
 }
