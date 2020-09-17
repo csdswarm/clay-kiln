@@ -13,7 +13,8 @@ module.exports = router => {
   router.get('/rdc/content-with-syndicated-url', wrapInTryCatch(async (req, res) => {
     preventFastlyCache(res);
 
-    const result = await db.raw(`
+    // A Union was removed from here as it's too taxing on the DB, splitting into multiple queries reduces overall timing
+    const query = `
       SELECT
         u.url AS content_url,
         p.id AS page_id,
@@ -24,32 +25,13 @@ module.exports = router => {
           data,
           data->>'syndicatedUrl' AS syndicatedUrl,
           data->>'syndicationStatus' AS syndicationStatus
-        FROM components.article
+        FROM ??
       ) AS content
       JOIN pages p ON p.data->'main'->>0 = content.id
       JOIN uris u ON u.data = p.id
       WHERE content.syndicationStatus = 'syndicated'
         AND content.syndicatedUrl = ?
         AND content.id NOT LIKE '%@published'
-      UNION
-      SELECT
-        u.url AS content_url,
-        p.id AS page_id,
-        content.id AS content_uri,
-        content.data AS content_data
-      FROM (
-        SELECT id,
-          data,
-          data->>'syndicatedUrl' AS syndicatedUrl,
-          data->>'syndicationStatus' AS syndicationStatus
-        FROM components.gallery
-      ) AS content
-      JOIN pages p ON p.data->'main'->>0 = content.id
-      JOIN uris u ON u.data = p.id
-      WHERE content.syndicationStatus = 'syndicated'
-        AND content.syndicatedUrl = ?
-        AND content.id NOT LIKE '%@published'
-
       -- we limit 1 because there shouldn't be a case where multiple pieces of
       --   content are syndicated from the same canonical
       --
@@ -57,7 +39,15 @@ module.exports = router => {
       --   refers to the canonical AS drupal stores it.  In unity the drupal
       --   canonical is stored AS syndicatedUrl
       LIMIT 1
-    `, [req.query.url, req.query.url]);
+    `;
+
+    // First check for articles
+    let result = await db.raw(query, ['components.article', req.query.url]);
+
+    // If there were no articles then check galleries
+    if (!result.rows.length) {
+      result = await db.raw(query, ['components.gallery', req.query.url]);
+    }
 
     if (!result.rows.length) {
       res.status(404).end();

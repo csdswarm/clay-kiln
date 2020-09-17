@@ -258,16 +258,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||| Page Header Fonts Styleguide ||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin page-header-font1 {
-  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 90px;
-}
-@define-mixin page-header-font2 {
-  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 42px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||| Stations Carousel Fonts Styleguide |||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin stations-carousel-font1 {
@@ -621,19 +611,6 @@ em, i {
 }
 @define-mixin podcast-lead-font5 {
   @mixin font CircularStd-Black, 24px, $black, -.58px, 29px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||||| Podcasts Trending Podcasts Fonts Styleguide |||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin trending-podcasts-font1 {
-  @mixin font CircularStd-Book, 12px, $boulder, inherit, 18px;
-}
-@define-mixin trending-podcasts-font2 {
-  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
-}
-@define-mixin trending-podcasts-font3 {
-  @mixin font CircularStd-Medium, 16px, theme(primaryColor, $robinsEggBlue), -.26px, 19px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/

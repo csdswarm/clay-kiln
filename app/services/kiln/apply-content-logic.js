@@ -8,12 +8,15 @@
  */
 
 const addStationNoteToCustomUrl = require('./add-station-note-to-custom-url'),
-  { enforcePublishRights } = require('./permissions'),
   handleEditModePlaceholders = require('./handle-edit-mode-placeholders'),
-  KilnInput = window.kiln.kilnInput,
-  // these components require specific permissions to publish.  The other
-  //   content components restrict publishing based off station access.
-  componentsToCheckPublishPermission = new Set([
+  {
+    enforcePagePermissions,
+    enforcePublishRights
+  } = require('./permissions');
+
+// these components require specific permissions to publish.  The other
+//   content components restrict publishing based off station access.
+const componentsToCheckPublishPermission = new Set([
     'static-page'
   ]),
   componentsToCheckUnpublishPermission = new Set([
@@ -25,7 +28,9 @@ const addStationNoteToCustomUrl = require('./add-station-note-to-custom-url'),
   componentsWithHardcodedUrls = new Set([
     'homepage',
     'station-front'
-  ]);
+  ]),
+  KilnInput = window.kiln.kilnInput;
+
 
 module.exports = schema => {
   const { schemaName } = schema;
@@ -42,4 +47,6 @@ module.exports = schema => {
   });
 
   handleEditModePlaceholders(new KilnInput(schema));
+
+  enforcePagePermissions(schema);
 };

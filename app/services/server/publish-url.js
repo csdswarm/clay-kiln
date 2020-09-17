@@ -1,8 +1,13 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
+  urlPatterns = require('../universal/url-patterns'),
+
   { PAGE_TYPES } = pubUtils,
-  urlPatterns = require('../universal/url-patterns');
+
+  __ = {
+    pubUtils
+  };
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
@@ -13,15 +18,16 @@ const pubUtils = require('./publish-utils'),
  * @returns {Promise} returns an object to be consumed by url patterns.
  */
 function getUrlOptions(pageData, locals, mainComponentRefs) {
-  const componentReference = pubUtils.getComponentReference(pageData, mainComponentRefs);
+  const { getComponentReference, getMainComponentFromRef, getUrlOptions } = __.pubUtils,
+    componentReference = getComponentReference(pageData, mainComponentRefs);
 
   if (!componentReference) {
     return Promise.reject(new Error('Could not find a main component on the page'));
   }
 
-  return pubUtils.getMainComponentFromRef(componentReference, locals)
+  return getMainComponentFromRef(componentReference, locals)
     .then(({ component, pageType }) => {
-      return pubUtils.getUrlOptions(component, locals, pageType);
+      return getUrlOptions(component, locals, pageType);
     });
 }
 
@@ -118,6 +124,20 @@ function getStationFrontSlugUrl(pageData, locals, mainComponentRefs) {
       }
     });
 }
+/**
+ * Return the url for a static page slug
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+async function getStaticPageSlugUrl(pageData, locals, mainComponentRefs) {
+  const urlOptions = await getUrlOptions(pageData, locals, mainComponentRefs);
+
+  if (urlOptions.pageType === PAGE_TYPES.STATIC_PAGES) {
+    return urlPatterns.staticPage(urlOptions);
+  }
+}
 
 /**
  * Return the url for a event pg based on its slug, within the events subdir
@@ -200,6 +220,7 @@ function getHostPageSlugUrl(pageData, locals, mainComponentRefs) {
 }
 
 module.exports = {
+  _internals: __,
   getYearMonthSlugUrl,
   getArticleSlugUrl,
   getGallerySlugUrl,
@@ -209,6 +230,7 @@ module.exports = {
   getEventsListingUrl,
   getContestSlugUrl,
   getStationFrontSlugUrl,
+  getStaticPageSlugUrl,
   getHostPageSlugUrl,
   getPodcastFrontSlugUrl
 };

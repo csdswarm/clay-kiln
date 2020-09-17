@@ -1,6 +1,6 @@
 'use strict';
 
-const { hasClass } = require('../client/dom-helpers');
+const whenChildIsAdded = require('./when-child-is-added');
 
 /**
  * Using the passed in kilnInput for subscribing and finding the station via the
@@ -27,36 +27,10 @@ module.exports = (kilnInput, cb) => {
       return;
     }
 
-    const serverRenderedRightDrawer = document.querySelector('.kiln-wrapper .right-drawer');
-
-    if (serverRenderedRightDrawer) {
-      cb(serverRenderedRightDrawer);
-      return;
-    }
-
-    // this shouldn't be declared above the short circuit
-    // eslint-disable-next-line one-var
-    const kilnWrapper = document.querySelector('.kiln-wrapper'),
-      runCallbackWhenRightDrawerExists = mutation => {
-        const rightDrawer = Array.from(mutation.addedNodes)
-          .find(hasClass('right-drawer'));
-
-        if (rightDrawer) {
-          cb(rightDrawer);
-          return true;
-        }
-      },
-      observer = new MutationObserver(mutationList => {
-        for (const mutation of mutationList) {
-          const callbackRan = runCallbackWhenRightDrawerExists(mutation);
-
-          if (callbackRan) {
-            observer.disconnect();
-            return;
-          }
-        }
-      });
-
-    observer.observe(kilnWrapper, { childList: true });
+    whenChildIsAdded({
+      cb,
+      childClass: 'right-drawer',
+      parentClass: 'kiln-wrapper'
+    });
   }, false);
 };

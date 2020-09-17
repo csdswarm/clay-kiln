@@ -1,0 +1,10 @@
+_components:
+  stats-widget-list:
+    title: ''
+    titleVisible: true
+    content: []
+    instances:
+      new:
+        title: ''
+        titleVisible: true
+        content: []

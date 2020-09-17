@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _reject = require('lodash/reject'),
   db = require('../../services/server/db'),
   rest = require('../../services/universal/rest'),
   { uriToUrl } = require('../../services/universal/utils'),
@@ -42,11 +43,18 @@ async function addSyndicationEntry(uri, syndicationEntry) {
  * @param  {string} callsign
  */
 async function removeSyndicationEntry(uri, callsign) {
-  const data = await db.get(uri),
-    stationSyndication = data.stationSyndication.filter(syndicated => syndicated.callsign !== callsign );
+  const data = await db.get(uri);
 
-  data.stationSyndication = stationSyndication;
+  data.stationSyndication.forEach(syndicated => {
+    if (syndicated.callsign === callsign) {
+      syndicated.unsubscribed = true;
+    }
+  });
 
+  // We are only updating unsubscribed property for entries related to any other syndication tool like
+  //  content subscriptions, editorial feed, ap news. Manual syndications are removed from stationSyndication entries to avoid
+  //  duplicated entries when content is syndicated using one of this tools again.
+  data.stationSyndication = _reject(data.stationSyndication, { callsign, source: 'manual syndication' });
   await db.put(uri, data);
 }
 

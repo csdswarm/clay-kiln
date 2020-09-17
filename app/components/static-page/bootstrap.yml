@@ -4,3 +4,4 @@ _components:
     content:
       - _ref: /_components/paragraph/instances/new
     pageTitle: ''
+    slug: ''

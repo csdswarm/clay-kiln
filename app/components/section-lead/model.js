@@ -1,8 +1,8 @@
 'use strict';
 
-const { recirculationData, sectionOrTagCondition } = require('../../services/universal/recirc/recirculation'),
+const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  { getStationSlug, recirculationData, sectionOrTagCondition } = require('../../services/universal/recirc/recirculation'),
   { toPlainText } = require('../../services/universal/sanitize'),
-  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
   { getComponentName } = require('clayutils'),
   elasticFields = [
@@ -12,7 +12,8 @@ const { recirculationData, sectionOrTagCondition } = require('../../services/uni
     'canonicalUrl',
     'feedImgUrl',
     'contentType',
-    'sectionFront'
+    'sectionFront',
+    'stationSyndication'
   ],
   MEDIA_SIZES = {
     small: 'max-width: 360px',
@@ -41,6 +42,20 @@ const { recirculationData, sectionOrTagCondition } = require('../../services/uni
       media: MEDIA_SIZES[key],
       srcParams: asQuery(value)
     }));
+  },
+  /**
+   * Get syndicated section front to be used as a label
+   * @param {object} locals
+   * @param {object} item
+   * @returns {String}
+   */
+  getSyndicatedLabel = (locals, item) => {
+    const stationSlug = getStationSlug(locals),
+      syndication = (item.stationSyndication || []).find(syndication => syndication.stationSlug === stationSlug);
+
+    if (syndication) {
+      return syndication.sectionFront;
+    }
   };
 
 module.exports = recirculationData({
@@ -61,7 +76,8 @@ module.exports = recirculationData({
    */
   mapResultsToTemplate: async (locals, result, item = {}) => {
     const primarySectionFronts = await retrieveList('primary-section-fronts', { locals }),
-      label = getSectionFrontName(result.syndicatedLabel || result.sectionFront, primarySectionFronts);
+      syndicatedLabel = result.syndicatedLabel || getSyndicatedLabel(locals, result),
+      label = getSectionFrontName(syndicatedLabel || result.sectionFront, primarySectionFronts);
 
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
@@ -74,8 +90,11 @@ module.exports = recirculationData({
       urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
-      label: result.overrideLabel || label,
-      plaintextTitle: toPlainText(result.title)
+      curatedOverride: result.overrideLabel,
+      label,
+      plaintextTitle: toPlainText(result.title),
+      sectionFront: result.sectionFront,
+      stationSyndication: result.stationSyndication
     };
   },
 
@@ -101,10 +120,7 @@ module.exports = recirculationData({
         default: { width: 780, crop: wideCrop }
       };
 
-    data.primaryStoryLabel = data.primaryStoryLabel
-      || locals.secondarySectionFront
-      || locals.sectionFront
-      || data.tag;
+    data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront;
 
     if (isMultiColumn(data)) {
       Object.assign(defaultImageSizes, {
