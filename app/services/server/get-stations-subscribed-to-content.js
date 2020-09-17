@@ -7,7 +7,7 @@ const _ = require('lodash'),
   { DEFAULT_STATION } = require('../universal/constants'),
 
   matchesOn = buildMatchesOn(),
-  stationPropsForSyndication = ['callsign', 'name', 'site_slug', 'mapped_section_fronts'];
+  stationPropsForSyndication = ['callsign', 'name', 'site_slug'];
 
 /**
  * returns the stations which have content subscriptions matching the content
@@ -31,10 +31,17 @@ const getStationsSubscribedToContent = async (data, locals) => {
       .pick(Object.keys(allStations.bySlug))
       .pickBy(isSubscribed)
       .keys()
-      .map(stationSlug => _.pick(
-        allStations.bySlug[stationSlug],
-        stationPropsForSyndication
-      ))
+      .map(stationSlug => {
+        const stationProps = _.pick(
+          allStations.bySlug[stationSlug],
+          stationPropsForSyndication
+        );
+
+        return {
+          ...stationProps,
+          mapped_section_fronts: _.get(contentSubscriptions[stationSlug][0], 'mapped_section_fronts', {})
+        };
+      })
       .value();
 
   return subscribedStations;

@@ -7,7 +7,7 @@ const _noop = require('lodash/noop'),
 
   locals = {},
   nationalStationSlug = '',
-  testStation = { name: 'test station', site_slug: 'testSlug' },
+  testStation = { name: 'test station', site_slug: 'testSlug', mapped_section_fronts: {} },
   success = [testStation],
 
   filterDefaults = getFilterDefaults(),
@@ -196,7 +196,8 @@ function toMockSubscriptions(mockSubscriptions, val, key) {
     mockSubscriptions[key] = val.map(filter => ({
       filter,
       station_slug: testStation.site_slug,
-      from_station_slug: nationalStationSlug
+      from_station_slug: nationalStationSlug,
+      mapped_section_fronts: {}
     }));
   } else {
     mockSubscriptions[key] = _reduce(val, toMockSubscriptions, {});

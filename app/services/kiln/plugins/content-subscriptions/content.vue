@@ -38,14 +38,16 @@
             @input="handleNewFromStation"
           ></ui-select>
           <ui-select
-            :placeholder="'Primary Section Front'"
+            label='To Primary Section Front'
+            :placeholder="'To Primary Section Front'"
             hasSearch
             :options="stationPrimarySectionFronts"
             :value="workingSubscription.mapped_section_fronts.primarySectionFront"
             @input="opt => updateMappedSectionFront('primarySectionFront', opt)"/>
 
           <ui-select
-            :placeholder="'Secondary Section Front'"
+            label='To Secondary Section Front'
+            :placeholder="'To Secondary Section Front'"
             hasSearch
             :options="stationSecondarySectionFronts"
             :value="workingSubscription.mapped_section_fronts.secondarySectionFront"
@@ -132,10 +134,10 @@
         </form>
         <div slot="footer">
           <template v-if="modalMode === 'new'">
-            <ui-button color="primary" @click="createSubscription" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
+            <ui-button color="primary" @click="createSubscription" :disabled="!enableModalButton">Add</ui-button>
           </template>
           <template v-else>
-            <ui-button color="primary" @click="updateSubscription" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
+            <ui-button color="primary" @click="updateSubscription" :disabled="!enableModalButton">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
         </div>
@@ -241,8 +243,8 @@
       from_station_slug: nationalFromStationOption.value,
       station_slug: window.kiln.locals.station.site_slug,
       mapped_section_fronts: {
-        primarySectionFront: null,
-        secondarySectionFront: null
+        primarySectionFront: '',
+        secondarySectionFront: ''
       },
       short_desc: '',
       filter: {
@@ -296,10 +298,6 @@
         secondarySectionFronts: [],
         stationPrimarySectionFronts: [],
         stationSecondarySectionFronts: [],
-        mapped_section_fronts: {
-          primarySectionFront: null,
-          secondarySectionFront: null
-        },
         stationName,
         isLoading: false,
         modalMode: null,
@@ -309,7 +307,6 @@
     },
     methods: {
       updateMappedSectionFront(property, opt) {
-        this.mapped_section_fronts[property] = opt;
         this.workingSubscription.mapped_section_fronts[property] = opt.value ? opt.value : ''
       },
       setSectionFrontFilter(key, option) {
@@ -432,6 +429,11 @@
       onEditSubscriptionRow (subscription) {
         this.modalMode = 'edit'
 
+        if(!_get(subscription, 'mapped_section_fronts.primarySectionFront', null)){
+            _set(subscription, 'mapped_section_fronts.primarySectionFront', '')
+            _set(subscription, 'mapped_section_fronts.secondarySectionFront', '')
+        }
+
         const { filter } = subscription;
 
         Object.assign(this, {
@@ -498,6 +500,7 @@
     },
     mounted () {
       this.loadSectionFronts()
+      this.workingSubscription = new ContentSubscription();
     },
     created () {
       this.hookDataToTags()
@@ -576,6 +579,10 @@
         )
 
         return Object.values(stationOptions).map(toStationOption)
+      },
+      enableModalButton(){
+        return this.workingSubscription.short_desc.trim().length > 0 && 
+          this.workingSubscription.mapped_section_fronts.primarySectionFront.trim().length > 0;
       }
     },
     components: {

@@ -1,6 +1,7 @@
 'use strict';
 
-const _reject = require('lodash/reject'),
+const _get = require('lodash/get'),
+  _reject = require('lodash/reject'),
   getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
 
 /**
@@ -33,17 +34,16 @@ async function getStationsSubscribed(data, locals) {
 
   return (stations || []).map(station => {
     const { sectionFront, secondarySectionFront } = data,
-      { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = station;
-    
-    /* TODO: revisit. */
+      { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = station,
+      primarySectionFrontMapped = _get(mappedSectionFronts,'primarySectionFront', false) ? _get(mappedSectionFronts,'primarySectionFront', '') : sectionFront,
+      secondarySectionFrontMapped = _get(mappedSectionFronts,'primarySectionFront', false) ? _get(mappedSectionFronts,'secondarySectionFront', '') : secondarySectionFront;
 
     return {
       callsign,
       stationName,
       stationSlug,
-      ...sectionFront && { sectionFront },
-      ...secondarySectionFront && { secondarySectionFront },
-      ...mappedSectionFronts && { mappedSectionFronts },
+      ...primarySectionFrontMapped && { sectionFront: primarySectionFrontMapped },
+      ...secondarySectionFrontMapped && { secondarySectionFront: secondarySectionFrontMapped },
       source: 'content subscription'
     };
   });

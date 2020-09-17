@@ -141,27 +141,32 @@ const expect = require('chai').expect,
       {
         callsign: 'WXRTFM',
         name: '93XRT',
-        site_slug: 'wxrt'
+        site_slug: 'wxrt',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WNCXFM',
         name: '98.5 WNCX',
-        site_slug: 'wncx'
+        site_slug: 'wncx',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'KQMTFM',
         name: '99.5 The Mountain',
-        site_slug: '995themountain'
+        site_slug: '995themountain',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WROQFM',
         name: 'Classic Rock 101.1',
-        site_slug: 'classicrock1011'
+        site_slug: 'classicrock1011',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WKBUFM',
         name: 'Bayou 95.7',
-        site_slug: 'bayou957'
+        site_slug: 'bayou957',
+        mapped_section_fronts: { primarySectionFront: 'RADIOCOM', secondarySectionFront: null }
       }
     ]
   };
@@ -207,6 +212,19 @@ describe(`${dirname}/${filename}`, () => {
       expect(data.stationSyndication).to.have.lengthOf(5);
       expect(data.stationSyndication[0].sectionFront).to.eql('music');
       expect(data.stationSyndication[0].secondarySectionFront).to.eql('rock');
+    });
+
+    it('syndication data should include mapped primary and secondary section fronts, if present', async () => {
+      const data = {
+        ...mockData.data,
+        sectionFront: 'music',
+        secondarySectionFront: 'rock'
+      };
+
+      await applyContentSubscriptions(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(5);
+      expect(data.stationSyndication[4].sectionFront).to.eql('RADIOCOM');
     });
   });
 });
