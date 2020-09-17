@@ -29,7 +29,6 @@ describe('radioApi', () => {
     const { fetchDOM, _internals: __ } = getRadioApi();
 
     sinon.stub(__.clientStateInterface, 'getState').resolves([{}]);
-    sinon.stub(__.clientStateInterface, 'setLoadedIds');
     sinon.stub(__, 'spaInterface').returnsArg(0);
 
     return fetchDOM;
