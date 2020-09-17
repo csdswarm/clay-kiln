@@ -1,6 +1,5 @@
 'use strict';
 const radioApiService = require('./radioApi'),
-  // Only used server-side
   log = require('../../services/universal/log').setup({ file: __filename });
 
 module.exports  = async (data, locals) => {
