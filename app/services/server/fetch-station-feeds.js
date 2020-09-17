@@ -1,5 +1,7 @@
 'use strict';
-const radioApiService = require('./radioApi');
+const radioApiService = require('./radioApi'),
+  // Only used server-side
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 module.exports  = async (data, locals) => {
   try {
@@ -10,6 +12,7 @@ module.exports  = async (data, locals) => {
       return feed;
     }
   } catch (error) {
+    log('error', 'error fetching station feed', error);
     return data;
   }
 };
