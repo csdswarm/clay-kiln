@@ -42,8 +42,9 @@ async function updateArticleInstances(articles) {
     async ({ id, data }) => {
       data.content = data.content.filter(component => !component._ref.includes('/_components/google-ad-manager'));
       await axios.put(`${http}://${id}`, data, { headers }).catch(err => console.log(err));
+      await new Promise(resolve => setTimeout(resolve, 500));
     },
-    { concurrency: 5 }
+    { concurrency: 100 }
   );
 
   return articles.length;
