@@ -177,10 +177,10 @@ async function handlePublishStationSyndication(page) {
       allSyndicatedUrls = await __.getUri(page.uri.replace('@published', '')),
       originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
-      newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
-      outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, (prev, next) => prev.url === next.url),
+      syndicationEntries = (contentData.stationSyndication || []).filter(station => !_get(station, 'unsubscribed', false)),
+      outDatedUrls = _differenceWith(allSyndicatedUrls, syndicationEntries, (prev, next) => prev.url === `${host}${next.syndicatedArticleSlug}`),
       removeCanonical = outDatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
-      queue = (contentData.stationSyndication || []).map(station => {
+      queue = (syndicationEntries || []).map(station => {
         if (station.syndicatedArticleSlug) {
           const url = `${host}${station.syndicatedArticleSlug}`,
             redirect = page.uri.replace('@published', '');

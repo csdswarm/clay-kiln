@@ -225,11 +225,10 @@ function onePublishedArticleByUrl(url, fields) {
   const query = newQueryWithCount('published-content'),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(url)
-    );
+    ),
+    articleSyndication = universalQuery.getStationSyndication(canonicalUrl, url);
 
-  universalQuery.addFilter(query, {
-    term: { canonicalUrl }
-  });
+  universalQuery.addShould(query, articleSyndication);
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
   }

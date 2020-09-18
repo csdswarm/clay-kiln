@@ -4,12 +4,10 @@ const
   _get = require('lodash/get'),
   createContent = require('../../services/universal/create-content'),
   { assignStationInfo } = require('../../services/universal/create-content'),
+  { capitalize } = require('../../services/universal/capitalize'),
   { getComponentInstance } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),
 
-  _capitalize = (str) => {
-    return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
-  },
   socialLinks = [
     {
       type: 'facebook',
@@ -41,7 +39,7 @@ const
 module.exports = unityComponent({
   render: (ref, data, locals) => {
     if (_get(locals, 'params.host')) {
-      data.host = _capitalize(locals.params.host.replace(/-/g, ' ').replace(/\//g,''));
+      data.host = capitalize(locals.params.host.replace(/-/g, ' ').replace(/\//g,''));
     }
 
     data._computed.dynamic = getComponentInstance(ref) === 'new';
