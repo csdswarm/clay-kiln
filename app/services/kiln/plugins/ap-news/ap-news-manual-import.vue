@@ -98,7 +98,7 @@ const {
 } = window.kiln.utils.components;
 import axios from 'axios';
 import moment from 'moment';
-import _sortBy from 'lodash/sortBy';
+import _orderBy from 'lodash/orderBy';
 
 const AP_MEDIA_API_SEARCH = '/rdc/ap-subscriptions/search';
 const AP_MEDIA_API_IMPORT = '/rdc/ap-subscriptions/manual-import';
@@ -254,7 +254,7 @@ export default {
         });
         // this is currently sorted by versioncreated, but we want to show results in desc order by publish date
         // and ap search does not provide that, so handle it after retrieving the most recently updated items.
-        this.items = _sortBy(response.data, ['firstcreated']).reverse();
+        this.items = _orderBy(response.data, ['firstcreated'], ['desc']);
       } catch (err) {
         console.log("Something went wrong while fetching content", err);
       } finally {
