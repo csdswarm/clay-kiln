@@ -16,13 +16,17 @@
          display: flex;
          justify-content: space-between;
          align-items: center;
-         &--toggle {
+         &--form {
             flex-shrink: 0;
             width: widthOnGrid(4,3);
             h4 {
-               margin-bottom: em(10);
+               margin-bottom: em(16);
             }
          }
+         &--input {
+            margin-bottom: em(10);
+         }
+
          &--disclaimer {
             width: widthOnGrid(6,5);
          }

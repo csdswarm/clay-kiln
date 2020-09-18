@@ -37,17 +37,29 @@
 
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">
-      {{#ifAll isOpinion headline.length}}OPINION:{{/ifAll}}
+      {{#ifAll isOpinion headline}}
+        {{#if opinionHeadlineOverride}}
+          {{opinionHeadlineOverride}}:
+        {{else}}
+          OPINION:
+        {{/if}}
+      {{/ifAll}}
       {{{ headline }}}
     </h1>
     {{#if @root.locals.edit}}
-      <div class="header__opinion" data-editable="isOpinion" itemprop="isOpinion">
-        <div class="header__opinion--toggle">
+      <div class="header__opinion" data-editable="opinion" itemprop="isOpinion">
+        <div class="header__opinion--form">
           <h4>Opinion settings:</h4>
-          <div>
-            <input {{#if isOpinion}}checked{{/if}} type="checkbox" disabled />
-            Is this an opinion piece?
+          <div class="header__opinion--input">
+            <input id="isOpinionCheckbox" {{#if isOpinion}}checked{{/if}} type="checkbox" disabled />
+            <label for="isOpinionCheckbox">Is this an opinion piece?</label>
           </div>
+          {{#if opinionHeadlineOverride}}
+            <div class="header__opinion--input">
+              <label for="opinionHeadlineOverrideInput">Prepended label</label>
+              <input id="opinionHeadlineOverrideInput" type="text" value="{{opinionHeadlineOverride}}" disabled />
+            </div>
+          {{/if}}
         </div>
         {{#if isOpinion}}
           <div class="header__opinion--disclaimer">
