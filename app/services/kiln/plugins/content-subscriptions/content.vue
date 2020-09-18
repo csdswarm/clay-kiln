@@ -272,8 +272,6 @@
   const getNewWorkingSectionFrontProps = () => ({
     workingSectionFront: '',
     workingSecondarySectionFront: '',
-    targetWorkingSectionFront: '',
-    targetWorkingSecondarySectionFront: '',
     workingExcludeSectionFronts: [],
     workingExcludeSecondarySectionFronts: [],
   })
@@ -429,7 +427,7 @@
       onEditSubscriptionRow (subscription) {
         this.modalMode = 'edit'
 
-        if(!_get(subscription, 'mapped_section_fronts.primarySectionFront', null)){
+        if(!_get(subscription, 'mapped_section_fronts.primarySectionFront')){
             _set(subscription, 'mapped_section_fronts.primarySectionFront', '')
             _set(subscription, 'mapped_section_fronts.secondarySectionFront', '')
         }
@@ -500,7 +498,6 @@
     },
     mounted () {
       this.loadSectionFronts()
-      this.workingSubscription = new ContentSubscription();
     },
     created () {
       this.hookDataToTags()
