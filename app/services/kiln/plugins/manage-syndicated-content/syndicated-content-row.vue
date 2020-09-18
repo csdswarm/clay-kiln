@@ -100,7 +100,7 @@
           selectedStationSlug = this.selectedStation.slug,
           findSyndication = findSyndicatedStation(selectedStationSlug),
           syndicatedStation = findSyndication(content.stationSyndication),
-          syndicationStatus = syndicatedStation ? 'published' : 'available';
+          syndicationStatus = syndicatedStation && !syndicatedStation.unsubscribed ? 'published' : 'available';
 
         this.unpublishLoading = false;
 
