@@ -10,3 +10,14 @@ module.exports['1.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['2.0'] = (uri, data) => {
+  data.byline = [{
+    sources: [],
+    hosts: [],
+    names: [],
+    prefix: 'by'
+  }];
+
+  return data;
+};
