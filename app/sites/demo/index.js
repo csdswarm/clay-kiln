@@ -28,6 +28,7 @@ const dynamicTopicRoutes = {
     '/_components/event/instances',
     '/_components/events-listing-page/instances',
     '/_components/station-front/instances',
+    '/_components/static-page/instances',
     '/_components/podcast-front-page/instances',
     '/_components/frequency-iframe-page/instances'
   ],
@@ -142,6 +143,7 @@ module.exports.routes = [
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [
+  (uri, data, locals) => publishing.getStaticPageSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),

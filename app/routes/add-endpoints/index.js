@@ -11,6 +11,7 @@ module.exports = {
   getStationsSubscribedToContent: require('./get-stations-subscribed-to-content'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
+  podcasts: require('./podcasts'),
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),

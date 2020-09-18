@@ -11,9 +11,11 @@ const
   promises = require('../promises'),
   rest = require('../rest'),
   sanitize = require('../sanitize'),
+  slugify = require('../slugify'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
+  { capitalize } = require('../capitalize'),
   { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
@@ -383,13 +385,21 @@ function bylineOperations(data) {
       on save as to not affect rendering.
     */
     for (const author of names || []) {
+      const slug = slugify(author.text);
+
       delete author.count;
       author.slug = textToEncodedSlug(author.text);
+      author.name = author.name ? author.name : author.text;
+      author.text = capitalize(slug.replace(/-/g, ' '));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
+      const slug = slugify(host.text);
+
       delete host.count;
       host.slug = textToEncodedSlug(host.text);
+      host.name = host.name ? host.name : host.text;
+      host.text = capitalize(slug.replace(/-/g, ' '));
       hosts.push(host);
     }
     // do sources too

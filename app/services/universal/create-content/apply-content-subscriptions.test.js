@@ -208,5 +208,26 @@ describe(`${dirname}/${filename}`, () => {
       expect(data.stationSyndication[0].sectionFront).to.eql('music');
       expect(data.stationSyndication[0].secondarySectionFront).to.eql('rock');
     });
+
+    it('keep previously unsubscribed content as part of the data syndication entries', async () => {
+      const data = {
+        ...mockData.data,
+        stationSyndication: [
+          {
+            source: 'content subscription',
+            callsign: 'WROQFM',
+            stationName: 'Classic Rock 101.1',
+            stationSlug: 'classicrock1011',
+            syndicatedArticleSlug: '/classicrock1011/the-greatest-band-of-all-times',
+            unsubscribed: true
+          }
+        ]
+      };
+
+      await applyContentSubscriptions(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(5);
+      expect(data.stationSyndication.find(station => station.callsign === 'WROQFM').unsubscribed).to.eql(true);
+    });
   });
 });

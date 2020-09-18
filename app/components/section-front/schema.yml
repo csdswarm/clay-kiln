@@ -1,6 +1,10 @@
 _version: 4.0
 _confirmRemoval: true
 
+_pagePermissions:
+  add-component: section-front
+  remove-component: section-front
+
 title:
   _label: Title
   _publish:

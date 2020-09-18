@@ -2,12 +2,18 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-/* will remove once integrated */
-body > .podcast-trending {
-  /* this is just for acceptance and testing since it isn't living where it should yet */
-  margin: 2em;
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Podcasts Trending Podcasts Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin trending-podcasts-font1 {
+  @mixin font CircularStd-Book, 12px, $boulder, inherit, 18px;
 }
-/* will remove once integrated */
+@define-mixin trending-podcasts-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin trending-podcasts-font3 {
+  @mixin font CircularStd-Medium, 16px, theme(primaryColor, $robinsEggBlue), -.26px, 19px;
+}
 
 .podcast-trending {
   padding: em(15);
@@ -40,6 +46,7 @@ body > .podcast-trending {
   }
   &--info-description {
     @mixin trending-podcasts-font1;
+    @mixin clamp 2, em(36, 12);
   }
   &--thumb-img {
     width: 100%;
