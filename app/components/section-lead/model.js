@@ -79,15 +79,12 @@ module.exports = recirculationData({
       syndicatedLabel = result.syndicatedLabel || getSyndicatedLabel(locals, result),
       label = getSectionFrontName(syndicatedLabel || result.sectionFront, primarySectionFronts);
 
-    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
     return {
       ...item,
       date: result.date,
       uri: result._id,
       primaryHeadline: result.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
       canonicalUrl: result.url || result.canonicalUrl,
       feedImgUrl: result.overrideImage || result.feedImgUrl,
       curatedOverride: result.overrideLabel,
