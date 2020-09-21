@@ -9,6 +9,7 @@ const db = require('../../services/server/db'),
   stationQuery = stationCallsign => `AND cc.data->>'stationCallsign' = '${stationCallsign}'`,
   /**
   * Queries the db for contest rules
+  * @param {boolean} [param.openOnly=false] retrieve only contests that are currently open (current date is in between start and end date)
   * @param {String} param.stationCallsign
   */
   getContestRules = async ({
