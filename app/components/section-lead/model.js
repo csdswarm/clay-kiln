@@ -1,7 +1,7 @@
 'use strict';
 
 const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
-  { getStationSlug, recirculationData, sectionOrTagCondition } = require('../../services/universal/recirc/recirculation'),
+  { getStationSlug, recirculationData } = require('../../services/universal/recirc/recirculation'),
   { toPlainText } = require('../../services/universal/sanitize'),
   qs = require('qs'),
   { getComponentName } = require('clayutils'),
@@ -60,12 +60,8 @@ const { getSectionFrontName, retrieveList } = require('../../services/server/lis
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: (uri, data, locals) => ({
-    maxItems: getMaxItems(data),
-    filters: {
-      includeSyndicated: false,
-      sectionFronts: sectionOrTagCondition(data.populateFrom, locals.sectionFront)
-    }
+  mapDataToFilters: (uri, data) => ({
+    maxItems: getMaxItems(data)
   }),
 
   /**
@@ -91,7 +87,7 @@ module.exports = recirculationData({
       label,
       plaintextTitle: toPlainText(result.title),
       sectionFront: result.sectionFront,
-      stationSyndication: result.stationSyndication
+      stationSyndication: (result.stationSyndication || []).filter(syndication => syndication.stationSlug === locals.station.site_slug)
     };
   },
 
