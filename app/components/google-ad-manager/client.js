@@ -643,6 +643,15 @@ window.disableAdRefresh = function (ads) {
 };
 
 /**
+ * Tells a list of ads to restore refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.enableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.delete(ad));
+};
+
+/**
  * Legacy code ported over from frequency to implement the takeover.
  *
  * @param {string} imageUrl
