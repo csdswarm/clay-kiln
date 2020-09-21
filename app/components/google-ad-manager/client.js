@@ -660,7 +660,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
     globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
-    resetElements = resizeForSkin();
+    resetElements = resizeForSkin(),
+    stationData = getCurrentStation();
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -720,7 +721,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
 
         const sponsorship = document.querySelector('.google-ad-manager--global-logo-sponsorship');
 
-        if (sponsorship) {
+        if (sponsorship && stationData.site_slug) {
           mainDiv.classList.add('has-global-sponsorship-ad');
         }
       }
