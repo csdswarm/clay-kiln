@@ -12,7 +12,7 @@ process.env.ARTICLE_AD_INSERT_EVERY = 3;
 
 describe(dirname, () => {
   describe(filename, () => {
-    const { _internals: { injectAdsToArticleContent } } = require('./model');
+    const { _internals: { injectAdsToArticleContent, removeAdsFromArticleContent } } = require('./model');
 
     describe('render', () => {
       let sandbox;
@@ -73,6 +73,19 @@ describe(dirname, () => {
         expect(data.content[3]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
         expect(data.content[7]._ref).to.include('/_components/google-ad-manager/instances/mediumRectangleContentBody');
         expect(data.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager/instances/mediumRectangleContentBody')).length).to.equal(2);
+      });
+
+      it('should remove all google ad instances from content.', () => {
+        data.content = [
+          ...data.content,
+          ...Array(5).fill({ _ref: '' })
+        ];
+
+        injectAdsToArticleContent(data);
+        removeAdsFromArticleContent(data);
+
+        expect(data.content).to.have.lengthOf(8);
+        expect(data.content.filter(({ _ref }) => _ref.includes('/_components/google-ad-manager')).length).to.equal(0);
       });
 
     });
