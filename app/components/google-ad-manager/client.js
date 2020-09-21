@@ -380,7 +380,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     nmcTags = getMetaTagContent('name', NMC.tag),
     adTargetingData = {
       targetingAuthors: authors,
-      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
+      // Use the nmc tags only when the ad-tags are empty/not-present and imported nmc:tag is not empty.
       // In case that there is no tags we should not sent information to GAM.
       targetingTags:
         _isEmpty(contentTags.filter(Boolean)) &&
@@ -399,8 +399,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags: nmcTags
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
     });
   } else {
     Object.assign(adTargetingData, {
