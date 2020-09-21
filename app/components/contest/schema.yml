@@ -323,10 +323,6 @@ noIndexNoFollow:
   _publish: noIndexNoFollow
   _label: No Index / No Follow
   _has: checkbox
-  _reveal:
-    field: isContentFromAP
-    operator: ===
-    value: false
 
 feeds:
   _label: Include in These Feeds

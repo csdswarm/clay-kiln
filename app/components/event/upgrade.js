@@ -8,5 +8,7 @@ module.exports['1.0'] = (uri, data) => {
     smartNews: false
   };
 
+  data.noIndexNoFollow = false;
+
   return data;
 };
