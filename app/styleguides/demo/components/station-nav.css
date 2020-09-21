@@ -169,8 +169,13 @@ $caret-margin-right: em(25);
         @mixin medium-small-screen {
           height: em(96);
         }
-        @mixin small-screen {
-          height: em(68);
+        @media only screen and (min-width: 351px) and (max-width: 430px) {
+          min-height: em(68);
+          height: calc(66vw - em(188));
+        }
+        @media only screen and (max-width: 350px) {
+          min-height: em(40);
+          height: calc(58vw - em(139));
         }
       }
 
