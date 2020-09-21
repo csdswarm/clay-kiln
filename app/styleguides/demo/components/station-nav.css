@@ -47,11 +47,11 @@
 }
 
 @define-mixin station-listen-nav-cta1{
-  @mixin font CircularStd-Medium, 12px, $white, inherit, 15px;
+  @mixin font CircularStd-Medium, 12px, theme(primaryFontColor, $black), inherit, 12px;
 }
 
 @define-mixin station-listen-nav-cta2{
-  @mixin font CircularStd-Medium, 11px, $white, inherit, 15.92px;
+  @mixin font CircularStd-Medium, 11px, theme(primaryFontColor, $black), inherit, 15.92px;
 }
 
 $station-logo-width-height: em(100);
@@ -352,20 +352,32 @@ $caret-margin-right: em(25);
           justify-content: flex-end;
         }
         .station-nav__cta-link-icon {
+          svg {
+            fill: theme(primaryFontColor, $black);
+          }
           &--newsletter {
-            height: em(12, 12);
             margin-right: em(6, 12);
+            svg {
+              height: em(12, 12);
+            }
           }
           &--chevron-right {
             margin-left: em(4, 12);
+            svg {
+              height: em(8, 12);
+            }
           }
           &--tel {
-            height: em(14, 14);
-            margin-right: em(6, 14);
+            margin-right: em(6, 11);
+            svg {
+              height: em(12, 11);
+            }
           }
           &--sms {
-            height: em(12, 14);
-            margin-right: em(6, 14);
+            margin-right: em(6, 11);
+            svg {
+              height: em(12, 11);
+            }
           }
         }
         .station-nav__menu-right-listen {
