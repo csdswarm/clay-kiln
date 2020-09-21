@@ -185,7 +185,7 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ sectionFront })
+              ...multiCaseFilter({ sectionFront })
             ]
           }
         },
@@ -198,18 +198,19 @@ const
     secondarySectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+      createObj: ({ sectionFront, secondarySectionFront }, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ secondarySectionFront })
-            ]
+              ...multiCaseFilter({ sectionFront, ...secondarySectionFront && { secondarySectionFront } })
+            ].filter(Boolean)
           }
         },
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
-          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+          { 'stationSyndication.sectionFront': sectionFront },
+          secondarySectionFront && { 'stationSyndication.secondarySectionFront': secondarySectionFront }
         )
       ].filter(Boolean))
     },
@@ -309,25 +310,22 @@ const
    *                       as is and lowercase against the data
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
-  multiCaseFilter = obj => {
-    const [key, value] = Object.entries(obj)[0] || [];
-
-    return minimumShouldMatch([
-      { match: { [ key ]: `${value}` } },
-      { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]);
-  },
+  multiCaseFilter = obj => Object.entries(obj).map(([key, value]) => minimumShouldMatch([
+    { match: { [ key ]: `${value}` } },
+    { match: { [ key ]: `${value}`.toLowerCase() } }
+  ])),
 
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
-   * @param {object} obj - The syndicated property and value to filter
+   * @param {object} sectionFront - The section front property and value to filter
+   * @param {object} secondarySectionFront - The secondary section front property and value to filter
    * @returns {*|
    *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
    *   {bool: {should: Array, minimum_should_match: number}}]}}}}
    * }
    */
-  syndicatedSectionFrontFilter = (stationSlug, obj) => ({
+  syndicatedSectionFrontFilter = (stationSlug, sectionFront, secondarySectionFront) => ({
     nested: {
       path: 'stationSyndication',
       query: {
@@ -338,8 +336,8 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(obj)
-          ]
+            ...multiCaseFilter({ ...sectionFront, ...secondarySectionFront })
+          ].filter(Boolean)
         }
       }
     }
@@ -504,6 +502,7 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
+    
     if (tags === '') {
       return [];
     }
@@ -629,7 +628,17 @@ const
           value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
-          value = { value, stationSlug, includeSyndicated };
+          if (_isEmpty(value)) {
+            return;
+          }
+          value = {
+            value: {
+              sectionFront: filters.sectionFronts,
+              secondarySectionFront: value
+            },
+            stationSlug,
+            includeSyndicated
+          };
           break;
         case 'includeSyndicated':
           return;
@@ -649,6 +658,7 @@ const
       }
       addCondition(query, key, value);
     });
+
     Object.entries(excludes)
       .forEach(([key, value]) => {
         if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
