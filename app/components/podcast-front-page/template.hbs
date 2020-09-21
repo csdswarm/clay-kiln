@@ -1,9 +1,10 @@
 <div class="component component--podcast-front podcast-front" data-uri="{{ default _ref _self }}">
 
-  {{#if _computed.primaryColorOverride}}
+  {{#if _computed.themeColorsOverride}}
     <style>
       :root {
-        --theme-primaryColor: {{ _computed.primaryColorOverride }};
+        --theme-primaryColor: {{ _computed.themeColorsOverride.primaryColorOverride }};
+        --theme-secondaryColor: {{ _computed.themeColorsOverride.secondaryColorOverride }};
       }
     </style>
   {{/if}}

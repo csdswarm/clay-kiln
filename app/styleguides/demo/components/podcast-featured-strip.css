@@ -3,7 +3,7 @@
 @import "_global/mixins";
 
 @define-mixin podcast-featured-strip-title {
-  @mixin font CircularStd-Black, 24px, theme(primaryColor, $black), -.38px, 29px;
+  @mixin font CircularStd-Black, 24px, theme(secondaryColor, $black), -.38px, 29px;
 }
 @define-mixin podcast-featured-strip-sponsor-label {
   @mixin font ProximaNova-Black, 14px, $black, -.38px, 17px;

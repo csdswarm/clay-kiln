@@ -12,11 +12,14 @@ const { unityComponent } = require('../../services/universal/amphora'),
  * @param {Object} locals
  * @returns {string}
  */
-function shouldOverrideThemePrimaryColor(locals) {
+function shouldOverrideThemeColors(locals) {
   const { station = {} } = locals;
 
   if (station.id === DEFAULT_STATION.id) {
-    return COLORS.robinsEggBlue;
+    return {
+      primaryColorOverride: COLORS.robinsEggBlue,
+      secondaryColorOverride: COLORS.black
+    };
   } else {
     return undefined;
   }
@@ -40,7 +43,7 @@ module.exports = unityComponent({
     if (!locals) {
       return;
     }
-    data._computed.primaryColorOverride = shouldOverrideThemePrimaryColor(locals);
+    data._computed.themeColorsOverride = shouldOverrideThemeColors(locals);
     return data;
   }
 });
