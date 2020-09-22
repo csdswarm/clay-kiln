@@ -2,16 +2,11 @@
 
 const _ = require('lodash'),
   stationUtils = require('../../station-utils'),
+  { unsafeMethods } = require('../utils'),
   urps = require('../../../universal/urps'),
   { DEFAULT_STATION } = require('../../../universal/constants'),
   { refreshPath } = require('../../../../routes/add-endpoints/refresh-permissions'),
-  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true',
-  unsafeMethods = new Set([
-    'DELETE',
-    'POST',
-    'PATCH',
-    'PUT'
-  ]);
+  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true';
 
 /**
  * 'trimmed' refers to the fact that we don't include all the station properties
