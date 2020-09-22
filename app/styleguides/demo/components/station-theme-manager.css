@@ -4,13 +4,6 @@
   padding: em(30);
 }
 .station-theme-manager {
-  overflow-y: scroll;
-  padding: em(30);
-
-  h3 {
-    @mixin station-theme-font1;
-    margin-bottom: em(30, 20);
-  }
   .theme-color-input {
     display: flex;
     flex-direction: row;
