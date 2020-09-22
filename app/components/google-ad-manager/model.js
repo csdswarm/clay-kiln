@@ -11,6 +11,15 @@ module.exports = unityComponent({
 
     data._computed.station = _pick(_get(locals, 'station'), ['callsign', 'category', 'genre_name[0]', 'market_name', 'site_slug'] );
     data._computed.station = JSON.stringify(data._computed.station);
+    data._computed.renderGAM = true;
+
+    if (
+      data.adSize === 'global-logo-sponsorship'
+      && !locals.stationOptions.isGlobalSponsorshipEnabled
+    ) {
+      data._computed.renderGAM = false;
+    }
+
     return {
       ...data,
       doubleclickBannerTag: isDefaultStation
