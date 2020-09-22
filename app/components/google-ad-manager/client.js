@@ -3,7 +3,7 @@
 
 const _get = require('lodash/get'),
   _debounce = require('lodash/debounce'),
-  _isEmpty = require('lodash/isEmpty'),
+  _uniq = require('lodash/uniq'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
@@ -377,16 +377,11 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       pageData,
       contentTags
     }),
-    nmcTags = getMetaTagContent('name', NMC.tag),
+    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ','), // imported content tags are been created with slashes instead of commas.
+    targetingTagData = _uniq(trackingData.tag.concat(nmcTags.split(','))).filter(Boolean),
     adTargetingData = {
       targetingAuthors: authors,
-      // Use the nmc tags only when the ad-tags are empty/not-present and imported nmc:tag is not empty.
-      // In case that there is no tags we should not sent information to GAM.
-      targetingTags:
-        _isEmpty(contentTags.filter(Boolean)) &&
-        !_isEmpty(nmcTags)
-          ? (nmcTags || '').replace(/\//g, ',')
-          : trackingData.tag
+      targetingTags: targetingTagData.join(',')
     };
 
   if (shouldUseNmcTags) {
