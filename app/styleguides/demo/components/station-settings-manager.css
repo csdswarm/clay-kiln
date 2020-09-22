@@ -1,0 +1,51 @@
+@import "_global/colors";
+@import "_global/fonts";
+@import "_global/mixins";
+
+@define-mixin station-settings-title {
+  @mixin font CircularStd-Black, 20px, inherit, -.23px, 20px;
+}
+
+@define-mixin station-settings-title-book {
+  @mixin font CircularStd-Book, 20px, inherit, -.23px, 20px;
+}
+
+.station-settings-manager {
+  &__content {
+    width: 75vw;
+  }
+  &__tabs.ui-tabs {
+    width: 75vw;
+    .ui-tabs__body {
+      height: 100vh;
+      overflow-y: auto;
+    }
+  }
+  &__main-title {
+    @mixin station-settings-title;
+    display: flex;
+    align-items: center;
+    background: theme(primaryColor, $black);
+    color: theme(primaryFontColor, $white);
+  }
+  &__img-wrap {
+    flex: 0 0 2em;
+    height: 2em;
+    margin-right: 0.5em;
+    img {
+      width: 100%;
+    }
+  }
+  &__title-text {
+    small  {
+      @mixin station-settings-title-book;
+    }
+  }
+}
+
+.station-settings {
+  &__main-title {
+    @mixin station-settings-title-book;
+    margin-bottom: em(30, 20);
+  }
+}
