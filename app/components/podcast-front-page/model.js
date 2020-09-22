@@ -17,8 +17,7 @@ function shouldOverrideThemeColors(locals) {
 
   if (station.id === DEFAULT_STATION.id) {
     return {
-      primaryColorOverride: COLORS.robinsEggBlue,
-      secondaryColorOverride: COLORS.black
+      primaryColorOverride: COLORS.robinsEggBlue
     };
   } else {
     return undefined;
