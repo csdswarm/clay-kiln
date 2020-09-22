@@ -42,4 +42,19 @@ module.exports = router => {
       res.send(result.rows[0]);
     }
   }));
+  router.get('/rdc/generic-page-info', wrapInTryCatch(async (req, res) => {
+    preventFastlyCache(res);
+
+    const result = await db.raw(`
+      SELECT id, data, meta
+      FROM pages 
+      WHERE meta->>'url' LIKE 'http%://${req.query.url}'
+    `);
+
+    if (!result.rows.length) {
+      res.status(404).end();
+    } else {
+      res.send(result.rows[0]);
+    }
+  }));
 };
