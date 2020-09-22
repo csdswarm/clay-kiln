@@ -1,8 +1,8 @@
 'use strict';
 
 const _set = require('lodash/set'),
-  stationThemeButton = require('./station-theme-button.vue'),
-  stationTheme = require('./station-theme.vue'),
+  stationSettingsButton = require('./station-settings-button.vue'),
+  stationSettingsManager = require('./station-settings-manager.vue'),
   { DEFAULT_STATION } = require('../../../universal/constants');
 
 module.exports = () => {
@@ -13,7 +13,7 @@ module.exports = () => {
     && stationForPermissions.id !== DEFAULT_STATION.id
     && user.can('update').a('station-theme').value
   ) {
-    _set(window, "kiln.navButtons['station-theme']", stationThemeButton);
-    _set(window, "kiln.navContent['station-theme']", stationTheme);
+    _set(window, "kiln.navButtons['station-settings-manager']", stationSettingsButton);
+    _set(window, "kiln.navContent['station-settings-manager']", stationSettingsManager);
   }
 };
