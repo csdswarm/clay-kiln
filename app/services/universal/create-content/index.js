@@ -2,6 +2,7 @@
 
 const
   _get = require('lodash/get'),
+  _has = require('lodash/has'),
   applyContentSubscriptions = require('./apply-content-subscriptions'),
   articleOrGallery = new Set(['article', 'gallery']),
   circulationService = require('../circulation'),
@@ -12,6 +13,7 @@ const
   rest = require('../rest'),
   sanitize = require('../sanitize'),
   slugify = require('../slugify'),
+  stripEot = require('../strip-eot'),
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
@@ -27,7 +29,30 @@ const
     urlToElasticSearch
   } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
-  { PAGE_TYPES } = require('../constants');
+  { PAGE_TYPES } = require('../constants'),
+  fieldsToStripEot = [
+    'pageTitle',
+    'headline',
+    'primaryHeadline',
+    'socialDescription',
+    'seoHeadline',
+    'subHeadline',
+    'pageDescription',
+    'seoDescription'
+  ];
+
+/**
+ * Remove eot characters from all content fields
+ *
+ * @param {object} data
+*/
+function stripEotFromContent(data) {
+  fieldsToStripEot
+    .filter(field => _has(data, field))
+    .forEach((field) => {
+      data[field] = stripEot(data[field]);
+    });
+}
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -684,6 +709,7 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+  stripEotFromContent(data);
 
   // we need to get stations by editorial feeds before creating slugs for syndicated content
   await addStationsByEditorialGroup(data, locals);
