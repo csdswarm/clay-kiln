@@ -47,7 +47,6 @@ module.exports = {
   bluebird: require('../../app/node_modules/bluebird'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),
-  uuid: require('../../app/node_modules/uuid'),
   clone: obj => obj && JSON.parse(JSON.stringify(obj)),
   ensureEndsWith,
   moment: require('../../app/node_modules/moment'),
