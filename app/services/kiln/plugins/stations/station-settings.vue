@@ -45,7 +45,6 @@
         const putData = {
           ...this.stationOptions
         };
-        console.log('[putDatas]', putData);
         axios.put(stationOptionsEndpoint, putData)
         .then(response => this.showSnack(
           `Enable Global Sponsorship: ${this.stationOptions.isGlobalSponsorshipEnabled}`

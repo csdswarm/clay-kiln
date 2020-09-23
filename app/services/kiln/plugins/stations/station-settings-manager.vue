@@ -39,8 +39,6 @@
         square_logo_large: stationLogo
     } = window.kiln.locals.stationForPermissions
 
-  console.log('[window.kiln.locals.stationForPermissions]', window.kiln.locals.stationForPermissions.square_logo_large);
-
   export default {
     data() {
       return {
