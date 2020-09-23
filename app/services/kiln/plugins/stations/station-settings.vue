@@ -46,10 +46,20 @@
           ...this.stationOptions
         };
         axios.put(stationOptionsEndpoint, putData)
-        .then(response => this.showSnack(
-          `Enable Global Sponsorship: ${this.stationOptions.isGlobalSponsorshipEnabled}`
-        ))
-        .catch(err => this.handleError)
+        .then(response => {
+          this.showSnack(
+            `Enable Global Sponsorship: ${this.stationOptions.isGlobalSponsorshipEnabled}`
+          );
+          window.kiln.locals.stationOptions = {
+            ...this.stationOptions
+          };
+        })
+        .catch(err => {
+          this.handleError(err);
+          this.stationOptions = {
+            ...window.kiln.locals.stationOptions
+          };
+        })
       }
     },
     components: {
