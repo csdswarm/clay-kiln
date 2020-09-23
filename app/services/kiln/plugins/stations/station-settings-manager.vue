@@ -18,7 +18,11 @@
           <StationTheme :station-name="stationName" />
         </ui-tab>
         <ui-tab id="settings" title="Other Settings">
-          <StationSettings :station-name="stationName" :station-logo="stationLogo" />
+          <StationSettings
+            :station-name="stationName"
+            :station-logo="stationLogo"
+            :station-id="stationId"
+          />
         </ui-tab>
       </ui-tabs>
     </div>
@@ -36,14 +40,16 @@
     StationSettings = require('./station-settings.vue'),
     {
         name: stationName,
-        square_logo_large: stationLogo
+        square_logo_large: stationLogo,
+        id: stationId
     } = window.kiln.locals.stationForPermissions
 
   export default {
     data() {
       return {
         stationName,
-        stationLogo
+        stationLogo,
+        stationId
       }
     },
     components: {

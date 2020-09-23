@@ -28,7 +28,8 @@
     },
     props: {
       stationName: String,
-      stationLogo: String
+      stationLogo: String,
+      stationId: String
     },
     methods: {
       showSnack (message, duration = 4000) {
@@ -45,7 +46,7 @@
         const putData = {
           ...this.stationOptions
         };
-        axios.put(stationOptionsEndpoint, putData)
+        axios.put(`${stationOptionsEndpoint}${this.stationId}`, putData)
         .then(response => {
           this.showSnack(
             `Enable Global Sponsorship: ${this.stationOptions.isGlobalSponsorshipEnabled}`
