@@ -10,6 +10,7 @@ const socialSvgs = require('./social-svgs'),
  * Comma separate authors
  * @param {Object[]} authorsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
  * @param {Object[]} hostsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
+ * @param {Object[]} sources e.g. [{text: "RADIO.COM", isSource: true}]
  * @param {Object} options
  * @param {String} options.authorHost e.g. 'nymag.com'
  * @param {Boolean} options.showSocial
@@ -17,8 +18,8 @@ const socialSvgs = require('./social-svgs'),
  * @param {String} [options.linkClass]
  * @return {String}
  */
-function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, options) {
-  const listAndMeta = [...authorsAndMeta, ...hostsAndMeta];
+function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, sources, options) {
+  const listAndMeta = [...authorsAndMeta, ...hostsAndMeta, ...sources];
 
   return listAndMeta.reduce(function (acc, item, index) {
     if (listAndMeta.length === 1) { // only display socials if there is one author
@@ -109,17 +110,24 @@ function createAuthorHostHtml(data, options) {
   const nameOrText = data.name || data.text,
     link = slugifyService(nameOrText),
     name = data.isHost ? 'host' : 'author',
+    isSource = data.isSource,
     { authorHost, isContentFromAP, linkClass, nameClass, siteSlug, stationSlug } = options,
     slug = isContentFromAP ? siteSlug : stationSlug,
     linkAuthorHostPage = `${authorHost + (slug ? `/${slug}` : '')}/${name}s/${link}`;
 
-
-  // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
-    `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
-    `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
-    `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
+  if (isSource) {
+    // multiline interpolation doesn't work here because whitespace will get interpreted literally
+    return `<span itemprop="source" itemscope itemtype="http://schema.org/Person" class="source" data-source="${nameOrText}">` +
+      `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
+      `<meta itemprop="name" content="${nameOrText}"/></span>`;
+  } else {
+    // multiline interpolation doesn't work here because whitespace will get interpreted literally
+    return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
+      `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
+      `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
+      `<meta itemprop="name" content="${nameOrText}"/>` +
+      `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
+  }
 }
 
 // For testing
