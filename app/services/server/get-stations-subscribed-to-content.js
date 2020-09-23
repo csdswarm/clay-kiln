@@ -24,22 +24,19 @@ const getStationsSubscribedToContent = async (data, locals) => {
     stationUtils.getAllStations({ locals })
   ]);
 
-  contentSubscriptions = _.groupBy(contentSubscriptions, 'station_slug');
 
   const isSubscribed = makeIsSubscribed(data),
     subscribedStations = _.chain(contentSubscriptions)
-      .pick(Object.keys(allStations.bySlug))
-      .pickBy(isSubscribed)
-      .keys()
-      .map(stationSlug => {
+      .filter(isSubscribed)
+      .map(({ station_slug, mapped_section_fronts = {} }) => {
         const stationProps = _.pick(
-          allStations.bySlug[stationSlug],
+          allStations.bySlug[station_slug],
           stationPropsForSyndication
         );
 
         return {
           ...stationProps,
-          mapped_section_fronts: _.get(contentSubscriptions[stationSlug][0], 'mapped_section_fronts', {})
+          mapped_section_fronts
         };
       })
       .value();
@@ -110,19 +107,20 @@ function buildMatchesOn() {
  */
 function makeIsSubscribed(data) {
   // not all content types have tags yet
-  const tags = new Set(data.textTags || []);
+  const tags = new Set(data.textTags || []),
+    subscriptionsPerStation = sub => {
+      const { filter, from_station_slug: fromStationSlug } = sub,
+        matchesStation = fromStationSlug === DEFAULT_STATION.site_slug
+          ? !data.stationSlug
+          : data.stationSlug === fromStationSlug;
 
-  return subscriptionsPerStation => subscriptionsPerStation.some(sub => {
-    const { filter, from_station_slug: fromStationSlug } = sub,
-      matchesStation = fromStationSlug === DEFAULT_STATION.site_slug
-        ? !data.stationSlug
-        : data.stationSlug === fromStationSlug;
+      return matchesStation
+        && !isExcluded(data, tags, filter)
+        && filter.contentType.includes(data.contentType)
+        && matchesOn[filter.populateFrom](data, tags, filter);
+    };
 
-    return matchesStation
-      && !isExcluded(data, tags, filter)
-      && filter.contentType.includes(data.contentType)
-      && matchesOn[filter.populateFrom](data, tags, filter);
-  });
+  return subscriptionsPerStation;
 }
 
 module.exports = getStationsSubscribedToContent;
