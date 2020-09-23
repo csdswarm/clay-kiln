@@ -9,7 +9,7 @@
     </h3>
     <form>
       <div class="form-group">
-        <UiCheckbox label="Enable Global Sponsorship" v-model="stationOptions.isGlobalSponsorshipEnabled" @input="onGlobalSponsorshipInput" />
+        <UiCheckbox label="Enable Global Sponsorship" v-model="stationOptions.isGlobalSponsorshipEnabled" @change="onGlobalSponsorshipChange" />
       </div>
     </form>
   </div>
@@ -46,7 +46,7 @@
         console.error(err)
         this.showSnack(`Error: ${err.message}`)
       },
-      onGlobalSponsorshipInput(e) {
+      onGlobalSponsorshipChange(e) {
         const putData = {
           ...this.stationOptions
         };
