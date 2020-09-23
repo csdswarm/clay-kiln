@@ -51,9 +51,9 @@
 <section class="component podcast-lead component--podcast-lead podcast-lead--{{ sectionFront }}"
   data-uri="{{ default _ref _self }}" data-track-type="podcast-lead">
   <div class="podcast-lead__head--sm {{#if _computed.episode}}podcast-lead__head--episode{{/if}}">
-    <div class="podcast-lead__heading--sm">
+    <h1 class="podcast-lead__heading--sm">
       {{ _computed.title }}
-    </div>
+    </h1>
     {{#if _computed.episode}}
     <div class="podcast-lead__subheading--sm">
       <span>{{_computed.published_date_formatted}}</span>
@@ -74,9 +74,9 @@
         class="image__play-btn {{_computed.episode.playingClass}}"></div>
     </div>
     <div class="podcast-lead__main main__content">
-      <div class="podcast-lead__heading {{#if _computed.episode}}podcast-lead__heading--episode{{/if}}">
+      <h1 class="podcast-lead__heading {{#if _computed.episode}}podcast-lead__heading--episode{{/if}}">
         {{ _computed.title }}
-      </div>
+      </h1>
       {{#if _computed.episode}}
       <div class="podcast-lead__subheading">
         {{#if _computed.published_date_formatted}}

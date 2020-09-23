@@ -10,6 +10,30 @@ primaryStoryLabel:
     field: _computed.useContentLabel
     operator: falsy
 
+populateFrom:
+  _label: Populate articles by primary section front, secondary section front or tag?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: All Content
+        value: all-content
+      -
+        name: Section Front
+        value: section-front
+      - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
+      - manual
+      - 
+        name: External RSS Feed
+        value: rss-feed
 
 contentType:
   _label: Content type
@@ -20,6 +44,134 @@ contentType:
     options:
       - article
       - gallery
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+sectionFront:
+  _subscribe: sectionFront
+
+sectionFrontManual:
+  _label: Section Front Category
+  _subscribe: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
+
+tag:
+  _label: Tag
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Includes content from all tags inside the section set in the URL
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
+
+excludeTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+excludeSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
 
 items:
   _label: Items
@@ -70,37 +222,6 @@ items:
           validate:
             required: true
 
-
-excludeTags:
-  _label: Exclude Tags
-  _has:
-    input: simple-list
-    autocomplete:
-      list: tags
-      allowRemove: true
-      allowCreate: true
-    help: Exclude content from all tags
-
-excludeSecondarySectionFronts:
-  _label: Exclude Secondary Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: secondary-section-fronts
-
-excludeSubscriptions:
-  _label: Exclude Subscriptions
-  _has:
-    input: checkbox
-
-tag:
-  _label: Filter by Tag
-  _subscribe: tag
-  _has:
-    input: static
-    text: ${tag}
-
 # Component properties
 googleAdRightRail:
   _component:
@@ -111,11 +232,17 @@ _groups:
   settings:
     fields:
     - primaryStoryLabel
+    - populateFrom
     - contentType
-    - items
-    - excludeTags
+    - rssFeed
+    - sectionFrontManual
+    - secondarySectionFront
+    - tag
+    - excludeSectionFronts
     - excludeSecondarySectionFronts
+    - excludeTags
     - excludeSubscriptions
+    - items
     _placeholder:
       ifEmpty: contentType
       height: 400px

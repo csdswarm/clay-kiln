@@ -10,7 +10,7 @@ const
   componentClassName = 'podcast-episode-list',
   { utils } = require('../../services/client/utils'),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
-  loadMoreAmount = 20;
+  { pageSize } = require('./constants');
 
 let
   $one, $all;
@@ -234,7 +234,7 @@ class PodcastListComponentController {
 
           this.model.pageNumber = this.model.pageNumber + 1;
           this.view.addMoreEpisodes(episodes);
-          if (episodes.length < loadMoreAmount) {
+          if (episodes.length < pageSize) {
             this.model.pageNumber = 2;
             this.view.hideLoadMoreBtn();
           }

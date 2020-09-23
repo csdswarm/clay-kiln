@@ -65,6 +65,10 @@ module.exports.save = async function (ref, data, locals) {
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  if (data.hasCustomColumns) {
+    return data;
+  }
+
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       curatedIds = items.filter(item => item.uri).map(item => item.uri);
