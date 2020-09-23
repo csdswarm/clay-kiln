@@ -11,7 +11,7 @@ module.exports = () => {
   if (
     stationForPermissions
     && stationForPermissions.id !== DEFAULT_STATION.id
-    && user.can('update').a('station-theme').value
+    && user.can('update').a('station-settings').value
   ) {
     _set(window, "kiln.navButtons['station-settings-manager']", stationSettingsButton);
     _set(window, "kiln.navContent['station-settings-manager']", stationSettingsManager);
