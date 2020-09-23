@@ -17,7 +17,7 @@
   &__tabs.ui-tabs {
     width: 75vw;
     .ui-tabs__body {
-      height: 100vh;
+      height: calc(100vh - em(88));
       overflow-y: auto;
     }
   }
