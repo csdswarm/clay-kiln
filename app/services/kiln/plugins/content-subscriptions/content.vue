@@ -128,7 +128,7 @@
           <template v-if="modalMode === 'new'">
             <ui-button color="primary" @click="createSubscription" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
           </template>
-          <template v-else="">
+          <template v-else>
             <ui-button color="primary" @click="updateSubscription" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
@@ -220,15 +220,6 @@
       : station.slug
   })
   const nationalFromStationOption = toStationOption(DEFAULT_STATION)
-
-  // needed for using simple-list outside of kiln
-  _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
-    const style = _get(this, '$el.style')
-
-    if (style) {
-      style.height = 'auto';
-    }
-  })
 
   class ContentSubscription {
     constructor (options = {
