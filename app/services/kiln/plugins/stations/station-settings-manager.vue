@@ -1,4 +1,7 @@
-<!-- Station Settings Manager -->
+<docs>
+  # Station Settings Manager
+</docs>
+
 <template>
   <div class="station-settings-manager">
 

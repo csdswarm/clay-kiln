@@ -1,4 +1,7 @@
-<!-- Station Theme Manager -->
+<docs>
+  # Station Settings Theme Manager
+</docs>
+
 <template>
   <div class="station-theme-manager">
     <h3 class="station-settings__main-title">Theme Colors:</h3>

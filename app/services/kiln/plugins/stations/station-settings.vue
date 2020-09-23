@@ -1,3 +1,7 @@
+<docs>
+  # Station Settings
+</docs>
+
 <template>
   <div class="station-settings">
     <h3 class="station-settings__main-title">

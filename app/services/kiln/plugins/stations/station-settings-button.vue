@@ -1,4 +1,7 @@
-<!-- Station Settings Button -->
+<docs>
+    # Station Settings Mamanger Kiln Drawer Button
+</docs>
+
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
         <span>Station Settings</span>
