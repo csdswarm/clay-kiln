@@ -20,7 +20,6 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/contest
     main:
       - /_components/contest/instances/new
@@ -51,7 +50,6 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/event
     main:
       - /_components/event/instances/new
@@ -85,7 +83,6 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/article
     main:
       - /_components/gallery/instances/new
@@ -140,7 +137,6 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/contest
     main:
       - /_components/contest/instances/new
@@ -167,7 +163,6 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/article
     main:
       - /_components/article/instances/new

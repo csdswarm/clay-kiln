@@ -416,15 +416,42 @@ _components:
       frequency:
         index: published-content
         meta:
+          link: https://www.radio.com
+          title: Radio.com Frequency Feed
+          renderer: freq
           contentType: application/rss+xml
           description: Most recent content from Radio.com
           fileExtension: freq
-          renderer: freq
-          title: Radio.com Frequency Feed
         query:
           size: 20
           sort:
             date: desc
+          query:
+            bool:
+              must:
+                - bool:
+                    should:
+                      - match:
+                          stationSlug: ''
+                      - bool:
+                          must_not:
+                            exists:
+                              field: stationSlug
+                    minimum_should_match: 1
+              filter:
+                - match:
+                    feeds.rss: true
+                - nested:
+                    path: byline
+                    query:
+                      bool:
+                        must_not:
+                          match:
+                            byline.sources.text: The Associated Press
+                - terms:
+                    contentType:
+                      - article
+                      - gallery
         transform: content
       google-news-feed:
         index: published-content
@@ -505,17 +532,32 @@ _components:
       reversechron:
         index: published-content
         meta:
+          link: https://www.radio.com
+          title: Radio.com Reverse Chron Feed
+          renderer: rss
           contentType: application/rss+xml
           description: Most recent content from Radio.com
           fileExtension: rss
-          link: 'https://clay.radio.com'
-          renderer: rss
-          title: Radio.com Reverse Chron Feed
         query:
           size: 20
           sort:
             date: desc
-        results: []
+          query:
+            bool:
+              filter:
+                - match:
+                    feeds.rss: true
+                - bool:
+                    must_not:
+                      term:
+                        noIndexNoFollow: true
+                - nested:
+                    path: byline
+                    query:
+                      bool:
+                        must_not:
+                          match:
+                            byline.sources.text: The Associated Press
         transform: article
       smart-news:
         attr:

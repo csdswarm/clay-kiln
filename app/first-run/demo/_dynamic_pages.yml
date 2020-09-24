@@ -55,7 +55,6 @@ _pages:
       - /_components/dynamic-meta-description/instances/podcast-episode
       - /_components/dynamic-meta-image/instances/podcast-episode
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/podcast-episode
     layoutHeader: []
     main:
@@ -70,7 +69,6 @@ _pages:
       - /_components/dynamic-meta-url/instances/general
       - /_components/dynamic-meta-image/instances/podcast-show
       - /_components/meta-tags/instances/general
-      - /_components/branch-io-head/instances/default
     layout: /_layouts/two-column-layout/instances/podcast-show
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop

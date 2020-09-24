@@ -280,6 +280,8 @@ _doc:
           type: keyword
         syndicatedArticleSlug:
           type: text
+        unsubscribed:
+          type: boolean
     tags:
       type: keyword
       fields:
