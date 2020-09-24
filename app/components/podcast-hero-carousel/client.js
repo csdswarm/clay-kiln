@@ -2,7 +2,10 @@
 
 const
   _bindAll = require('lodash/bindAll'),
-  componentClassName = 'podcast-hero-carousel',
+  Hammer = require('hammerjs'),
+  { bindInstanceFunctions } = require('../../services/universal/utils');
+
+const componentClassName = 'podcast-hero-carousel',
   carouselDirectionalObjects = {
     left: {
       value: -1,
@@ -235,11 +238,15 @@ class PodcastHeroCarouselController {
    * @param {HTMLElement} el - the component's containing html element.
    */
   constructor(el) {
-    _bindAll(this, ['onMount', 'onDismount', 'onMouseEnter', 'onMouseLeave', 'onComponentClick']);
+    bindInstanceFunctions(this);
+
     // instantiate model/view classes
     this.view = new PodcastHeroCarouselView(this, el);
     this.model = new PodcastHeroCarouselModel(this);
     this.timer = new PodcastHeroCarouselTimer();
+
+    this.setupSwipe(el);
+
     document.addEventListener('podcast-hero-carousel-mount', this.onMount);
     document.addEventListener('podcast-hero-carousel-dismount', this.onDismount);
   }
@@ -250,25 +257,25 @@ class PodcastHeroCarouselController {
    * @param {Event} e - the event object
    */
   onComponentClick(e) {
+    if (this.view.isAnimating) {
+      return;  // short-circuit if currently animating
+    }
+
     // directional buttons
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
-      if (this.view.isAnimating) return;  // short-circuit if currently animating
-      const aCarouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
-
-      this.view.onClickDirectionButton(aCarouselDirectionalObject);
-      this.model.updateSlideIndex(aCarouselDirectionalObject);
-      this.view.setActiveMacro(this.model.slideIndex);
+      this.transitionDirection(carouselDirectionalObjects[e.target.dataset.direction]);
     }
     // macro (dots) click
     if (e.target.classList.contains(`${componentClassName}__macro-button`)) {
-      if (this.view.isAnimating) return;  // short-circuit if currently animating
       const
         newSlideIndex = parseInt(e.target.dataset.slideIndex),
         carouselDirectionalObject = carouselDirectionalObjects[
           newSlideIndex < this.model.slideIndex ? 'left' : 'right'
         ];
 
-      if (newSlideIndex === this.model.slideIndex) return;  // short-circuit if same as current slide
+      if (newSlideIndex === this.model.slideIndex) {
+        return;  // short-circuit if same as current slide
+      }
       this.model.updateSlideIndex(carouselDirectionalObject, newSlideIndex);
       this.view.onClickDirectionButton(carouselDirectionalObject);
       this.view.setActiveMacro(newSlideIndex);
@@ -321,6 +328,52 @@ class PodcastHeroCarouselController {
     this.view.el.removeEventListener('mouseenter', this.onComponentClick);
     this.view.el.removeEventListener('mouseleave', this.onComponentClick);
     this.timer.unsubscribe();
+    this.hammerManager.destroy();
+  }
+
+  /**
+   * move the slide left or right
+   *
+   * @param {object} aCarouselDirectionalObject
+   */
+  transitionDirection(aCarouselDirectionalObject) {
+    if (this.view.isAnimating) {
+      return;
+    }
+
+    this.timer.reset();
+    this.view.onClickDirectionButton(aCarouselDirectionalObject);
+    this.model.updateSlideIndex(aCarouselDirectionalObject);
+    this.view.setActiveMacro(this.model.slideIndex);
+  }
+
+  /**
+   * Contains the logic for the swiping left
+   */
+  onSwipeLeft() {
+    this.transitionDirection(carouselDirectionalObjects.right);
+  }
+
+  /**
+   * Contains the logic for the swiping right
+   */
+  onSwipeRight() {
+    this.transitionDirection(carouselDirectionalObjects.left);
+  }
+
+  /**
+   * intializes the swipe gesture
+   *
+   * @param {HTMLElement} el
+   */
+  setupSwipe(el) {
+    const manager = new Hammer.Manager(el);
+
+    this.hammerManager = manager;
+
+    manager.add(new Hammer.Swipe({ direction: Hammer.DIRECTION_HORIZONTAL }));
+    manager.on('swipeleft', this.onSwipeLeft);
+    manager.on('swiperight', this.onSwipeRight);
   }
 }
 

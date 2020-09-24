@@ -4,7 +4,15 @@ const { DEFAULT_STATION } = require('./constants');
 
 // Unity App encompasses permissions which don't belong to a station such as
 //   whether you can update a global alert or the homepage
-const unityAppDomainName = 'Unity App';
+const unityAppDomainName = 'Unity App',
+  unityAppDomain = {
+    type: 'application',
+    id: 'Unity App'
+  },
+  nationalMarket = {
+    type: 'market',
+    id: 14
+  };
 
 /**
  * given a station, returns its urps domain name
@@ -42,7 +50,6 @@ function getStationDomainName(station) {
   if (station.id === DEFAULT_STATION.id) {
     return station.urpsDomainName;
   }
-
   // site_slug might be an empty string from the default station, in which case
   //   we want to use it
   const slug = typeof station.site_slug === 'string'
@@ -52,4 +59,24 @@ function getStationDomainName(station) {
   return `${station.name} | ${slug}`;
 }
 
-module.exports = { getStationDomainName, unityAppDomainName };
+/**
+ * given a station, returns its urps domain object
+ *
+* @param {object} station
+* @returns {Object}
+*/
+function getStationDomain(station) {
+  // we use the National market to store permissions for RDC.  Even though unity
+  //   models RDC as a station, urps preferred not to have a fake station on
+  //   their end.
+  if (station.id === DEFAULT_STATION.id) {
+    return nationalMarket;
+  }
+
+  return {
+    type: 'station',
+    id: station.id
+  };
+}
+
+module.exports = { getStationDomainName, getStationDomain, unityAppDomainName, unityAppDomain, nationalMarket };

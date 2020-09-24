@@ -65,7 +65,7 @@ function getMockUrpsPermissions() {
     {
       name: unityAppDomainName,
       id: '53f043a3-340b-45dd-8e9e-33b9779ae371',
-      type: 'app',
+      type: 'application',
       permissions: [
         {
           permissionId: '011fcede-0f18-40c4-8785-45fd599bfab3',
