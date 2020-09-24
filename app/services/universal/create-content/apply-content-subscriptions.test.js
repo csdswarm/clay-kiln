@@ -5,7 +5,7 @@ const expect = require('chai').expect,
   filename = __filename.split('/').pop().split('.').shift(),
   proxyquire = require('proxyquire'),
   applyContentSubscriptions = proxyquire('./apply-content-subscriptions', {
-    '../../server/get-stations-subscribed-to-content': () => Promise.resolve(mockData.stationsSubscribedToContent)
+    '../../server/get-subscriptions-with-station-props': () => Promise.resolve(mockData.stationsSubscribedToContent)
   }),
   mockData = {
     data: {

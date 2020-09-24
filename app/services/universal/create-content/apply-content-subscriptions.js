@@ -2,7 +2,7 @@
 
 const _get = require('lodash/get'),
   _reject = require('lodash/reject'),
-  getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
+  getSubscriptionsWithStationProps = require('../../server/get-subscriptions-with-station-props');
 
 /**
  * Add syndication entries for content subscriptions
@@ -11,7 +11,7 @@ const _get = require('lodash/get'),
  */
 async function applyContentSubscriptions(data, locals) {
   if (['article', 'gallery'].includes(data.contentType)) {
-    const stationsSubscribed = await getStationsSubscribed(data, locals),
+    const stationsSubscribed = await getContentSubscriptionEntries(data, locals),
       syndicatedStations = _reject(
         data.stationSyndication,
         { source: 'content subscription' }
@@ -29,8 +29,8 @@ async function applyContentSubscriptions(data, locals) {
  * @param {Object} locals
  * @returns {array}
  */
-async function getStationsSubscribed(data, locals) {
-  const stations = await getStationsSubscribedToContent(data, locals);
+async function getContentSubscriptionEntries(data, locals) {
+  const stations = await getSubscriptionsWithStationProps(data, locals);
 
   return (stations || []).map(station => {
     const { sectionFront, secondarySectionFront } = data,

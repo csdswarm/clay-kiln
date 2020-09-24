@@ -15,7 +15,7 @@ const _noop = require('lodash/noop'),
   mockContent = getMockContent(),
 
   makeFn = mock =>
-    proxyquire('./get-stations-subscribed-to-content', {
+    proxyquire('./get-subscriptions-with-station-props', {
       './amphora-storage-postgres': _noop,
       './get-content-subscriptions': () => mock,
       './station-utils': {
@@ -27,7 +27,7 @@ const _noop = require('lodash/noop'),
       }
     });
 
-describe('getStationsSubscribedToContent', () => {
+describe('getSubscriptionsWithStationProps', () => {
   it('should not match per excluded tags', async () => {
     const fn = makeFn(mockSubscriptions.excludeTags);
 

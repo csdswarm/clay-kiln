@@ -16,7 +16,7 @@ const _ = require('lodash'),
  * @param {object} locals
  * @returns {object[]}
  */
-const getStationsSubscribedToContent = async (data, locals) => {
+const getSubscriptionsWithStationProps = async (data, locals) => {
   // unable to declare 'let' and 'const' in parallel
   // eslint-disable-next-line prefer-const
   let [contentSubscriptions, allStations] = await Promise.all([
@@ -123,4 +123,4 @@ function makeIsSubscribed(data) {
   return subscriptionsPerStation;
 }
 
-module.exports = getStationsSubscribedToContent;
+module.exports = getSubscriptionsWithStationProps;
