@@ -4,7 +4,8 @@
 const clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
   recentStations = require('../../services/client/recentStations'),
-  Audio = require('../../global/js/classes/Audio');
+  Audio = require('../../global/js/classes/Audio'),
+  MOBILE_STICKY_AD = 'google-ad-manager__slot--mobile-adhesion-1';
 
 let webPlayer = null;
 
@@ -91,6 +92,8 @@ clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async (payl
     // since events are being added to the component node, use them to dispatch the event
     webPlayer.dispatchEvent(webPlayer.getEventTypes().MEDIA_PLAY);
   }
+
+  hideMobileStickyAd(playerState);
 });
 
 /**
@@ -112,3 +115,22 @@ function syncPlayerButtons(currentStationId, playingClass) {
     }
   });
 }
+
+/**
+ * Hide mobile sticky ad when the webplayer is launched.
+ *
+ * @param {string} playerState
+ */
+function hideMobileStickyAd(playerState) {
+  const firstStickyAd = document.querySelector(`#${MOBILE_STICKY_AD}`);
+
+  if (firstStickyAd) {
+    if (playerState === 'play') {
+      firstStickyAd.style.display = 'none';
+      window.disableAdRefresh([MOBILE_STICKY_AD]);
+    } else if (playerState === 'stop') {
+      window.enableAdRefresh([MOBILE_STICKY_AD]);
+      firstStickyAd.style.display = 'block';
+    }
+  }
+};
