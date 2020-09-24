@@ -204,6 +204,11 @@ _components:
           _ref: /_components/stations-list/instances/market
         stationsListTruncated:
           _ref: /_components/stations-list/instances/marketTruncated
+  divider:
+    instances:
+      home:
+        componentVariation: divider
+        title: MORE from RADIO.COM
   dynamic-meta-description:
     instances:
       author:
@@ -416,28 +421,15 @@ _components:
       frequency:
         index: published-content
         meta:
-          link: https://www.radio.com
-          title: Radio.com Frequency Feed
-          renderer: freq
           contentType: application/rss+xml
           description: Most recent content from Radio.com
           fileExtension: freq
+          link: 'https://www.radio.com'
+          renderer: freq
+          title: Radio.com Frequency Feed
         query:
-          size: 20
-          sort:
-            date: desc
           query:
             bool:
-              must:
-                - bool:
-                    should:
-                      - match:
-                          stationSlug: ''
-                      - bool:
-                          must_not:
-                            exists:
-                              field: stationSlug
-                    minimum_should_match: 1
               filter:
                 - match:
                     feeds.rss: true
@@ -452,6 +444,19 @@ _components:
                     contentType:
                       - article
                       - gallery
+              must:
+                - bool:
+                    minimum_should_match: 1
+                    should:
+                      - match:
+                          stationSlug: ''
+                      - bool:
+                          must_not:
+                            exists:
+                              field: stationSlug
+          size: 20
+          sort:
+            date: desc
         transform: content
       google-news-feed:
         index: published-content
@@ -532,16 +537,13 @@ _components:
       reversechron:
         index: published-content
         meta:
-          link: https://www.radio.com
-          title: Radio.com Reverse Chron Feed
-          renderer: rss
           contentType: application/rss+xml
           description: Most recent content from Radio.com
           fileExtension: rss
+          link: 'https://www.radio.com'
+          renderer: rss
+          title: Radio.com Reverse Chron Feed
         query:
-          size: 20
-          sort:
-            date: desc
           query:
             bool:
               filter:
@@ -558,6 +560,9 @@ _components:
                         must_not:
                           match:
                             byline.sources.text: The Associated Press
+          size: 20
+          sort:
+            date: desc
         transform: article
       smart-news:
         attr:
@@ -824,6 +829,7 @@ _components:
         adSize: billboard
         sticky: false
       billboardTop:
+        _version: 1
         adLocation: atf
         adPosition: top
         adSize: billboard
@@ -853,6 +859,11 @@ _components:
         adLocation: atf
         adPosition: rec
         adSize: half-page
+      home-section-lead:
+        _version: 1
+        adLocation: atf
+        adPosition: rec
+        adSize: half-page
       leaderboardBottom:
         adLocation: btf
         adPosition: bottom
@@ -874,6 +885,7 @@ _components:
         adSize: medium-rectangle
         sticky: false
       mediumRectangleTop:
+        _version: 1
         adLocation: atf
         adPosition: rec
         adSize: medium-rectangle
@@ -930,6 +942,18 @@ _components:
           - _ref: /_components/latest-videos/instances/homepage
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/two-column-component/instances/homepage
+      home:
+        _version: 1
+        mainContent:
+          - _ref: /_components/multi-column/instances/home
+          - _ref: /_components/stations-carousel/instances/home
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/latest-content/instances/default
+          - _ref: /_components/podcast-list/instances/home
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/latest-videos/instances/home
+          - _ref: /_components/divider/instances/home
+          - _ref: /_components/two-column-component/instances/home
   host-page:
     instances:
       new:
@@ -951,6 +975,10 @@ _components:
     instances:
       new:
         text: ''
+      newsletter-subscribe:
+        componentVariation: html-embed
+        isIframe: false
+        text: <div id="postup-newsletter"></div>
   image:
     instances:
       new:
@@ -972,6 +1000,14 @@ _components:
   latest-content:
     instances:
       default:
+        _version: 5
+        articles:
+          - articles: []
+            section: music
+          - articles: []
+            section: sports
+          - articles: []
+            section: news
         componentTitle: LATEST from RADIO.COM
         componentTitleVisible: true
         contentType:
@@ -979,6 +1015,8 @@ _components:
           gallery: true
         excludeSubscriptions: false
         filterSecondarySectionFronts: {}
+        filterTags:
+          - text: Radio.com Latino
         firstColumn: []
         hasCustomColumns: false
         musicItems: []
@@ -1028,6 +1066,29 @@ _components:
         useCustomTitle: false
   latest-recirculation:
     instances:
+      home:
+        _version: 6
+        contentType:
+          article: true
+          gallery: true
+        customTitle: ''
+        excludeSecondarySectionFronts: null
+        excludeSectionFronts: null
+        excludeSubscriptions: false
+        excludeTags:
+          - text: RADIO.COM Latino
+          - count: 1
+            text: RDC Local
+        hyperLinkTitle: null
+        hyperLinkUrl: null
+        items: []
+        populateFrom: all-content
+        rssFeed: null
+        secondarySectionFront: null
+        sectionFront: null
+        sectionFrontManual: null
+        tag:
+          - Qassem Soleimani
       new:
         contentType:
           article: true
@@ -1058,6 +1119,18 @@ _components:
         tag: []
   latest-videos:
     instances:
+      home:
+        _version: 5
+        articles: []
+        excludeSubscriptions: false
+        filterSecondarySectionFronts: {}
+        filterTags:
+          - text: Radio.com Latino
+          - text: RDC Local
+        items: []
+        primaryContentLabel: Exclusive Video
+        sectionFront: null
+        title: Radio.com Video
       homepage:
         excludeSubscriptions: false
         filterSecondarySectionFronts: []
@@ -1069,6 +1142,36 @@ _components:
     instances:
       general:
         description: ''
+      home:
+        _version: 1
+        defaultDescription: >-
+          Listen to your favorite station & podcasts for FREE on RADIO.COM, plus
+          read exclusive celebrity news, breaking sports stories, and music news
+          from today's biggest artists.
+        description: >-
+          Listen to your favorite station & podcasts for FREE on RADIO.COM, plus
+          read exclusive celebrity news, breaking sports stories, and music news
+          from today's biggest artists.
+      legal:
+        _computed:
+          parents: []
+        _version: 1
+        componentVariation: meta-description
+        defaultDescription: entercom-legal | RADIO.COM
+        description: entercom-legal | RADIO.COM
+      newsletter-subscribe:
+        _computed:
+          parents: []
+        _version: 1
+        componentVariation: meta-description
+        defaultDescription: >-
+          Subscribe to RADIO.com - Gain access to the latest music news, music,
+          and radio online with RADIO.com's newsletter. Get a first listen to
+          RADIO.com exclusives and enter RADIO.com contests!
+        description: >-
+          Subscribe to RADIO.com - Gain access to the latest music news, music,
+          and radio online with RADIO.com's newsletter. Get a first listen to
+          RADIO.com exclusives and enter RADIO.com contests!
       station-basic-music:
         description: homepage
       stations-directory:
@@ -1080,6 +1183,14 @@ _components:
   meta-image:
     instances:
       general:
+        defaultImageUrl: ''
+        imageUrl: ''
+      legal:
+        _version: 3
+        defaultImageUrl: ''
+        imageUrl: ''
+      newsletter-subscribe:
+        _version: 3
         defaultImageUrl: ''
         imageUrl: ''
       og-logo:
@@ -1094,19 +1205,177 @@ _components:
   meta-tags:
     instances:
       general:
+        _version: 1
         authors: []
         automatedPublishDate: ''
         contentTagItems: []
         contentType: ''
+        metaTags:
+          - content: sports
+            name: 'cXenseParse:recs:category'
+          - content: NATL-RC
+            name: station-call-letters
+          - content: music
+            data-was-imported: false
+            name: 'nmc:cat'
+          - content: aaa
+            data-was-imported: false
+            name: 'nmc:genre'
+          - content: _components/meta-tags/instances/general.json
+            data-was-imported: false
+            name: 'nmc:pid'
+          - content: natlrc
+            data-was-imported: false
+            name: 'nmc:station'
+          - content: sectionfront/_components/meta-tags/instances/general.json
+            data-was-imported: false
+            name: 'nmc:tag'
+          - content: Sports
+            name: 'branch:deeplink:unity_site_categories'
+          - content: Radio.com
+            name: 'branch:deeplink:station_name'
+        publishDate: ''
+        secondarySectionFront: null
+        sectionFront: null
+        unusedTags:
+          - property: 'og:type'
+            type: property
+          - property: 'article:author:name'
+            type: property
+          - property: 'article:published_time'
+            type: property
+          - name: robots
+            type: name
+          - name: 'nmc:author'
+            type: name
+          - name: 'nmc:market'
+            type: name
+      legal:
+        _version: 1
+        authors: []
+        automatedPublishDate: ''
+        contentType: ''
+        metaTags:
+          - content: home
+            name: 'cXenseParse:recs:category'
+          - content: NATL-RC
+            name: station-call-letters
+          - content: music
+            data-was-imported: false
+            name: 'nmc:cat'
+          - content: aaa
+            data-was-imported: false
+            name: 'nmc:genre'
+          - content: homepage
+            data-was-imported: false
+            name: 'nmc:pid'
+          - content: natlrc
+            data-was-imported: false
+            name: 'nmc:station'
+          - content: sectionfront/homepage
+            data-was-imported: false
+            name: 'nmc:tag'
+          - content: home
+            name: 'branch:deeplink:unity_site_categories'
+          - content: Radio.com
+            name: 'branch:deeplink:station_name'
         publishDate: ''
         secondarySectionFront: ''
-        sectionFront: null
+        sectionFront: home
+        unusedTags:
+          - property: 'og:type'
+            type: property
+          - property: 'article:author:name'
+            type: property
+          - property: 'article:published_time'
+            type: property
+          - name: robots
+            type: name
+          - name: 'nmc:author'
+            type: name
+          - name: 'nmc:market'
+            type: name
+      newsletter-subscribe:
+        _version: 1
+        authors: []
+        automatedPublishDate: ''
+        contentType: ''
+        metaTags:
+          - content: home
+            name: 'cXenseParse:recs:category'
+          - content: NATL-RC
+            name: station-call-letters
+          - content: music
+            data-was-imported: false
+            name: 'nmc:cat'
+          - content: aaa
+            data-was-imported: false
+            name: 'nmc:genre'
+          - content: homepage
+            data-was-imported: false
+            name: 'nmc:pid'
+          - content: natlrc
+            data-was-imported: false
+            name: 'nmc:station'
+          - content: sectionfront/homepage
+            data-was-imported: false
+            name: 'nmc:tag'
+          - content: home
+            name: 'branch:deeplink:unity_site_categories'
+          - content: Radio.com
+            name: 'branch:deeplink:station_name'
+        publishDate: ''
+        secondarySectionFront: ''
+        sectionFront: home
+        unusedTags:
+          - property: 'og:type'
+            type: property
+          - property: 'article:author:name'
+            type: property
+          - property: 'article:published_time'
+            type: property
+          - name: robots
+            type: name
+          - name: 'nmc:author'
+            type: name
+          - name: 'nmc:market'
+            type: name
   meta-title:
     instances:
       general:
         kilnTitle: ''
         ogTitle: ''
         title: ''
+        twitterTitle: ''
+      home:
+        _version: 1
+        defaultKilnTitle: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+        defaultOgTitle: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+        defaultTitle: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+        kilnTitle: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+        ogTitle: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+        title: 'RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts'
+      legal:
+        _version: 1
+        componentVariation: meta-title
+        defaultKilnTitle: Entercom Legal | RADIO.COM
+        defaultOgTitle: Entercom Legal | RADIO.COM
+        defaultTitle: Entercom Legal | RADIO.COM
+        defaultTwitterTitle: Entercom Legal | RADIO.COM
+        kilnTitle: Entercom Legal | RADIO.COM
+        ogTitle: Entercom Legal | RADIO.COM
+        title: Entercom Legal | RADIO.COM
+        twitterTitle: Entercom Legal | RADIO.COM
+      newsletter-subscribe:
+        _version: 1
+        componentVariation: meta-title
+        defaultKilnTitle: Subscribe
+        defaultOgTitle: Subscribe
+        defaultTitle: Subscribe
+        defaultTwitterTitle: ''
+        kilnTitle: Subscribe
+        ogTitle: Subscribe
+        title: Subscribe
         twitterTitle: ''
       station-basic-music:
         kilnTitle: RADIO.COM
@@ -1125,9 +1394,60 @@ _components:
         defaultUrl: ''
         syndicatedUrl: ''
         url: ''
+      home:
+        _version: 2
+        date: ''
+        defaultDate: ''
+        defaultSyndicatedUrl: ''
+        defaultUrl: 'https://clay.radio.com/'
+        syndicatedUrl: ''
+        url: 'https://clay.radio.com/'
+      legal:
+        _version: 2
+        componentVariation: meta-url
+        defaultSyndicatedUrl: ''
+        defaultUrl: ''
+        syndicatedUrl: ''
+        url: ''
+      newsletter-subscribe:
+        _version: 2
+        componentVariation: meta-url
+        defaultSyndicatedUrl: ''
+        defaultUrl: ''
+        syndicatedUrl: ''
+        url: ''
       station-basic-music:
         defaultUrl: ''
         url: ''
+  minified-content-feed:
+    instances:
+      home:
+        autoPopulatedContentHeader: null
+        componentTitle: TOP STORIES
+        componentTitleVisible: true
+        componentVariation: minified-content-feed
+        contentType:
+          article: true
+          gallery: true
+        curatedContentHeader: null
+        excludeSecondarySectionFronts: {}
+        excludeSectionFronts: []
+        excludeSubscriptions: false
+        excludeTags:
+          - text: Radio.com Latino
+          - text: RDC Local
+        filterSecondarySectionFronts: null
+        filterTags: null
+        items: []
+        locationOfContentFeed: homepage
+        pageSize: 6
+        populateFrom: all-content
+        secondarySectionFront: null
+        secondarySectionFrontManual: null
+        sectionFront: home
+        sectionFrontManual: null
+        tag: ''
+        tagManual: null
   more-content-feed:
     instances:
       author-page:
@@ -1153,6 +1473,44 @@ _components:
         sectionFrontManual: ''
         sharethroughTag:
           _ref: /_components/google-ad-manager/instances/sharethroughTag
+      home:
+        _version: 14
+        autoPopulatedContentHeader: null
+        componentTitle: MORE from RADIO.COM
+        componentTitleVisible: false
+        componentVariation: more-content-feed
+        content: []
+        contentType:
+          article: true
+          gallery: true
+        curatedContentHeader: null
+        enableSharethrough: true
+        excludeSecondarySectionFronts: null
+        excludeSectionFronts: null
+        excludeTags:
+          - text: RADIO.COM Latino
+          - text: RDC Local
+        filterSecondarySectionFronts: {}
+        filterTags:
+          - text: Radio.com Latino
+          - text: RADIO.COM Latino
+        initialLoad: true
+        introComponents: []
+        items: []
+        lazyLoads: 2
+        locationOfContentFeed: homepage
+        maxLength: null
+        moreContent: true
+        pageLength: 10
+        populateFrom: all-content
+        secondarySectionFront: null
+        secondarySectionFrontManual: null
+        sectionFront: null
+        sectionFrontManual: home
+        sharethroughTag:
+          _ref: /_components/google-ad-manager/instances/sharethroughTag
+        tag: ''
+        tagManual: null
       homepage:
         _version: 14
         componentTitle: MORE from RADIO.COM
@@ -1207,31 +1565,32 @@ _components:
         tag: ''
         tagManual: ''
       section-front:
-        tag: []
-        items: []
-        content: []
-        station:
         _version: 15
-        lazyLoads: 2
-        tagManual: []
-        filterTags: []
-        pageLength: 10
+        componentTitle: MORE from RADIO.COM
+        componentTitleVisible: false
+        content: []
         contentType:
           article: true
           gallery: true
-        initialLoad: true
-        moreContent: true
-        populateFrom: section-front
-        sectionFront: ''
-        componentTitle: MORE from RADIO.COM
-        introComponents: []
-        sharethroughTag:
-          _ref: www.radio.com/_components/google-ad-manager/instances/sharethroughTag
         enableSharethrough: true
-        primarySectionFront:
-        componentTitleVisible: false
-        locationOfContentFeed: section-front
         filterSecondarySectionFronts: {}
+        filterTags: []
+        initialLoad: true
+        introComponents: []
+        items: []
+        lazyLoads: 2
+        locationOfContentFeed: section-front
+        moreContent: true
+        pageLength: 10
+        populateFrom: section-front
+        primarySectionFront: null
+        sectionFront: ''
+        sharethroughTag:
+          _ref: >-
+            www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+        station: null
+        tag: []
+        tagManual: []
       station-basic-music:
         _version: 14
         componentTitle: MORE from RADIO.COM
@@ -1284,9 +1643,15 @@ _components:
   multi-column:
     instances:
       home:
-        col1: []
-        col2: []
-        col3: []
+        _computed:
+          parents: []
+        col1:
+          - _ref: /_components/section-lead/instances/home
+        col2:
+          - _ref: /_components/latest-recirculation/instances/home
+        col3:
+          - _ref: /_components/minified-content-feed/instances/home
+        componentVariation: multi-column
         mediumRectangleTop:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
       new:
@@ -1306,10 +1671,52 @@ _components:
         embedSize: ''
   paragraph:
     instances:
+      legal-1:
+        componentVariation: paragraph
+        text: >-
+          <a href="#ip-contact-us-support"><strong
+          >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
+          </strong><a
+          href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
+          | </strong><a
+          href="http://www.entercom.com/terms-and-conditions"><strong
+          >Terms&nbsp;of&nbsp;Service</strong></a>
+      legal-3:
+        componentVariation: paragraph
+        text: RADIO.COM App &amp; Player - Contact and Support
+      legal-4:
+        text: >-
+          If you are experiencing any issues and need support for the RADIO.COM
+          app or desktop player, please reach out to us at <a
+          href="mailto:support@radio.com" >support@radio.com</a>.
+      legal-6:
+        componentVariation: paragraph
+        text: Public Inspection File - Help
+      legal-7:
+        text: >-
+          If you need help accessing the file due to a disability, please
+          contact <a href="mailto:publicfileinfo@entercom.com"
+          >publicfileinfo@entercom.com</a>
       new:
         text: ''
+      newsletter-subscribe-2:
+        text: Subscribe to RADIO.COM emails.
+      newsletter-subscribe-3:
+        text: >-
+          You'll receive updates on stations, content, new app features,
+          contests, shows and more from RADIO.COM.
   podcast-list:
     instances:
+      home:
+        _version: 2
+        backFillEnabled: true
+        isTitleFontColorDark: false
+        items: []
+        primaryColor: null
+        sectionFront: null
+        showCallToActions: true
+        showTitle: true
+        title: Podcasts
       new:
         _version: 2
         backFillEnabled: true
@@ -1375,6 +1782,21 @@ _components:
         title: ''
   section-lead:
     instances:
+      home:
+        _version: 7
+        contentType:
+          article: true
+          gallery: true
+        excludeSecondarySectionFronts: {}
+        excludeSubscriptions: false
+        excludeTags:
+          - text: Radio.com Latino
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/home-section-lead
+        items: []
+        primaryStoryLabel: ''
+        secondarySectionFront: ''
+        tag: ''
       new:
         contentType:
           article: true
@@ -1416,6 +1838,27 @@ _components:
           https://twitter.com/share?text=&via=Radiodotcom&url=https%3A%2F%2Fclay.radio.com%2F_components%2Fcontest%2Finstances%2Fnew.json%3Futm_campaign%3Dsharebutton%26utm_medium%3Dsocial%26utm_source%3Dtwitter.com%26utm_term%3DNATL-RC
   static-page:
     instances:
+      legal:
+        byline: []
+        content:
+          - _ref: /_components/paragraph/instances/legal-1
+          - _ref: /_components/subheader/instances/legal-2
+          - _ref: /_components/paragraph/instances/legal-3
+          - _ref: /_components/paragraph/instances/legal-4
+          - _ref: /_components/subheader/instances/legal-5
+          - _ref: /_components/paragraph/instances/legal-6
+          - _ref: /_components/paragraph/instances/legal-7
+        headline: Entercom Legal
+        kilnTitle: Entercom Legal
+        manualSlugUnlock: false
+        ogTitle: Entercom Legal
+        pageTitle: Entercom Legal
+        plaintextPrimaryHeadline: Entercom Legal
+        plaintextShortHeadline: Entercom Legal
+        primaryHeadline: Entercom Legal
+        shortHeadline: Entercom Legal
+        slugLock: true
+        twitterTitle: Entercom Legal
       new:
         byline: []
         content:
@@ -1426,6 +1869,26 @@ _components:
         primaryHeadline: ''
         shortHeadline: ''
         slugLock: true
+      newsletter-subscribe:
+        authors: []
+        byline: []
+        componentVariation: static-page
+        content:
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-2
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-3
+          - _ref: /_components/html-embed/instances/newsletter-subscribe
+        fullWidthLead: false
+        headline: Subscribe
+        isContentFromAP: false
+        manualSlugUnlock: false
+        noIndexNoFollow: false
+        pageTitle: Subscribe
+        plaintextPrimaryHeadline: Subscribe
+        plaintextShortHeadline: Subscribe
+        primaryHeadline: Subscribe
+        shortHeadline: Subscribe
+        slugLock: true
+        sources: []
   station-detail:
     instances:
       default:
@@ -1491,6 +1954,13 @@ _components:
           playingClass: show__play
   stations-carousel:
     instances:
+      home:
+        componentVariation: stations-carousel
+        filterStationsBy: market
+        genre: null
+        overrideTitle: null
+        sectionFront: null
+        title: stations near you
       homepage:
         filterStationsBy: market
         genre: ''
@@ -1552,6 +2022,12 @@ _components:
         truncatedList: true
   subheader:
     instances:
+      legal-2:
+        anchorId: ip-contact-us-support
+        text: Contact Us &amp; Support
+      legal-5:
+        anchorId: ip-public-file
+        text: Public File
       new:
         text: ''
   tags:
@@ -1693,6 +2169,13 @@ _components:
           - _ref: >-
               /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
           - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+      home:
+        col1:
+          - _ref: /_components/more-content-feed/instances/home
+        col2:
+          - _ref: >-
+              /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
       homepage:
         col1:
           - _ref: /_components/more-content-feed/instances/homepage
@@ -1709,10 +2192,13 @@ _components:
           - _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
       section-front:
         col1:
-          - _ref: www.radio.com/_components/more-content-feed/instances/section-front
+          - _ref: >-
+              www.radio.com/_components/more-content-feed/instances/section-front
         col2:
-          - _ref: www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-          - _ref: www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+          - _ref: >-
+              www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+          - _ref: >-
+              www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
       station-front:
         col1:
           - _ref: /_components/more-content-feed/instances/station-basic-music

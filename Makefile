@@ -60,11 +60,9 @@ bootstrap:
 	@echo "\r\n\r\n"
 	cd ./app && cat ./first-run/**/_pages.yml | clay import -k demo -y clay.radio.com
 	@echo "\r\n\r\n"
+	cd ./app && cat ./first-run/**/_published_pages.yml | clay import -k demo -y -p clay.radio.com
+	@echo "\r\n\r\n"
 	cd ./app && cat ./first-run/**/_dynamic_pages.yml | clay import -k demo -y -p clay.radio.com
-	@echo "\r\n\r\n"
-	cd ./app && cat ./first-run/**/initial-pages/*-components.yml | clay import -k demo -y clay.radio.com
-	@echo "\r\n\r\n"
-	cd ./app && cat ./first-run/**/initial-pages/_pages.yml | clay import -k demo -y -p clay.radio.com
 	@echo "\r\n\r\n"
 	@echo ""
 	./migrations/legacy/run-legacy-scripts.sh
