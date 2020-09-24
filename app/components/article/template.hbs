@@ -159,8 +159,6 @@
         {{> component-list content }}
       </div>
 
-      {{! Tags }}
-      {{> tags tags}}
       {{#if isOpinion}}
         <i>
           We strive to be a platform where varying opinions may be voiced and heard, but it is up to you, the
@@ -173,6 +171,9 @@
           to be caused by and in connection to such article and/or any comment(s).
         </i>
       {{/if}}
+
+      {{! Tags }}
+      {{> tags tags}}
 
       {{! Ad Tags }}
       {{> ad-tags adTags}}
