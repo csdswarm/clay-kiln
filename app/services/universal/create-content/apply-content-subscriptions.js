@@ -30,11 +30,11 @@ async function applyContentSubscriptions(data, locals) {
  * @returns {array}
  */
 async function getContentSubscriptionEntries(data, locals) {
-  const stations = await getSubscriptionsWithStationProps(data, locals);
+  const subscriptions = await getSubscriptionsWithStationProps(data, locals);
 
-  return (stations || []).map(station => {
+  return (subscriptions || []).map(subscription => {
     const { sectionFront, secondarySectionFront } = data,
-      { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = station,
+      { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = subscription,
       primarySectionFrontExists = _get(mappedSectionFronts,'primarySectionFront'),
       primarySectionFrontMapped = primarySectionFrontExists ? _get(mappedSectionFronts,'primarySectionFront') : sectionFront,
       secondarySectionFrontMapped = primarySectionFrontExists ? _get(mappedSectionFronts,'secondarySectionFront') : secondarySectionFront;
