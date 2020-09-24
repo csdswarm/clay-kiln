@@ -5,7 +5,7 @@ const utils = require('../universal/utils'),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
   DATA_STRUCTURES = [
-    'alert', 'ap_subscriptions', 'apple_news', 'editorial_group', 'podcasts', 'station_themes', 'valid_source'
+    'alert', 'ap_subscriptions', 'apple_news', 'editorial_group', 'podcasts', 'station_options', 'station_themes', 'valid_source'
   ],
   /**
    * Check Postgres to see if the table exists
@@ -185,6 +185,30 @@ const utils = require('../universal/utils'),
     const data = await db.get(uri.split('@')[0]) || {};
 
     return key ? _get(data, key) : data;
+  },
+
+  /**
+   * Upsert a row in a postgres table
+   * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
+   *
+   * @param {string} key
+   * @param {any} value
+   *
+   * @returns {Promise}
+  */
+  upsert = async (key, value) => {
+    const tableName = findSchemaAndTable(key);
+
+    if (!tableName) {
+      db.put(key, value);
+    } else {
+      try {
+        await get(key);
+        return db.raw(`UPDATE ${tableName} SET data = ? WHERE id = ?`, [value, key]);
+      } catch (error) {
+        return db.raw(`INSERT INTO ${tableName} (id, data) VALUES (?, ?)`, [key, value]);
+      }
+    }
   };
 
 module.exports = {
@@ -199,5 +223,6 @@ module.exports = {
   post,
   put,
   raw: db.raw,
+  upsert,
   uriToUrl: utils.uriToUrl
 };
