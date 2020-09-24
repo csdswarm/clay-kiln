@@ -6,6 +6,7 @@
 @import "_global/colors";
 @import "_global/alert-banner";
 @import "_global/layouts";
+@import "_global/permissions";
 
 .layout--two-column {
   margin: 0;
@@ -70,7 +71,7 @@
   }
 
   .layout__content {
-    z-index: 3;
+    z-index: 2;
     position: relative;
 
     .content__main,
@@ -97,6 +98,11 @@
     }
   },
   &[data-main-component="contest"] {
+    .content__sidebar {
+      visibility: visible;
+    }
+  },
+  &[data-main-component="podcast-show-page"] {
     .content__sidebar {
       visibility: visible;
     }

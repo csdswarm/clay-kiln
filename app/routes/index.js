@@ -155,10 +155,14 @@ module.exports = router => {
    */
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
+
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);
+  addEndpoints.apSubscriptions(router);
   addEndpoints.createPage(router);
+  addEndpoints.cloneContent(router);
+  addEndpoints.podcasts(router, checkAuth);
   addEndpoints.imageInfo(router, checkAuth);
   addEndpoints.contentSubscription(router);
   ensureStationOnCustomUrl(router);
@@ -166,4 +170,5 @@ module.exports = router => {
   addEndpoints.validSource(router);
   addEndpoints.signOut(router);
   addEndpoints.getStationsSubscribedToContent(router);
+  addEndpoints.stationUtils(router);
 };

@@ -1,16 +1,9 @@
 'use strict';
-const _indexOf = require('lodash/indexOf');
+
+const getBaseUrlFromLocals = require('../../services/universal/get-base-url-from-locals');
 
 module.exports.render = (ref, data, locals) => {
-  // ON-560 canonicals should be https
-  if (locals && locals.url) {
-
-    const fullUrl = locals.url.replace('http:', 'https:'),
-      params = _indexOf(fullUrl, '?'),
-      clearQueryParams = params > 0 ? fullUrl.substring(0, params) : fullUrl;
-
-    data.localUrl = clearQueryParams;
-  }
+  data.localUrl = getBaseUrlFromLocals(locals);
   return data;
 };
 

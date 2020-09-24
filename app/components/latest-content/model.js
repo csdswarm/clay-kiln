@@ -65,6 +65,10 @@ module.exports.save = async function (ref, data, locals) {
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  if (data.hasCustomColumns) {
+    return data;
+  }
+
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       curatedIds = items.filter(item => item.uri).map(item => item.uri);
@@ -107,8 +111,8 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     // Filter out the following tags
-    if (data.filterTags) {
-      for (const tag of data.filterTags.map((tag) => tag.text)) {
+    if (data.excludeTags) {
+      for (const tag of data.excludeTags.map((tag) => tag.text)) {
         queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
       }
     }

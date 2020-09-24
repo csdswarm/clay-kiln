@@ -4,8 +4,11 @@ const _ = require('lodash'),
   url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
+  log = require('../universal/log').setup({ file: __filename }),
   { sites, composer } = require('amphora'),
-  log = require('../universal/log').setup({ file: __filename });
+  { topicPagePrefixes } = require('../universal/constants');
+
+
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -36,34 +39,6 @@ function getPrefixAndKey(path) {
   return { routeParamKey, routePrefix };
 }
 
-/**
- * Returns the pathname split into an array of parts.
- *
- * Example:
- * ```
- * const pathname = '/foo/bar/blah'
- * pathParts(pathname) // ['foo', 'bar', 'blah']
- * ```
- *
- * @param {string} pathname
- * @returns {Array<string>}
- */
-function parsePathParts(pathname) {
-  return pathname.match(/[^\/]+/g) || [];
-}
-/**
-  * Returns curated or dynamic page data
-  *
-  * @param {Object} req
-  * @param {string} dynamicPageKey
-  * @returns {Promise<Promise<Object>>}
-*/
-function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
-  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
-    .then(pageKey => db.get(`${ pageKey }@published`))
-    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
-}
-
 const routes = [
   // `/authors/{authorSlug}` or `{stationSlug}/authors/{authorSlug}`
   // https://regex101.com/r/TFNbVH/1
@@ -85,6 +60,44 @@ const routes = [
       }
     },
     getPageData: req => curatedOrDynamicRouteHandler(req, 'author')
+  },
+  { // stations directories
+    testPath: req => req.path.includes('/stations'),
+    getParams: (req, params) => {
+      if (req.path.match(/stations\/location\/(.+)/)) {
+        params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
+      } else if (req.path.match(/stations\/music\/(.+)/)) {
+        params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
+      }
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/stations-directory@published`)
+  },
+  { // station detail page
+    testPath: req => /\/(.+)\/listen$/.test(req.path),
+    getParams: (req, params) => params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1],
+    getPageData: req => db.get(`${req.hostname}/_pages/station@published`)
+  },
+  { // podcast episode page - https://regex101.com/r/cjCzbC/4
+    testPath: req => /\/?([\w\-]+)?\/podcasts\/([\w\-]+)\/([\w\-]+)/.test(req.path),
+    applyMiddleware: (req, res, next) => middleware.episodeMiddleware(req, res, next),
+    getParams: (req, params) => {
+      const matches = req.path.match(/\/?([\w\-]+)?\/podcasts\/([\w\-]+)\/([\w\-]+)/);
+
+      params.stationSlug = matches[1];
+      params.dynamicSlug = matches[2];
+      params.dynamicEpisode = matches[3];
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/podcast-episode@published`)
+  },
+  { // podcast show page - https://regex101.com/r/cjCzbC/6
+    testPath: req => /\/?([\w\-]+)?\/podcasts\/?([\w\-]+)\/?$/.test(req.path),
+    getParams: (req, params) => {
+      const matches = req.path.match(/\/?([\w\-]+)?\/podcasts\/?([\w\-]+)\/?$/);
+
+      params.stationSlug = matches[1];
+      params.dynamicSlug = matches[2];
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
   },
   // `/contest-rules` or `{stationSlug}/contest-rules`
   {
@@ -130,17 +143,24 @@ const routes = [
       params.stationSlug = match ? match[1] : '';
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
-  },
-  // `{stationSlug}/shows/show-schedule`
-  {
+  },{
     testPath: req => req.path.includes('/shows/show-schedule'),
-    getParams: () => {},
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/shows/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
     getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
-  },
-  // `{stationSlug}/stats/mlb/scores`
-  {
+  },{
+    // `{stationSlug}/stats/mlb/scores`
     testPath: req => req.path.includes('/stats'),
-    getParams: () => {},
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/stats/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
     getPageData: req => db.get(`${req.hostname}/_pages/frequency-iframe-page@published`)
   },
   // `/hosts/{hostSlug}` or `{stationSlug}/hosts/{hostSlug}`
@@ -163,15 +183,43 @@ const routes = [
       }
     },
     getPageData: req => curatedOrDynamicRouteHandler(req, 'host')
-  },
-  // [default route handler] resolve the uri and page instance
-  {
+  },{
+    // [default route handler] resolve the uri and page instance
     testPath: () => true,
-    getParams: () => null,
-    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    getParams: () => {},
+    getPageData: req => db
+      .getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(data => db.get(`${data}@published`))
   }
 ];
+
+/**
+ * Returns the pathname split into an array of parts.
+ *
+ * Example:
+ * ```
+ * const pathname = '/foo/bar/blah'
+ * pathParts(pathname) // ['foo', 'bar', 'blah']
+ * ```
+ *
+ * @param {string} pathname
+ * @returns {Array<string>}
+ */
+function parsePathParts(pathname) {
+  return pathname.match(/[^\/]+/g) || [];
+}
+/**
+  * Returns curated or dynamic page data
+  *
+  * @param {Object} req
+  * @param {string} dynamicPageKey
+  * @returns {Promise<Promise<Object>>}
+*/
+function curatedOrDynamicRouteHandler(req, dynamicPageKey) {
+  return db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    .then(pageKey => db.get(`${ pageKey }@published`))
+    .catch(() => db.get(`${ req.hostname }/_pages/${ dynamicPageKey }@published`));
+}
 
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
@@ -182,23 +230,34 @@ const routes = [
  * @param {Function} next
  * @returns {Promise}
  */
-function middleware(req, res, next) {
+async function middleware(req, res, next) {
   const params = {},
-    { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
-
-  let promise, dynamicParamExtractor;
+    { routeParamKey, routePrefix } = getPrefixAndKey(req.path),
+    stationSlug = _.get(res, 'locals.station.site_slug');
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
   }
 
   // Define Curated/Dynamic routes.
-  // Match against section-front and topic slug prefixes
-  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  // Match against section-front, topic, and author slug prefixes
+  const sectionFrontsList = '/_lists/primary-section-fronts',
+    sectionFronts = await db.get(`${ req.hostname }${ sectionFrontsList }`),
+    sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
 
-  curatedOrDynamicRoutePrefixes.push('topic');
-  if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
-    curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
+  let promise,
+    dynamicParamExtractor,
+    curatedOrDynamicRoutePrefixes = [
+      ...sectionFrontValues,
+      ...topicPagePrefixes,
+      'authors'
+    ];
+
+  if (stationSlug) {
+    const prefixesToAdd = topicPagePrefixes.filter(prefix => req.path.includes(`/${prefix}`))
+      .map(prefix => `${stationSlug}/${prefix}`);
+
+    curatedOrDynamicRoutePrefixes = curatedOrDynamicRoutePrefixes.concat(prefixesToAdd);
   }
 
   // Define curated/dynamic routing logic
@@ -237,16 +296,6 @@ function middleware(req, res, next) {
           throw error;
         }
       });
-  } else if (req.path.indexOf('/stations') === 0) {
-    if (req.path.match(/stations\/location\/(.+)/)) {
-      params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
-    } else if (req.path.match(/stations\/music\/(.+)/)) {
-      params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
-    }
-    promise = db.get(`${req.hostname}/_pages/stations-directory@published`);
-  } else if (/\/(.+)\/listen$/.test(req.path)) {
-    params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
-    promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     const route = routes.find(r => r.testPath(req));
 
@@ -255,7 +304,7 @@ function middleware(req, res, next) {
   }
 
   // Compose and respond
-  promise
+  return promise
     .then(data => {
       // Set locals
       fakeLocals(req, res, params);

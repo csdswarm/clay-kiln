@@ -2,6 +2,7 @@
 
 const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
+  _pick = require('lodash/pick'),
   radioApi = require('./radioApi'),
   { URL } = require('url'),
   { DEFAULT_STATION } = require('../universal/constants'),
@@ -227,5 +228,21 @@ api.getAllStationsCallsigns = withUpdatedStations(({ locals, addDefaultCallsign 
 
   return callsigns.sort();
 });
+
+
+/**
+ * Gets a list of specific stations, by calling getAllStations and filtering the list
+ *
+ * @param {object} argObj
+ * @param {object} [argObj.locals] - used by withUpdatedStations
+ * @param {object} [argObj.ids] - used when getting stations by id
+ */
+api.getSomeStations = {
+  byId: async ({ locals, ids }) => {
+    const allStations = await api.getAllStations.byId({ locals });
+
+    return _pick(allStations,ids);
+  }
+};
 
 module.exports = api;

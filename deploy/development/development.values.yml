@@ -17,7 +17,7 @@ configmap:
     AWS_S3_CDN_HOST: "stg-images.radio.com"
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
     CLAY_BUS_HOST: "redis://dev-redis.radio-dev.com:6379"
-    CLAY_LOG_PRETTY: "true"
+    CLAY_LOG_PRETTY: ""
     CLAY_PROVIDER: "google"
     CLAY_SCHEDULING_ENABLED: "true"
     CLAY_SITE_HOST: "dev-clay-k8s.radio.com"
@@ -54,6 +54,7 @@ configmap:
     URPS_AUTHORIZATIONS_URL: "https://admin-api-stg.radio-sbx.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+    USE_URPS_CORE_ID: "true"
 clayconfig:
   data:
     .clayconfig: |

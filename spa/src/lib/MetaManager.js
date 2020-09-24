@@ -134,14 +134,14 @@ export default class MetaManager {
     if (dynamicMetaUrlData) {
       metaUrlData = {
         rel: dynamicMetaUrlData.url,
-        ogUrl: dynamicMetaUrlData.url
+        ogUrl: dynamicMetaUrlData.localUrl
       }
     } else {
       metaUrlData = queryPayload.findComponent(spaPayload.head, 'meta-url')
       metaUrlData = {
         // Clone string concat logic from meta-url/template.hbs.
         rel: metaUrlData.syndicatedUrl || metaUrlData.url,
-        ogUrl: metaUrlData.url
+        ogUrl: metaUrlData.localUrl
       }
     }
 

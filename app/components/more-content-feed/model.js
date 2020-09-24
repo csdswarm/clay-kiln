@@ -29,7 +29,7 @@ const _get = require('lodash/get'),
   render = async function (ref, data, locals) {
     const isDynamicAuthorPage = _get(locals, 'params.author');
 
-    data.dynamicTagPage = _get(locals, 'params.dynamicTag', _get(locals, 'params.stationSlug'));
+    data.dynamicTagPage = _get(locals, 'params.dynamicTag');
 
     if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0 && data.populateFrom !== 'host') {
       sendError(`${data.populateFrom} not found`, 404);
@@ -37,7 +37,8 @@ const _get = require('lodash/get'),
 
     Object.assign(data._computed, {
       stationId: _get(locals, 'station.id'),
-      lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
+      lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0),
+      showContentLabels: data.populateFrom === 'all-content' || data.populateFrom === 'author' || data.populateFrom === 'host'
     });
 
     // ON-1995: The data.station property is not filled when is done using the migration script and older components may no have the property set properly.
@@ -45,12 +46,40 @@ const _get = require('lodash/get'),
     return data;
   };
 
+/**
+ * Coerces the page value from `locals.page` to a number where applicable
+ * and errors out otherwise. This is needed because the `page` value comes
+ * from an api query param which gets parsed as a string.
+ *
+ * @param {string} page from locals
+ *
+ * @returns {Number}
+ */
+function coerceLocalsPageValueToNumber(page) {
+  const valueType = typeof page,
+    // the page can be undefined because the initial
+    // render happens on the server so there is
+    // no actual `page` parameter being passed in.
+    isUndefined = valueType === 'undefined',
+    isValidValueType = isUndefined || valueType === 'string';
+
+  if (!isValidValueType) {
+    throw new Error(`invalid page value \`${page}\`.`);
+  }
+
+  return isUndefined
+    ? 0
+    : Number(page);
+}
+
 module.exports = recirculationData({
   contentKey: 'content',
   elasticFields,
   mapDataToFilters: (uri, data, locals) => ({
     pagination: {
-      page: _get(locals, 'page')
+      page: coerceLocalsPageValueToNumber(
+        _get(locals, 'page')
+      )
     }
   }),
   mapResultsToTemplate: async (locals, result, item = {}) => {
@@ -61,7 +90,6 @@ module.exports = recirculationData({
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       subHeadline: item.overrideSubHeadline || result.subHeadline,
       pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
       label,
