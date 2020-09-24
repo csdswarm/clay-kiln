@@ -64,8 +64,8 @@ bootstrap:
 	@echo "\r\n\r\n"
 	cd ./app && cat ./first-run/**/_dynamic_pages.yml | clay import -k demo -y -p clay.radio.com
 	@echo "\r\n\r\n"
-#	@echo ""
-#	./migrations/legacy/run-legacy-scripts.sh
+	@echo ""
+	./migrations/legacy/run-legacy-scripts.sh
 
 install-dev:
 	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm run build
