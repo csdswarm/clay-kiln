@@ -13,6 +13,23 @@ primaryHeadline:
       required: true
       max: 280
     help: Write your most shareable headline
+
+isOpinion:
+  _label: Is this an opinion piece?
+  _has:
+    input: checkbox
+    help: OPINION will be appended to the article's title and a disclaimer provided by legal will be added to the bottom
+  
+opinionHeadlineOverride:
+  _label: Override default 'OPINION' label prepended to the headline
+  _placeholder: 'OPINION'
+  _has:
+    input: default-text-with-override
+    overrideCheckbox:
+      help: >-
+        If this article is an opinion piece, 'OPINION' will be prepended to the article's headline,
+        you can change the default prepended label here.
+
 shortHeadline:
   _label: Twitter/Short Headline
   _has:
@@ -401,6 +418,10 @@ genreSyndication:
     distribute: vertical-level-content
 
 _groups:
+  opinion:
+    fields:
+      - isOpinion
+      - opinionHeadlineOverride
   publishedDate:
     fields:
       - articleDate
@@ -445,6 +466,8 @@ _groups:
 
   settings:
     fields:
+      - isOpinion
+      - opinionHeadlineOverride
       - stationName
       - feeds
       - showSocial
