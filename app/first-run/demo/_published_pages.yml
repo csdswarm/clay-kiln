@@ -30,6 +30,38 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
+  music:
+    head:
+      - /_components/meta-title/instances/music
+      - /_components/meta-description/instances/music
+      - /_components/meta-url/instances/music
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/section-front/instances/music
+    banner:
+      - /_components/alert-banner/instances/default
+    layout: /_layouts/one-column-layout/instances/general
+    customUrl: /music
+    secondary: []
+    pageHeader: []
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  news:
+    head:
+      - /_components/meta-title/instances/news
+      - /_components/meta-description/instances/news
+      - /_components/meta-url/instances/news
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/section-front/instances/news
+    banner:
+      - /_components/alert-banner/instances/default
+    layout: /_layouts/one-column-layout/instances/general
+    customUrl: /news
+    secondary: []
+    pageHeader: []
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
   newsletter-subscribe:
     customUrl: /newsletter/subscribe
     head:
@@ -54,3 +86,19 @@ _pages:
       - /_components/redirects/instances/default
     pageHeader: []
     secondary: []
+  sports:
+    head:
+      - /_components/meta-title/instances/sports
+      - /_components/meta-description/instances/sports
+      - /_components/meta-url/instances/sports
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/section-front/instances/sports
+    banner:
+      - /_components/alert-banner/instances/default
+    layout: /_layouts/one-column-layout/instances/general
+    customUrl: /sports
+    secondary: []
+    pageHeader: []
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
