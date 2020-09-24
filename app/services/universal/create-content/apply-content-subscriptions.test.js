@@ -5,7 +5,7 @@ const expect = require('chai').expect,
   filename = __filename.split('/').pop().split('.').shift(),
   proxyquire = require('proxyquire'),
   applyContentSubscriptions = proxyquire('./apply-content-subscriptions', {
-    '../../server/get-subscriptions-with-station-props': () => Promise.resolve(mockData.stationsSubscribedToContent)
+    '../../server/get-subscriptions-with-station-props': () => Promise.resolve(mockData.subscriptionsWithStationProps)
   }),
   mockData = {
     data: {
@@ -137,7 +137,7 @@ const expect = require('chai').expect,
       },
       extension: 'html'
     },
-    stationsSubscribedToContent: [
+    subscriptionsWithStationProps: [
       {
         callsign: 'WXRTFM',
         name: '93XRT',
