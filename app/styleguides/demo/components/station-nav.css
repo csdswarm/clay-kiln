@@ -46,6 +46,14 @@
   @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
 }
 
+@define-mixin station-listen-nav-cta1{
+  @mixin font CircularStd-Medium, 12px, theme(primaryFontColor, $black), inherit, 12px;
+}
+
+@define-mixin station-listen-nav-cta2{
+  @mixin font CircularStd-Medium, 11px, theme(primaryFontColor, $black), inherit, 15.92px;
+}
+
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
 $logo-margin-right: em(60);
@@ -304,7 +312,83 @@ $caret-margin-right: em(25);
 
       .station-nav__menu-right {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
+        .station-nav__menu-right-cta {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          flex: 1 0 auto;
+        }
+        .station-nav__cta {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          &--newsletter {
+            @mixin station-listen-nav-cta1;
+            text-transform: uppercase;
+          }
+          &--contact {
+            @mixin station-listen-nav-cta2;
+            text-transform: uppercase;
+          }
+          &--has-both {
+            .station-nav__cta-link:first-of-type {
+              margin-bottom: em(6, 11);
+            }
+          }
+        }
+        .station-nav__cta-link {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: inherit;
+          text-align: right;
+        }
+        .station-nav__cta-link-icon {
+          display: flex;
+        }
+        .station-nav__cta-link-text {
+          display: flex;
+          flex-direction: column;
+        }
+        .station-nav__cta-link-text-line {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+        .station-nav__cta-link-icon {
+          svg {
+            fill: theme(primaryFontColor, $black);
+          }
+          &--newsletter {
+            margin-right: em(6, 12);
+            svg {
+              height: em(12, 12);
+            }
+          }
+          &--chevron-right {
+            margin-left: em(4, 12);
+            svg {
+              height: em(8, 12);
+            }
+          }
+          &--tel {
+            margin-right: em(6, 11);
+            svg {
+              height: em(12, 11);
+            }
+          }
+          &--sms {
+            margin-right: em(6, 11);
+            svg {
+              height: em(12, 11);
+            }
+          }
+        }
+        .station-nav__menu-right-listen {
+          display: flex;
+          align-items: flex-end;
+        }
       }
     }
 
