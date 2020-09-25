@@ -2,12 +2,19 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin podcast-front-header-font1 {
+  @mixin font CircularStd-Black, 35px, theme(primaryColor, $parisM), -.55px, 90px;
+}
+@define-mixin podcast-front-header-font2 {
+  @mixin font CircularStd-Black, 35px, theme(primaryColor, $parisM), -.55px, 42px;
+}
+
 @define-mixin podcast-front-font1 {
   @mixin font CircularStd-Black, 14px, $white, -0.55px, 17px;
 }
 
-.component--podcast-front-page {
-  &.podcast-front-page {
+.component--podcast-front {
+  &.podcast-front {
     display: flex;
     flex-direction: column;
 
@@ -29,3 +36,46 @@
     }
   }
 }
+
+.podcast-front {
+  &__header-banner {
+    h1 {
+      @mixin podcast-front-header-font1;
+      margin:0 auto em(20, 35) auto;
+      text-transform: capitalize;
+      display: table;
+      white-space: nowrap;
+      width: em(1100, 35);
+      padding-right: em(15, 35);
+
+      @mixin large-screen {
+        width: em(940, 35);
+        @mixin podcast-front-header-font2;
+      }
+
+      @mixin medium-screen {
+        width: calc(100% - em(60, 35));
+        max-width: em(728, 35);
+      }
+
+      @mixin medium-small-screen {
+        width: 100%;
+        margin-bottom: em(30, 35);
+      }
+
+      &:after {
+        border-top: em(1, 35) solid theme(primaryColor, $parisM);
+        content: '';
+        display: table-cell;
+        position: relative;
+        top: em(45, 35);
+        left: em(15, 35);
+        width: 100%;
+        @mixin large-screen {
+            top: em(21, 35);
+        }
+      }
+    }
+  }
+}
+

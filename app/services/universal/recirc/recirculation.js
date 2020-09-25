@@ -9,6 +9,7 @@
  * Component expects the following fields in the schema.yml
  * populateFrom
  * contentType
+ * authors
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -95,6 +96,7 @@ const
       moreContent
     };
   },
+
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => {
     const
@@ -136,7 +138,6 @@ const
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
-    urlIsValid: validatedItem.urlIsValid,
     canonicalUrl: curatedItem.url || validatedItem.canonicalUrl,
     feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
@@ -184,7 +185,7 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ sectionFront })
+              ...multiCaseFilter({ sectionFront })
             ]
           }
         },
@@ -197,18 +198,19 @@ const
     secondarySectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+      createObj: ({ sectionFront, secondarySectionFront }, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ secondarySectionFront })
-            ]
+              ...multiCaseFilter({ sectionFront, ...secondarySectionFront && { secondarySectionFront } })
+            ].filter(Boolean)
           }
         },
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
-          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+          { 'stationSyndication.sectionFront': sectionFront },
+          secondarySectionFront && { 'stationSyndication.secondarySectionFront': secondarySectionFront }
         )
       ].filter(Boolean))
     },
@@ -308,25 +310,22 @@ const
    *                       as is and lowercase against the data
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
-  multiCaseFilter = obj => {
-    const [key, value] = Object.entries(obj)[0] || [];
-
-    return minimumShouldMatch([
-      { match: { [ key ]: `${value}` } },
-      { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]);
-  },
+  multiCaseFilter = obj => Object.entries(obj).map(([key, value]) => minimumShouldMatch([
+    { match: { [ key ]: `${value}` } },
+    { match: { [ key ]: `${value}`.toLowerCase() } }
+  ])),
 
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
-   * @param {object} obj - The syndicated property and value to filter
+   * @param {object} sectionFront - The section front property and value to filter
+   * @param {object} secondarySectionFront - The secondary section front property and value to filter
    * @returns {*|
    *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
    *   {bool: {should: Array, minimum_should_match: number}}]}}}}
    * }
    */
-  syndicatedSectionFrontFilter = (stationSlug, obj) => ({
+  syndicatedSectionFrontFilter = (stationSlug, sectionFront, secondarySectionFront) => ({
     nested: {
       path: 'stationSyndication',
       query: {
@@ -337,12 +336,38 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(obj)
-          ]
+            ...multiCaseFilter({ ...sectionFront, ...secondarySectionFront })
+          ].filter(Boolean)
         }
       }
     }
   }),
+
+  /**
+   * Adds an extra condition for only subscribed content
+   * @returns {(*|{bool: { should: [{ match: {'stationSyndication.unsubscribed': false}}]}})[]}
+   */
+  subscribedContentOnly = [{
+    bool: {
+      should: [
+        {
+          match: {
+            'stationSyndication.unsubscribed': false
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSyndication.unsubscribed'
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
+  }],
 
   /**
    * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
@@ -353,8 +378,15 @@ const
     nested: {
       path: 'stationSyndication',
       query: {
-        match: {
-          'stationSyndication.stationSlug': stationSlug
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            ...subscribedContentOnly
+          ]
         }
       }
     }
@@ -441,7 +473,7 @@ const
    * @return {string} host
    */
   getHost = (data, locals) => {
-    data.author = coalesce(locals, 'host', 'params.host');
+    data.host = coalesce(locals, 'host', 'params.host');
 
     return data.host;
   },
@@ -470,7 +502,7 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
+    
     if (tags === '') {
       return [];
     }
@@ -541,6 +573,18 @@ const
   }),
 
   /**
+   * assigns urlIsValid to item if the key exists on result
+   *
+   * @param {object} result
+   * @param {object} item - this is mutated
+   */
+  handleUrlIsValid = (result, item) => {
+    if (result.hasOwnProperty('urlIsValid')) {
+      item.urlIsValid = result.urlIsValid;
+    }
+  },
+
+  /**
    * Use filters to query elastic for content
    *
    * @param {object} config
@@ -584,7 +628,17 @@ const
           value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
-          value = { value, stationSlug, includeSyndicated };
+          if (_isEmpty(value)) {
+            return;
+          }
+          value = {
+            value: {
+              sectionFront: filters.sectionFronts,
+              secondarySectionFront: value
+            },
+            stationSlug,
+            includeSyndicated
+          };
           break;
         case 'includeSyndicated':
           return;
@@ -604,6 +658,7 @@ const
       }
       addCondition(query, key, value);
     });
+
     Object.entries(excludes)
       .forEach(([key, value]) => {
         if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
@@ -716,7 +771,14 @@ const
             [contentKey]: await Promise.all(
               [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
                 .slice(0, maxItems)
-                .map(async (item) => mapResultsToTemplate(locals, item))),
+                .map(async (result) => {
+                  const item = {};
+
+                  handleUrlIsValid(result, item);
+
+                  return mapResultsToTemplate(locals, result, item);
+                })
+            ),
             initialLoad: !pagination.page,
             moreContent: totalHits > maxItems
           });
@@ -742,6 +804,8 @@ const
 
         item.uri = result._id;
 
+        handleUrlIsValid(result, item);
+
         return mapResultsToTemplate(locals, result, item);
       }));
 
@@ -754,5 +818,6 @@ module.exports = {
   getStationSlug,
   makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
-  sectionOrTagCondition
+  sectionOrTagCondition,
+  subscribedContentOnly
 };
