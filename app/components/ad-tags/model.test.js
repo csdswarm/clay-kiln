@@ -51,14 +51,14 @@ describe('ad-tags', function () {
   });
 
   describe('save', () => {
-    function setup_render() {
+    function setup_save() {
       const { mockLocals, mockData, expectedTags, save } = setup_model();
 
       return { mockLocals, mockData, expectedTags, save };
     };
 
     it('includes the slug property for all tags elements', async () => {
-      const { mockLocals, mockData, expectedTags, save } = setup_render(),
+      const { mockLocals, mockData, expectedTags, save } = setup_save(),
         data = await save('some_ref', mockData, mockLocals);
 
       expect(data.items).to.deep.eq(expectedTags);
