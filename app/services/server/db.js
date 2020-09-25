@@ -200,7 +200,7 @@ const utils = require('../universal/utils'),
     const tableName = findSchemaAndTable(key);
 
     if (!tableName) {
-      db.put(key, value);
+      return db.put(key, value);
     } else {
       await ensureTableExists(tableName);
       return db.raw(`
