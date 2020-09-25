@@ -1,11 +1,12 @@
 
 'use strict';
 
-const _ = require('lodash');
+const db = require('../../services/server/db'),
+  _ = require('lodash');
 
-module.exports = async (router, db) => {
+module.exports = router => {
 
-  return router.get('/*', async (req, res, next) => {
+  router.get('/*', async (req, res, next) => {
     const { edit } = res.locals;
 
     try {
@@ -30,7 +31,7 @@ module.exports = async (router, db) => {
 
       };
     } catch (error) {
-      console.log(`Error setting idDynamicPage on locals for ${req.uri}: \n`, error);
+      console.log(`Error setting isDynamicPage on locals for ${req.uri}: \n`, error);
     };
 
     next();

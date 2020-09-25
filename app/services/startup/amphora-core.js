@@ -4,7 +4,6 @@ const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
   healthCheck = require('@nymdev/health-check'),
   permissionsPlugin = require('./amphora-permissions'),
-  isDynamicPagePlugin = require('./add-to-locals/is-dynamic-page'),
   { checkUserPermissions, userPermissionRouter } = require('../server/permissions');
 
 function initAmphora(app, search, sessionStore, routes) {
@@ -17,8 +16,7 @@ function initAmphora(app, search, sessionStore, routes) {
       search,
       permissionsPlugin(checkUserPermissions, userPermissionRouter()),
       routes,
-      require('amphora-schedule'),
-      isDynamicPagePlugin
+      require('amphora-schedule')
     ],
     storage: require('amphora-storage-postgres'),
     eventBus: require('amphora-event-bus-redis')

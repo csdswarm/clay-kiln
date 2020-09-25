@@ -21,7 +21,8 @@ const AWS = require('aws-sdk'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
   siteMapStations = require('./sitemap-stations'),
   siteMapGoogleNews = require('./sitemap-google-news'),
-  stationTheming = require('../services/server/stationThemingApi');
+  stationTheming = require('../services/server/stationThemingApi'),
+  addToLocals = require('./add-to-locals');
 
 module.exports = router => {
   // Auth Middleware
@@ -155,7 +156,6 @@ module.exports = router => {
    */
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
-
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);
@@ -171,4 +171,5 @@ module.exports = router => {
   addEndpoints.signOut(router);
   addEndpoints.getStationsSubscribedToContent(router);
   addEndpoints.stationUtils(router);
+  addToLocals.isDynamicPage(router);
 };
