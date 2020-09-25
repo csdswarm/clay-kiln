@@ -202,12 +202,13 @@ const utils = require('../universal/utils'),
     if (!tableName) {
       db.put(key, value);
     } else {
-      try {
-        await get(key);
-        return db.raw(`UPDATE ${tableName} SET data = ? WHERE id = ?`, [value, key]);
-      } catch (error) {
-        return db.raw(`INSERT INTO ${tableName} (id, data) VALUES (?, ?)`, [key, value]);
-      }
+      await ensureTableExists(tableName);
+      return db.raw(`
+        INSERT INTO station_options(id, data)
+          VALUES
+            (?, ?)
+          ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
+      `, [key, value]);
     }
   };
 

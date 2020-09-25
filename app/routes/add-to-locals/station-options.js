@@ -1,14 +1,22 @@
 'use strict';
 
-const db = require('../../services/server/db');
+const db = require('../../services/server/db'),
+  redis = require('../../services/server/redis');
   
 
 module.exports = app => {
   app.use(async (req, res, next) => {
-    const { station } = res.locals,
-      stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, {});
+    const { station } = res.locals;
 
-    res.locals.stationOptions = stationOptions;
+    let stationOptions = await redis.get(`station_options:${station.id}`);
+
+    if (!stationOptions) {
+      stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, {});
+      redis.set(`station_options:${station.id}`, JSON.stringify(stationOptions));
+    }
+
+    res.locals.stationOptions = JSON.parse(stationOptions);
+
     next();
   });
 };
