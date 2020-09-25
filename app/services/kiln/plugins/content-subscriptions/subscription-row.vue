@@ -13,7 +13,7 @@
         </ui-collapsible>
       </template>
       <!-- /filter -->
-      <template v-else="">
+      <template v-else>
         <span v-if="item.useFilter">
           {{ $options.filters[item.useFilter](subscription[item.key]) }}
         </span>
