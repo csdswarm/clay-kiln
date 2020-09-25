@@ -214,11 +214,3 @@
     min-height: 0 !important;
   }
 }
-
-.has-global-sponsorship-ad {
-  .advertisement--full {
-    .dfp-takeover-skin {
-      margin-top: em(43);
-    }
-  }
-}
