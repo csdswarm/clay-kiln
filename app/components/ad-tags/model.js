@@ -1,11 +1,11 @@
 'use strict';
+const slugifyService = require('../../services/universal/slugify');
 
 module.exports.save = function (uri, data) {
   for (const aTag of data.items) {
     aTag.text = aTag.text.trim();
+    aTag.slug = slugifyService(aTag.text);
   }
-
-  data.normalizedAdTagsStr = data.items.map(item => item.text.replace(/ /g, '-')).join(',');
-
+  data.tagString = data.items.map(item => item.text).join(',');
   return data;
 };
