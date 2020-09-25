@@ -12,7 +12,7 @@ describe('ad-tags', function () {
   afterEach(sinon.restore);
 
   function setup_model() {
-    const { save } = adTags,
+    const { render, save } = adTags,
       mockLocals = {
         station: {
           site_slug: 'siteslug'
@@ -31,8 +31,24 @@ describe('ad-tags', function () {
         { text: 'Also multiple Strings', slug: 'also-multiple-strings', count: 1 }
       ];
 
-    return { mockLocals, mockData, expectedTags, save };
+    return { mockLocals, mockData, expectedTags, render, save };
   };
+
+  describe('render', () => {
+    function setup_render() {
+      const { mockLocals, mockData, expectedTags, render } = setup_model();
+
+      return { mockLocals, mockData, expectedTags, render };
+    };
+
+    it('includes a adTags property with all tags items separated by comma', async () => {
+      const { mockLocals, mockData, render } = setup_render(),
+        data = await render('some_ref', mockData, mockLocals);
+
+      expect(data._computed).to.have.property('adTags');
+      expect(data._computed.adTags).to.eq('One,Two Strings,Also multiple Strings');
+    });
+  });
 
   describe('save', () => {
     function setup_render() {
@@ -41,19 +57,10 @@ describe('ad-tags', function () {
       return { mockLocals, mockData, expectedTags, save };
     };
 
-    it('Should include a tagString with all items separated by comma', async () => {
-      const { mockLocals, mockData, save } = setup_render(),
-        data = await save('some_ref', mockData, mockLocals);
-
-      expect(data).to.have.own.property('tagString');
-      expect(data.tagString).to.eq('One,Two Strings,Also multiple Strings');
-    });
-
-    it('Should include the slug text for all tags', async () => {
+    it('includes the slug property for all tags elements', async () => {
       const { mockLocals, mockData, expectedTags, save } = setup_render(),
         data = await save('some_ref', mockData, mockLocals);
 
-      expect(data).to.have.own.property('tagString');
       expect(data.items).to.deep.eq(expectedTags);
     });
   });

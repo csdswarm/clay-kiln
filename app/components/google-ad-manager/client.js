@@ -351,7 +351,7 @@ function getContentTags(pageData) {
   const adTagsEl = document.querySelector('.component--ad-tags');
 
   return adTagsEl
-    ? (adTagsEl.getAttribute('data-ad-tags') || '').split(',')
+    ? (adTagsEl.dataset.adTags || '').split(',')
     : [];
 }
 
