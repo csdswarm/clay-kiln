@@ -1,8 +1,8 @@
 _pages:
   podcast-front:
     head: # @TODO SEO
-      - /_components/dynamic-meta-title/instances/podcast-front
-      - /_components/dynamic-meta-description/instances/podcast-front
+      # - /_components/dynamic-meta-title/instances/podcast-front
+      # - /_components/dynamic-meta-description/instances/podcast-front
       - /_components/dynamic-meta-url/instances/general
       # - /_components/dynamic-meta-image/instances/podcast-front
     layoutHeader:
