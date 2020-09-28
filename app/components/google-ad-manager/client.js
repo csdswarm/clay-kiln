@@ -343,7 +343,7 @@ function getAuthors(pageData) {
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {string[]}
  */
-function getContentTags(pageData) {
+function getContentAdTags(pageData) {
   if (!isArticleOrGallery(pageData)) {
     return [];
   }
@@ -370,15 +370,16 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
   // we can't refer to the NMC tags for author since NMC only holds a single
   //   author for some reason.
   const authors = getAuthors(pageData),
-    contentTags = getContentTags(pageData),
+    contentTags = getContentAdTags(pageData),
     trackingData = getTrackingData({
       pathname: window.location.pathname,
       station: currentStation,
       pageData,
       contentTags
     }),
-    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ','), // imported content tags are been created with slashes instead of commas.
-    targetingTagData = _uniq(trackingData.tag.concat(nmcTags.split(','))).filter(Boolean),
+    // imported content tags is been created with slashes instead of commas, using this pattern when the importer is updated we won't need to update Unity side.
+    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ',').split(','),
+    targetingTagData = _uniq(nmcTags.concat(trackingData.tag)).filter(Boolean),
     adTargetingData = {
       targetingAuthors: authors,
       targetingTags: targetingTagData.join(',')

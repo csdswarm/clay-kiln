@@ -3,6 +3,7 @@
 const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   _without = require('lodash/without'),
+  _uniq = require('lodash/uniq'),
   parse = require('url-parse'),
   getPageId = require('../../services/universal/analytics/get-page-id'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
@@ -22,25 +23,30 @@ const _get = require('lodash/get'),
 function getNmcData(hasImportedNmcData, componentData, locals) {
   const { station, url } = locals,
     pathname = parse(url).pathname,
-    pageData = getPageData(pathname, componentData.contentType, station.site_slug);
+    pageData = getPageData(pathname, componentData.contentType, station.site_slug),
+    contentTags = [componentData.sectionFront, componentData.secondarySectionFront, ...(componentData.contentTagItems || []).map(i => i.text)].filter(Boolean),
+    // imported content tags is been created with slashes instead of commas, using this pattern when the importer is updated we won't need to update Unity side.
+    nmcImportedTags = _get(componentData, 'importedNmcData.tag', '').replace(/\//g, ',').split(','),
+    targetingTags = _uniq(contentTags.concat(nmcImportedTags).filter(Boolean));
 
   if (hasImportedNmcData) {
     const pageId = getPageId({ pageData, pathname }),
-      nmcData = componentData.importedNmcData;
+      nmcMutableData = componentData.importedNmcData,
+      nmcData = Object.assign({}, nmcMutableData);
 
     // the imported pid is always a bogus value 'api_v1.1_blogs'.  We know this
     //   is bogus because it's not the value in the article's html.
-    nmcData.pid = pageId;
+    nmcMutableData.pid = pageId;
+    nmcData.tag = targetingTags.join(','); // ensures we are always sending newly edited tags.
 
     return nmcData;
   } else { // nmc data is not imported
-    const contentTags = [componentData.sectionFront, componentData.secondarySectionFront, ...(componentData.contentTagItems || []).map(i => i.text)].filter(Boolean),
-      nmcData = getTrackingData({
-        contentTags,
-        pageData,
-        pathname,
-        station
-      });
+    const nmcData = getTrackingData({
+      contentTags,
+      pageData,
+      pathname,
+      station
+    });
 
     nmcData.tag = nmcData.tag.join(',');
 
