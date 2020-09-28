@@ -327,3 +327,12 @@ _users:
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
+  -
+    username: jeremy.zevin+etm+urps@gmail.com
+    provider: cognito
+    auth: admin
+  -
+    username: jeremy.zevin+etm+urps+no+perms@gmail.com
+    provider: cognito
+    auth: admin
+
