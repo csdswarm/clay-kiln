@@ -56,7 +56,9 @@ const { getSectionFrontName, retrieveList } = require('../../services/server/lis
     if (syndication) {
       return syndication.sectionFront;
     }
-  };
+  },
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
+  _get = require('lodash/get');
 
 module.exports = recirculationData({
   elasticFields,
@@ -139,6 +141,10 @@ module.exports = recirculationData({
     data._computed.storySizeParams = asQuery(defaultImageSizes.default);
     data._computed.primaryStorySizes = mapSizes(primaryImageSizes);
     data._computed.primaryStorySizeParams = asQuery(primaryImageSizes.default);
+
+    data._computed.rdcSectionFrontModifier = _get(
+      locals, 'stationForPermissions.id'
+    ) === DEFAULT_STATION.id ? 'section-lead--rdc-sports' : '';
 
     return data;
   }
