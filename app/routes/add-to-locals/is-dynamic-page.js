@@ -33,7 +33,7 @@ module.exports = router => {
 
       };
     } catch (error) {
-      log(`Error setting isDynamicPage on locals for ${req.uri}: \n`, error);
+      log('error', `Error setting isDynamicPage on locals for ${req.uri}: \n`, error);
     };
 
     next();
