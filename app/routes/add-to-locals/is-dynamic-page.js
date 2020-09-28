@@ -2,7 +2,9 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  logger = require('../../universal/log'),
+  log = logger.setup({ file: __filename });
 
 module.exports = router => {
 
@@ -31,7 +33,7 @@ module.exports = router => {
 
       };
     } catch (error) {
-      console.log(`Error setting isDynamicPage on locals for ${req.uri}: \n`, error);
+      log(`Error setting isDynamicPage on locals for ${req.uri}: \n`, error);
     };
 
     next();
