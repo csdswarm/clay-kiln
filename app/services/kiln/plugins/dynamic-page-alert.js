@@ -4,8 +4,6 @@ const _ = require('lodash');
 module.exports = () => {
   const { edit, isDynamicPage } = window.kiln.locals;
 
-  window.kiln = window.kiln || {};
-  window.kiln.plugins = window.kiln.plugins || {};
   _.set(window, ['kiln', 'plugins', 'dynamic-page-alert'], (store) => {
     if (edit && isDynamicPage) {
       store.dispatch('addAlert', { type: 'warning', text: `
