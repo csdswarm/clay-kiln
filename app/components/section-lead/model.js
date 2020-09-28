@@ -144,7 +144,9 @@ module.exports = recirculationData({
 
     data._computed.rdcSectionFrontModifier = _get(
       locals, 'stationForPermissions.id'
-    ) === DEFAULT_STATION.id ? 'section-lead--rdc-sports' : '';
+    ) === DEFAULT_STATION.id && _get(
+      locals, 'sectionFront'
+    ) === 'sports' ? 'section-lead--rdc-sports' : '';
 
     return data;
   }
