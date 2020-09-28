@@ -42,7 +42,7 @@ async function getSecondarySFMappings() {
 async function getMigratedStations(envInfo) {
   try {
     const result = await esQuery(
-      { size: 100 },
+      { size: 150 },
       {
         ...envInfo.es,
         index: 'published-stations',
