@@ -3,7 +3,7 @@
 
 const db = require('../../services/server/db'),
   _ = require('lodash'),
-  logger = require('../../universal/log'),
+  logger = require('../../services/universal/log'),
   log = logger.setup({ file: __filename });
 
 module.exports = router => {
