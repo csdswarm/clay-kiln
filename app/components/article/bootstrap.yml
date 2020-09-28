@@ -27,8 +27,6 @@ _components:
       _ref: /_components/tags/instances/new
     adTags:
       _ref: /_components/ad-tags/instances/new
-    contentPageSponsorLogo:
-      _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
     sideShare:
       _ref: /_components/share/instances/new
     feeds:
