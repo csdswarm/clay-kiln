@@ -19,22 +19,35 @@ const socialSvgs = require('./social-svgs'),
  * @return {String}
  */
 function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, sources, options) {
-  const listAndMeta = [...authorsAndMeta, ...hostsAndMeta, ...sources];
+  const listAndMeta = reduceList([...authorsAndMeta, ...hostsAndMeta], options),
+    listSources = reduceList([...sources], options);
 
-  return listAndMeta.reduce(function (acc, item, index) {
-    if (listAndMeta.length === 1) { // only display socials if there is one author
+  return `${listAndMeta} ${listSources ? listSources : ' '}`;
+    
+}
+
+/**
+ * Create html string of the list
+ *
+ * @param {Object[]} list
+ * @param {Object} options
+ * @return {string}
+ */
+function reduceList(list, options) {
+  return list.reduce(function (acc, item, index) {
+    if (list.length === 1) { // only display socials if there is one author
       if (options.showSocial) {
         return acc + createAuthorHostHtml(item, options) + createSocialsHtml(item);
       }
       return acc + createAuthorHostHtml(item, options);
     } else {
-      if (index === listAndMeta.length - 1) {
-        if (listAndMeta.length === 2) {
+      if (index === list.length - 1) {
+        if (list.length === 2) {
           return `${acc}<span> and </span>${createAuthorHostHtml(item, options)}`;
         } else {
           return `${acc}<span>, </span> <span> and </span>${createAuthorHostHtml(item, options)}`;
         }
-      } else if (index > 0 && index < listAndMeta.length - 1) {
+      } else if (index > 0 && index < list.length - 1) {
         return `${acc}<span>, </span>${createAuthorHostHtml(item, options)}`;
       } else {
         return acc + createAuthorHostHtml(item, options);
