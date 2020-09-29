@@ -20,7 +20,10 @@ function rendererPipeline(ref, data, locals, prefix) {
     mapper = (feed) => ({ meta: data.meta, feed, attr }),
     entryMapper = (entry) => Object.assign(entry, utmParams),
     errorHandler = (error) => {
-      log('error', 'Error rendering feed data', error);
+      log('error', 'Error rendering feed data', {
+        error,
+        ref
+      });
     };
 
   return h(results)

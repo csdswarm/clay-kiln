@@ -14,7 +14,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
  */
 module.exports.render = function (ref, data, locals) { // eslint-disable-line no-unused-vars
   if (typeof data.text !== 'string') {
-    log('error', 'HTML Embed contains malformed data', { ref });
+    log('warn', 'HTML Embed contains malformed data', { ref });
 
     data.text = '';
   }

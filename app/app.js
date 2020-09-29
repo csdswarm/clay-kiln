@@ -12,6 +12,9 @@ var pkg,
 // The .env file should be processed before doing anything else.
 require('dotenv').config();
 
+// Set the plugin directory for logging
+process.env.CLAY_LOG_PLUGINS_PATH = `${__dirname}/services/server/`;
+
 pkg = require('./package.json');
 logger = require('./services/universal/log');
 log = logger.init(pkg.version);

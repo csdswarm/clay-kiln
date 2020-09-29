@@ -24,7 +24,7 @@ module.exports = {
       // Update this component instance
       db.put(ref, data)
         .catch(e => {
-          log('error', `Could not update Brightcove component video views: ${ref}`, e);
+          log('warn', 'Could not update Brightcove component video views', e);
         });
     }
 

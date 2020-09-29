@@ -201,7 +201,7 @@ const rest = require('../universal/rest'),
     try {
       response = await rest.get(endpoint, options.headers);
     } finally {
-      log('error', 'Endpoint not cached in REDIS - Making REST call', { requestTime: new Date() - start, endpoint });
+      log('warn', 'Endpoint not cached in REDIS - Making REST call', { requestTime: new Date() - start, endpoint });
       addAmphoraRenderTime(
         locals,
         {
