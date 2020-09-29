@@ -67,6 +67,7 @@
 import { uploadFile } from '../../../client/s3'
 
 const { UiFileupload, UiButton } = window.kiln.utils.components
+const _every = require('lodash/every')
 
 export default {
   props: ['name', 'data', 'schema', 'args'],
@@ -110,7 +111,11 @@ export default {
 
       try {
         const image = await this.getImageDimensions(file);
-        const valid = this.checkImageDimemsions(image);
+        let valid = this.checkImageDimemsions(image);
+        // if additonal non-kiln validators
+        if (this.args.additionNonKilnValidators) {
+          valid = _every(this.args.additionNonKilnValidators, (validator, index, array) => validator(image));
+        }
         // If file attached, exec upload logic.
         if (file && valid) {
           /*
@@ -122,9 +127,17 @@ export default {
           const s3 = await uploadFile(file);
           // Build the full s3 image url.
           this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+          // hooking into for non-kiln use
+          if (this.args.uploadCallback) {
+            this.args.uploadCallback(null, this.imageUrl);
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        // hooking into for non-kiln use
+        if (this.args.uploadCallback) {
+          this.args.uploadCallback(error);
+        }
       } finally {
         this.fileUploadButtonDisabled = false; // Re-enable file upload button.
       }
