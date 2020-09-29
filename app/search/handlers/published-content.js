@@ -3,13 +3,21 @@
 const
   db = require('../../services/server/db'),
   h = require('highland'),
-  { PAGE_TYPES } = require('../../services/universal/constants'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { elastic, filters, helpers, subscribe } = require('amphora-search'),
   { getComponentInstance, getComponentName } = require('clayutils'),
   { isOpForComponents } = require('../filters'),
   { logError, logSuccess } = require('../helpers/log-events'),
-  CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.EVENT]),
+  CONTENT = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    CONTENT_COLLECTION: 'topic-page-header',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    GALLERY: 'gallery',
+    STATIC_PAGE: 'static-page'
+  },
+  CONTENT_FILTER = isOpForComponents(Object.values(CONTENT)),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX);
 
 // Subscribe to the save stream
@@ -81,7 +89,7 @@ function processContent(obj, components) {
     }
   });
 
-  if (componentName === PAGE_TYPES.GALLERY) {
+  if (componentName === CONTENT.GALLERY) {
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
 
@@ -91,7 +99,7 @@ function processContent(obj, components) {
 }
 
 /**
- * Transforms authors and tags objects into display names.
+ * Transforms authors, hosts and tags objects into display names.
  * This must be done because ElasticSearch expects an array of strings for tags and authors, which should be their display names.
  *
  * @param {object} op
@@ -104,6 +112,10 @@ function transformAuthorsAndTags(op) {
     op.value.authors = op.value.authors.map(extractText);
   }
 
+  if (op.value.hosts) {
+    op.value.hosts = op.value.hosts.map(extractText);
+  }
+
   if (op.value.tags) {
     const data = JSON.parse(op.value.tags.data);
 
@@ -112,6 +124,29 @@ function transformAuthorsAndTags(op) {
     }
   }
 
+  return op;
+}
+
+/**
+ * section fronts are always searched against with lower case values. Make sure that they are
+ * always lower case going into elastic.
+ * @param { object } op
+ * @returns { object }
+ */
+function transformSectionFronts(op) {
+  const
+    data = op.value,
+    downCaseSectionFronts = obj =>
+      ['sectionFront', 'secondarySectionFront'].forEach(key => {
+        if (typeof obj[key] === 'string') {
+          obj[key] = obj[key].toLowerCase();
+        }
+      });
+
+  downCaseSectionFronts(data);
+
+  (data.stationSyndication || []).forEach(downCaseSectionFronts);
+  
   return op;
 }
 
@@ -137,7 +172,6 @@ function save(stream) {
       components.push(param);
       return param;
     })
-    // only bring back articles and galleries
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
@@ -146,6 +180,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(transformAuthorsAndTags)
+    .map(transformSectionFronts)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()

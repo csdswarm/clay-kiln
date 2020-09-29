@@ -1,0 +1,16 @@
+.kiln-edit-mode {
+  &.cannot-remove-component {
+    .form-header-actions button[aria-label~='Remove'],
+    .quick-bar-remove {
+      display: none;
+    }
+  }
+
+  &.cannot-add-component {
+    .form-header-actions button[aria-label~='Add'],
+    .quick-bar-dupe,
+    .quick-bar-add {
+      display: none;
+    }
+  }
+}

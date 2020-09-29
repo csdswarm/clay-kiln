@@ -7,8 +7,9 @@ ingress:
   healthCheckDomain: "preprod-clay.radio.com"
 configmap:
   data:
-    APPLE_NEWS_ENABLED: "TRUE"
-    APPLE_NEWS_PREVIEW_ONLY: "TRUE"
+    APPLE_NEWS_ENABLED: "true"
+    APPLE_NEWS_PREVIEW_ONLY: "true"
+    ARTICLE_AD_INSERT_EVERY: "3"
     AWS_S3_BUCKET: "radioimg-stg"
     AWS_S3_CDN_HOST: "stg-images.radio.com"
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
@@ -51,6 +52,7 @@ configmap:
     URPS_AUTHORIZATIONS_URL: "http://admin-api.radio.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+    USE_URPS_CORE_ID: "false"
 clayconfig:
   data:
     .clayconfig: |

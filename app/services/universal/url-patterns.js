@@ -95,6 +95,32 @@ const exists = require('lodash/identity'),
       opts.stationSlug
     ].filter(exists)
       .join('/');
+  },
+  staticPage = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.slug
+    ].filter(exists)
+      .join('/');
+  },
+  host = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.contentType,
+      opts.hostSlug
+    ].filter(exists)
+      .join('/');
+  },
+  podcastFront = opts => {
+    // e.g. http://radio.com/podcasts or http://radio.com/kroq/podcasts
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'podcasts'
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -103,9 +129,12 @@ module.exports = {
   contestSlugPattern,
   date,
   gallery,
+  host,
   sectionFront,
   event,
   eventsListing,
   contest,
-  stationFront
+  stationFront,
+  staticPage,
+  podcastFront
 };

@@ -1,6 +1,11 @@
-_version: 5.0
+_version: 6.0
 _description: |
   Latest videos module
+
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
 
 items:
   _label: Latest Videos
@@ -30,7 +35,7 @@ sectionFront:
   _label: Section Front
   _subscribe: sectionFront
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -40,7 +45,7 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -65,6 +70,7 @@ _groups:
     fields:
       - title
       - primaryContentLabel
-      - filterTags
-      - filterSecondarySectionFronts
+      - excludeTags
+      - excludeSecondarySectionFronts
+      - excludeSubscriptions
 

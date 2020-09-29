@@ -45,7 +45,7 @@ describe(dirname, function () {
         ]);
     });
 
-    it('should create breadcrumb based on the station slug', async () => {
+    it('should create breadcrumb based on locals station slug', async () => {
       const { autoLink, __ } = setup_autoLink(),
         data = {
           stationSlug: 'stationx',
@@ -74,6 +74,36 @@ describe(dirname, function () {
         { text: 'Station X', url: '//somehost.com/stationx', hidden: false },
         { text: 'Modern', url: '//somehost.com/stationx/modern', hidden: false },
         { text: 'Fashion', url: '//somehost.com/stationx/modern/fashion', hidden: false }
+      ]);
+    });
+
+    it('should create breadcrumb based on locals station slug, removing sectionFront and secondarySectionFront from breadcrumbs when data.stationSlug does not match locals.station.site_slug', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'modern',
+          secondarySectionFront: 'fashion'
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Modern', value: 'modern' },
+        { name: 'Fashion', value: 'fashion' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'localsstationx',
+        callsign: 'localsstationx',
+        name: 'Locals Station X'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Locals Station X', url: '//somehost.com/localsstationx', hidden: false }
       ]);
     });
 
@@ -154,6 +184,125 @@ describe(dirname, function () {
         { text: 'Station X', url: '//somehost.com/stationx', hidden: false },
         { text: 'Primary Section X', url: '//somehost.com/stationx/primarysectionx', hidden: false },
         { text: 'Secondary Section X', url: '//somehost.com/stationx/primarysectionx/secondarysectionx', hidden: false }
+      ]);
+    });
+
+    it('should remove sectionFront and secondarySectionFront from breadcrumbs when matching syndication source editorial feed', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'modern',
+          secondarySectionFront: 'fashion',
+          stationSyndication: [{
+            callsign: 'STATION-Y',
+            stationSlug: 'stationy',
+            stationName: 'Station Y',
+            sectionFront: 'primary',
+            secondarySectionFront: 'secondary',
+            source: 'editorial feed'
+          }]
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Primary Section Front', value: 'primary' },
+        { name: 'Secondary Section Front', value: 'secondary' },
+        { name: 'Primary Section X', value: 'primarysectionx' },
+        { name: 'Secondary Section X', value: 'secondarysectionx' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'stationy',
+        callsign: 'STATION-Y',
+        name: 'Station Y'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Station Y', url: '//somehost.com/stationy', hidden: false }
+      ]);
+    });
+
+    it('should remove sectionFront and secondarySectionFront from breadcrumbs when matching syndication source content subscription', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'modern',
+          secondarySectionFront: 'fashion',
+          stationSyndication: [{
+            callsign: 'STATION-Y',
+            stationSlug: 'stationy',
+            stationName: 'Station Y',
+            sectionFront: 'primary',
+            secondarySectionFront: 'secondary',
+            source: 'content subscription'
+          }]
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Primary Section Front', value: 'primary' },
+        { name: 'Secondary Section Front', value: 'secondary' },
+        { name: 'Primary Section X', value: 'primarysectionx' },
+        { name: 'Secondary Section X', value: 'secondarysectionx' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'stationy',
+        callsign: 'STATION-Y',
+        name: 'Station Y'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'Station Y', url: '//somehost.com/stationy', hidden: false }
+      ]);
+    });
+
+    it('should assign breadcrumb when content syndicated to an empty slug - for RDC content', async () => {
+      const { autoLink, __ } = setup_autoLink(),
+        data = {
+          stationSlug: 'stationx',
+          stationName: 'Station X',
+          sectionFront: 'primarysectionx',
+          secondarySectionFront: 'primarysectionx',
+          stationSyndication: [{
+            callsign: 'RDC',
+            stationSlug: '',
+            stationName: 'Radio.com',
+            sectionFront: 'news',
+            source: 'manual syndication'
+          }]
+        },
+        props = ['sectionFront', 'secondarySectionFront'];
+
+      __.retrieveList.resolves([
+        { name: 'Music', value: 'music' },
+        { name: 'News', value: 'news' },
+        { name: 'Sports', value: 'sports' },
+        { name: '1Thing', value: '1thing' },
+        { name: 'Primary Section Front', value: 'primary' },
+        { name: 'Secondary Section Front', value: 'secondary' },
+        { name: 'Primary Section X', value: 'primarysectionx' },
+        { name: 'Secondary Section X', value: 'primarysectionx' }
+      ]);
+
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'',
+        callsign: 'RDC',
+        name: 'Radio.com'
+      } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'News', url: '//somehost.com/news', hidden: false }
       ]);
     });
 

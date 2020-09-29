@@ -10,8 +10,9 @@ clipURL:
       required: true
       # Using pattern from https://regex101.com/r/R4COrc/5
       pattern: ^(?:http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?(omny\.fm\/shows\/[a-z0-9]+(?:-[a-z0-9]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*\/?[^\s]*)$
-      patternMessage: Must be a valid Omny URL
-    help: https://omny.fm/shows/{show name}/{clip slug}
+      patternMessage: Must be a valid Omny URL https://omny.fm/shows/{show name}/{clip slug}
+      requiredMessage: Example https://omny.fm/shows/{show name}/{clip slug}
+    help: Example https://omny.fm/shows/{show name}/{clip slug}
 
 embedSize:
   _label: Size of embed

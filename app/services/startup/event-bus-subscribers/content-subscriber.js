@@ -18,7 +18,8 @@ const
     getComponentName,
     getUri: uri.getUri,
     handlePublishStationSyndication,
-    setUri: uri.setUri
+    setUri: uri.setUri,
+    getByUrl: uri.getByUrl
   };
 
 /**
@@ -56,7 +57,7 @@ function filterNonContentType(page) {
 async function handlePublishContentPg(page) {
   __.handlePublishStationSyndication(page);
 
-  if (process.env.APPLE_NEWS_ENABLED === 'TRUE') {
+  if (process.env.APPLE_NEWS_ENABLED === 'true') {
     const articleRef = page.data.main[0].replace('@published', ''),
       appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`,
       appleNewsData = await __.dbGet(appleNewsKey, null, {});
@@ -111,8 +112,10 @@ async function handleUnpublishContentPg(page) {
     const pageData = await __.dbGet(page.uri),
       mainRef = pageData.main[0];
 
+    updateSyndicationRedirects(page);
+
     if (['article', 'gallery'].includes(__.getComponentName(mainRef)) &&
-      process.env.APPLE_NEWS_ENABLED === 'TRUE') {
+      process.env.APPLE_NEWS_ENABLED === 'true') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
         articleData = await __.dbGet(appleNewsKey, null, {}),
         { id } = articleData;
@@ -138,6 +141,27 @@ async function handleUnpublishContentPg(page) {
   }
 }
 
+async function updateSyndicationRedirects(page) {
+  const pageData = await __.dbGet(page.uri),
+    mainRef = pageData.main[0],
+    host = page.uri.split('/')[0],
+    [contentData, hostData] = await Promise.all([
+      __.dbGet(mainRef),
+      __.getByUrl(`${host}/`)
+    ]),
+    hostId = _get(hostData, '0.id');
+
+  for (const syndication of contentData.stationSyndication) {
+    const stationFrontId = await _get(await __.getByUrl(`${host}/${syndication.stationSlug}`), '0.id');
+
+    if (stationFrontId) {
+      await __.setUri(stationFrontId, `${host}${syndication.syndicatedArticleSlug}`);
+    } else {
+      await __.setUri(hostId, `${host}${syndication.syndicatedArticleSlug}`);
+    };
+  }
+}
+
 /**
  * Creates URIs for station syndications.
  * @param {object} page
@@ -153,10 +177,10 @@ async function handlePublishStationSyndication(page) {
       allSyndicatedUrls = await __.getUri(page.uri.replace('@published', '')),
       originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
-      newSyndicatedUrls = (contentData.stationSyndication || []).map(station => ({ url: `${host}${station.syndicatedArticleSlug}` })),
-      outDatedUrls = _differenceWith(allSyndicatedUrls, newSyndicatedUrls, (prev, next) => prev.url === next.url),
+      syndicationEntries = (contentData.stationSyndication || []).filter(station => !_get(station, 'unsubscribed', false)),
+      outDatedUrls = _differenceWith(allSyndicatedUrls, syndicationEntries, (prev, next) => prev.url === `${host}${next.syndicatedArticleSlug}`),
       removeCanonical = outDatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
-      queue = (contentData.stationSyndication || []).map(station => {
+      queue = (syndicationEntries || []).map(station => {
         if (station.syndicatedArticleSlug) {
           const url = `${host}${station.syndicatedArticleSlug}`,
             redirect = page.uri.replace('@published', '');

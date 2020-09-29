@@ -60,6 +60,7 @@ main:
     include:
       - article
       - generic-list
+      - smart-speaker
 secondary:
   _componentList:
     include:
@@ -74,6 +75,8 @@ tertiary:
     include:
       - latest-recirculation
       - google-ad-manager
+      - smart-speaker
+      - stats-widget-list
 bottom:
   _componentList:
     include:

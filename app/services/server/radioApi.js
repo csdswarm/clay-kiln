@@ -62,7 +62,7 @@ const rest = require('../universal/rest'),
    * @param {object} locals
    * @returns {boolean}
    */
-  shouldUseStagingApi = (locals) => {
+  shouldUseStagingApi = (locals = {}) => {
     return locals.useStagingApi && !locals.edit;
   },
   /**

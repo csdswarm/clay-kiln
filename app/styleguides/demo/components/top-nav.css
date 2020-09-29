@@ -5,10 +5,12 @@
 @import "_global/fonts";
 
 $default-radium-width: em(150);
-$default-nav-height: em(60);
-$mini-nav-height: em(46);
+$default-nav-height: em(43);
+$mini-nav-height: em(37);
 $navButton: radiocom-nav__category-button;
 $drawerSelector: nav-drawer;
+$logo-width: em(140);
+$logo-height: em(17, 18);
 
 .component--top-nav {
   position: relative; /* z-index does not work unless position is specified */
@@ -19,7 +21,8 @@ $drawerSelector: nav-drawer;
   height: $default-nav-height;
 
   button {
-    @mixin inline-block;
+    display: inline-block;
+    vertical-align: middle;
     padding: 0;
     outline: none;
     cursor: pointer;
@@ -52,7 +55,7 @@ $drawerSelector: nav-drawer;
   }
 
   a {
-    @mixin inline-block;
+    display: inline-block;
     color: #000;
     text-transform: none;
     text-decoration: none;
@@ -86,7 +89,7 @@ $drawerSelector: nav-drawer;
     vertical-align: top;
     margin-right: em(20);
     width: em(20);
-    height: em(15);
+    height: $logo-height;
     cursor: pointer;
     @mixin vertical-align;
 
@@ -140,16 +143,15 @@ $drawerSelector: nav-drawer;
     background: transparent;
     border: 0;
     height: 100%;
-    width: em(260);
+    width: $logo-width;
     padding: 0;
-    margin: 0 em(42) 0 0;
+    margin: 0 em(20) 0 0;
     cursor: pointer;
 
     img,
     svg {
       width: 100%;
-      height: auto;
-      vertical-align: -webkit-baseline-middle;
+      vertical-align: middle;
     }
   }
 
@@ -169,7 +171,7 @@ $drawerSelector: nav-drawer;
   }
 
   .$(navButton) {
-    @mixin inline-block;
+    display: inline-block;
     border: 0;
     height: 100%;
     background: transparent;
@@ -191,8 +193,7 @@ $drawerSelector: nav-drawer;
       font-size: 15px;
       color: $white;
       text-transform: uppercase;
-      line-height: 60px;
-      vertical-align: bottom;
+      line-height: em(43, 15);
     }
   }
 
@@ -571,7 +572,7 @@ $drawerSelector: nav-drawer;
      width: $large-screen-nav-width;
 
     .radiocom-nav__logo {
-      width: em(220);
+      width: $logo-width;
       margin: 0 em(15) 0 0;
     }
 
@@ -628,7 +629,7 @@ $drawerSelector: nav-drawer;
       }
 
       .radiocom-nav__logo {
-        width: em(180);
+        width: $logo-width;
       }
 
       .$(navButton) {
@@ -783,4 +784,9 @@ $drawerSelector: nav-drawer;
   .radiocom-nav {
     top: 76px;
   }
+}
+
+/*  Reset behavior of radioCom top nav bar */
+.radiocom-nav.reset-radiocom-top-nav {
+  position: unset;
 }

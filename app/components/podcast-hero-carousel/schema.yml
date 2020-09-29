@@ -1,0 +1,73 @@
+_description: The Podcast Front Page Hero Carousel
+_confirmRemoval: true
+
+# component properties
+slides:
+  _placeholder:
+    text: Add Slides
+  _label: Carousel Slides
+  _has:
+    input: complex-list
+    collapse: title
+    enforceMaxlength: true
+    validate.min: 1
+    validate.max: 5
+    props:
+      -
+        prop: image
+        _label: Image
+        _has:
+          input: advanced-image-upload
+          webLabel: Insert Image via Web
+          webHelp: Supply a valid HTTPS url to an image file then click "done" button
+          uploadLabel: Upload Image Attachment
+          uploadHelp: Choose an image file from your computer
+          validate:
+            required: true
+      -
+        prop: title
+        _label: Title
+        _has:
+          help: the title of the slide
+          input: text
+          validate:
+            required: true
+      -
+        prop: description
+        _label: Description
+        _has:
+          help: the description of the slide can be no more than 300 characters
+          input: text
+          enforceMaxlength: true
+          validate:
+            required: true
+            max: 300
+            maxMessage: the description of the slide can be no more than 300 characters
+      -
+        prop: url
+        _label: URL
+        _has:
+          help: the URL for the Podcast
+          input: text
+          validate:
+            required: true
+      -
+        prop: backgroundColor
+        _label: Background Color
+        _has:
+          help: the background color of slide i.e. #123456
+          input: text
+      -
+        prop: textColor
+        _label: Text Color
+        _has:
+          help: the text color of slide i.e. #123456
+          input: text
+      -
+        prop: hideListenNowButton
+        _label: hide the Listen Now Button
+        _checked: true
+        checked: true
+        _has:
+          help: Do you want to hide the Listen Now Button?
+          input: checkbox

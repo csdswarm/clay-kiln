@@ -5,6 +5,7 @@
 @import "_global/colors";
 @import "_global/alert-banner";
 @import "_global/layouts";
+@import "_global/permissions";
 
 .layout--one-column {
   height: 100vh;
@@ -16,8 +17,15 @@
   }
   .layout__content,
   .layout__bottomSection {
-    z-index: 3;
+    z-index: 2;
     position: relative;
+    .full-width {
+      width: 100vw;
+      margin-left: calc((100% - 100vw)/2);
+    }
+  }
+  .layout__content {
+    background: $white;
   }
   .layout__content {
     background: $white;

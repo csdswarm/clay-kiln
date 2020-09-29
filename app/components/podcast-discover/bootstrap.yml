@@ -1,0 +1,8 @@
+_components:
+  podcast-discover:
+    recentPodcast:
+      _ref: /_components/podcast-set/instances/recent
+    instances:
+      default:
+        recentPodcast:
+          _ref: /_components/podcast-set/instances/recent

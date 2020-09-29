@@ -13,6 +13,7 @@
 import QueryPayload from './QueryPayload'
 
 const queryPayload = new QueryPayload()
+const BRANCH_EDITORIAL_TAGS = 'branch:deeplink:editorial_tags'
 
 export default class MetaManager {
   /**
@@ -55,10 +56,15 @@ export default class MetaManager {
     // meta-tags component needs to be added to every page
     const metaTagsData = queryPayload.findComponent(spaPayload.head, 'meta-tags')
     if (metaTagsData) {
+      this.removeDOMTagOccurences('name', BRANCH_EDITORIAL_TAGS)
       if (metaTagsData.metaTags) {
         metaTagsData.metaTags.forEach(tag => {
           if (tag.name) {
-            this.updateMetaTag('name', tag.name, tag.content, true)
+            if (tag.name === BRANCH_EDITORIAL_TAGS) {
+              this.createMetaTag('name', tag.name, tag.content)
+            } else {
+              this.updateMetaTag('name', tag.name, tag.content, true)
+            }
           } else if (tag.property) {
             this.updateMetaTag('property', tag.property, tag.content, true)
           }
@@ -128,14 +134,14 @@ export default class MetaManager {
     if (dynamicMetaUrlData) {
       metaUrlData = {
         rel: dynamicMetaUrlData.url,
-        ogUrl: dynamicMetaUrlData.url
+        ogUrl: dynamicMetaUrlData.localUrl
       }
     } else {
       metaUrlData = queryPayload.findComponent(spaPayload.head, 'meta-url')
       metaUrlData = {
         // Clone string concat logic from meta-url/template.hbs.
         rel: metaUrlData.syndicatedUrl || metaUrlData.url,
-        ogUrl: metaUrlData.url
+        ogUrl: metaUrlData.localUrl
       }
     }
 
@@ -271,6 +277,20 @@ export default class MetaManager {
       linkTag.setAttribute('href', href)
     } else if (createIfNotExist) {
       this.createLinkTag(href)
+    }
+  }
+
+  /**
+   *
+   * Select <meta> tags and delete them from the DOM.
+   *
+   * @param {string} attributeType - Attribute to select by ("name" or "property").
+   * @param {string} attributeKey - Value of attribute to select for.
+   */
+  removeDOMTagOccurences (attributeType, attributeKey) {
+    const tags = document.head.querySelectorAll(`meta[${attributeType}='${attributeKey}']`)
+    if (tags.length) {
+      tags.forEach(tag => tag.parentNode.removeChild(tag))
     }
   }
 }

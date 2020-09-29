@@ -1,0 +1,54 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Podcasts Trending Podcasts Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin trending-podcasts-font1 {
+  @mixin font CircularStd-Book, 12px, $boulder, inherit, 18px;
+}
+@define-mixin trending-podcasts-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin trending-podcasts-font3 {
+  @mixin font CircularStd-Medium, 16px, theme(primaryColor, $robinsEggBlue), -.26px, 19px;
+}
+
+.podcast-trending {
+  padding: em(15);
+  border: 1px solid theme(primaryColor, $robinsEggBlue);
+  &--title {
+    @mixin trending-podcasts-font3;
+    margin: em(-27.5, 16) 0 em(16, 16) 0;
+    background: white;
+    width: max-content;
+    padding: 0 em(4, 16);
+  }
+  &--list-item {
+    margin-bottom: em(20);
+  }
+  &--item-link {
+    display: flex;
+    text-decoration: none;
+  }
+  &--item-thumb {
+    flex: 0 0 em(70);
+    margin-right: em(10);
+  }
+  &--item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  &--info-title {
+    @mixin trending-podcasts-font2;
+  }
+  &--info-description {
+    @mixin trending-podcasts-font1;
+    @mixin clamp 2, em(36, 12);
+  }
+  &--thumb-img {
+    width: 100%;
+  }
+}

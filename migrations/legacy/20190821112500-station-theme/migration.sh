@@ -23,6 +23,7 @@ if [[ $(curl "$http://$1/_components/theme/instances" 2>&1) == *"default"* ]];
 then
     echo "Theme has already been setup.";
 else
+    npm init -f;
     npm i yamljs node-fetch lodash;
 
     node ./modifyLayouts.js "$http://$1";
@@ -30,5 +31,5 @@ else
     cat ./components.yml | clay import -y -p -k demo "$http://$1";
     cat ./layouts.yml | clay import -y -p -k demo "$http://$1";
 
-    rm -rf ./node_modules package-lock.json layouts.yml
+    rm -rf ./node_modules package*.json layouts.yml
 fi

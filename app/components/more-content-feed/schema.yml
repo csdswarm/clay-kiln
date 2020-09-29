@@ -1,4 +1,4 @@
-_version: 14.0
+_version: 15.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -12,6 +12,30 @@ contentType:
       - article
       - gallery
       - contest
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
 
 componentTitle:
   _label: Component's Title
@@ -68,6 +92,9 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+      -
+        name: External RSS Feed
+        value: rss-feed
   _reveal:
     field: populateFrom
     operator: '!=='
@@ -105,7 +132,6 @@ primarySectionFront:
 
 sectionFrontManual:
   _label: Section Front Category
-  _publish: sectionFront
   _reveal:
     field: populateFrom
     operator: ===
@@ -183,6 +209,12 @@ excludeTags:
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
 
 excludeSectionFronts:
   _label: Exclude Section Fronts
@@ -191,6 +223,11 @@ excludeSectionFronts:
     search: true
     multiple: true
     list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -199,6 +236,21 @@ excludeSecondarySectionFronts:
     search: true
     multiple: true
     list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 items:
   _label: Items
@@ -307,6 +359,7 @@ _groups:
       - maxLength
       - autoPopulatedContentHeader
       - populateFrom
+      - rssFeed
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
@@ -314,6 +367,7 @@ _groups:
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
+      - excludeSubscriptions
       - curatedContentHeader
       - items
     _placeholder:

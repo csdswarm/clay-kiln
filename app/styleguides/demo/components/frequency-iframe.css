@@ -1,0 +1,5 @@
+.component--frequency-iframe {
+  height:calc(100vh - 4px);
+  width:calc(100% - 4px);
+  margin: 0 auto;
+}

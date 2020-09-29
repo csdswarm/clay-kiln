@@ -1,9 +1,12 @@
 'use strict';
-const queryService = require('../../services/server/query'),
-  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+const
   contentTypeService = require('../../services/universal/content-type'),
+  queryService = require('../../services/server/query'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+  { getStationSlug, makeSubscriptionsQuery } = require('../../services/universal/recirc/recirculation'),
+  { DEFAULT_STATION } = require('../../services/universal/constants'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-content',
+
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -11,8 +14,8 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType'
   ],
-  maxItems = 3,
-  { DEFAULT_STATION } = require('../../services/universal/constants');
+  elasticIndex = 'published-content',
+  maxItems = 3;
 
 /**
  * For each section's override items (0 through 3), look up the associated
@@ -62,6 +65,10 @@ module.exports.save = async function (ref, data, locals) {
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  if (data.hasCustomColumns) {
+    return data;
+  }
+
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       curatedIds = items.filter(item => item.uri).map(item => item.uri);
@@ -95,15 +102,17 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-    queryService.addShould(query, { match: { stationSlug: station_slug } });
+
 
     if (station_slug === DEFAULT_STATION.site_slug) {
       queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    } else {
+      queryService.addMust(query, { match: { stationSlug: station_slug } });
     }
-    
+
     // Filter out the following tags
-    if (data.filterTags) {
-      for (const tag of data.filterTags.map((tag) => tag.text)) {
+    if (data.excludeTags) {
+      for (const tag of data.excludeTags.map((tag) => tag.text)) {
         queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
       }
     }
@@ -111,12 +120,21 @@ module.exports.render = async function (ref, data, locals) {
     // Filter out the following secondary article type
     if (data.filterSecondarySectionFronts) {
       Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-        const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+        const [secondarySectionFrontFilter, filterOut] = secondarySectionFront;
 
         if (filterOut) {
           queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
         }
       });
+    }
+
+    if (data.excludeSubscriptions) {
+      const stationSlug = getStationSlug(locals);
+
+      queryService.addMustNot(query, makeSubscriptionsQuery({
+        stationSlug,
+        subscriptions: ['content subscription']
+      }));
     }
 
     // exclude the current page in results

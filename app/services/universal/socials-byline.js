@@ -1,7 +1,7 @@
 'use strict';
 
 const socialSvgs = require('./social-svgs'),
-  { textToEncodedSlug } = require('./utils'),
+  slugifyService = require('./slugify'),
   twitterHtml = (authorData) => `<a href="http://twitter.com/${authorData.twitter}" target='_blank' class="author-socials"><span class="author-socials-icon twitter">${socialSvgs.TWITTER}</span><span>@${authorData.twitter}</span></a>`,
   fbHtml = (authorData) => `<a href="http://facebook.com/${authorData.facebook}" target='_blank' class="author-socials"><span class="author-socials-icon facebook">${socialSvgs.FACEBOOK}</span><span>@${authorData.name.toLowerCase().replace(/\s/g, '')}</span></a>`,
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
@@ -9,6 +9,7 @@ const socialSvgs = require('./social-svgs'),
 /**
  * Comma separate authors
  * @param {Object[]} authorsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
+ * @param {Object[]} hostsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
  * @param {Object} options
  * @param {String} options.authorHost e.g. 'nymag.com'
  * @param {Boolean} options.showSocial
@@ -16,24 +17,26 @@ const socialSvgs = require('./social-svgs'),
  * @param {String} [options.linkClass]
  * @return {String}
  */
-function formatNumAuthors(authorsAndMeta, options) {
-  return authorsAndMeta.reduce(function (acc, item, index) {
-    if (authorsAndMeta.length === 1) { // only display socials if there is one author
+function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, options) {
+  const listAndMeta = [...authorsAndMeta, ...hostsAndMeta];
+
+  return listAndMeta.reduce(function (acc, item, index) {
+    if (listAndMeta.length === 1) { // only display socials if there is one author
       if (options.showSocial) {
-        return acc + createAuthorHtml(item, options) + createSocialsHtml(item);
+        return acc + createAuthorHostHtml(item, options) + createSocialsHtml(item);
       }
-      return acc + createAuthorHtml(item, options);
+      return acc + createAuthorHostHtml(item, options);
     } else {
-      if (index === authorsAndMeta.length - 1) {
-        if (authorsAndMeta.length === 2) {
-          return `${acc}<span> and </span>${createAuthorHtml(item, options)}`;
+      if (index === listAndMeta.length - 1) {
+        if (listAndMeta.length === 2) {
+          return `${acc}<span> and </span>${createAuthorHostHtml(item, options)}`;
         } else {
-          return `${acc}<span>, </span> <span> and </span>${createAuthorHtml(item, options)}`;
+          return `${acc}<span>, </span> <span> and </span>${createAuthorHostHtml(item, options)}`;
         }
-      } else if (index > 0 && index < authorsAndMeta.length - 1) {
-        return `${acc}<span>, </span>${createAuthorHtml(item, options)}`;
+      } else if (index > 0 && index < listAndMeta.length - 1) {
+        return `${acc}<span>, </span>${createAuthorHostHtml(item, options)}`;
       } else {
-        return acc + createAuthorHtml(item, options);
+        return acc + createAuthorHostHtml(item, options);
       }
     }
   }, '');
@@ -90,10 +93,11 @@ function getSocialHtmlWithoutPreference(authorData) {
 
   return '';
 }
+
 /**
- * Create HTML for the author, including
- * link to author page and meta-author tags
- * @param  {Object} authorData
+ * Create HTML for the author and host, including
+ * link to author/host page and meta-author tags
+ * @param  {Object} data
  * @param {Object} options
  * @param {String} options.authorHost e.g. 'nymag.com'
  * @param {Boolean} options.showSocial
@@ -101,20 +105,24 @@ function getSocialHtmlWithoutPreference(authorData) {
  * @param {String} [options.linkClass]
  * @return {String}
  */
-function createAuthorHtml(authorData, options) {
-  const nameOrText = authorData.name || authorData.text,
-    link = textToEncodedSlug(nameOrText),
-    linkAuthorPage = `${options.authorHost + (options.stationSlug ? `/${options.stationSlug}` : '')}/authors/${link}`;
+function createAuthorHostHtml(data, options) {
+  const nameOrText = data.name || data.text,
+    link = slugifyService(nameOrText),
+    name = data.isHost ? 'host' : 'author',
+    { authorHost, isContentFromAP, linkClass, nameClass, siteSlug, stationSlug } = options,
+    slug = isContentFromAP ? siteSlug : stationSlug,
+    linkAuthorHostPage = `${authorHost + (slug ? `/${slug}` : '')}/${name}s/${link}`;
+
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
-    `<a href="//${linkAuthorPage}" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
-    `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
+  return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
+    `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
+    `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${linkAuthorPage}"/></a></span>`;
+    `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
 }
 
 // For testing
-module.exports.formatNumAuthors = formatNumAuthors;
+module.exports.formatNumAuthorsHosts = formatNumAuthorsHosts;
 module.exports.createSocialsHtml = createSocialsHtml;
-module.exports.createAuthorHtml = createAuthorHtml;
+module.exports.createAuthorHostHtml = createAuthorHostHtml;

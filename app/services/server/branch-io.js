@@ -9,6 +9,7 @@
 const
   _get = require('lodash/get'),
   { retrieveList } = require('./lists'),
+  isEmpty = require('lodash/isEmpty'),
 
   /**
    * Generate relevant Branch.io meta tags for the page.
@@ -31,7 +32,9 @@ const
           content
         });
       },
-      isStation = _get(locals, 'station.slug', 'www') !== 'www',
+      isPodcast = _get(locals, 'podcast'),
+      episode = _get(locals, 'episode'),
+      isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
       // https://regex101.com/r/SyxFxE/1
       isStationDetailPage = new RegExp(/\/.+\/*listen\/?$/).test(locals.url),
       timestamp = _get(locals, 'query.t');
@@ -81,6 +84,25 @@ const
       }
       // both national & station pages
       addTag('station_name', _get(locals, 'station.name', 'Radio.com'));
+      _get(data, 'contentTagItems', []).forEach(tag => addTag('editorial_tags', tag.text));
+    }
+
+    // podcast page
+    if (isPodcast) {
+      addTag('type', _get(locals, 'podcast.type'));
+      addTag('podcast_name', _get(locals, 'podcast.attributes.title'));
+      addTag('podcast_id', _get(locals, 'podcast.id'));
+      addTag('partner_id', _get(locals, 'podcast.attributes.partner.id'));
+      addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
+      addTag('podcast_category', _get(locals, 'podcast.attributes.category[0].name'));
+      addTag('podcast_logo', _get(locals, 'podcast.attributes.image'));
+    }
+
+    // podcast episode page
+    if (episode) {
+      addTag('podcast_type', episode.type);
+      addTag('episode_id', episode.id);
+      addTag('episode_title', _get(episode, 'attributes.title'));
     }
 
     // timestamp

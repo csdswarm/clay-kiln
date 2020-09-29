@@ -10,6 +10,8 @@ const rest = require('../universal/rest'),
   clientPlayerInterface = require('./ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
   clientStateInterface = require('./ClientStateInterface')(),
+  radioApi = 'api.radio.com/v1/',
+  radioStgApi = 'api-stg.radio.com/v1/',
   // here for models that reference /server/radioApi (brightcove)
   TTL = {
     NONE: 0,
@@ -18,6 +20,14 @@ const rest = require('../universal/rest'),
     HOUR: 3600000,
     DAY: 86400000
   },
+  httpRegEx = /^https?:\/\//,
+  /**
+   * Returns if the route passed in is for api.radio.com or a different location
+   *
+   * @param {string} route
+   * @return {boolean}
+   */
+  isRadioApiRoute = (route) => !httpRegEx.test(route),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
@@ -125,21 +135,64 @@ const rest = require('../universal/rest'),
     return __.spaInterface(elements);
   },
   /**
+   * Creates a url from a route and params
+   *
+   * @param {string} route
+   * @param {object} params
+   * @param {object} locals
+   * @return {string}
+   */
+  createEndpoint = (route, params, locals) => {
+    const decodeParams = params ? `?${decodeURIComponent(qs.stringify(params))}` : '',
+      apiHost = shouldUseStagingApi(locals) ? radioStgApi : radioApi;
+
+    return isRadioApiRoute(route) ?
+      `https://${apiHost}${route}${decodeParams}` :
+      `${route}${decodeParams}`;
+  },
+  /**
+   * Determines whether we should use the staging api
+   *
+   * @param {object} locals
+   * @returns {boolean}
+   */
+  shouldUseStagingApi = (locals) => {
+    return locals.useStagingApi && !locals.edit;
+  },
+  /**
    * Get data
    *
    * @param {string} route
    * @param {*} [params]
-   * @returns {*}
+   * @param {function} [validate]
+   * @param {object} [options]
+   * @param {object} [locals]
+   * @return {Promise}
    */
-  get = (route, params) => {
-    const endpoint = params ? `${route}?${qs.stringify(params)}` : route;
+  // eslint-disable-next-line max-params
+  get = (route, params, validate, options, locals = {}) => {
+    const endpoint = createEndpoint(route, params, locals);
 
     return rest.get(endpoint).then(data => {
+      return data;
+    });
+  },
+
+  /**
+   * Put data
+   *
+   * @param {string} route
+   * @param {Object} payload
+   * @returns {Object}
+   */
+  put = (route, payload) => {
+    return rest.put(route, payload).then(data => {
       return data;
     });
   };
 
 module.exports.get = get;
+module.exports.put = put;
 module.exports.fetchDOM = fetchDOM;
 module.exports.TTL = TTL;
 module.exports._internals = __;

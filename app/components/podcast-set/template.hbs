@@ -1,0 +1,38 @@
+<div
+        class="component component--podcast-set podcast-set"
+        data-uri="{{ default _ref _self }}"
+        data-set="{{setType}}"
+>
+  {{#if title}}
+    <h2>{{title}}</h2>
+  {{/if}}
+  <ul class="podcast-set-list">
+    {{#each _computed.podcasts as |podcast|}}
+      <li class="podcast-set-item">
+        <div class="podcast-set-show">
+          <a href="{{podcast.attributes.url}}">
+            <img src="{{podcast.attributes.image}}" alt="{{podcast.attribues.title}}"/>
+          </a>
+          <div class="show__name">{{podcast.attributes.title}}</div>
+          <div class="show__details">{{podcast.attributes.description}}</div>
+        </div>
+      </li>
+    {{else}}
+      <li class="podcast-set-item podcast-set-waiting hidden">
+        <div class="show__name">
+          Retrieving your recent podcasts...
+        </div>
+      </li>
+      <li class="podcast-set-item podcast-set-empty hidden">
+        <div class="show__name">
+          You have no recently played podcasts.
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</div>
+
+
+
+
+

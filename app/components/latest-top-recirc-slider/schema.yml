@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _description: |
   A dynamically created slider for promoting recirculation of latest articles and galleries within the same.
 _confirmRemoval: true
@@ -12,6 +12,11 @@ contentType:
     options:
       - article
       - gallery
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 populateFrom:
   _label: Populate content from?
@@ -33,10 +38,31 @@ populateFrom:
       -
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
+      - 
+        name: External RSS Feed
+        value: rss-feed
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
 
 sectionFront:
   _label: Section Front Category
-  _publish: sectionFront
   _reveal:
     field: populateFrom
     operator: ===
@@ -102,6 +128,12 @@ excludeTags:
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
 
 excludeSectionFronts:
   _label: Exclude Section Fronts
@@ -110,6 +142,11 @@ excludeSectionFronts:
     search: true
     multiple: true
     list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
   
 excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -118,6 +155,21 @@ excludeSecondarySectionFronts:
     search: true
     multiple: true
     list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
+
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 items:
   _label: Items
@@ -167,9 +219,11 @@ _groups:
     fields:
       - contentType
       - populateFrom
+      - rssFeed
       - sectionFront
       - secondarySectionFront
       - tag
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
+      - excludeSubscriptions

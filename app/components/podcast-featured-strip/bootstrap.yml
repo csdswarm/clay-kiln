@@ -1,0 +1,9 @@
+_components:
+  podcast-featured-strip:
+    items: []
+    title: 'Podcast featured strip'
+    description: ''
+    overrideDescription: false
+    overrideCategoryLabel: false
+    showTitle: true
+    showBottomBorder: true

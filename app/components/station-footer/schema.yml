@@ -1,11 +1,14 @@
 _description: |
   This is the station footer above the main footer.
+
 _confirmRemoval: true
+_permission:
+  update: station-footer
 
 footerLinks:
   _label: Footer Link collection
   _placeholder:
-    height: 100px
+    height: 30px
     text: Add Footer Links
   _has:
     input: complex-list

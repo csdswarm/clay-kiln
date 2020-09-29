@@ -1,0 +1,35 @@
+_components:
+  latest-content-column:
+    items: []
+    excludeSubscriptions: false
+    populate-from: section-front
+    contentType: { article: true, gallery: true }
+    rssFeed: ''
+    useCustomTitle: false
+    columnTitle: ''
+    hyperLinkTitle: false
+    hyperLinkUrl: ''
+    sectionFront: ''
+    sectionFrontManual: ''
+    secondarySectionFront: ''
+    tag: ''
+    excludeTags: []
+    excludeSectionFronts: {}
+    excludeSecondarySectionFronts: {}
+    instances:
+      new:
+        items: []
+        populate-from: section-front
+        contentType: { article: true, gallery: true }
+        rssFeed: ''
+        useCustomTitle: false
+        columnTitle: ''
+        hyperLinkTitle: false
+        hyperLinkUrl: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        secondarySectionFront: ''
+        tag: ''
+        excludeTags: []
+        excludeSectionFronts: {}
+        excludeSecondarySectionFronts: {}

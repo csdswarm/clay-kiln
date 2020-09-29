@@ -2,11 +2,12 @@
 
 
 const _get = require('lodash/get'),
+  _debounce = require('lodash/debounce'),
+  _isEmpty = require('lodash/isEmpty'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
-  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
   {
     pageTypeTagArticle,
     pageTypeTagSection,
@@ -41,7 +42,9 @@ let refreshCount = 0,
   numGalleryInline = 1,
   numStationsDirectoryInline = 1,
   adIndices = {},
-  adsMounted = false;
+  adsMounted = false,
+  prevLocation = window.location.href,
+  windowWidth = 0;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -74,6 +77,8 @@ document.addEventListener('content-feed-lazy-load', () => {
 document.addEventListener('google-ad-manager-mount', () => {
   // This will allow initializeAds to trigger ad refresh
   adsMounted = true;
+  windowWidth = window.innerWidth;
+  window.addEventListener('resize', debounceRefresh());
 });
 
 // Reset data when navigating in SPA
@@ -81,7 +86,28 @@ document.addEventListener('google-ad-manager-dismount', () => {
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
+  window.removeEventListener('resize', debounceRefresh());
 });
+
+// Refreshes ads when navigating to other pages in SPA
+window.onload = function () {
+  const
+    bodyList = document.querySelector('body'),
+    observer = new MutationObserver( mutations => {
+      mutations.forEach( () => {
+        if (prevLocation !== window.location.href) {
+          prevLocation = window.location.href;
+          refreshAllSlots();
+        }
+      });
+    }),
+    config = {
+      childList: true,
+      subtree: true
+    };
+
+  observer.observe(bodyList, config);
+};
 
 // Create listeners inside of the context of having googletag.pubads()
 googletag.cmd.push(() => {
@@ -212,6 +238,15 @@ function lazyLoadAd(changes, observer) {
     }
   });
 }
+/**
+ * Refreshes all slots when navigating between pages
+ */
+const  refreshAllSlots = () => {
+  googletag.cmd.push(() => {
+    googletag.pubads().refresh();
+  });
+};
+
 
 /**
  * adds a listener to the x div to enable it to close the current ad
@@ -342,11 +377,16 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       pageData,
       contentTags
     }),
+    nmcTags = getMetaTagContent('name', NMC.tag),
     adTargetingData = {
       targetingAuthors: authors,
-      // google ad manager doesn't take the tags from nmc since nmc cares about
-      //   the editorial tags rather than the ad tags.
-      targetingTags: trackingData.tag
+      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
+      // In case that there is no tags we should not sent information to GAM.
+      targetingTags:
+        _isEmpty(contentTags.filter(Boolean)) &&
+        !_isEmpty(nmcTags)
+          ? (nmcTags || '').replace(/\//g, ',')
+          : trackingData.tag
     };
 
   if (shouldUseNmcTags) {
@@ -359,7 +399,8 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
+      targetingTags: nmcTags
     });
   } else {
     Object.assign(adTargetingData, {
@@ -371,29 +412,15 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     });
   }
 
-  if (isArticleOrGallery(pageData)) {
-    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
-  }
-
   return adTargetingData;
 }
 
 function getCurrentStation() {
-  const fromPathname = makeFromPathname({ pathname: window.location.pathname });
+  const googleAdManagerElement = document.querySelector('.component--google-ad-manager'),
+    stationData = JSON.parse(googleAdManagerElement.dataset.gamStationData);
 
-  if (!fromPathname.isStationDetail()) {
-    return {};
-  }
+  return stationData;
 
-  // these shouldn't be declared above the short circuit
-  // eslint-disable-next-line one-var
-  const stationDetailComponent = document.querySelector('.component--station-detail'),
-    stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-    station = stationDetailEl
-      ? JSON.parse(stationDetailEl.innerHTML)
-      : {};
-
-  return station;
 }
 
 /**
@@ -405,13 +432,18 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
+  /**
+   * the initialgoogleAdManagerComponent ref used before and elsewhere, is inaccurate or stale and therefore,
+   * a new ref was created within this method’s context to grab new data that occurs on SPA page change.
+   */
+  const googleAdEl = document.querySelector('.component--google-ad-manager'),
+    { doubleclickBannerTag } = googleAdEl.dataset,
     currentStation = getCurrentStation(),
     /**
      * NOTE: This is a workaround to access process.env.NODE_ENV
      * because it is not available in client.js.
      */
-    env = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : '',
+    { env } = googleAdEl.dataset,
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
     hasNmcTags = !!firstNmcTag,
@@ -424,12 +456,16 @@ function getAdTargeting(pageData) {
   switch (pageData.page) {
     case 'article':
     case 'vgallery':
+    case 'events':
+    case 'contests':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
+    case 'stationFront':
       adTargetingData.siteZone = siteZone.concat('/', 'home', '/', pageTypeTagSection);
       break;
     case 'sectionFront':
+    case 'stationSectionFront':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':
@@ -462,7 +498,8 @@ function getAdTargeting(pageData) {
 function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
-    pageData = getPageData(window.location.pathname, contentType),
+    stationData = getCurrentStation(),
+    pageData = getPageData(window.location.pathname, contentType, stationData.site_slug),
     adTargetingData = getAdTargeting(pageData),
     ads = [];
 
@@ -481,7 +518,6 @@ function createAds(adSlots) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
-        updateSkinStyles(true);
       } else {
         slot = googletag.defineSlot(
           adTargetingData.siteZone,
@@ -582,12 +618,37 @@ function resizeForSkin() {
 }
 
 /**
+ * @returns {function} that debounces refreshAllSlots, and verifies window.innerWith.
+ */
+function debounceRefresh() {
+  return (
+    _debounce(() => {
+      // Check for a change in screen width to prevent an unneeded refresh when scrolling on mobile.
+      if (window.innerWidth != windowWidth) {
+        windowWidth = window.innerWidth;
+        refreshAllSlots();
+      };
+    }, 500)
+  );
+}
+
+
+/**
  * Tells a list of ads to stop refreshing, whether they've loaded yet or not.
  *
  * @param {string[]} ads
  */
 window.disableAdRefresh = function (ads) {
   ads.forEach(ad => disabledRefreshAds.add(ad));
+};
+
+/**
+ * Tells a list of ads to restore refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.enableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.delete(ad));
 };
 
 /**
@@ -599,7 +660,6 @@ window.disableAdRefresh = function (ads) {
  * @param {string} position
  */
 window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
-  updateSkinStyles(true);
   const skinDiv = 'freq-dfp--bg-skin',
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
@@ -660,7 +720,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
       // DFP seems to include a 1x1 pixel image even with no takeover.
       if (typeof bgImg.width !== 'undefined' && bgImg.width > 1) {
         // Create our wrapper div element
-
+        updateSkinStyles(true);
         mainDiv.classList.add('has-fullpage-ad');
       }
     };
@@ -691,3 +751,5 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     updateSkinStyles(false);
   };
 };
+
+

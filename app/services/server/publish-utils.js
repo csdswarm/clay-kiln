@@ -96,12 +96,12 @@ function guaranteePrimaryHeadline(mainComponent) {
  * @returns {string}
  */
 function getPublishDate(latest, published) {
-  if (_.isObject(latest) && latest.date) {
-    // if we're given a date, use it
-    return latest.date;
-  } else if (_.isObject(published) && published.date) {
+  if (_.isObject(published) && _.has(published, 'date') && !(latest.articleDate || latest.galleryDate) && !latest.dateUpdated) {
     // if there is only a date on the published version, use it
     return published.date;
+  } else if (_.isObject(latest) && _.has(latest, 'date')) {
+    // if we're given a date, use it
+    return latest.date;
   } else {
     return new Date().toISOString();
   }
@@ -138,7 +138,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST].includes(pageType)) {
+    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.STATIC_PAGES].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
@@ -191,7 +191,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.pageType = pageType;
   urlOptions.stationSlug = component.stationSlug || rdcSlug;
 
-  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST].includes(urlOptions.pageType)) {
+  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.STATIC_PAGES].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
@@ -210,8 +210,11 @@ function getUrlOptions(component, locals, pageType) {
     urlOptions.contentType = 'authors';
     urlOptions.author = component.author;
     urlOptions.authorSlug = slugifyService(component.author);
+  } else if (urlOptions.pageType === PAGE_TYPES.HOST) {
+    urlOptions.contentType = 'hosts';
+    urlOptions.host = _.get(component, 'hosts[0].text', component.host);
+    urlOptions.hostSlug = slugifyService(_.get(component, 'hosts[0].text', component.host));
   }
-
   return urlOptions;
 }
 

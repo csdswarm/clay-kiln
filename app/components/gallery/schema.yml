@@ -1,4 +1,4 @@
-_version: 13.0
+_version: 16.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -136,6 +136,16 @@ byline:
             allowRemove: true
             allowCreate: true
       -
+        prop: hosts
+        _label: Hosts
+        _has:
+          help: Press TAB or , after each name to save
+          input: simple-list
+          autocomplete:
+            list: hosts
+            allowRemove: true
+            allowCreate: true
+      -
         prop: prefix
         _label: Prefix
         _has:
@@ -153,6 +163,11 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
+hosts:
+  _label: Hosts
+  _publish: hosts
+  _has:
+    help: An Array of Objects containing hosts names (without byline prefixes), for search.
 stationLogoUrl:
   _has:
     input: advanced-image-upload
@@ -446,7 +461,7 @@ _groups:
     _placeholder:
       text: Byline and Station Logo
       height: 60px
-      ifEmpty: byline.names and byline.sources and stationLogoUrl
+      ifEmpty: byline.names and byline.sources and stationLogoUrl and byline.hosts
   slidesSettings:
     fields:
       - slidesNumbered
@@ -580,3 +595,6 @@ stationName:
   _reveal:
     field: stationName
     operator: truthy
+
+textTags:
+  _subscribe: textTags

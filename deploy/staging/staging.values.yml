@@ -10,8 +10,9 @@ ingress:
   healthCheckDomain: "stg-clay-k8s.radio.com"
 configmap:
   data:
-    APPLE_NEWS_ENABLED: "TRUE"
-    APPLE_NEWS_PREVIEW_ONLY: "TRUE"
+    APPLE_NEWS_ENABLED: "true"
+    APPLE_NEWS_PREVIEW_ONLY: "true"
+    ARTICLE_AD_INSERT_EVERY: "3"
     AWS_S3_BUCKET: "radioimg-stg"
     AWS_S3_CDN_HOST: "stg-images.radio.com"
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
@@ -45,7 +46,6 @@ configmap:
     INLINE_EDIT_STYLES: "true"
     IP_ADDRESS: "0.0.0.0"
     LOG: "info"
-    LYTICS_API_URL: "https://api.lytics.io/api"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
     REDIS_HOST: "redis://stg-redis.radio-stg.com:6379"
@@ -55,6 +55,7 @@ configmap:
     URPS_AUTHORIZATIONS_URL: "https://admin-api-stg.radio-sbx.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+    USE_URPS_CORE_ID: "true"
 clayconfig:
   data:
     .clayconfig: |

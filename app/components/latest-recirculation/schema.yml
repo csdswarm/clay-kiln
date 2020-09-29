@@ -1,4 +1,4 @@
-_version: 6.0
+_version: 7.0
 _confirmRemoval: true
 
 _description: |
@@ -183,6 +183,11 @@ excludeSecondarySectionFronts:
     values:
       - rss-feed
 
+excludeSubscriptions:
+  _label: Exclude Subscriptions
+  _has:
+    input: checkbox
+
 excludeTags:
   _label: Exclude Tags
   _has:
@@ -260,6 +265,7 @@ _groups:
       - excludeSectionFronts
       - excludeSecondarySectionFronts
       - excludeTags
+      - excludeSubscriptions
       - items
     _placeholder:
       ifEmpty: 'populateFrom'

@@ -1,7 +1,8 @@
 _components:
   latest-videos:
+    excludeSubscriptions: false
     items: []
-    filterTags: []
-    filterSecondarySectionFronts: []
+    excludeTags: []
+    excludeSecondarySectionFronts: []
     title: Radio.com Video
     primaryContentLabel: 'Exclusive Video'

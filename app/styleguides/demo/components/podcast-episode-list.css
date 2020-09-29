@@ -1,0 +1,115 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin podcast-episode-list-font1 {
+  @mixin font CircularStd-Black, 16px, $black, inherit, 19px;
+}
+@define-mixin podcast-episode-list-font2 {
+  @mixin font CircularStd-Book, 12px, $doveGray, inherit, 18px;
+}
+@define-mixin podcast-episode-list-font3 {
+  @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
+}
+
+.podcast-episode-list {
+  &__controls {
+    margin-bottom: em(32);
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: em(14);
+  }
+  &__item-thumb {
+    display: flex;
+    flex: 0 0 widthOnGrid(1, 0);
+    margin-right: em(20);
+    align-items: center;
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(1, 0, medium-screen);
+    }
+    @mixin medium-small-screen {
+      display: none;
+    }
+  }
+  &__image {
+    max-width: 100%;
+    height: auto;
+    width: 100%; /*ie11*/
+  }
+
+  &__item-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  &__title {
+    @mixin podcast-episode-list-font1;
+    text-decoration: none;
+  }
+  &__description {
+    @mixin podcast-episode-list-font2;
+  }
+
+  &__info-meta {
+    display: flex;
+    @mixin podcast-episode-list-font2;
+  }
+  &__pub-date, &__duration {
+    margin-right: 1.5em;
+  }
+  &__download-link {
+    text-decoration: none;
+    color: theme(primaryColor, $purple);
+    .svg-download-icon {
+      fill: theme(primaryColor, $purple);
+    }
+  }
+
+  &__item-controls {
+    display: flex;
+    padding-left: em(20);
+    flex: 0 0 widthOnGrid(1, 0);
+  }
+  &__play-btn {
+    @mixin podcast-episode-list-font1;
+    width: em(32);
+    height: em(32);
+    .wplyr-cntrl-symbol {
+      fill: theme(primaryColor, $purple);
+    }
+    &.show__play {
+      .pause {
+        display: none;
+      }
+    }
+    &.show__pause {
+      .play {
+        display: none;
+      }
+    }
+  }
+
+  &__btn {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &__load-more {
+    display: flex;
+    flex: 0 0 widthOnGrid(1, 0);
+  }
+  &__load-more-btn {
+    @mixin podcast-episode-list-font3;
+    background-color: theme(primaryColor, $purple);
+    color: $white;
+    width: 100%;
+    height: em(42, 14);
+    text-transform: uppercase;
+  }
+
+}

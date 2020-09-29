@@ -9,6 +9,7 @@
  * Component expects the following fields in the schema.yml
  * populateFrom
  * contentType
+ * authors
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -18,62 +19,148 @@
  */
 
 const
-  _merge = require('lodash/merge'),
   _get = require('lodash/get'),
   _has = require('lodash/has'),
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
+  _merge = require('lodash/merge'),
   _pick = require('lodash/pick'),
-  logger = require('../log'),
-  queryService = require('../../server/query'),
-  recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
+  { addAmphoraRenderTime, boolKeys, cleanUrl, coalesce } = require('../utils'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),
   { unityComponent } = require('../amphora'),
+  fetchStationFeeds = require('../../server/fetch-station-feeds'),
+  logger = require('../log'),
+  queryService = require('../../server/query'),
+  recircCmpt = require('./recirc-cmpt'),
+  transformStationFeed = require('../../universal/transform-station-feed'),
 
   log = logger.setup({ file: __filename }),
   index = 'published-content',
   DEFAULT_CONTENT_KEY = 'articles',
   DEFAULT_ELASTIC_FIELDS = [
-    'primaryHeadline',
-    'pageUri',
     'canonicalUrl',
-    'feedImgUrl',
     'contentType',
+    'feedImgUrl',
+    'pageUri',
+    'primaryHeadline',
     'sectionFront'
   ],
   DEFAULT_MAX_ITEMS = 10,
+
+  /**
+   * Fetches the rss data for a station feed and
+   * transforms it to a recirculation-compatible format.
+   *
+   * @param   {object}   config
+   * @param   {object}   config.data
+   * @param   {object}   config.locals
+   * @param   {number}   config.numberOfArticles
+   * @param   {number}   config.page
+   * @param   {function} config.mapResultsToTemplate
+   * @returns {object}
+   */
+  fetchAndTransformStationFeed = async ({
+    data,
+    locals,
+    numberOfArticles,
+    page,
+    mapResultsToTemplate
+  }) => {
+    const feed = await fetchStationFeeds(data, locals),
+      {
+        items: nextContent,
+        hasMoreItems: moreContent
+      } = await transformStationFeed(
+        locals,
+        feed,
+        numberOfArticles,
+        page
+      );
+
+    return {
+      content: await Promise.all(
+        nextContent.map(({
+          primaryHeadline,
+          externalUrl,
+          feedImgUrl,
+          date
+        }) => mapResultsToTemplate(locals, {
+          primaryHeadline,
+          feedImgUrl,
+          canonicalUrl: externalUrl,
+          date
+        }))
+      ),
+      moreContent
+    };
+  },
+
   returnData = (_, data) => data,
-  defaultMapDataToFilters = (ref, data, locals) => ({
-    filters: {
-      ...getAuthor(data, locals),
-      contentTypes: boolObjectToArray(data.contentType),
-      ..._pick({
-        sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
-        secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
-        tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
-      }, populateFilter(data.populateFrom)),
-      ...{ stationSlug: getStationSlug(locals) }
-    },
-    excludes: {
-      canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-      sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-      secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
-      tags: (data.excludeTags || []).map(tag => tag.text)
-    },
-    curated: data.items || []
-  }),
+  defaultMapDataToFilters = (ref, data, locals) => {
+    const
+      author = getAuthor(data, locals),
+      host = getHost(data, locals),
+      primarySF = coalesce(data, 'sectionFrontManual','sectionFront'),
+      secondarySF =  coalesce(data, 'secondarySectionFrontManual', 'secondarySectionFront'),
+      tag = getTag(data, locals);
+
+    return {
+      pagination: {
+        page: 0
+      },
+      filters: {
+        author,
+        host,
+        contentTypes: boolKeys(data.contentType),
+        ..._pick({
+          sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
+          secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
+          tags: sectionOrTagCondition(data.populateFrom, tag)
+        }, populateFilter(data.populateFrom)),
+        stationSlug: getStationSlug(locals)
+      },
+      excludes: {
+        canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
+        sectionFronts: boolKeys(data.excludeSectionFronts),
+        secondarySectionFronts: boolKeys(data.excludeSecondarySectionFronts),
+        subscriptions: { value: {
+          subscriptions: data.excludeSubscriptions ? ['content subscription'] : [],
+          stationSlug: getStationSlug(locals)
+        } },
+        tags: (data.excludeTags || []).map(tag => tag.text)
+      },
+      curated: data.items || []
+    };
+  },
   defaultTemplate = (locals, validatedItem, curatedItem = {}) => ({
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
-    urlIsValid: validatedItem.urlIsValid,
     canonicalUrl: curatedItem.url || validatedItem.canonicalUrl,
-    feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl ,
+    feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
   }),
+  /**
+   * Handles inserting stationSlug into a values list for multiple section fronts
+   * @param {string} key
+   * @param {function} createObj
+   * @param {boolean} [includeSyndicated]
+   * @param {string} [stationSlug]
+   * @returns {function(*=): (*)}
+   */
+  listFilter = ({ key, createObj, includeSyndicated, stationSlug }) => value => {
+    if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+      return createObj(
+        value,
+        stationSlug,
+        includeSyndicated
+      );
+    } else {
+      return createObj(value);
+    }
+  },
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
     author: {
@@ -86,97 +173,65 @@ const
       unique: true,
       createObj: contentType => ({ match: { contentType } })
     },
+    host: {
+      filterCondition: 'must',
+      createObj: host => ({ match: { 'hosts.normalized': host } })
+    },
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: sectionFront => ({
-        bool: {
-          should: [
-            { match: { sectionFront: sectionFront } },
-            { match: { sectionFront: sectionFront.toLowerCase() } },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  bool: {
-                    should: [
-                      { match: { 'stationSyndication.sectionFront': sectionFront } },
-                      { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
-                    ],
-                    minimum_should_match: 1
-                  }
-                }
-              }
-            }
-          ],
-          minimum_should_match: 1
-        }
-      })
+      createObj: (sectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+        {
+          bool: {
+            must: [
+              filterMainStation(stationSlug),
+              ...multiCaseFilter({ sectionFront })
+            ]
+          }
+        },
+        includeSyndicated && syndicatedSectionFrontFilter(
+          stationSlug,
+          { 'stationSyndication.sectionFront': sectionFront }
+        )
+      ].filter(Boolean))
     },
     secondarySectionFronts: {
-      createObj: secondarySectionFront => ({
-        bool: {
-          should: [
-            { match: { secondarySectionFront: secondarySectionFront } },
-            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  bool: {
-                    should: [
-                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
-                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
-                    ],
-                    minimum_should_match: 1
-                  }
-                }
-              }
-            }
-          ],
-          minimum_should_match: 1
-        }
-      })
+      filterCondition: 'must',
+      unique: true,
+      createObj: ({ sectionFront, secondarySectionFront }, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+        {
+          bool: {
+            must: [
+              filterMainStation(stationSlug),
+              ...multiCaseFilter({ sectionFront, ...secondarySectionFront && { secondarySectionFront } })
+            ].filter(Boolean)
+          }
+        },
+        includeSyndicated && syndicatedSectionFrontFilter(
+          stationSlug,
+          { 'stationSyndication.sectionFront': sectionFront },
+          secondarySectionFront && { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+        )
+      ].filter(Boolean))
     },
     stationSlug: {
       filterCondition: 'must',
       createObj: (stationSlug, includeSyndicated = true) => {
+        const syndicated = includeSyndicated ? [syndicatedStationFilter(stationSlug)] : [];
 
-        const qs = {
-          bool: {
-            should: [
-              { match: { stationSlug } }
-            ],
-            minimum_should_match: 1
-          }
-        };
+        return minimumShouldMatch([
+          filterMainStation(stationSlug),
+          ...syndicated
+        ]);
+      }
+    },
+    subscriptions: {
+      createObj: ({ stationSlug, subscriptions }) => {
+        const matchSources = source => ({ match_phrase: { 'stationSyndication.source': source } }),
+          anySource = minimumShouldMatch(subscriptions.map(matchSources)),
+          syndicationQuery = [{ match: { 'stationSyndication.stationSlug': stationSlug } }, anySource];
 
-        if (includeSyndicated) {
-          qs.bool.should.push({
-            nested: {
-              path: 'stationSyndication',
-              query: {
-                match: {
-                  'stationSyndication.stationSlug': stationSlug
-                }
-              }
-            }
-          });
-        }
-
-        if (stationSlug === DEFAULT_STATION.site_slug) {
-          qs.bool.should.push({
-            bool: {
-              must_not: {
-                exists: {
-                  field: 'stationSlug'
-                }
-              }
-            }
-          });
-        }
-
-        return qs;
+        return { nested: { path: 'stationSyndication', query: { bool: { must: syndicationQuery } } } };
       }
     },
     tags: {
@@ -186,25 +241,21 @@ const
     videos: {
       filterCondition: 'must',
       unique: true,
-      createObj: value => ({
-        bool: {
-          should: [
-            {
-              nested: {
-                path: 'lead',
-                query: {
-                  regexp: {
-                    'lead._ref': value
-                  }
-                }
+      createObj: value => minimumShouldMatch([
+        {
+          nested: {
+            path: 'lead',
+            query: {
+              regexp: {
+                'lead._ref': value
               }
             }
-          ],
-          minimum_should_match: 1
+          }
         }
-      })
+      ])
     }
   },
+
   /**
    * Transform condition to queryService method name
    *
@@ -221,6 +272,26 @@ const
         return 'addShould';
     }
   },
+
+  /**
+   * Creates a filter for the main station of an article or gallery
+   * @param { string } stationSlug
+   * @returns {{bool: {should: Array, minimum_should_match: number}}}
+   */
+  filterMainStation = stationSlug => minimumShouldMatch([
+    { match: { stationSlug } },
+    stationSlug === DEFAULT_STATION.site_slug && {
+      bool: {
+        must_not: {
+          exists: {
+            field: 'stationSlug'
+          }
+        }
+      }
+    }
+  ].filter(Boolean)),
+
+
   /**
    * Convert array to a bool query with a minimum should match
    *
@@ -228,7 +299,99 @@ const
    * @param {number} minimum_should_match
    * @returns {object}
    */
-  minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match } }),
+  minimumShouldMatch = (queries, minimum_should_match = 1) => ({
+    bool: { should: queries, minimum_should_match }
+  }),
+
+  /**
+   * Creates a filter for when we need to check regular and lower case versions of the property
+   * value.
+   * @param {object} obj - essentially the property and value to check. the value will be checked
+   *                       as is and lowercase against the data
+   * @returns {{bool: {should: Array, minimum_should_match: number}}}
+   */
+  multiCaseFilter = obj => Object.entries(obj).map(([key, value]) => minimumShouldMatch([
+    { match: { [ key ]: `${value}` } },
+    { match: { [ key ]: `${value}`.toLowerCase() } }
+  ])),
+
+  /**
+   * Creates a filter for a syndicated sectionFront or secondarySectionFront
+   * @param {string} stationSlug - The station to filter by
+   * @param {object} sectionFront - The section front property and value to filter
+   * @param {object} secondarySectionFront - The secondary section front property and value to filter
+   * @returns {*|
+   *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
+   *   {bool: {should: Array, minimum_should_match: number}}]}}}}
+   * }
+   */
+  syndicatedSectionFrontFilter = (stationSlug, sectionFront, secondarySectionFront) => ({
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            ...multiCaseFilter({ ...sectionFront, ...secondarySectionFront })
+          ].filter(Boolean)
+        }
+      }
+    }
+  }),
+
+  /**
+   * Adds an extra condition for only subscribed content
+   * @returns {(*|{bool: { should: [{ match: {'stationSyndication.unsubscribed': false}}]}})[]}
+   */
+  subscribedContentOnly = [{
+    bool: {
+      should: [
+        {
+          match: {
+            'stationSyndication.unsubscribed': false
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSyndication.unsubscribed'
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
+  }],
+
+  /**
+   * Creates a filter for the syndicated station or an empty array if includeSyndicated is false
+   * @param {string} stationSlug - The station to filter by
+   * @returns {(*|{nested: {path: string, query: {match: {'stationSyndication.stationSlug': *}}}})[]}
+   */
+  syndicatedStationFilter = (stationSlug) => ({
+    nested: {
+      path: 'stationSyndication',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                'stationSyndication.stationSlug': stationSlug
+              }
+            },
+            ...subscribedContentOnly
+          ]
+        }
+      }
+    }
+  }),
+
   /**
    * Add to bool query portion of elastic query
    *
@@ -239,36 +402,54 @@ const
    */
   addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
-      log('error', `No filter currently exists for ${ key }`);
+      log('error', `No filter currently exists for ${key}`);
       return;
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value, includeSyndicated } = _isPlainObject(valueObj)
-        ? valueObj
-        : { value: valueObj };
+      {
+        condition = conditionOverride || filterCondition,
+        includeSyndicated,
+        stationSlug,
+        value
+      } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
     if (Array.isArray(value)) {
       if (unique && value.length) {
-        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
+        const items = value.map(listFilter({
+          createObj,
+          includeSyndicated,
+          key,
+          stationSlug
+        }));
+
+        queryService[getQueryType(condition)](query, minimumShouldMatch(items));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
     } else {
       if (!createObj || !value) {
         if (key === 'stationSlug') {
-          queryService[getQueryType('must')](query, queryFilters.stationSlug.createObj(''));
+          queryService[getQueryType('must')](
+            query,
+            queryFilters.stationSlug.createObj(DEFAULT_STATION.site_slug)
+          );
         }
         return;
       }
 
-      if (typeof includeSyndicated !== 'undefined') {
-        queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
+      if (stationSlug !== undefined) {
+        queryService[getQueryType(condition)](query, createObj(value, stationSlug, includeSyndicated));
         return;
       }
-      queryService[getQueryType(condition)](query, createObj(value));
+
+      if (key === 'subscriptions' && !value.subscriptions.length) {
+        return;
+      }
+      queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
     }
   },
+
   /**
    * Pull author from locals
    *
@@ -278,20 +459,23 @@ const
    * @return {string} author
    */
   getAuthor = (data, locals) => {
-    let author;
+    data.author = coalesce(locals, 'author', 'params.author');
 
-    if (locals && locals.author) {
-      // This is from load more on an author page
-      author = locals.author;
-    } else if (locals && locals.params && locals.params.author) {
-      // This is from a curated & dynamic author page
-      author = locals.params.author;
-    }
+    return data.author;
+  },
 
-    // Used for load-more queries
-    data.author = author;
+  /**
+   * Pull host from locals
+   *
+   * @param {object} data
+   * @param {object} locals
+   *
+   * @return {string} host
+   */
+  getHost = (data, locals) => {
+    data.host = coalesce(locals, 'host', 'params.host');
 
-    return { author };
+    return data.host;
   },
   /**
    * Pull stationSlug from local params if dynamic station page
@@ -301,9 +485,8 @@ const
    *
    * @return {string} stationSlug
    */
-  getStationSlug = locals => {
-    return _get(locals, 'params.stationSlug') || _get(locals, 'station.site_slug');
-  },
+  getStationSlug = locals => coalesce(locals, 'params.stationSlug', 'station.site_slug'),
+
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
    *
@@ -313,38 +496,32 @@ const
    * @return {array} tags
    */
   getTag = (data, locals) => {
-    let tags = data.tagManual || data.tag;
-
-    // Check if we are on a tag page and override the above
-    if (locals && locals.tag) {
-      // This is from load more on a tag page
-      tags = locals.tag;
-    } else if (locals && locals.params && locals.params.tag) {
-      // This is from a tag page but do not override a manually set tag
-      tags = data.tag || locals.params.tag;
-    } else if (locals && locals.params && locals.params.dynamicTag) {
-      // This is from a tag page
-      tags = locals.params.dynamicTag;
-    }
+    let tags = coalesce({ data, locals }, 'locals.tag', 'locals.params.dynamicTag', 'data.tagManual', 'data.tag');
 
     // normalize tag array (based on simple list input)
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-
-    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
-      tags = tags.split(',');
-    }
-
-    // split comma separated tags (for load-more get queries)
-    data.tag = tags;
-
+    
     if (tags === '') {
       return [];
     }
 
+    // split comma separated tags (for load-more get queries)
+    if (typeof tags === 'string' && tags.includes(',')) {
+      tags = tags.split(',');
+    }
+
+    // Check for tags in the case of one column layouts, and retain the correct formatting for updating the tags for kiln's UI
+    if (typeof tags === 'string') {
+      data.tag = [{ text: tags }];
+    } else if (Array.isArray(tags)) {
+      data.tag = tags.map((t) => typeof t === 'string' ? { text: t } : t);
+    }
+
     return tags;
   },
+
   /**
    * Determine which sectionFront/tag values to consider based on where the populateFrom value
    *
@@ -367,6 +544,7 @@ const
         return [...sectionFronts, ...tags];
     }
   },
+
   /**
    * Query condition needs to be should if populateFrom = section-front-or-tag
    *
@@ -375,7 +553,11 @@ const
    *
    * @returns {object}
    */
-  sectionOrTagCondition = (populateFrom, value) => populateFrom === 'section-front-or-tag' ? { condition: 'should', value } : value,
+  sectionOrTagCondition = (populateFrom, value) => populateFrom === 'section-front-or-tag' ? {
+    condition: 'should',
+    value
+  } : value,
+
   /**
    * Verify the url exists and is not a component
    *
@@ -384,22 +566,38 @@ const
    * @returns {boolean}
    */
   validUrl = url => url && !isComponent(url),
-  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
   // Get both the results and the total number of results for the query
-  transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
+  transformResult = (formattedResult, rawResult) => ({
+    content: formattedResult,
+    totalHits: _get(rawResult, 'hits.total')
+  }),
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
+   * assigns urlIsValid to item if the key exists on result
+   *
+   * @param {object} result
+   * @param {object} item - this is mutated
+   */
+  handleUrlIsValid = (result, item) => {
+    if (result.hasOwnProperty('urlIsValid')) {
+      item.urlIsValid = result.urlIsValid;
+    }
+  },
+
+  /**
+   * Use filters to query elastic for content
+   *
+   * @param {object} config
+   * @param {object} config.filters
+   * @param {object} config.excludes
+   * @param {array} config.elasticFields
+   * @param {number} config.maxItems
+   * @param {boolean} config.shouldAddAmphoraTimings
+   * @param {boolean} config.isRdcContent
+   * @param {Object} [locals]
+   * @returns {array} elasticResults
+   */
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
     let results = {
       content: [],
       totalHits: 0
@@ -418,20 +616,56 @@ const
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
-    // Don't search for primary section front if the secondary is selected
+    const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
+
     Object.entries(filters).forEach(([key, value]) => {
-      if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
-        return;
-      }
-      if (key === 'includeSyndicated') {
-        return;
-      }
-      if (key === 'stationSlug' && !filters.includeSyndicated) {
-        value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
+
+      switch (key) {
+        case 'sectionFronts':
+          if (!_isEmpty(filters.secondarySectionFronts)) {
+            return;
+          }
+          value = { value, stationSlug, includeSyndicated };
+          break;
+        case 'secondarySectionFronts':
+          if (_isEmpty(value)) {
+            return;
+          }
+          value = {
+            value: {
+              sectionFront: filters.sectionFronts,
+              secondarySectionFront: value
+            },
+            stationSlug,
+            includeSyndicated
+          };
+          break;
+        case 'includeSyndicated':
+          return;
+        case 'stationSlug':
+          const hasSectionFrontFilter = !(_isEmpty(filters.sectionFronts) && _isEmpty(filters.secondarySectionFronts));
+
+          if (hasSectionFrontFilter) {
+            return;
+          }
+          if (isRdcContent) {
+            value = DEFAULT_STATION.site_slug;
+          }
+          value = { value, includeSyndicated };
+          break;
+        default:
+          // do nothing
       }
       addCondition(query, key, value);
     });
-    Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
+
+    Object.entries(excludes)
+      .forEach(([key, value]) => {
+        if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+          value = { value, stationSlug };
+        }
+        addCondition(query, key, value, 'mustNot');
+      });
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
@@ -466,11 +700,12 @@ const
    * @param {object} [config]
    * @param {string} [config.contentKey]
    * @param {array} [config.elasticFields]
-   * @param {number} [config.maxItems]
    * @param {function} [config.mapDataToFilters]
    * @param {function} [config.mapResultsToTemplate]
    * @param {function} [config.render]
    * @param {function} [config.save]
+   * @param {boolean} [config.shouldAddAmphoraTimings]
+   * @param {boolean} [config.skipRender]
    * @returns {object}
    */
   recirculationData = ({
@@ -481,7 +716,8 @@ const
     render = returnData,
     save = returnData,
     shouldAddAmphoraTimings = false,
-    skipRender = () => false } = {}) => unityComponent({
+    skipRender = () => false
+  } = {}) => unityComponent({
     async render(uri, data, locals) {
       const curatedIds = (data.items || []).map(anItem => anItem.uri),
         requiredSearchFields = ['stationSlug', 'stationSyndication'],
@@ -493,33 +729,62 @@ const
         return render(uri, data, locals);
       }
 
-      try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
-            defaultMapDataToFilters(uri, data, locals),
-            await mapDataToFilters(uri, data, locals)
-          ),
-          itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          { content, totalHits } = await fetchRecirculation(
-            {
-              filters,
-              excludes,
-              elasticFields: esFields,
-              pagination,
-              maxItems: itemsNeeded,
-              shouldAddAmphoraTimings
-            },
-            locals);
+      const {
+          filters = {}, excludes = {}, pagination = {}, curated,
+          maxItems = DEFAULT_MAX_ITEMS, isRdcContent = false
+        } = _merge(
+          defaultMapDataToFilters(uri, data, locals),
+          await mapDataToFilters(uri, data, locals)
+        ),
+        itemsNeeded = maxItems > curated.length ? maxItems - curated.length : 0;
 
-        data._computed = Object.assign(data._computed || {}, {
-          [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals)))]
-              .slice(0, maxItems)
-              .map(async (item) => mapResultsToTemplate(locals, item))),
-          initialLoad: !pagination.page,
-          moreContent: totalHits > maxItems
-        });
+      try {
+        const isFromRss = data.populateFrom === 'rss-feed';
+
+        if (isFromRss) {
+          const { content, moreContent } = await fetchAndTransformStationFeed({
+            data, locals,
+            numberOfArticles: itemsNeeded,
+            page: pagination.page,
+            mapResultsToTemplate
+          });
+
+          data._computed = Object.assign(data._computed || {}, {
+            [contentKey]: [...curated, ...content],
+            initialLoad: !pagination.page,
+            moreContent
+          });
+
+        } else {
+
+          const { content, totalHits } = await fetchRecirculation({
+            filters,
+            excludes,
+            elasticFields: esFields,
+            pagination,
+            maxItems: itemsNeeded,
+            shouldAddAmphoraTimings,
+            isRdcContent
+          }, locals);
+
+          data._computed = Object.assign(data._computed || {}, {
+            [contentKey]: await Promise.all(
+              [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
+                .slice(0, maxItems)
+                .map(async (result) => {
+                  const item = {};
+
+                  handleUrlIsValid(result, item);
+
+                  return mapResultsToTemplate(locals, result, item);
+                })
+            ),
+            initialLoad: !pagination.page,
+            moreContent: totalHits > maxItems
+          });
+        }
       } catch (e) {
-        log('error', `There was an error querying items from elastic - ${ e.message }`, e);
+        log('error', `There was an error querying items from elastic - ${e.message}`, e);
       }
       return render(uri, data, locals);
     },
@@ -537,6 +802,10 @@ const
           },
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
+        item.uri = result._id;
+
+        handleUrlIsValid(result, item);
+
         return mapResultsToTemplate(locals, result, item);
       }));
 
@@ -546,6 +815,9 @@ const
   });
 
 module.exports = {
+  getStationSlug,
+  makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
-  sectionOrTagCondition
+  sectionOrTagCondition,
+  subscribedContentOnly
 };

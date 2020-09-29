@@ -33,9 +33,18 @@ const _get = require('lodash/get'),
     EVENT: 'event',
     EVENTSLISTING: 'events-listing-page',
     GALLERY: 'gallery',
+    HOST: 'host-page-header',
     SECTIONFRONT: 'section-front',
     STATIC_PAGES: 'static-page',
-    STATIONFRONT: 'station-front'
+    STATIONFRONT: 'station-front',
+    PODCASTFRONT: 'podcast-front-page'
+  },
+
+  STATUS_CODE = {
+    BAD_REQUEST: 400,
+    CREATED: 201,
+    OK: 200,
+    SERVER_ERROR: 500
   },
 
   msnFeed = {
@@ -69,6 +78,7 @@ const _get = require('lodash/get'),
     'event',
     'events-listing-page',
     'gallery',
+    'host-page',
     'homepage',
     'section-front',
     'static-page',
@@ -107,7 +117,6 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: '',
-
     // in an ideal world we could store our hardcoded station in URPS, but due
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
@@ -119,9 +128,22 @@ const _get = require('lodash/get'),
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large,
 
-  LOAD_MORE_LIMIT = 10;
+  LOAD_MORE_LIMIT = 10,
+
+  PODCASTS = 'podcasts',
+  // I realize these are defined in colors.css but that obviously isn't importable
+  // so starting a mirrored object here
+  COLORS = {
+    lightningYellow: '#FEC517',
+    sunsetOrange: '#FF4940',
+    azureRadience: '#0099FF',
+    robinsEggBlue: '#00CCB7'
+  },
+
+  topicPagePrefixes = ['topic', 'music', 'news', 'sports'];
 
 module.exports = {
+  COLORS,
   DAY,
   DEFAULT_RADIOCOM_LOGO,
   DEFAULT_STATION,
@@ -129,13 +151,16 @@ module.exports = {
   LOAD_MORE_LIMIT,
   MINUTE,
   PAGE_TYPES,
+  PODCASTS,
   PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,
+  STATUS_CODE,
   WEEK,
   YEAR,
   contentTypes,
   msnFeed,
-  time
+  time,
+  topicPagePrefixes
 };
