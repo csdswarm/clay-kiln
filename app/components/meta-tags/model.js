@@ -37,7 +37,9 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
     // the imported pid is always a bogus value 'api_v1.1_blogs'.  We know this
     //   is bogus because it's not the value in the article's html.
     nmcMutableData.pid = pageId;
-    nmcData.tag = targetingTags.join(','); // ensures we are always sending newly edited tags.
+
+    nmcData.pid = pageId;
+    nmcData.tag = [pageData.pageName, ...targetingTags].join(','); // ensures we are always sending newly edited tags.
 
     return nmcData;
   } else { // nmc data is not imported
@@ -194,3 +196,7 @@ module.exports.save = (ref, data, locals) => {
   }
   return data;
 };
+
+
+// for testing purposes
+module.exports.getNmcData = getNmcData;
