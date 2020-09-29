@@ -19,6 +19,8 @@
   * **uploadHelp** - Description / helper text for the file upload button.
   * **maxEditorDisplayHeight** - height for when used in a complex list.
   * **enableDelete** - enables delete functionality.  'delete' in this context refers to the url field, not the image on s3.  By default this is false
+  * **uploadCallback** - a hook for when used outside of Kiln
+  * **additionNonKilnValidators** - additional validators for when used outside of Kiln
 
 </docs>
 
