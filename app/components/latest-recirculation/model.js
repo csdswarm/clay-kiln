@@ -69,7 +69,14 @@ module.exports = recirculationData({
       isRdcContent: !(locals.station.id && locals.station.website)
     };
   },
-  render,
+  render: (uri, data, locals) => {
+
+    if (data.populateFrom ===  'tag') {
+      data._computed.tagText = data.tag[0].text;
+    }
+    
+    return render(uri, data, locals);
+  },
   shouldAddAmphoraTimings: true,
   mapResultsToTemplate: (locals, result, item = {}) => {
     return Object.assign(item, {
