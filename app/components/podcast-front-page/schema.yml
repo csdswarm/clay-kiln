@@ -1,0 +1,40 @@
+_description: |
+  landing page featuring podcasts
+
+title:
+  _label: Title to show when the hero carousel is disabled
+  _has: 
+    input: text
+
+enableHero:
+  _label: Enable hero carousel
+  _has: checkbox
+
+
+hero:
+  _label: Podcast Front Hero
+  _placeholder:
+    text: Podcast Front Hero
+    height: 540px
+  _componentList:
+    include:
+      - podcast-hero-carousel
+    validate:
+      max: 1
+
+content:
+  _label: Podcast Front Sections
+  _placeholder:
+    text: Podcast Front Section
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - podcast-featured-strip
+      - podcast-category-strip
+
+_groups:
+  settings:
+    fields:
+      - enableHero
+      - title

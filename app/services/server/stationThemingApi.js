@@ -9,12 +9,13 @@ const db = require('./db'),
    * retrieves the current station theme
    *
    * @param {string} siteSlug
+   * @param {*} defaultResult
    * @return {object}
    */
-  get = async (siteSlug) => {
+  get = async (siteSlug, defaultResult) => {
     const key = `${CLAY_SITE_HOST}/_station_themes/${siteSlug}`;
 
-    return await db.get(key);
+    return await db.get(key, {}, defaultResult);
   },
   /**
    * Add routes for station themes
@@ -81,12 +82,16 @@ const db = require('./db'),
    */
   getStationPage = async (stationSlug) => {
     const sql = `
-        SELECT  p.id as uri
-        FROM  pages p,
-          LATERAL jsonb_array_elements_text(p.data->'main') m(id)
-            INNER JOIN components."station-front" sf ON m.id = sf.id
-        WHERE  sf.data@>?::jsonb  AND sf.id ~ '@published$'`,
-      result = await db.raw(sql, [{ stationSlug }]),
+        SELECT 
+          p.id as uri
+        FROM 
+          pages p
+        JOIN components."station-front" sf 
+          ON p.data->'main'->>0 = sf.id
+        WHERE 
+          sf.data->>'stationSlug' = ?
+          AND sf.id ~ '@published$'`,
+      result = await db.raw(sql, [stationSlug]),
       pageUri = _get(result, 'rows[0].uri');
 
     if (pageUri) {

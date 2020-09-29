@@ -6,6 +6,7 @@ const
   _identity = require('lodash/identity'),
   _isArray = require('lodash/isArray'),
   _isEmpty = require('lodash/isEmpty'),
+  _isFunction = require('lodash/isFunction'),
   _isNull = require('lodash/isNull'),
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
@@ -60,6 +61,29 @@ function boolKeys(obj) {
 }
 
 /**
+ * coalesce is a recursive function that finds the first matching property path (lodash style) within an object
+ * and returns the value
+ * @param { object } obj - the object to search
+ * @param { string|array } path - the property array or string
+ * @param { array } rest - any additional paths to check if the previous is not found on the object
+ * @returns {*}
+ * @example:
+ * coalesce({ stuff: { things: 'Hello' }, a: 'Bye' }, 'not.here', ['no', 'way'], 'not/here'.split('/'), 'stuff.things', 'a');
+ * // returns 'Hello';
+ */
+function coalesce(obj, path, ...rest) {
+  while (path) {
+    const value = _get(obj, path);
+
+    if (value !== undefined) {
+      return value;
+    }
+
+    [path, ...rest] = rest;
+  }
+}
+
+/**
  * determine if a field is empty
  * @param  {*}  val
  * @return {Boolean}
@@ -93,6 +117,20 @@ function has(val) {
  */
 function isUrl(str) {
   return /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(str);
+}
+
+/**
+ * Determine if an url is valid using the URL constructor
+ * @param {string} str
+ * @return {Boolean}
+ */
+function isValidUrl(str) {
+  try {
+    new URL(str);
+  } catch (err) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -528,11 +566,33 @@ function includesAny(iterable1, iterable2) {
   return false;
 }
 
+/**
+ * Iterates over all prototype properties and binds any functions to itself
+ *
+ * The purpose is to reduce _bindAll boilerplate which usually binds every
+ *   instance function.
+ *
+ * @param {*} obj
+ */
+function bindInstanceFunctions(obj) {
+  const proto = obj.constructor.prototype;
+
+  for (const key of Object.getOwnPropertyNames(proto)) {
+    const val = obj[key];
+
+    if (key !== 'constructor' && _isFunction(val)) {
+      obj[key] = val.bind(obj);
+    }
+  }
+}
+
 module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
+  bindInstanceFunctions,
   boolKeys,
   boolObjectToArray,
+  coalesce,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
@@ -548,6 +608,7 @@ module.exports = {
   isInstance,
   isPublishedVersion,
   isUrl,
+  isValidUrl,
   listDeepObjects,
   postfix,
   prepend,

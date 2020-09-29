@@ -1,5 +1,13 @@
 @import "_global/colors";
 
+.component--station-front, 
+.component--section-front {
+  .two-column-component__column--2 .iframe-container__padded-container iframe[style] {
+    /* Overrides the iframe inline styling, Inline style takes higher priority, the important is required */
+    width: auto !important;
+  }
+}
+
 .component--html-embed {
   margin-bottom: em(30);
   width: 100%;

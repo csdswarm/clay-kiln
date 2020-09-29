@@ -33,6 +33,20 @@ pageTitle:
   _has:
     help: Plaintext page title, set by headline.
 
+slug:
+  _label: Slug
+  _has:
+    input: text
+    attachedButton:
+      name: magic-button
+      component: static-page
+      transform: getComponentInstance
+      url: $SITE_PREFIX
+      property: pageTitle
+      moreMagic:
+        - transform: toSlug
+      tooltip: Generate from pageTitle
+
 plaintextPrimaryHeadline:
   _publish:
     - ogTitle
@@ -44,6 +58,7 @@ _groups:
   settings:
     fields:
       - stationName
+      - slug
 
 stationName:
   _label: Station Name
@@ -51,3 +66,4 @@ stationName:
   _reveal:
     field: stationName
     operator: truthy
+

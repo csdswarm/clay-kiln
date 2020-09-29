@@ -15,17 +15,19 @@ const
   striptags = require('striptags'),
   urlExists = require('../url-exists'),
   { addStationsByEditorialGroup } = require('../editorial-feed-syndication'),
-  { DEFAULT_STATION } = require('../constants'),
-  { PAGE_TYPES } = require('../constants'),
+  { capitalize } = require('../capitalize'),
+  { generateSyndicationSlug } = require('../syndication-utils'),
   { getComponentName } = require('clayutils'),
   {
-    uriToUrl,
-    replaceVersion,
     has,
     isFieldEmpty,
+    replaceVersion,
     textToEncodedSlug,
+    uriToUrl,
     urlToElasticSearch
-  } = require('../utils');
+  } = require('../utils'),
+  { DEFAULT_STATION } = require('../constants'),
+  { PAGE_TYPES } = require('../constants');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -383,13 +385,21 @@ function bylineOperations(data) {
       on save as to not affect rendering.
     */
     for (const author of names || []) {
+      const slug = slugify(author.text);
+
       delete author.count;
       author.slug = textToEncodedSlug(author.text);
+      author.name = author.name ? author.name : author.text;
+      author.text = capitalize(slug.replace(/-/g, ' '));
       authors.push(author);
     }
     for (const host of bylineHosts || []) {
+      const slug = slugify(host.text);
+
       delete host.count;
       host.slug = textToEncodedSlug(host.text);
+      host.name = host.name ? host.name : host.text;
+      host.text = capitalize(slug.replace(/-/g, ' '));
       hosts.push(host);
     }
     // do sources too
@@ -471,9 +481,10 @@ function updateStationSyndicationType(data) {
  * @returns {Object}
  */
 function setNoIndexNoFollow(data) {
-  const isContentFromAP = _get(data, 'byline', [])
-    .some(({ sources = [] }) =>
-      sources.some(({ text }) => text === 'The Associated Press'));
+  const
+    containAP = ({ text }) => text.includes('Associated Press'),
+    isContentFromAP = _get(data, 'byline', [])
+      .some(({ sources = [], names = [] }) => names.some(containAP) || sources.some(containAP));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
@@ -568,12 +579,7 @@ function addStationSyndicationSlugs(data) {
       const shouldSetSlug = station.stationSlug === DEFAULT_STATION.site_slug ? station.sectionFront : station.stationSlug;
 
       if (shouldSetSlug) {
-        station.syndicatedArticleSlug = '/' + [
-          station.stationSlug,
-          slugify(station.sectionFront),
-          slugify(station.secondarySectionFront),
-          station.slug || data.slug
-        ].filter(Boolean).join('/');
+        station.syndicatedArticleSlug = generateSyndicationSlug(data.slug, station);
       } else {
         delete station.syndicatedArticleSlug;
       }

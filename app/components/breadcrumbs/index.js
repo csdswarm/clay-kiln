@@ -4,7 +4,8 @@ const { getSectionFrontName, retrieveList } = require('../../services/server/lis
   __ = {
     retrieveList
   },
-  _isPlainObject = require('lodash/isPlainObject');
+  _isPlainObject = require('lodash/isPlainObject'),
+  _has = require('lodash/has');
 
 /**
  * Takes a text value and converts it to a navigable slug
@@ -181,7 +182,10 @@ module.exports = {
 
       // When content is imported/created directly in a station and then syndicated to another without setting the section fronts
       // the primary and secondary sections front should be removing from the breadcrumbs to avoid using the original ones.
-      if (data.stationSlug !== station.site_slug) {
+      // TODO: standardize the stationSlug property location for podcast-show-pages and podcast-episodes-pages.
+      if (_has(data, 'stationSlug') && data.stationSlug !== station.site_slug) {
+        breadcrumbItems.splice(1);
+      } else if (_has(data, '_computed.stationSlug') && data._computed.stationSlug !== station.site_slug) {
         breadcrumbItems.splice(1);
       }
     }
@@ -194,12 +198,16 @@ module.exports = {
       // SectionFront must be taken into account since is been used to complete the breadcrumbs
       // when a content is imported only the callsign is been set in the process.
       if (syndication && syndication.sectionFront) {
-        const excludeSyndicationSource = ['editorial feed'].includes(syndication.source);
+        const excludeSyndicationSource = [
+          'editorial feed',
+          'content subscription'
+        ].includes(syndication.source);
 
         breadcrumbProps = [
           { slug: syndication.stationSlug, text: syndication.stationName },
           ...props
         ];
+
         breadcrumbItems = breadcrumbProps
           .filter(prop => existingProp(prop, syndication))
           .map(useDisplayName(syndication, lists));

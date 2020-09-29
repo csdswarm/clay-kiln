@@ -22,6 +22,7 @@ col3:
     fuzzy: true
     renderOrder: 3
     include:
+      - stats-widget-list
       - minified-content-feed
 
 mediumRectangleTop:

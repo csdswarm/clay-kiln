@@ -19,6 +19,7 @@
 .kiln-edit-mode .component--google-ad-manager {
   margin-bottom: em(50);
 }
+
 .component--google-ad-manager {
   &.sticky {
     position: -webkit-sticky;
@@ -60,6 +61,10 @@
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+.layout__layout-header .google-ad-manager--billboard {
+  margin-bottom: 0;
 }
 
 .layout__bottom,
@@ -116,10 +121,12 @@
     &super-leaderboard,
     &leaderboard,
     &mobile {
-      width: 100%;
-      margin: 0 0 em(50);
-      left: 0;
-      right: 0;
+      @media only screen and (min-width: 481px) {
+        width: 100%;
+        margin: 0 0 em(50);
+        left: 0;
+        right: 0;
+      }
     }
   }
 }

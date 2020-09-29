@@ -6,41 +6,27 @@ const db = require('../../services/server/db'),
   * @param {String} stationCallsign
   * @returns {String}
   */
-  stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stationCallsign}'`,
+  stationQuery = stationCallsign => `AND cc.data->>'stationCallsign' = '${stationCallsign}'`,
   /**
   * Queries the db for contest rules
+  * @param {boolean} [param.openOnly=false] retrieve only contests that are currently open (current date is in between start and end date)
   * @param {String} param.stationCallsign
   */
   getContestRules = async ({
-    stationCallsign = ''
+    stationCallsign = '',
+    // Modifies the query to shows all the contests including those past 31 days after they ended
+    //  or only show all active contests
+    openOnly = false
   }) => {
     const contestRulesQuery = /* sql */ `
-      SELECT *
-      FROM components."contest"
-
-      WHERE (
-        -- ending within 30 days from now or ended within 31 days ago
-        DATE_PART(
-          'day',
-          CURRENT_TIMESTAMP - (data ->> 'endDateTime')::timestamp
-        ) BETWEEN -30 and 31
-
-        -- currently active
-        OR (
-          DATE_PART(
-            'day',
-            CURRENT_TIMESTAMP - (data ->> 'startDateTime')::timestamp
-          ) > 0
-          AND
-          DATE_PART(
-            'day',
-            (data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
-          ) > 0
-        )
-      )
-
-      AND id SIMILAR TO '%@published'
-      ${stationQuery(stationCallsign)}
+    SELECT cc.id, cc.data FROM components."contest" cc
+    JOIN pages p ON cc.data->>'canonicalUrl' = p.meta->>'url'
+    WHERE 
+    ${ openOnly
+    ? "CURRENT_DATE <= DATE(((cc.data ->> 'endDateTime')::timestamp)) "
+    : "DATE((cc.data ->> 'endDateTime')::timestamp) >= DATE(CURRENT_DATE - INTERVAL '31 day') "}
+      ${stationQuery(stationCallsign)} 
+      ORDER BY cc.data ->> 'startDateTime' ASC;
     `,
 
       { rows } = await db.raw(contestRulesQuery),
