@@ -19,10 +19,10 @@ const socialSvgs = require('./social-svgs'),
  * @return {String}
  */
 function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, sources, options) {
-  const listAndMeta = reduceList([...authorsAndMeta, ...hostsAndMeta], options),
-    listSources = reduceList([...sources], options);
+  const listAndMeta = listToHtml([...authorsAndMeta, ...hostsAndMeta], options),
+    listSources = listToHtml([...sources], options);
 
-  return `${listAndMeta} ${listSources ? listSources : ' '}`;
+  return `${listAndMeta} ${listSources ? listSources : ''}`;
     
 }
 
@@ -33,7 +33,7 @@ function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, sources, options) {
  * @param {Object} options
  * @return {string}
  */
-function reduceList(list, options) {
+function listToHtml(list, options) {
   return list.reduce(function (acc, item, index) {
     if (list.length === 1) { // only display socials if there is one author
       if (options.showSocial) {
