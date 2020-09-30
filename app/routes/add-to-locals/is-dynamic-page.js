@@ -13,12 +13,12 @@ module.exports = router => {
 
     try {
       if (edit) {
-        const where = _.includes(req.uri, '_pages') ? `WHERE id = ${req.uri}` : `WHERE meta->>'url' = http://${req.uri}`,
+        const where = () => _.includes(req.uri, '_pages') ? `WHERE id = '${req.uri}'` : `WHERE meta->>'url' = 'http://${req.uri}'`,
           results = await db.raw(`
             WITH _page_main (main) AS (
               SELECT data->'main'->>0, position('/instances/' in data->'main'->>0)
               FROM pages
-              ${where}
+              ${where()}
             )
         
             SELECT _pm.main, _p.data->>'_dynamic' AS dynamic
