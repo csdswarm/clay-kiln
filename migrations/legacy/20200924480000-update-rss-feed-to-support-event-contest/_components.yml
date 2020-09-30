@@ -51,11 +51,11 @@ _components:
             bool:
               filter:
               - match:
-                feeds.rss: true
+                  feeds.rss: true
               - bool:
-                must_not:
-                  term:
-                    noIndexNoFollow: true
+                  must_not:
+                    term:
+                      noIndexNoFollow: true
               should:
               - term:
                   byline:
