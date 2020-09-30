@@ -88,7 +88,7 @@ export default {
         }
         this.saveStationOptions(`Station Favicon Saved`);
       } else {
-        this.showSnack(err);
+        this.showSnack(err.message);
       }
     },
     saveStationOptions(snackMessage) {
