@@ -115,9 +115,9 @@ byline:
     props:
       -
         prop: names
-        _label: Names
+        _label: Authors
         _has:
-          help: Press TAB or , after each name to save
+          help: Press TAB or , after each author to save
           input: simple-list
           autocomplete:
             list: authors
