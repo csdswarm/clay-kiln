@@ -22,7 +22,7 @@ describe('meta-tags', function () {
         },
         url: 'https://www.radio.com/music/alternative/billie-eilish-on-why-its-a-great-time-to-be-vegan/'
       },
-      mockData = {
+      mockImportedData = {
         contentTagItems: [
           { slug: 'one', text: 'One' },
           { slug: 'two-strings', text: 'Two Strings',  count: 1 },
@@ -39,9 +39,19 @@ describe('meta-tags', function () {
           market: 'los angeles',
           station: 'kroqfm'
         }
+      },
+      mockData = {
+        contentTagItems: [
+          { slug: 'one', text: 'One' },
+          { slug: 'two-strings', text: 'Two Strings',  count: 1 },
+          { slug: 'also-multiple-strings', text: 'Also multiple Strings', count: 1 }
+        ],
+        sectionFront: 'primary',
+        secondarySectionFront: 'secondary',
+        contentType: 'article'
       };
 
-    return { mockLocals, mockData, render, getNmcData };
+    return { mockLocals, mockData, mockImportedData, render, getNmcData };
   };
 
   describe('render', () => {
@@ -62,7 +72,7 @@ describe('meta-tags', function () {
       });
     });
 
-    it('don\'t includes "editorial tags" data in the unusedTags array', async () => {
+    it('doesn\'t includes "editorial tags" data in the unusedTags array', async () => {
       const { mockLocals, mockData, render } = setup_render(),
         data = await render('some_ref', mockData, mockLocals);
 
@@ -73,24 +83,23 @@ describe('meta-tags', function () {
 
   describe('getNmcData', () => {
     function setup_data() {
-      const { mockLocals, mockData, getNmcData } = setup_model();
+      const { mockLocals, mockData, mockImportedData, getNmcData } = setup_model();
 
-      return { mockLocals, mockData, getNmcData };
+      return { mockLocals, mockData, mockImportedData, getNmcData };
     };
 
-    it('returns tags generated using the pageData and contentTagItems', async () => {
-      const { mockLocals, mockData, getNmcData } = setup_data(),
-        nmcData =  getNmcData(false, mockData, mockLocals);
-
-      expect(nmcData).to.have.property('tag');
-      expect(nmcData.tag).to.eql('article,primary,secondary,One,Two Strings,Also multiple Strings');
-    });
-
-    it('returns tags using the imported information and contentTagItems', async () => {
-      const { mockLocals, mockData, getNmcData } = setup_data(),
-        nmcData =  getNmcData(true, mockData, mockLocals);
+    it('returns tags using the imported tags and contentTagItems information when they are present', async () => {
+      const { mockLocals, mockImportedData, getNmcData } = setup_data(),
+        nmcData =  getNmcData(mockImportedData, mockLocals);
 
       expect(nmcData.tag).to.eql('article,primary,secondary,One,Two Strings,Also multiple Strings,music,pop,alternative,Billie Eilish');
+    });
+
+    it('returns tags using the contentTagItems information when they are present', async () => {
+      const { mockLocals, mockData, getNmcData } = setup_data(),
+        nmcData =  getNmcData(mockData, mockLocals);
+
+      expect(nmcData.tag).to.eql('article,primary,secondary,One,Two Strings,Also multiple Strings');
     });
   });
 });
