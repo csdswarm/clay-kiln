@@ -21,7 +21,7 @@
           <AdvancedImageUploader
             name="favicon"
             :data="stationOptions.favicon"
-            schema="{}"
+            :schema="{}"
             :args="faviconArgs"
           />
         </div>
