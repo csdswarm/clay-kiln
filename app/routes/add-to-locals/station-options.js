@@ -11,8 +11,8 @@ module.exports = app => {
     let stationOptions = await redis.get(`station_options:${station.id}`);
 
     if (!stationOptions) {
-      stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, {});
-      redis.set(`station_options:${station.id}`, JSON.stringify(stationOptions));
+      stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, '{}');
+      redis.set(`station_options:${station.id}`, stationOptions);
     }
 
     res.locals.stationOptions = JSON.parse(stationOptions);
