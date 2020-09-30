@@ -11,7 +11,7 @@ function wrapper(data, msg) {
       stack: msg.stack,
       kind: msg.name
     };
-  } else if (typeof data === 'object' && data.hasOwnProperty('error')) {
+  } else if (typeof data === 'object' && data.hasOwnProperty('error') && data.error instanceof Error) {
     data.error = {
       stack: data.error.stack,
       kind: data.error.name,
