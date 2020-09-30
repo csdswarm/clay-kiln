@@ -109,10 +109,16 @@ export default {
     },
     validateFaviconSize(image) {
       if (image.width <  MIN_FAVICON_WIDTH || image.height < MIN_FAVICON_HEIGHT) {
-        this.handleError(new Error(`Image must be a minimum of: ${MIN_FAVICON_WIDTH}x${MIN_FAVICON_HEIGHT}`, 6000));
+        this.handleError(
+          new Error(`Image must be a minimum of: ${MIN_FAVICON_WIDTH}x${MIN_FAVICON_HEIGHT}`),
+          6000
+        );
         return false;
       } else if (image.width !== image.height) {
-        this.handleError(new Error(`Image must be a square with a 1:1 ratio i.e. ${MIN_FAVICON_WIDTH}x${MIN_FAVICON_HEIGHT}`, 6000));
+        this.handleError(
+          new Error(`Image must be a square with a 1:1 ratio i.e. ${MIN_FAVICON_WIDTH}x${MIN_FAVICON_HEIGHT}`),
+          6000
+        );
         return false;
       } else {
         return true;
