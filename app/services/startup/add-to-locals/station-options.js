@@ -1,8 +1,8 @@
 'use strict';
 
-const { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
-  db = require('../../services/server/db'),
-  redis = require('../../services/server/redis');
+const { wrapInTryCatch } = require('../middleware-utils'),
+  db = require('../../server/db'),
+  redis = require('../../server/redis');
   
 
 module.exports = app => {
@@ -15,10 +15,10 @@ module.exports = app => {
       stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, {});
       redis.set(`station_options:${station.id}`, JSON.stringify(stationOptions));
       res.locals.stationOptions = stationOptions;
-      next();
+      return next();
     }
 
     res.locals.stationOptions = JSON.parse(stationOptions);
-    next();
+    return next();
   }));
 };

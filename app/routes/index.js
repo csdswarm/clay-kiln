@@ -18,7 +18,6 @@ const AWS = require('aws-sdk'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   addEndpoints = require('./add-endpoints'),
-  addLocals = require('./add-to-locals'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
   siteMapStations = require('./sitemap-stations'),
   siteMapGoogleNews = require('./sitemap-google-news'),
@@ -173,6 +172,4 @@ module.exports = router => {
   addEndpoints.getStationsSubscribedToContent(router);
   addEndpoints.stationOptions(router);
   addEndpoints.stationUtils(router);
-
-  addLocals.stationOptions(router);
 };
