@@ -15,10 +15,10 @@ module.exports = app => {
       stationOptions = await db.get(`${process.env.CLAY_SITE_HOST}/_station_options/${station.id}`, res.locals, {});
       redis.set(`station_options:${station.id}`, JSON.stringify(stationOptions));
       res.locals.stationOptions = stationOptions;
-      return next();
+      next();
     }
 
     res.locals.stationOptions = JSON.parse(stationOptions);
-    return next();
+    next();
   }));
 };
