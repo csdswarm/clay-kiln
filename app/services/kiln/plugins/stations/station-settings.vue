@@ -82,10 +82,7 @@ export default {
     },
     onFaviconChange(err, imgUrl) {
       if (!err) {
-        this.stationOptions.favicon = imgUrl;
-        this.stationOptions = {
-          ...this.stationOptions
-        }
+        this.$set(this.stationOptions, 'favicon', imgUrl);
         this.saveStationOptions(`Station Favicon Saved`);
       } else {
         this.showSnack(err.message);
