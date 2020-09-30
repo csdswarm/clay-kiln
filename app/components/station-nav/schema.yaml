@@ -185,7 +185,83 @@ listenNav:
     include:
       - station-listen-nav
 
+CtaOptions:
+  _has:
+    input: radio
+    options:
+      -
+        name: No CTA
+        value: none
+      -
+        name: Newsletter Sign Up Link
+        value: newsletter
+      -
+        name: Contact Info
+        value: contact
+    help: Which CTA would you like to show?
+
+CtaNewsletterUrl:
+  _label: CTA Newsletter URL
+  _has:
+    input: text
+    type: url
+  _reveal:
+    field: CtaOptions
+    operator: ===
+    values:
+      - newsletter
+
+CtaContactInfoTelephone:
+  _label: CTA Contact Telephone Number
+  _has:
+    input: text
+    type: tel
+  _reveal:
+    field: CtaOptions
+    operator: ===
+    values:
+      - contact
+
+CtaContactInfoTelephoneDisplay:
+  _label: CTA Contact Telephone Display
+  _has:
+    input: text
+    type: text
+    help: The phone number displayed to the user
+  _reveal:
+    field: CtaOptions
+    operator: ===
+    values:
+      - contact
+
+CtaContactInfoSms:
+  _label: CTA Contact SMS
+  _has:
+    input: text
+    type: tel
+  _reveal:
+    field: CtaOptions
+    operator: ===
+    values:
+      - contact
+
+CtaContactInfoSmsDisplay:
+  _label: CTA Contact Text Display
+  _has:
+    input: text
+    type: text
+    help: The SMS number displayed to the user
+  _reveal:
+    field: CtaOptions
+    operator: ===
+    values:
+      - contact
+
 _groups:
+  CtaContactInfoSettings:
+    fields:
+      - CtaContactInfoTelephone
+      - CtaContactInfoSms
   settings:
     fields:
       - stationLogo (Main Nav & Drawer)
@@ -193,3 +269,9 @@ _groups:
       - hidePodcastsLink (Listen Nav Drawer)
       - podcastsUrl (Listen Nav Drawer)
       - featuredLinks (Listen Nav Drawer)
+      - CtaOptions (Connect CTA Drawer)
+      - CtaNewsletterUrl (Connect CTA Drawer)
+      - CtaContactInfoTelephone (Connect CTA Drawer)
+      - CtaContactInfoTelephoneDisplay (Connect CTA Drawer)
+      - CtaContactInfoSms (Connect CTA Drawer)
+      - CtaContactInfoSmsDisplay (Connect CTA Drawer)

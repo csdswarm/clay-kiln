@@ -1,9 +1,10 @@
 'use strict';
 
-const _reject = require('lodash/reject'),
+const _differenceBy = require('lodash/differenceBy'),
   _filter = require('lodash/filter'),
-  _differenceBy = require('lodash/differenceBy'),
-  getStationsSubscribedToContent = require('../../server/get-stations-subscribed-to-content');
+  _get = require('lodash/get'),
+  _reject = require('lodash/reject'),
+  getSubscriptionsWithStationProps = require('../../server/get-subscriptions-with-station-props');
 
 /**
  * Add syndication entries for content subscriptions
@@ -12,7 +13,7 @@ const _reject = require('lodash/reject'),
  */
 async function applyContentSubscriptions(data, locals) {
   if (['article', 'gallery'].includes(data.contentType)) {
-    const contentSubscriptionEntries = await getStationsSubscribed(data, locals),
+    const contentSubscriptionEntries = await getContentSubscriptionEntries(data, locals),
       otherSyndicationEntries = _reject(
         data.stationSyndication,
         { source: 'content subscription' }
@@ -34,19 +35,21 @@ async function applyContentSubscriptions(data, locals) {
  * @param {Object} locals
  * @returns {array}
  */
-async function getStationsSubscribed(data, locals) {
-  const stations = await getStationsSubscribedToContent(data, locals),
-
-    stationsSubscribed = (stations || []).map(station => {
+async function getContentSubscriptionEntries(data, locals) {
+  const subscriptions = await getSubscriptionsWithStationProps(data, locals),
+    stationsSubscribed = (subscriptions || []).map(subscription => {
       const { sectionFront, secondarySectionFront } = data,
-        { callsign, name: stationName, site_slug: stationSlug } = station;
+        { callsign, name: stationName, site_slug: stationSlug, mapped_section_fronts: mappedSectionFronts } = subscription,
+        primarySectionFrontExists = _get(mappedSectionFronts,'primarySectionFront'),
+        primarySectionFrontMapped = primarySectionFrontExists ? _get(mappedSectionFronts,'primarySectionFront') : sectionFront,
+        secondarySectionFrontMapped = primarySectionFrontExists ? _get(mappedSectionFronts,'secondarySectionFront') : secondarySectionFront;
 
       return {
         callsign,
         stationName,
         stationSlug,
-        ...sectionFront && { sectionFront },
-        ...secondarySectionFront && { secondarySectionFront },
+        ...primarySectionFrontMapped && { sectionFront: primarySectionFrontMapped },
+        ...secondarySectionFrontMapped && { secondarySectionFront: secondarySectionFrontMapped },
         source: 'content subscription'
       };
     }),
@@ -56,9 +59,9 @@ async function getStationsSubscribed(data, locals) {
     ),
 
     // remove elements from the content subscription that matches unsubscribed ones.
-    filteredStationSubscribed = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
-    
-  return filteredStationSubscribed;
+    filteredSubscriptionEntries = _differenceBy(stationsSubscribed, unsubscribed, 'callsign');
+  
+  return filteredSubscriptionEntries;
 }
 
 module.exports = applyContentSubscriptions;
