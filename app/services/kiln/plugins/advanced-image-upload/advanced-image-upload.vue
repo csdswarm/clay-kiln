@@ -67,9 +67,9 @@
 <script>
 
 import { uploadFile } from '../../../client/s3'
+import _every from 'lodash/every'
 
 const { UiFileupload, UiButton } = window.kiln.utils.components
-const _every = require('lodash/every')
 
 export default {
   props: ['name', 'data', 'schema', 'args'],
