@@ -10,7 +10,7 @@
   @mixin font CircularStd-Book, 20px, inherit, -.23px, 20px;
 }
 
-@define-mixin station-settings-label {
+@define-mixin station-settings-form-group-title {
   @mixin font CircularStd-Bold, 16px, inherit, -.23px, 20px;
 }
 
@@ -58,9 +58,9 @@
     background: $concrete;
     padding: em(16);
     margin-bottom: em(2);
-    label {
-      @mixin station-settings-label;
-    }
+  }
+  &__form-group-title {
+    @mixin station-settings-form-group-title;
   }
   &__form-group--global-sponsorship {
     .ui-checkbox {

@@ -17,7 +17,7 @@
 
       <div class="station-settings__form-group station-settings__form-group--favicon">
         <div class="station-settings__form-group-left">
-          <label for="">Station Favicon:</label>
+          <div class="station-settings__form-group-title">Station Favicon:</div>
           <AdvancedImageUploader
             name="favicon"
             :data="stationOptions.favicon"
