@@ -21,7 +21,7 @@ module.exports = router => {
               ${where()}
             )
         
-            SELECT _pm.main, _p.data->>'_dynamic' AS dynamic
+            SELECT _p.data->>'_dynamic' AS dynamic
             FROM _page_main _pm, pages _p
             WHERE LEFT(_pm.main, _pm.position) || 'instances/new' = _p.data->'main'->>0
             AND _p.data->>'_dynamic' IS NOT NULL
