@@ -3,7 +3,6 @@
 let fetchMore = true;
 
 const { 
-  bluebird,
   axios
 } = require('../../utils/base'),
   fs = require('fs'),
@@ -20,8 +19,8 @@ const host = process.argv[2] || 'clay.radio.com',
 let updatedTags = [],
   existingTags = [],
   OFFSET = 0,
-  LIMIT = 5000,
-  SLEEP = 1000,
+  LIMIT = 1000,
+  SLEEP = 500,
   COUNT = 0;
   
 
@@ -61,8 +60,8 @@ async function updateCurrentList() {
     Authorization: 'token accesskey',
     'Content-Type': 'application/json'
   };
-  // await axios.put(`${http}://${id}`, data, { headers }).catch(err => console.log(err));
-  axios.put(`http://clay.radio.com/_lists/tags`, data, { headers })
+
+  axios.put(`${http}://${host}/_lists/tags`, data, { headers })
     .then(() => {
       console.log('Tag list updated');
     })
@@ -86,7 +85,6 @@ async function appendTags(rows) {
 }
 
 async function getTagComponents(db, offset, limit) {
-  console.log(`Entry #${COUNT}`);
   await new Promise(resolve => setTimeout(resolve, SLEEP));
   const result = await db.query(`
     select data->'textTags' as data
@@ -96,6 +94,7 @@ async function getTagComponents(db, offset, limit) {
     OFFSET ${offset}
   `);
 
+  console.log(`Number of entries validated: ${COUNT}`);
   if (result.rows.length === 0) {
     fetchMore = false;
   }
