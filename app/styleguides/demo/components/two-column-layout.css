@@ -96,6 +96,11 @@
       visibility: visible;
       margin-top: em(153);
     }
+    &[data-main-component="article"] {
+      .content__sidebar {
+        margin-top: em(253);
+      }
+    }
   },
   &[data-main-component="contest"] {
     .content__sidebar {

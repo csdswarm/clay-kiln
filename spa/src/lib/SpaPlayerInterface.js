@@ -11,6 +11,7 @@ import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
 import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 import recentPodcasts from '../../../app/services/client/recentPodcasts.js'
+import _get from 'lodash/get'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
 const sessionStorage = window.sessionStorage
@@ -78,10 +79,10 @@ class SpaPlayerInterface {
    * @returns {boolean} - whether or not to automatically boot the player.
    */
   autoBootPlayer (path) {
-    const matchedStationDetailRoute = path.match(/^\/podcasts\/(.+)\/(.+)$/) || path.match(/^\/(.+)\/listen$/)
+    const matchedAutoPlayRoute = path.match(/\/?([\w-]+)?\/podcasts\/([\w-]+)\/([\w-]+)/) || path.match(/^\/(.+)\/listen$/)
     const playerWasActive = this.playerSession.playerState === 'play'
 
-    if (matchedStationDetailRoute || playerWasActive) {
+    if (matchedAutoPlayRoute || playerWasActive) {
       return true
     } else {
       return false
@@ -152,6 +153,11 @@ class SpaPlayerInterface {
       window.addEventListener('goToPodcastPage', e => {
         const { podcastSiteSlug, stationSiteSlug } = e.detail
         this.redirectToPodcast(podcastSiteSlug, stationSiteSlug)
+      })
+
+      window.addEventListener('goToEpisodePage', e => {
+        const { podcastSiteSlug, episodeSiteSlug, stationSiteSlug } = e.detail
+        this.redirectToPodcast(podcastSiteSlug, stationSiteSlug, episodeSiteSlug)
       })
 
       return true
@@ -259,18 +265,24 @@ class SpaPlayerInterface {
    * Return if the route is the current
    * @param { string } podcastSiteSlug
    * @param { string } stationSiteSlug
+   * @param { string } episodeSiteSlug
    */
-  redirectToPodcast (podcastSiteSlug, stationSiteSlug) {
+  redirectToPodcast (podcastSiteSlug, stationSiteSlug, episodeSiteSlug) {
     let route = `/podcasts/${podcastSiteSlug}`
 
     if (stationSiteSlug) {
-      // if the siteSlug is defined make sure to append so they go back
+      // if the siteSlug is defined make sure to prepend so they go back
       // to station context
       route = `/${stationSiteSlug}${route}`
     }
 
+    if (episodeSiteSlug) {
+      // if the episodeSiteSlug is defined make sure to append it
+      route = `${route}/${episodeSiteSlug}`
+    }
+
     if (window.location.pathname === route) {
-      // Short circuit If the route is the same as current
+      // return if the route is the same as current
       return
     }
 
@@ -340,9 +352,11 @@ class SpaPlayerInterface {
    */
   extractPodcastEpisodeIdFromSpaPayload () {
     const episodeDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'podcast-episode-page')
+    const podcastId = _get(episodeDetailData, '_computed.podcast.id')
+    const episodeId = _get(episodeDetailData, '_computed.episode.id')
 
-    if (episodeDetailData && episodeDetailData.episode && episodeDetailData.podcast) {
-      return { podcastId: episodeDetailData.podcast.id, episodeId: episodeDetailData.episode.id }
+    if (episodeDetailData && podcastId && episodeId) {
+      return { podcastId, episodeId }
     } else {
       return {}
     }

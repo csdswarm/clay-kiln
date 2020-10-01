@@ -426,6 +426,7 @@ describe('server', () => {
                   etag: 'xyz123_mod1'
                 },
                 version: 1,
+                firstcreated: '2020-02-02T02:02:02Z',
                 ednote: 'go ahead and publish, there are no problems here.',
                 headline: 'Something tragic happened',
                 headline_extended: 'Something tragic happened on the way to heaven',
@@ -455,9 +456,10 @@ describe('server', () => {
         }
 
         it('maps AP data to article', async () => {
-          const { result } = await setup_modifiedByAP(),
+          const
+            expectedTitle = 'Something bad happened',
+            { result } = await setup_modifiedByAP({ apMeta: { headline: expectedTitle, firstcreated: '2020-05-04T07:14:00Z' } }),
             { article } = result,
-            expectedTitle = 'Something tragic happened',
             expected = {
               ap:
                 {
@@ -467,6 +469,8 @@ describe('server', () => {
                   uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0&include=*',
                   version: 1
                 },
+              articleDate: '2020-05-04',
+              articleTime: '07:14',
               headline: expectedTitle,
               msnTitle: expectedTitle,
               pageDescription: 'Something tragic happened on the way to heaven',
@@ -477,7 +481,7 @@ describe('server', () => {
               seoDescription: 'Something tragic happened on the way to heaven',
               seoHeadline: expectedTitle,
               shortHeadline: expectedTitle,
-              slug: 'something-tragic-happened',
+              slug: 'something-bad-happened',
               stationLogoUrl: '',
               stationURL: '',
               teaser: expectedTitle

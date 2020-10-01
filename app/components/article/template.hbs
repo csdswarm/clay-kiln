@@ -36,7 +36,38 @@
     <meta itemprop="dateModified" content="{{ dateModified }}" />
 
     {{! title }}
-    <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    <h1 class="header__primary" data-editable="headline" itemprop="headline">
+      {{#ifAll isOpinion headline}}
+        {{#if opinionHeadlineOverride}}
+          {{opinionHeadlineOverride}}:
+        {{else}}
+          OPINION:
+        {{/if}}
+      {{/ifAll}}
+      {{{ headline }}}
+    </h1>
+    {{#if @root.locals.edit}}
+      <div class="header__opinion" data-editable="opinion" itemprop="isOpinion">
+        <div class="header__opinion--form">
+          <h4>Opinion settings:</h4>
+          <div class="header__opinion--input">
+            <input id="isOpinionCheckbox" {{#if isOpinion}}checked{{/if}} type="checkbox" disabled />
+            <label for="isOpinionCheckbox">Is this an opinion piece?</label>
+          </div>
+          {{#if opinionHeadlineOverride}}
+            <div class="header__opinion--input">
+              <label for="opinionHeadlineOverrideInput">Prepended label</label>
+              <input id="opinionHeadlineOverrideInput" type="text" value="{{opinionHeadlineOverride}}" disabled />
+            </div>
+          {{/if}}
+        </div>
+        {{#if isOpinion}}
+          <div class="header__opinion--disclaimer">
+            "OPINION" will be appended to the article's title and a disclaimer provided by legal will be added to the bottom
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
     {{! subtitle }}
     {{#ifAny @root.locals.edit subHeadline}}
       <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
@@ -49,8 +80,6 @@
       {{> component-list lead }}
     </div>
   {{/if}}
-
-  {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="article__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
@@ -127,6 +156,19 @@
       <div data-editable="content" itemprop="articleBody">
         {{> component-list content }}
       </div>
+
+      {{#if isOpinion}}
+        <i>
+          We strive to be a platform where varying opinions may be voiced and heard, but it is up to you, the
+          reader, to verify your own facts and reach your own conclusions. We make no representations as to
+          the accuracy, completeness, correctness, quality, suitability, or validity of this article and/or
+          any comment(s) to it. All views, thoughts, statements, and opinions expressed by the author(s)
+          and/or by those providing comments are theirs alone. Entercom Communications Corp. and RADIO.COM
+          do not endorse or support the views, opinions or conclusions expressed in this article or any
+          comments, and we are not responsible or liable for any damage or loss of any kind whatsoever
+          to be caused by and in connection to such article and/or any comment(s).
+        </i>
+      {{/if}}
 
       {{! Tags }}
       {{> tags tags}}
