@@ -16,7 +16,7 @@ const podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
     podcastShow = await getPodcastShow(locals, dynamicSlug);
 
   // Needed to display dynamic page warning for users when in edit mode.
-  if (locals.edit) res.locals.isDynamicPage = true;
+  if (locals.edit) locals.isDynamicPage = true;
 
   if (_isEmpty(podcastShow)) {
     res.status(404).send('Podcast not found');
