@@ -6,7 +6,7 @@ const {
   axios
 } = require('../../utils/base'),
   fs = require('fs'),
-  _find = require('lodash/find'),
+  _findIndex = require('lodash/findIndex'),
 {
   formatAxiosError,
   parseHost,
@@ -49,11 +49,19 @@ async function getCurrentList() {
   console.log('Fetching original list...');
   const { data: tags } = await axios.get(`${http}://${host}/_lists/tags`);
   existingTags = tags;
-  updatedTags = existingTags;
   fs.writeFileSync('_original.json', JSON.stringify(tags))
 }
 
 async function updateCurrentList() {
+  // Append existing tags that are we're not created as a component in CLAY.
+  existingTags.forEach(tag => {
+    const idx = _findIndex(updatedTags, { text: tag.text });
+    if( idx >= 0){
+      // Do nothing.
+    } else {
+      updatedTags.push(tag);
+    }
+  })
 
   const data = JSON.stringify(updatedTags)
   const headers = { 
@@ -72,7 +80,10 @@ async function updateCurrentList() {
 async function appendTags(rows) {
   rows.forEach(({ data }) => {
     data.forEach(tag => {
-      if(!_find(updatedTags, { text: tag })) {
+      const idx = _findIndex(updatedTags, { text: tag });
+      if( idx >= 0){
+        updatedTags[idx].count+= 1;
+      } else {
         updatedTags.push({
           text: tag,
           count: 0
