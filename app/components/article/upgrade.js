@@ -229,3 +229,10 @@ module.exports['16.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['17.0'] = (uri, data) => {
+  // eslint-disable-next-line no-unused-vars
+  const { contentPageSponsorLogo, ...rest } = data;
+
+  return rest;
+};

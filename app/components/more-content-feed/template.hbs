@@ -107,7 +107,7 @@
           {{/each}}
 {{#if _computed.moreContent}}
     <li class="links__link--loadmore"
-        {{#if tag}}data-tag="{{ tag}}"{{/if}}
+        {{#if tag}}data-tag="{{ _computed.tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
         {{#if author}}data-author="{{ author }}"{{/if}}
         {{#if _computed.stationId}}data-station="{{ _computed.stationId }}"{{/if}}>

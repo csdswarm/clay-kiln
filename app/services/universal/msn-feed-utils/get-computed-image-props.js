@@ -28,8 +28,7 @@ const _round = require('lodash/round'),
       useInMsnFeed = url
         && !is404
         && !largerThanMaxSize
-        && !smallerThanMinSide
-        && !longerThanMaxSide;
+        && !smallerThanMinSide;
 
     let msnFeedUrl = url;
 

@@ -9,7 +9,7 @@
   @mixin font ProximaNova-Black, 14px, $black, -.38px, 17px;
 }
 @define-mixin podcast-featured-strip-font-category {
-  @mixin font CircularStd-Black, 15px, $robinsEgg, -.24px, 18px;
+  @mixin font CircularStd-Black, 15px, theme(primaryColor, $robinsEgg), -.24px, 18px;
 }
 @define-mixin podcast-featured-strip-font-heading {
   @mixin font CircularStd-Black, 16px, $black, -.55px, 19px;
@@ -56,15 +56,15 @@
       margin-bottom: em(20);
       max-width: em(widthOnGrid(3,2));
       flex: 1 0;
-  
+
       &:not(:last-child) {
-         margin-right: em(20);
-  
+        margin-right: em(20);
+
         @mixin medium-screen {
           margin-right: 0;
         }
       }
-  
+
       &:nth-child(odd) {
         @mixin medium-screen {
           padding-right: em(10);
@@ -73,7 +73,7 @@
           padding-right: 0;
         }
       }
-  
+
       &:nth-child(even) {
         @mixin medium-screen {
           padding-left: em(10);
@@ -82,7 +82,7 @@
           padding-left: 0;
         }
       }
-  
+
       @mixin medium-screen {
         flex: 1 0 50%;
         max-width: em(widthOnGrid(3, 2, medium-screen));
@@ -102,23 +102,23 @@
         object-fit: cover;
         width: 100%;
       }
-    
+
       .podcast-featured-strip__category {
         @mixin podcast-featured-strip-font-category;
         text-transform: uppercase;
         margin-top: em(10,15);
       }
-    
+
       .podcast-featured-strip__heading {
         @mixin podcast-featured-strip-font-heading;
         margin-top: em(3);
       }
-    
+
       .podcast-featured-strip__description {
         @mixin podcast-featured-strip-font-description;
         margin-top: em(4,12);
       }
-    
+
       .podcast-featured-strip__link {
         text-decoration: none;
       }
@@ -134,7 +134,7 @@
       flex-direction: column;
       max-width: initial;
     }
-  
+
     .podcast-preview__image {
       display: block;
       object-fit: cover;
@@ -142,7 +142,7 @@
       max-width: em(220);
       margin: auto
     }
-  
+
     .podcast-preview__link {
       margin-top: em(15, 22);
       text-decoration: none;
