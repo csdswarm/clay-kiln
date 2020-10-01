@@ -1,115 +1,75 @@
 'use strict'
-
-let fetchMore = true;
-
-const { 
-  axios
-} = require('../../utils/base'),
+const { axios } = require('../../utils/base'),
   fs = require('fs'),
   _findIndex = require('lodash/findIndex'),
-{
-  formatAxiosError,
-  parseHost,
-  usingDb
-} = require('../../legacy/migration-utils').v1;
+  {
+    formatAxiosError,
+    parseHost,
+    usingDb
+  } = require('../../legacy/migration-utils').v1
 
 const host = process.argv[2] || 'clay.radio.com',
-  { http } = parseHost(host);
+  { http } = parseHost(host)
 
-let updatedTags = [],
-  existingTags = [],
-  OFFSET = 0,
-  LIMIT = 1000,
-  SLEEP = 500,
-  COUNT = 0;
-  
+let existingTags = [];
 
 getCurrentList().then(
-  generateUpdatedList()
-  .catch(err => console.error(formatAxiosError(err, { includeStack: true })))
-);
+  generateUpdatedList().catch(err =>
+    console.error(formatAxiosError(err, { includeStack: true }))
+  )
+)
 
-async function generateUpdatedList() {
-  await usingDb(db => getTagComponents(db, OFFSET, LIMIT)
-    .then(appendTags)
-    .then(number => {
-      if (fetchMore) {
-        COUNT += number;
-        generateUpdatedList();
-      } else {
-        // Update the list with new values.
-        fs.writeFileSync('_created.json', JSON.stringify(updatedTags))
-        updateCurrentList();
-      }
-    })
-  );
+async function generateUpdatedList () {
+  await usingDb(db => getTagComponents(db).then(updateTags))
 }
 
-async function getCurrentList() {
-  console.log('Fetching original list...');
-  const { data: tags } = await axios.get(`${http}://${host}/_lists/tags`);
-  existingTags = tags;
+async function getCurrentList () {
+  console.log('Fetching tags...')
+  const { data: tags } = await axios.get(`${http}://${host}/_lists/tags`)
+  existingTags = tags
+  console.log(`Initial tags #${existingTags.length}`)
   fs.writeFileSync('_original.json', JSON.stringify(tags))
 }
 
-async function updateCurrentList() {
-  // Append existing tags that are we're not created as a component in CLAY.
-  existingTags.forEach(tag => {
-    const idx = _findIndex(updatedTags, { text: tag.text });
-    if( idx >= 0){
-      // Do nothing.
+async function updateTags (rows) {
+  rows.forEach(({ count, text }) => {
+    const idx = _findIndex(existingTags, { text })
+    if (idx >= 0) {
+      existingTags[idx].count = Number(count)
     } else {
-      updatedTags.push(tag);
+      existingTags.push({
+        text,
+        count: Number(count)
+      })
     }
   })
-
-  const data = JSON.stringify(updatedTags)
-  const headers = { 
+  console.log(`Updated tags #${existingTags.length}`)
+  const data = JSON.stringify(existingTags)
+  const headers = {
     Authorization: 'token accesskey',
     'Content-Type': 'application/json'
-  };
-
-  axios.put(`${http}://${host}/_lists/tags`, data, { headers })
-    .then(() => {
-      console.log('Tag list updated');
-    })
-    .catch(err => console.log(err));
-  
-}
-
-async function appendTags(rows) {
-  rows.forEach(({ data }) => {
-    data.forEach(tag => {
-      const idx = _findIndex(updatedTags, { text: tag });
-      if( idx >= 0){
-        updatedTags[idx].count+= 1;
-      } else {
-        updatedTags.push({
-          text: tag,
-          count: 0
-        });
-      }
-    })
-  })
-
-  return rows.length;
-}
-
-async function getTagComponents(db, offset, limit) {
-  await new Promise(resolve => setTimeout(resolve, SLEEP));
-  const result = await db.query(`
-    select data->'textTags' as data
-    from components.tags
-    where data->>'textTags' IS NOT NULL
-    LIMIT ${limit}
-    OFFSET ${offset}
-  `);
-
-  console.log(`Number of entries validated: ${COUNT}`);
-  if (result.rows.length === 0) {
-    fetchMore = false;
   }
-  // update the offset for querying.
-  OFFSET = OFFSET + LIMIT;
-  return result.rows;
+
+  axios
+    .put(`${http}://${host}/_lists/tags`, data, { headers })
+    .then(() => {
+      console.log('Tags Updated')
+    })
+    .catch(err => console.log(err))
+}
+
+async function getTagComponents (db) {
+  const result = await db.query(`
+    SELECT
+      count(*) as count,
+      jsonb_array_elements(data -> 'items')::jsonb ->> 'text' as text
+    FROM
+      components.tags
+    WHERE
+      id NOT LIKE '%@published'
+    GROUP BY
+      jsonb_array_elements(data -> 'items')::jsonb ->> 'text'
+  `)
+
+  return result.rows
 }
