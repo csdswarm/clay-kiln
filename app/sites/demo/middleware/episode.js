@@ -17,6 +17,9 @@ const episodeMiddleware = wrapInTryCatch(async ( req, res, next ) => {
       podcasts.getPodcastEpisode(locals, dynamicEpisode)
     ]);
 
+  // Needed to display dynamic page warning for users when in edit mode.
+  if (locals.edit) res.locals.isDynamicPage = true;
+
   res.locals.podcast = podcast;
   res.locals.episode = episode;
 
