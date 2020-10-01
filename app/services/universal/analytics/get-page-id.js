@@ -15,7 +15,10 @@ const makeFromPathname = require('./make-from-pathname');
  * @returns {string}
  */
 module.exports = ({ pageData, pathname }) => {
-  const fromPathname = makeFromPathname({ pathname });
+  const fromPathname = makeFromPathname({ pathname }),
+    pageId = fromPathname.getPageId(pageData);
 
-  return fromPathname.getPageId(pageData);
+  // added this character limit here because it's needed both for nmc tags and
+  // google ads targeting data
+  return pageId.substring(0, 40);
 };

@@ -118,7 +118,6 @@ primarySectionFront:
 
 sectionFrontManual:
   _label: Section Front Category
-  _publish: sectionFront
   _reveal:
     field: populateFrom
     operator: ===

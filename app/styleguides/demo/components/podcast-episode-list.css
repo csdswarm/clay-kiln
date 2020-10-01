@@ -15,6 +15,7 @@
 .podcast-episode-list {
   &__controls {
     margin-bottom: em(32);
+    max-width: em(116);
   }
   &__item {
     display: flex;
@@ -111,5 +112,14 @@
     height: em(42, 14);
     text-transform: uppercase;
   }
-
+  &__select-box {
+    &:focus {
+      outline: none;
+    }
+    .selectr-selected {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
 }
