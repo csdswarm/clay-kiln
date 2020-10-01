@@ -67,7 +67,7 @@ const dynamicTopicRoutes = {
     // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
     { path: '/' },
     { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcast },
-    { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: [podcast] },
+    { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcast },
     { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episode },
     { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episode },
     { path: '/stations', dynamicPage: 'stations-directory' },
