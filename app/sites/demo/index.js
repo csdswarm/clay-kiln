@@ -3,20 +3,18 @@
 const axios = require('../../node_modules/axios'),
   amphoraRender = require('../../node_modules/amphora/lib/render'),
   logger = require('../../services/universal/log'),
-  { episodeMiddleware, podcastMiddleware, dynamicPageMiddleware } = require('./middleware'),
+  { episode, podcast, dynamicPage } = require('./middleware'),
   publishing = require('../../services/publishing'),
   { topicPagePrefixes } = require('../../services/universal/constants');
 
 const dynamicTopicRoutes = {
     national: topicPagePrefixes.map(prefix => ({
       path: `/${prefix}/:dynamicTag`,
-      dynamicPage: 'topic',
-      middleware: dynamicPageMiddleware
+      dynamicPage: 'topic'
     })),
     station: topicPagePrefixes.map(prefix => ({
       path: `/:stationSlug/${prefix}/:dynamicTag`,
-      dynamicPage: 'topic',
-      middleware: dynamicPageMiddleware
+      dynamicPage: 'topic'
     }))
   },
   log = logger.setup({ file: __filename }),
@@ -69,33 +67,33 @@ module.exports.routes = [
   { path: '/:stationSlug/hosts/:host' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
-  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcastMiddleware },
-  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcastMiddleware },
-  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episodeMiddleware },
-  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episodeMiddleware },
-  { path: '/stations', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/location', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/music', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/news-talk', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/stations/sports', dynamicPage: 'stations-directory', middleware: dynamicPageMiddleware },
-  { path: '/account/:dynamicPage', dynamicPage: 'home', middleware: dynamicPageMiddleware  },
-  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home', middleware: dynamicPageMiddleware },
+  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcast },
+  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show', middleware: podcast },
+  { path: '/:stationSlug/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episode },
+  { path: '/podcasts/:dynamicSlug/:dynamicEpisode', dynamicPage: 'podcast-episode', middleware: episode },
+  { path: '/stations', dynamicPage: 'stations-directory' },
+  { path: '/stations/location', dynamicPage: 'stations-directory' },
+  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
+  { path: '/stations/music', dynamicPage: 'stations-directory' },
+  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
+  { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
+  { path: '/stations/sports', dynamicPage: 'stations-directory' },
+  { path: '/account/:dynamicPage', dynamicPage: 'home'  },
+  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home' },
   ...dynamicTopicRoutes.station,
   ...dynamicTopicRoutes.national,
-  { path: '/authors/:author', dynamicPage: 'author', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/authors/:author', dynamicPage: 'author', middleware: dynamicPageMiddleware },
-  { path: '/contest-rules', dynamicPage: 'contest-rules-page', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page', middleware: dynamicPageMiddleware },
+  { path: '/authors/:author', dynamicPage: 'author' },
+  { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
+  { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/contests', dynamicPage: 'contest-rules-page' },
-  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page', middleware: dynamicPageMiddleware },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
   { path: '/contests/:slug' },
-  { path: '/hosts/:host', dynamicPage: 'host', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/hosts/:host', dynamicPage: 'host', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page', middleware: dynamicPageMiddleware },
-  { path: '/:stationSlug/stats/:league/:standings', dynamicPage: 'frequency-iframe-page', middleware: dynamicPageMiddleware },
+  { path: '/hosts/:host', dynamicPage: 'host' },
+  { path: '/:stationSlug/hosts/:host', dynamicPage: 'host' },
+  { path: '/:stationSlug/shows/show-schedule', dynamicPage: 'frequency-iframe-page' },
+  { path: '/:stationSlug/stats/:league/:scoreboard', dynamicPage: 'frequency-iframe-page' },
+  { path: '/:stationSlug/stats/:league/:standings', dynamicPage: 'frequency-iframe-page' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },
@@ -142,6 +140,10 @@ module.exports.routes = [
   }
 
 ];
+console.log(dynamicPage);
+// routes.map((route) => {
+//   console.log('Route: ', route);
+// });
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [

@@ -9,16 +9,13 @@ const { wrapInTryCatch } = require('../../../services/startup/middleware-utils')
   * @param {object} next
   * @returns {Promise<object>}
   */
-const episodeMiddleware = wrapInTryCatch(async ( req, res, next ) => {
+const episode = wrapInTryCatch(async ( req, res, next ) => {
   const { dynamicSlug, dynamicEpisode } = req.params,
     locals = res.locals,
     [ podcast, episode ] = await Promise.all([
       podcasts.getPodcastShow(locals, dynamicSlug),
       podcasts.getPodcastEpisode(locals, dynamicEpisode)
     ]);
-
-  // Needed to display dynamic page warning for users when in edit mode.
-  if (locals.edit) locals.isDynamicPage = true;
 
   res.locals.podcast = podcast;
   res.locals.episode = episode;
@@ -27,5 +24,5 @@ const episodeMiddleware = wrapInTryCatch(async ( req, res, next ) => {
 });
 
 module.exports = {
-  episodeMiddleware
+  episode
 };

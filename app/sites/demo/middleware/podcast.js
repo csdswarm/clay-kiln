@@ -10,13 +10,10 @@ const { getPodcastShow } = require('../../../services/universal/podcast'),
 * @param {object} next
 * @returns {Promise<object>}
 */
-const podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
+const podcast = wrapInTryCatch(async ( req, res, next ) => {
   const { dynamicSlug } = req.params,
     locals = res.locals,
     podcastShow = await getPodcastShow(locals, dynamicSlug);
-
-  // Needed to display dynamic page warning for users when in edit mode.
-  if (locals.edit) locals.isDynamicPage = true;
 
   if (_isEmpty(podcastShow)) {
     res.status(404).send('Podcast not found');
@@ -27,5 +24,5 @@ const podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
 });
 
 module.exports = {
-  podcastMiddleware
+  podcast
 };

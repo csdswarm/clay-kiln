@@ -1,6 +1,6 @@
 'use strict';
 
-const dynamicPageMiddleware = ( req, res, next ) => {
+const dynamicPage = ( req, res, next ) => {
 
   if (res.locals.edit) res.locals.isDynamicPage = true;
   
@@ -8,5 +8,5 @@ const dynamicPageMiddleware = ( req, res, next ) => {
 };
 
 module.exports = {
-  dynamicPageMiddleware
+  dynamicPage
 };
