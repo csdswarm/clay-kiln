@@ -116,7 +116,7 @@ export default {
         let valid = this.checkImageDimemsions(image);
         // if additonal non-kiln validators
         if (this.args.additionNonKilnValidators) {
-          valid = _every(this.args.additionNonKilnValidators, (validator, index, array) => validator(image));
+          valid = valid && _every(this.args.additionNonKilnValidators, (validator, index, array) => validator(image));
         }
         // If file attached, exec upload logic.
         if (file && valid) {
