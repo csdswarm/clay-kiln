@@ -204,11 +204,18 @@ module.exports['15.0'] = (uri, data) => {
     data.tagManual = [{ text: data.tagManual }];
     return data;
   }
+
   return data;
 };
 
 module.exports['16.0'] = function (uri, data) {
   data.authors = data.authors || [];
+
+  return data;
+};
+
+module.exports['17.0'] = function (uri, data) {
+  data.hosts = data.hosts || [];
 
   return data;
 };

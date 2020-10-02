@@ -10,6 +10,7 @@
  * populateFrom
  * contentType
  * authors
+ * hosts
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -116,6 +117,7 @@ const
         contentTypes: boolKeys(data.contentType),
         ..._pick({
           authors: { condition: 'should', value: data.authors },
+          hosts: { condition: 'should', value: data.hosts },
           sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
           tags: sectionOrTagCondition(data.populateFrom, tag)
@@ -169,8 +171,8 @@ const
       createObj: author => ({ match: { 'authors.normalized': author } })
     },
     authors: {
-      filterCondition: 'must',
-      createObj: authors => boolKeys(authors).map(author => ({ match: { 'authors.normalized': author } }))
+      createObj: authors => boolKeys(authors)
+        .map(author => ({ match: { 'authors.normalized': author } }))
     },
     canonicalUrls: { createObj: canonicalUrl => ({ match: { canonicalUrl } }) },
     contentTypes: {
@@ -178,9 +180,9 @@ const
       unique: true,
       createObj: contentType => ({ match: { contentType } })
     },
-    host: {
-      filterCondition: 'must',
-      createObj: host => ({ match: { 'hosts.normalized': host } })
+    hosts: {
+      createObj: hosts => boolKeys(hosts)
+        .map(aHost => ({ match: { 'hosts.normalized': aHost } }))
     },
     sectionFronts: {
       filterCondition: 'must',
@@ -544,7 +546,7 @@ const
       case 'section-front':
         return sectionFronts;
       case 'byline':
-        return ['authors'];
+        return ['authors', 'hosts'];
       case 'all-content':
         return [];
       default:
@@ -606,7 +608,6 @@ const
    */
   fetchRecirculation = async (config, locals) => {
     const { filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent } = config;
-
     let results = {
       content: [],
       totalHits: 0
