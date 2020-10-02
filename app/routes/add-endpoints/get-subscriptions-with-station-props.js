@@ -1,11 +1,11 @@
 'use strict';
 
-const getStationsSubscribedToContent = require('../../services/server/get-stations-subscribed-to-content'),
+const getSubscriptionsWithStationProps = require('../../services/server/get-subscriptions-with-station-props'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils');
 
 module.exports = router => {
   router.post(
-    '/rdc/get-stations-subscribed-to-content',
+    '/rdc/get-subscriptions-with-station-props',
     wrapInTryCatch(async (req, res) => {
       const { data, locals } = req.body;
 
@@ -13,7 +13,7 @@ module.exports = router => {
         res.status(400)
           .send("both 'data' and 'locals' must exist on the request body");
       } else {
-        res.send(await getStationsSubscribedToContent(data, locals));
+        res.send(await getSubscriptionsWithStationProps(data, locals));
       }
     })
   );

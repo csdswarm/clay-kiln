@@ -48,8 +48,6 @@ const _noop = require('lodash/noop'),
       [ { _ref: 'clay.radio.com/_components/paragraph/instances/new' } ],
       tags: { _ref: 'clay.radio.com/_components/tags/instances/new' },
       adTags: { _ref: 'clay.radio.com/_components/ad-tags/instances/new' },
-      contentPageSponsorLogo:
-      { _ref: 'clay.radio.com/_components/google-ad-manager/instances/contentPageLogoSponsorship' },
       sideShare: { _ref: 'clay.radio.com/_components/share/instances/new' },
       feeds:
       { sitemaps: true,

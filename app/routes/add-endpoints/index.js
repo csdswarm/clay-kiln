@@ -8,7 +8,7 @@ module.exports = {
   contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
   editorialGroup: require('./editorialGroup'),
-  getStationsSubscribedToContent: require('./get-stations-subscribed-to-content'),
+  getSubscriptionsWithStationProps: require('./get-subscriptions-with-station-props'),
   imageInfo: require('./image-info'),
   importContent: require('./import-content'),
   podcasts: require('./podcasts'),
