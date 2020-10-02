@@ -18,7 +18,7 @@ module.exports = (schema) => {
       filtered = differenceBy(authors, hosts, 'text');
 
     if (authors.length > filtered.length) {
-      schema.byline.showSnackBar({ message: 'Authors and Hosts should be different', position: 'center' });
+      schema.byline.showSnackBar({ message: 'Authors and Hosts should be different' });
       return false;
     }
 
