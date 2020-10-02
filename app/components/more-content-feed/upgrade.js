@@ -206,3 +206,9 @@ module.exports['15.0'] = (uri, data) => {
   }
   return data;
 };
+
+module.exports['16.0'] = function (uri, data) {
+  data.authors = data.authors || [];
+
+  return data;
+};

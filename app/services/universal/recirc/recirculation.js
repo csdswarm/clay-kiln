@@ -115,6 +115,7 @@ const
         host,
         contentTypes: boolKeys(data.contentType),
         ..._pick({
+          authors: { condition: 'should', value: data.authors },
           sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
           tags: sectionOrTagCondition(data.populateFrom, tag)
@@ -166,6 +167,10 @@ const
     author: {
       filterCondition: 'must',
       createObj: author => ({ match: { 'authors.normalized': author } })
+    },
+    authors: {
+      filterCondition: 'must',
+      createObj: authors => boolKeys(authors).map(author => ({ match: { 'authors.normalized': author } }))
     },
     canonicalUrls: { createObj: canonicalUrl => ({ match: { canonicalUrl } }) },
     contentTypes: {
@@ -502,7 +507,7 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-    
+
     if (tags === '') {
       return [];
     }
@@ -538,6 +543,8 @@ const
         return tags;
       case 'section-front':
         return sectionFronts;
+      case 'byline':
+        return ['authors'];
       case 'all-content':
         return [];
       default:
@@ -586,18 +593,20 @@ const
 
   /**
    * Use filters to query elastic for content
-   *
-   * @param {object} config
-   * @param {object} config.filters
-   * @param {object} config.excludes
-   * @param {array} config.elasticFields
-   * @param {number} config.maxItems
-   * @param {boolean} config.shouldAddAmphoraTimings
-   * @param {boolean} config.isRdcContent
+   * @param {{
+   *   filters: object,
+   *   excludes: object,
+   *   elasticFields: string[],
+   *   maxItems: number,
+   *   shouldAddAmphoraTimings: boolean,
+   *   isRdcContent: boolean
+   * }} config
    * @param {Object} [locals]
    * @returns {array} elasticResults
    */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
+  fetchRecirculation = async (config, locals) => {
+    const { filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent } = config;
+
     let results = {
       content: [],
       totalHits: 0

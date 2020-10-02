@@ -1,6 +1,21 @@
-_version: 15.0
+_version: 16.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
+
+authors:
+  _label: Authors
+  _has:
+    input: select
+    list: authors
+    multiple: true
+    search: true
+    keys:
+      label: text
+      value: text
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: byline
 
 contentType:
   _label: Content type
@@ -92,6 +107,9 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+      -
+        name: Byline
+        value: byline
       -
         name: External RSS Feed
         value: rss-feed
@@ -364,6 +382,7 @@ _groups:
       - secondarySectionFrontManual
       - tagManual
       - contentType
+      - authors
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
