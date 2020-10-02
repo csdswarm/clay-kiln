@@ -15,13 +15,21 @@ updatePodcastFrontsMeta()
   .catch(err => console.log(err));
 
 async function getAllPodcastFrontPages(db, host) {
-  // fetch section-front pages that use the `general` meta-tags instance
-  const query = `SELECT p.id, p.data
-      FROM pages p
-      WHERE data->'main'->>0 ~ 'podcast-front-page'`,
-    result = await db.query(query);
+  // fetch podcast-front pages that have an empty `stationSlug` or doesn't have a 'stationSlug' at all (National podcast front)
+  const query = `
+    SELECT
+      p.id, p.data
+    FROM
+      pages p
+    JOIN components."podcast-front-page" pfp 
+      ON p.data->'main'->>0 = pfp.id
+    WHERE p.id !~ 'podcast-front'
+    AND pfp.id like '${host}/%'
+    AND (pfp.data->>'stationSlug' = '' OR pfp.data->>'stationSlug' is null)
+      `,
+    {rows} = await db.query(query);
 
-  return result.rows.filter(({ id }) => id.startsWith(host))
+  return rows;
 }
 
 async function updatePodcastFrontsMeta() {
@@ -31,7 +39,6 @@ async function updatePodcastFrontsMeta() {
 
       pages = await Promise.all(pages.map(async (page) => {
         const { data: main } = await axios.get(`${envInfo.http}://${page.data.main[0]}`, {headers});
-
         return {
           ...page,
           data: {
@@ -42,7 +49,7 @@ async function updatePodcastFrontsMeta() {
             }
           }
         }
-      })).filter(({ data, id }) => !data.main.stationSlug && id !== `${host}/_pages/podcast-front`);
+      }));
 
       const nationalPodcastFrontMetaTitle = `${host}/_components/meta-title/instances/national-podcast-front`,
         nationalPodcastFrontMetaDescription = `${host}/_components/meta-description/instances/national-podcast-front`,
