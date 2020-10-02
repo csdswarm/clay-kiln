@@ -7,6 +7,33 @@
 /* This file should only include article-specific styles.
    Any styling that is shared by other content page types should be included in the global contest-page stylesheet. */
 
+.article {
+   &__header {
+      .header__opinion {
+         background: whitesmoke;
+         padding: 1em;
+         margin-bottom: 1em;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         &--form {
+            flex-shrink: 0;
+            width: widthOnGrid(4,3);
+            h4 {
+               margin-bottom: em(16);
+            }
+         }
+         &--input {
+            margin-bottom: em(10);
+         }
+
+         &--disclaimer {
+            width: widthOnGrid(6,5);
+         }
+      }
+   }
+}
+
 .article__body .body__content .google-ad-manager--medium-rectangle {
    background: transparent;
    .google-ad-manager__slot--medium-rectangle {

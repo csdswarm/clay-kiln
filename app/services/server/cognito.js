@@ -45,7 +45,7 @@ async function refreshAuthToken({ refreshToken, deviceKey }) {
       accessToken: authResult.AccessToken,
       deviceKey,
       expires: Date.now() + ((authResult.ExpiresIn || 0) * SECOND),
-      idToken: authResult.id_token,
+      idToken: authResult.IdToken,
       lastUpdated: Date.now(),
       refreshToken
     };
