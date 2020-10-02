@@ -361,12 +361,11 @@ function getContentAdTags(pageData) {
  *   drupal api).  When the nielsen marketing cloud meta tags are imported, we
  *   should ignore them and just get the tracking data from the dom.
  *
- * @param {boolean} shouldUseNmcTags
  * @param {object} currentStation - the station object
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {object}
  */
-function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
+function getInitialAdTargetingData(currentStation, pageData) {
   // we can't refer to the NMC tags for author since NMC only holds a single
   //   author for some reason.
   const authors = getAuthors(pageData),
@@ -385,27 +384,13 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingTags: targetingTagData.join(',')
     };
 
-  if (shouldUseNmcTags) {
-    const market = pageData.page === 'stationDetail'
-      ? getMetaTagContent('name', NMC.market)
-      : undefined;
-
-    Object.assign(adTargetingData, {
-      targetingCategory: getMetaTagContent('name', NMC.cat),
-      targetingGenre: getMetaTagContent('name', NMC.genre),
-      targetingMarket: market,
-      targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
-    });
-  } else {
-    Object.assign(adTargetingData, {
-      targetingCategory: trackingData.cat,
-      targetingGenre: trackingData.genre,
-      targetingMarket: trackingData.market,
-      targetingPageId: trackingData.pid,
-      targetingRadioStation: trackingData.station
-    });
-  }
+  Object.assign(adTargetingData, {
+    targetingCategory: trackingData.cat,
+    targetingGenre: trackingData.genre,
+    targetingMarket: trackingData.market,
+    targetingPageId: trackingData.pid,
+    targetingRadioStation: trackingData.station
+  });
 
   return adTargetingData;
 }
@@ -439,13 +424,8 @@ function getAdTargeting(pageData) {
      * because it is not available in client.js.
      */
     { env } = googleAdEl.dataset,
-    // this query selector should always succeed
-    firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
-    hasNmcTags = !!firstNmcTag,
-    isNmcDataImported = hasNmcTags && firstNmcTag.getAttribute('data-was-imported') === 'true',
-    shouldUseNmcTags = hasNmcTags && !isNmcDataImported,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    adTargetingData = getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData);
+    adTargetingData = getInitialAdTargetingData(currentStation, pageData);
 
   // Set up targeting and ad paths based on current page
   switch (pageData.page) {

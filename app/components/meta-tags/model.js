@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _isEmpty = require('lodash/isEmpty'),
   _without = require('lodash/without'),
   _uniq = require('lodash/uniq'),
   parse = require('url-parse'),
@@ -53,10 +52,7 @@ module.exports.render = async (ref, data, locals) => {
     categories = [],
     { station } = locals,
     { importedNmcData = {} } = data,
-    // if we don't have imported data then we want to use the same logic
-    //   google-ad-manager/client.js was using prior to introducing the Nielsen
-    //   Marketing Cloud tags.
-    hasImportedNmcData = !_isEmpty(importedNmcData),
+
     nmcData = getNmcData(data, locals),
     // author is handled separately because we need to check data.authors before
     //   figuring out nmc's author value
@@ -82,9 +78,8 @@ module.exports.render = async (ref, data, locals) => {
   if (_get(data, 'authors.length') > 0) {
     const authors = data.authors.map(author => author.text).join(', ');
 
-    if (!hasImportedNmcData) {
-      nmcAuthor = data.authors[0].text;
-    }
+    // Use the imported author if present.
+    nmcAuthor = nmcAuthor || data.authors[0].text;
 
     data.metaTags.push({ property: AUTHOR_NAME, content: authors });
   } else {
@@ -140,20 +135,10 @@ module.exports.render = async (ref, data, locals) => {
     data.unusedTags.push({ type: 'name', name: EDITORIAL_TAGS });
   }
 
-  // handle nmc tags
-  //
-  // note we use the 'data-was-imported' attribute to communicate to
-  //   'google-ad-manager/client.js' whether the nmc tags were imported.  If
-  //   they were, then google ad manager should ignore them when calculating its
-  //   own tracking data.  If the tags weren't imported, then they should use
-  //   the exact same values as the nmc meta tags.  This attribute is located on
-  //   every nmc meta tag because I didn't know where a single queryable
-  //   location could be (maybe window.<something> ?).
   if (nmcAuthor) {
     data.metaTags.push({
       name: NMC.author,
-      content: nmcAuthor,
-      'data-was-imported': hasImportedNmcData
+      content: nmcAuthor
     });
   } else {
     data.unusedTags.push({ type: 'name', name: NMC.author });
@@ -163,8 +148,7 @@ module.exports.render = async (ref, data, locals) => {
     if (nmcData[key]) {
       data.metaTags.push({
         name: NMC[key],
-        content: nmcData[key],
-        'data-was-imported': hasImportedNmcData
+        content: nmcData[key]
       });
     } else {
       data.unusedTags.push({ type: 'name', name: NMC[key] });
