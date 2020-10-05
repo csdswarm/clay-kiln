@@ -115,6 +115,7 @@ const
         host,
         contentTypes: boolKeys(data.contentType),
         ..._pick({
+          authors: { condition: 'should', value: data.authors },
           sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
           tags: sectionOrTagCondition(data.populateFrom, tag)
@@ -815,9 +816,11 @@ const
   });
 
 module.exports = {
+  filterMainStation,
   getStationSlug,
   makeSubscriptionsQuery: queryFilters.subscriptions.createObj,
   recirculationData,
   sectionOrTagCondition,
-  subscribedContentOnly
+  subscribedContentOnly,
+  syndicatedStationFilter
 };
