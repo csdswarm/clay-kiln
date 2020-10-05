@@ -36,7 +36,7 @@
   class="component component--newsletter-sign-up newsletter-sign-up newsletter-sign-up--layout-{{ layoutType }}"
   data-uri="{{ default _ref _self }}" data-editable="settings"
   >
-  <h3 class="newsletter-sign-up__title">
+  <h3 class="newsletter-sign-up__title {{if _computed.isMultilineTitle ' newsletter-sign-up__title--multi-line'}}">
     <span class="newsletter-sign-up__title-text">{{ title }}</span>
   </h3>
   <form method="POST" class="newsletter-sign-up__form" action="http://www.e.radio.com/Subscribe.do?action=easySignup" novalidate>
