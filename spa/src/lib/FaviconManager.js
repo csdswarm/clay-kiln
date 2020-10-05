@@ -4,10 +4,23 @@ import QueryPayload from './QueryPayload'
 const queryPayload = new QueryPayload()
 const RDC_FAVICON = '/media/components/favicon/favicon.png'
 
+/**
+ * returns the extension of a file path
+ *
+ * @param {string} path
+ * @returns {string}
+ */
 function getFileTypeFromPath (path) {
   return path.slice(path.lastIndexOf('.') + 1)
 }
 
+/**
+ * sets the href and type attributes on the link elements
+ *
+ * @param {HTMLLinkElement} headIconElement
+ * @param {string} path
+ * @param {string} iconFileType
+ */
 function setAttributes (headIconElement, path, iconFileType) {
   headIconElement.setAttribute('href', path)
   if (headIconElement.getAttribute('type')) {
