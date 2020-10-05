@@ -11,8 +11,8 @@ module.exports = schema => {
   schema.byline = new KilnInput(schema, 'byline');
 
   schema.formValidation = () => {
-    const authors = schema.byline.value()[0].names,
-      hosts = schema.byline.value()[0].hosts,
+    const authors = schema.byline.value() ? schema.byline.value()[0].names : [],
+      hosts = schema.byline.value() ? schema.byline.value()[0].hosts : [],
       filtered = differenceBy(authors, hosts, 'text');
 
     if (authors.length > filtered.length) {
