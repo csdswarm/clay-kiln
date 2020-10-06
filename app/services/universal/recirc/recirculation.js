@@ -409,7 +409,7 @@ const
    */
   addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
-      log('error', `No filter current exists for ${key}`);
+      log('error', `No filter currently exists for ${key}`);
       return;
     }
 
