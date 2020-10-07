@@ -2,5 +2,5 @@ _components:
   smart-speaker:
     allowed: true
     instances:
-      default:
+      new:
         allowed: true

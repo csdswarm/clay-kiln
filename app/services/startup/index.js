@@ -59,7 +59,7 @@ const logRequestTime = (req, res, time) => {
     timeTaken = time.toFixed(3);
 
   if (timeTaken > SLOW_REQUEST_TIME) {
-    log('warn', msg, {
+    log('error', msg, {
       method: req.method,
       path: req.path,
       statusCode: res.statusCode,

@@ -1,4 +1,4 @@
-_version: 17.0
+_version: 16.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -547,6 +547,12 @@ footer:
       - youtube
       - html-embed
       - omny
+
+# Component properties
+contentPageSponsorLogo:
+  _component:
+    include:
+      - google-ad-manager
 
 sideShare:
   _component:

@@ -21,10 +21,6 @@ module.exports = unityComponent({
   render: (uri, data, locals) => {
 
     if (!_get(locals, 'postup')) {
-      // needed for template to accommodate CSS adjustments on vertical multi-line titles
-      const newLineCharCountThreshold = data.layoutType === 'vertical' ? 23 : 60;
-
-      data._computed.isMultilineTitle = data.title.length > newLineCharCountThreshold;
       return data;
     }
 

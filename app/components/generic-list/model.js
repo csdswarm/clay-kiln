@@ -34,7 +34,7 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // Log the query
-  log('debug', 'Query for newsfeed cmpt', {
+  log('debug', 'query for newsfeed cmpt', {
     query,
     ref
   });

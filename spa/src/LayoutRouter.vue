@@ -194,9 +194,7 @@ export default {
       const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
       // Reset loaded ids to prevent breaking deduping during spa navigation
-      const evt = new Event('set-loaded-ids')
-      Object.assign(evt, { loadedIds: [] })
-      document.dispatchEvent(evt)
+      this.$store.commit(mutationTypes.SET_LOADED_IDS, [])
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
@@ -208,9 +206,10 @@ export default {
           }
         })
 
-        const newLoadedIds = JSON.parse(nextSpaPayloadResult.headers['x-loaded-ids'] || '[]')
-        Object.assign(evt, { loadedIds: newLoadedIds })
-        document.dispatchEvent(evt)
+        this.$store.commit(
+          mutationTypes.SET_LOADED_IDS,
+          JSON.parse(nextSpaPayloadResult.headers['x-loaded-ids'] || '[]')
+        )
 
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`

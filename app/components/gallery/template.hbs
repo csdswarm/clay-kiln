@@ -49,6 +49,8 @@
     </div>
   {{/if}}
 
+  {{> google-ad-manager contentPageSponsorLogo }}
+
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}

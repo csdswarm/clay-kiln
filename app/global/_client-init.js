@@ -6,6 +6,8 @@
  * The default setup is that _client-init.js is put into public/js when running `claycli compile`
  */
 
+// Required and executed by view-after.js
+
 /**
  * Mount all megabundle modules on the page.
  */

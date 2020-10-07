@@ -9,14 +9,12 @@ const _ = require('lodash'),
  *
  * @param  {Array} authorsList
  * @param  {Array} hostsList
- * @param  {Array} sourcesList
  * @return {String}
  */
-function formatSimpleByline(authorsList, hostsList, sourcesList) {
+function formatSimpleByline(authorsList, hostsList) {
   const authors = _.map(authorsList, (author) => _.isObject(author) ? author.text : author),
     hosts = _.map(hostsList, (host) => _.isObject(host) ? host.text : host),
-    sources = _.map(sourcesList, (source) => _.isObject(source) ? source.text : source),
-    list = [...authors, ...hosts, ...sources];
+    list = [...authors, ...hosts];
 
   if (list.length === 1) {
     return '<span>' + list[0] + '</span>';
@@ -54,7 +52,7 @@ function complexByline(opts) {
       'isContentFromAP'
     ]);
 
-  let names, hosts, sources;
+  let names, hosts;
 
   if (options.simpleList) {
     return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatNumAuthorsHosts(bylines, options);
@@ -63,12 +61,10 @@ function complexByline(opts) {
   return _.join(_.reduce(bylines, (acc, byline, idx) => {
     names = _.get(byline, 'names', []);
     hosts = _.get(byline, 'hosts', []);
-    hosts = _.map(hosts, (host) => ({ ...host, isHost: true })),
-    sources = _.get(byline, 'sources', []),
-    sources = _.map(sources, (source) => ({ ...source, isSource: true }));
+    hosts = _.map(hosts, (host) => ({ ...host, isHost: true }));
 
-    if (names.length > 0 || hosts.length > 0 || sources.length > 0) {
-      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names, hosts, sources) : socialsByline.formatNumAuthorsHosts(names, hosts, sources, options)}`);
+    if (names.length > 0 || hosts.length > 0) {
+      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names, hosts) : socialsByline.formatNumAuthorsHosts(names, hosts, options)}`);
     }
 
     return acc;

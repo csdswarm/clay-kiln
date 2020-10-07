@@ -11,6 +11,17 @@ const _get = require('lodash/get'),
     return {
       currentlyPlaying: _get(state, 'spaPayloadLocals.currentlyPlaying', {})
     };
+  },
+  /**
+   * returns the loadedIds from the spa payload's locals
+   * @param {object} state
+   * @returns {string[]}
+   */
+  getLoadedIds = state => {
+    return _get(state, 'spaPayloadLocals.loadedIds', []);
   };
 
-module.exports = { getLocals };
+module.exports = {
+  getLocals,
+  getLoadedIds
+};

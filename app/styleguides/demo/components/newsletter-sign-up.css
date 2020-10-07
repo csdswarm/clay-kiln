@@ -66,15 +66,6 @@ body > .newsletter-sign-up {
       z-index: -1;
     }
   }
-  &__title&__title--multi-line {
-    &:after {
-      border-top: none;
-    }
-    .newsletter-sign-up__title-text {
-      background: transparent;
-    }
-  }
-
   &__title-text {
     background: $white;
     padding-right: em(8, 20);

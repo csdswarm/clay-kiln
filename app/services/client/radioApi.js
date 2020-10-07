@@ -1,17 +1,16 @@
 'use strict';
 
-const clientPlayerInterface = require('./ClientPlayerInterface')(),
-  clientStateInterface = require('./ClientStateInterface')(),
-  clientUserInterface = require('./ClientUserInterface')(),
-  md5 = require('md5'),
-  { getLoadedIds, setLoadedIds } = require('./non-vue-state'),
+const rest = require('../universal/rest'),
   qs = require('qs'),
-  rest = require('../universal/rest'),
-  spaLinkService = require('../universal/spaLink'),
+  md5 = require('md5'),
+  _uniq = require('lodash'),
   { formatLocal } = require('../../services/universal/dateTime'),
-  { getLocals } = require('./spaLocals');
-
-const radioApi = 'api.radio.com/v1/',
+  { getLoadedIds, getLocals } = require('./spaLocals'),
+  spaLinkService = require('../universal/spaLink'),
+  clientPlayerInterface = require('./ClientPlayerInterface')(),
+  clientUserInterface = require('./ClientUserInterface')(),
+  clientStateInterface = require('./ClientStateInterface')(),
+  radioApi = 'api.radio.com/v1/',
   radioStgApi = 'api-stg.radio.com/v1/',
   // here for models that reference /server/radioApi (brightcove)
   TTL = {
@@ -105,7 +104,7 @@ const radioApi = 'api.radio.com/v1/',
     if (shouldDedupeContent) {
       // these are false positives because there is no chain
       // eslint-disable-next-line lodash/prefer-thru,lodash/unwrap
-      const loadedIdsReqHeader = JSON.stringify(getLoadedIds());
+      const loadedIdsReqHeader = JSON.stringify(_uniq(getLoadedIds(state)).sort());
 
       requestHeaders['x-loaded-ids'] = loadedIdsReqHeader;
       // we need this hash to make sure the request is cached appropriately.
@@ -120,7 +119,7 @@ const radioApi = 'api.radio.com/v1/',
       loadedIdsStr = response.headers.get('x-loaded-ids');
 
     if (shouldDedupeContent && loadedIdsStr) {
-      setLoadedIds(JSON.parse(loadedIdsStr));
+      __.clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
     }
 
     const html = await response.text(),

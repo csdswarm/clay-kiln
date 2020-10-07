@@ -1,183 +1,82 @@
 _layouts:
-  one-column-full-width-layout:
+  one-column-layout:
     instances:
-      bare:
-        bottom:
-          - _ref: /_components/footer/instances/default
-        head: head
+      general:
         headLayout:
           - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        layoutHeader: layoutHeader
+        pageHeader: pageHeader
+        fullWidthComponents:
+        main: main
+        secondary: secondary
+        bottom:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
-        main: main
-        pageHeader: []
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-  one-column-layout:
-    instances:
-      article:
-        bottom:
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-        head: head
+      bare:
         headLayout:
           - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        main: main
+        bottom:
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default
+      article:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
         main: main
         secondary:
           - _ref: /_components/generic-list/instances/recirc
+        bottom:
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/station-nav/instances/default
+  one-column-full-width-layout:
+    instances:
       bare:
-        bottom:
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        main: main
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-      frequency-iframe:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      general:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-        fullWidthComponents: null
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        pageHeader: pageHeader
-        secondary: secondary
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      station-basic-music:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-        bottomAd:
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-        bottomSection: bottomSection
-        fullWidthComponents: null
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        pageHeader: pageHeader
-        secondary: secondary
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-        topAd:
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-        topSection: topSection
-      station-directory:
-        bottom:
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-        fullWidthComponents: null
-        head: head
         headLayout:
           - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
@@ -185,229 +84,21 @@ _layouts:
           - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        pageHeader: pageHeader
+        main: main
+        bottom:
+          - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        pageHeader: pageHeader
-        secondary: secondary
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
   two-column-layout:
     instances:
       article:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: []
-        main: main
-        pageHeader:
-          - _ref: /_components/google-ad-manager/instances/billboardTop
-        sectionHeader: []
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/latest-top-recirc-slider/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      contest:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        main: main
-        pageHeader: pageHeader
-        sectionHeader: sectionHeader
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      event:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        main: main
-        pageHeader: pageHeader
-        secondary:
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/trending-recirculation/instances/default
-        sectionHeader: sectionHeader
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      podcast-episode:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      podcast-front:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        secondary: []
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      podcast-show:
-        banner:
-          - _ref: /_components/alert-banner/instances/default
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      static-page:
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottom
-          - _ref: /_components/google-ad-manager/instances/oop
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/station-footer/instances/default
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
         headLayout:
           - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
@@ -415,78 +106,25 @@ _layouts:
           - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: []
-        main: main
-        pageHeader:
-          - _ref: /_components/google-ad-manager/instances/billboardTop
-        secondary: []
-        sectionHeader: []
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
         top:
-          - _ref: /_components/theme/instances/default
           - _ref: /_components/top-nav/instances/default
-          - _ref: /_components/station-nav/instances/default
-          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
-      station:
+        head: head
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
+        main: main
+        tertiary: tertiary
+        secondary:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/trending-recirculation/instances/default
         bottom:
           - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottomNonLazy
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        pageHeader: pageHeader
-        secondary: secondary
-        sectionHeader: sectionHeader
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default
-      station-detail-listen-only:
-        bottom:
-          - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/google-ad-manager/instances/billboardBottomNonLazy
-          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
-          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
-          - _ref: /_components/footer/instances/default
-          - _ref: /_components/nielsen/instances/default
-        head: head
-        headLayout:
-          - _ref: /_components/favicon/instances/default
-          - _ref: /_components/google-ad-manager-head/instances/default
-          - _ref: /_components/comscore-head/instances/default
-          - _ref: /_components/web-player-head/instances/default
-          - _ref: /_components/google-tag-manager/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        layoutHeader: layoutHeader
-        main: main
-        pageHeader: pageHeader
-        secondary: secondary
-        sectionHeader: sectionHeader
-        static:
-          - _ref: /_components/web-player/instances/default
-          - _ref: /_components/chartbeat/instances/default
-        tertiary: tertiary
-        top:
-          - _ref: /_components/theme/instances/default
-          - _ref: /_components/top-nav/instances/default

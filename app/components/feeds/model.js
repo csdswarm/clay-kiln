@@ -74,7 +74,7 @@ module.exports.save = async (uri, data) => {
  */
 module.exports.render = async (ref, data, locals) => {
   if (!data.index) {
-    log('warn', 'Feed component requires an `index` and `transform` property in the data');
+    log('error', 'Feed component requires an `index` and `transform` property in the data');
     return data;
   }
 
