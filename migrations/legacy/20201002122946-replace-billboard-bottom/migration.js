@@ -2,13 +2,14 @@
 
 const migrationUtils = require('../../utils/migration-utils');
 
-const {
+const { axios } = migrationUtils.v1,
+  {
     getComponentInstance,
     getComponentVersion,
     getLayoutName
   } = migrationUtils.v1.clayutils,
   { parseHost, usingDb } = migrationUtils.v2,
-  { host } = parseHost(process.argv[2]),
+  { host, http } = parseHost(process.argv[2]),
   footerBillboard = {
     _ref: `${host}/_components/google-ad-manager/instances/footer-billboard`
   },
@@ -20,16 +21,37 @@ usingDb(async db => {
   console.log('replacing billboardBottom with footer-billboard in layouts');
 
   try {
+    await addFooterBillboard('');
+    await addFooterBillboard('@published');
+
     await Promise.all([
       replaceBillboardIn('bottom', db),
       replaceBillboardIn('bottomAd', db)
-    ])
+    ]);
 
     console.log('success');
   } catch (err) {
     console.error(err);
   }
 })
+
+function addFooterBillboard(version) {
+  const content = {
+    adSize: 'footer-billboard',
+    adLocation: 'btf',
+    adPosition: 'bottom'
+  };
+
+  return axios.put(
+    `${http}://${host}/_components/google-ad-manager/instances/footer-billboard${version}`,
+
+    // typically when we publish we don't send any data and let amphora do
+    //   the copying from latest -> published
+    version ? {} : content,
+
+    { headers: { Authorization: 'token accesskey' } }
+  )
+}
 
 async function replaceBillboardIn(location, db) {
   const replaceInstance = makeReplaceInstance(location),

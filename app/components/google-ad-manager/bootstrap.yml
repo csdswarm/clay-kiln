@@ -4,10 +4,3 @@ _components:
     adPosition: ''
     adLocation: ''
     sticky: false
-
-    instances:
-      footer-billboard: &footerBillboardData
-        adSize: footer-billboard
-        adLocation: btf
-        adPosition: bottom
-      footer-billboard@published: *footerBillboardData
