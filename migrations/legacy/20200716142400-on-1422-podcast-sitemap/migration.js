@@ -47,13 +47,15 @@ const start = async () => {
   const endDots = loadingDots();
 
 
-  await axios.post(url + '/update-db-podcast-data', {}, {
-    headers: DEFAULT_HEADERS
-  }).catch((e)=>{
-    console.log('\nError updating podcasts:',e.message);
-  })
+  if (host !== 'clay.radio.com') {
+    await axios.post(url + '/update-db-podcast-data', {}, {
+      headers: DEFAULT_HEADERS
+    }).catch((e) => {
+      console.log('\nError updating podcasts:', e.message);
+    })
+  }
 
-  endDots()
+  endDots();
 
   console.log('Podcasts updated.');
 
