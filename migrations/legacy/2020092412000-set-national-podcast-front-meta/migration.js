@@ -53,19 +53,21 @@ async function updatePodcastFrontsMeta() {
 
       const nationalPodcastFrontMetaTitle = `${host}/_components/meta-title/instances/national-podcast-front`,
         nationalPodcastFrontMetaDescription = `${host}/_components/meta-description/instances/national-podcast-front`,
+        metaTitle = "Listen & Download on Any Device | RADIO.COM",
         metaTitleData = {
-          "title": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
-          "ogTitle": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
-          "kilnTitle": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
-          "defaultTitle": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
-          "defaultOgTitle": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
-          "defaultKilnTitle": "RADIO.COM: Listen to Free Radio | Music, Sports, News, Podcasts",
+          "title": metaTitle,
+          "ogTitle": metaTitle,
+          "kilnTitle": metaTitle,
+          "defaultTitle": metaTitle,
+          "defaultOgTitle": metaTitle,
+          "defaultKilnTitle": metaTitle,
           "componentVariation": "meta-title"
         },
+        metaDescription = "Find your favorite podcast and listen on any device for free on the RADIO.COM app. Browse our huge collection of podcasts by category, or let us find you one.",
         metaDescriptionData = {
-          "description": "Welcome to RADIO.COM where you can listen to free radio online. Subscribe to the latest music news, sports news, and podcasts.",
+          "description": metaDescription,
           "componentVariation": "meta-description",
-          "defaultDescription": "Welcome to RADIO.COM where you can listen to free radio online. Subscribe to the latest music news, sports news, and podcasts.",
+          "defaultDescription": metaDescription,
         };
 
       await Promise.all([
