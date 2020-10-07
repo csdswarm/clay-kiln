@@ -8,6 +8,7 @@ configmap:
     BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
     CLAY_ACCESS_KEY: "accesskey"
     CLAY_BUS_HOST: "redis://redis:6379"
+    CLAY_LOG_PLUGINS: "unity-log"
     CLAY_LOG_PRETTY: "true"
     CLAY_PROVIDER: "google"
     CLAY_SITE_HOST: "clay.radio.com"

@@ -1,5 +1,7 @@
 _components:
   more-content-feed:
+    authors: []
+    hosts: []
     componentTitle: 'MORE from RADIO.COM'
     componentTitleVisible: false
     pageLength: 5

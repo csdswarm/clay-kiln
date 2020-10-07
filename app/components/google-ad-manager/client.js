@@ -3,7 +3,7 @@
 
 const _get = require('lodash/get'),
   _debounce = require('lodash/debounce'),
-  _isEmpty = require('lodash/isEmpty'),
+  _uniq = require('lodash/uniq'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
@@ -43,7 +43,7 @@ let refreshCount = 0,
   numStationsDirectoryInline = 1,
   adIndices = {},
   adsMounted = false,
-  prevLocation = window.location.href,
+  prevLocation = getCurrentLocation(),
   windowWidth = 0;
 
 // On page load set up sizeMappings
@@ -95,8 +95,10 @@ window.onload = function () {
     bodyList = document.querySelector('body'),
     observer = new MutationObserver( mutations => {
       mutations.forEach( () => {
-        if (prevLocation !== window.location.href) {
-          prevLocation = window.location.href;
+        const curLocation = getCurrentLocation();
+
+        if (prevLocation !== curLocation) {
+          prevLocation = curLocation;
           refreshAllSlots();
         }
       });
@@ -351,7 +353,7 @@ function getContentTags(pageData) {
   const adTagsEl = document.querySelector('.component--ad-tags');
 
   return adTagsEl
-    ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
+    ? (adTagsEl.dataset.adTags || '').split(',')
     : [];
 }
 
@@ -377,16 +379,11 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       pageData,
       contentTags
     }),
-    nmcTags = getMetaTagContent('name', NMC.tag),
+    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ','), // imported content tags are been created with slashes instead of commas.
+    targetingTagData = _uniq(trackingData.tag.concat(nmcTags.split(','))).filter(Boolean),
     adTargetingData = {
       targetingAuthors: authors,
-      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
-      // In case that there is no tags we should not sent information to GAM.
-      targetingTags:
-        _isEmpty(contentTags.filter(Boolean)) &&
-        !_isEmpty(nmcTags)
-          ? (nmcTags || '').replace(/\//g, ',')
-          : trackingData.tag
+      targetingTags: targetingTagData.join(',')
     };
 
   if (shouldUseNmcTags) {
@@ -399,8 +396,7 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags: nmcTags
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
     });
   } else {
     Object.assign(adTargetingData, {
@@ -632,6 +628,18 @@ function debounceRefresh() {
   );
 }
 
+/**
+ * returns the current url without the hash
+ *
+ * @returns {string}
+ */
+function getCurrentLocation() {
+  const url = new URL(window.location.href);
+
+  url.hash = '';
+
+  return url.toString();
+}
 
 /**
  * Tells a list of ads to stop refreshing, whether they've loaded yet or not.

@@ -72,7 +72,7 @@ module.exports = (
 
   // facebook videos wont't play in apple news
   if (isVideo) {
-    log('error', 'facebook videos are not supported', { url });
+    log('warn', 'facebook videos are not supported', { url });
     return ANF_EMPTY_COMPONENT;
   }
 
@@ -86,7 +86,7 @@ module.exports = (
     );
   }
 
-  log('error', 'unsupported facebook url', { url });
+  log('warn', 'unsupported facebook url', { url });
   return ANF_EMPTY_COMPONENT;
 };
 
