@@ -133,6 +133,11 @@
     }
   }
 }
+.layout--two-column[data-main-component="podcast-show-page"] {
+  .content__sidebar {
+    padding-top: calc(em(20) + em(16));
+  }
+}
 
 @mixin default-screen {
   .layout--two-column {

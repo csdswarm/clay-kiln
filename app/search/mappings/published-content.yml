@@ -1,82 +1,292 @@
 settings:
   analysis:
-    analyzer:
-      tag_analyzer:
-        tokenizer: standard
-        filter:
-        - standard
-        - my_ascii_folding
-        - lowercase
-        char_filter:
-        - remove_whitespace
-        - remove_punctuation
-      author_analyzer:
-        tokenizer: standard
-        filter:
-        - standard
-        - my_ascii_folding
-        - lowercase
-        char_filter:
-        - remove_whitespace
-        - remove_punctuation
     filter:
       my_ascii_folding:
         type: asciifolding
-        preserve_original: true
+        preserve_original: 'true'
     char_filter:
       remove_whitespace:
-        type: pattern_replace
         pattern: "\\s+"
-        replacement: '-'
-      remove_punctuation:
         type: pattern_replace
-        pattern: "[.,\/#!$%\\^&\\*;:{}=\\-_`~()']"
+        replacement: "-"
+      remove_punctuation:
+        pattern: "[.,/#!$%\\^&\\*;:{}=\\-_`~()']"
+        type: pattern_replace
         replacement: ''
+    normalizer:
+      lowercase:
+        filter:
+          - lowercase
+        type: custom
+    analyzer:
+      tag_analyzer:
+        filter:
+          - standard
+          - my_ascii_folding
+          - lowercase
+        char_filter:
+          - remove_whitespace
+          - remove_punctuation
+        tokenizer: standard
+      station_analyzer:
+        filter:
+          - standard
+          - my_ascii_folding
+          - lowercase
+        char_filter:
+          - remove_whitespace
+          - remove_punctuation
+        tokenizer: standard
+      author_analyzer:
+        filter:
+          - standard
+          - my_ascii_folding
+          - lowercase
+        char_filter:
+          - remove_whitespace
+          - remove_punctuation
+        tokenizer: standard
+      flex_analyzer:
+        filter:
+          - standard
+          - my_ascii_folding
+          - lowercase
+        char_filter:
+          - remove_whitespace
+          - remove_punctuation
+        tokenizer: standard
 
 _doc:
-  dynamic: false
+  dynamic: 'false'
   properties:
-    displayHeadline:
-      type: text
-    plaintextDisplayHeadline:
-      type: text
+    ap:
+      properties:
+        itemid:
+          type: keyword
     authors:
       type: keyword
       fields:
         normalized:
           type: text
           analyzer: author_analyzer
-    date:
-      type: date
-      store: true
+    byline:
+      type: nested
+      dynamic: 'true'
+      properties:
+        names:
+          properties:
+            count:
+              type: long
+            slug:
+              type: text
+              fields:
+                keyword:
+                  type: keyword
+                  ignore_above: 256
+            text:
+              type: text
+              fields:
+                keyword:
+                  type: keyword
+                  ignore_above: 256
+        prefix:
+          type: text
+          fields:
+            keyword:
+              type: keyword
+              ignore_above: 256
+        sources:
+          properties:
+            count:
+              type: long
+            text:
+              type: text
+              fields:
+                keyword:
+                  type: keyword
+                  ignore_above: 256
     canonicalUrl:
       type: keyword
       store: true
-    feedImage:
-      type: keyword
-    tags:
+    categorySyndication:
       type: keyword
       fields:
         normalized:
           type: text
-          analyzer: tag_analyzer
-    sectionFront:
-      type: keyword
+          analyzer: station_analyzer
+    content:
+      type: nested
+      dynamic: 'true'
+      properties:
+        _ref:
+          type: text
+          fields:
+            keyword:
+              type: keyword
+              ignore_above: 256
+        data:
+          type: text
+          fields:
+            keyword:
+              type: keyword
+              ignore_above: 256
     contentType:
       type: keyword
-    teaser:
-      type: text
-    site:
-      type: keyword
-    pageUri:
-      type: keyword
+    corporateSyndication:
+      dynamic: 'true'
+      properties:
+        1Thing:
+          type: boolean
+        ImListening:
+          type: boolean
+    date:
+      type: date
       store: true
+    dateModified:
+      type: date
+    displayHeadline:
+      type: text
+    editorialFeeds:
+      dynamic: 'true'
+      properties:
+        AC:
+          type: boolean
+        Adult Hits:
+          type: boolean
+        Alternative:
+          type: boolean
+        CHR / Top 40:
+          type: boolean
+        Classic Hits:
+          type: boolean
+        Classic Rock:
+          type: boolean
+        Country:
+          type: boolean
+        Hip Hop:
+          type: boolean
+        Hot AC:
+          type: boolean
+        Hot AC / Top 40 / CHR:
+          type: boolean
+        News/Talk:
+          type: boolean
+        R and B:
+          type: boolean
+        Rock:
+          type: boolean
+        Sports:
+          type: boolean
+        Throwbacks:
+          type: boolean
+        Trending:
+          type: boolean
+        Urban:
+          type: boolean
+    endDateTime:
+      type: date
+    featured:
+      type: boolean
+    feedImage:
+      type: keyword
+    feeds:
+      dynamic: 'true'
+      properties:
+        apple-news:
+          type: boolean
+        most-popular:
+          type: boolean
+        msn:
+          type: boolean
+        newsfeed:
+          type: boolean
+        rss:
+          type: boolean
+        sitemaps:
+          type: boolean
+        smartNews:
+          type: boolean
+    genreSyndication:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: station_analyzer
+    hosts:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: author_analyzer
     lead:
       type: nested
-      dynamic: true
+      dynamic: 'true'
       properties:
         _ref:
           type: keyword
           ignore_above: 256
         data:
           type: text
+    msnTitleLength:
+      type: integer
+    noIndexNoFollow:
+      type: boolean
+    pageUri:
+      type: keyword
+      store: true
+    plaintextDisplayHeadline:
+      type: text
+    secondarySectionFront:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: flex_analyzer
+    sectionFront:
+      type: keyword
+    site:
+      type: keyword
+    startDate:
+      type: date
+    startDateTime:
+      type: date
+    stationCallsign:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: station_analyzer
+    stationSlug:
+      type: keyword
+      normalizer: lowercase
+    stationSyndication:
+      type: nested
+      properties:
+        callsign:
+          type: keyword
+          fields:
+            normalized:
+              type: text
+              analyzer: station_analyzer
+        importer:
+          type: boolean
+        secondarySectionFront:
+          type: keyword
+        sectionFront:
+          type: keyword
+        source:
+          type: keyword
+        stationSlug:
+          type: keyword
+        syndicatedArticleSlug:
+          type: text
+        unsubscribed:
+          type: boolean
+    tags:
+      type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: tag_analyzer
+    teaser:
+      type: text

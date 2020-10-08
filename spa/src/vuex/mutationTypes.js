@@ -34,5 +34,3 @@ export const MODAL_SUCCESS = 'MODAL_SUCCESS'
 export const ROUTER_PUSH = 'ROUTER_PUSH'
 
 export const SET_USER_STATIONS = 'SET_USER_STATIONS'
-
-export const SET_LOADED_IDS = 'SET_LOADED_IDS'

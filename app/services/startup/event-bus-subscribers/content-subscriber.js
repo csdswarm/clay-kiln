@@ -7,6 +7,7 @@ const
   buffer = require('../../../services/server/buffer'),
   db = require('../../../services/server/db'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
+  onContentSavedStream = require('./on-content-saved-stream'),
   { getComponentName } = require('clayutils'),
   { subscribe } = require('amphora-search'),
   uri = require('../../server/uri'),
@@ -203,6 +204,7 @@ async function handlePublishStationSyndication(page) {
 function subscribeToBusMessages() {
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
+  subscribe('save').through(onContentSavedStream);
 }
 subscribeToBusMessages._internals = __;
 
