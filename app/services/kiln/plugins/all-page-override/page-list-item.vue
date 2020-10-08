@@ -76,7 +76,7 @@
     const site = sites[page.siteSlug];
 
     return uriToUrl(page.uri, {
-      protocol: site.protocol || 'http:', // note: assumes http if protocol is not present in site config
+      protocol: site.protocol ? `${site.protocol}:` : 'http:', // note: assumes http if protocol is not present in site config
       port: site.port.toString(),
       hostname: site.host,
       host: site.host
