@@ -5,7 +5,7 @@ const expect = require('chai').expect,
   filename = __filename.split('/').pop().split('.').shift(),
   proxyquire = require('proxyquire'),
   applyContentSubscriptions = proxyquire('./apply-content-subscriptions', {
-    '../../server/get-stations-subscribed-to-content': () => Promise.resolve(mockData.stationsSubscribedToContent)
+    '../../server/get-subscriptions-with-station-props': () => Promise.resolve(mockData.subscriptionsWithStationProps)
   }),
   mockData = {
     data: {
@@ -27,8 +27,6 @@ const expect = require('chai').expect,
         [{ _ref: 'clay.radio.com/_components/paragraph/instances/new' }],
       tags: { _ref: 'clay.radio.com/_components/tags/instances/new' },
       adTags: { _ref: 'clay.radio.com/_components/ad-tags/instances/new' },
-      contentPageSponsorLogo:
-        { _ref: 'clay.radio.com/_components/google-ad-manager/instances/contentPageLogoSponsorship' },
       sideShare: { _ref: 'clay.radio.com/_components/share/instances/new' },
       feeds:
       {
@@ -137,31 +135,36 @@ const expect = require('chai').expect,
       },
       extension: 'html'
     },
-    stationsSubscribedToContent: [
+    subscriptionsWithStationProps: [
       {
         callsign: 'WXRTFM',
         name: '93XRT',
-        site_slug: 'wxrt'
+        site_slug: 'wxrt',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WNCXFM',
         name: '98.5 WNCX',
-        site_slug: 'wncx'
+        site_slug: 'wncx',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'KQMTFM',
         name: '99.5 The Mountain',
-        site_slug: '995themountain'
+        site_slug: '995themountain',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WROQFM',
         name: 'Classic Rock 101.1',
-        site_slug: 'classicrock1011'
+        site_slug: 'classicrock1011',
+        mapped_section_fronts: {}
       },
       {
         callsign: 'WKBUFM',
         name: 'Bayou 95.7',
-        site_slug: 'bayou957'
+        site_slug: 'bayou957',
+        mapped_section_fronts: { primarySectionFront: 'RADIOCOM', secondarySectionFront: null }
       }
     ]
   };
@@ -207,6 +210,40 @@ describe(`${dirname}/${filename}`, () => {
       expect(data.stationSyndication).to.have.lengthOf(5);
       expect(data.stationSyndication[0].sectionFront).to.eql('music');
       expect(data.stationSyndication[0].secondarySectionFront).to.eql('rock');
+    });
+
+    it('keep previously unsubscribed content as part of the data syndication entries', async () => {
+      const data = {
+        ...mockData.data,
+        stationSyndication: [
+          {
+            source: 'content subscription',
+            callsign: 'WROQFM',
+            stationName: 'Classic Rock 101.1',
+            stationSlug: 'classicrock1011',
+            syndicatedArticleSlug: '/classicrock1011/the-greatest-band-of-all-times',
+            unsubscribed: true
+          }
+        ]
+      };
+
+      await applyContentSubscriptions(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(5);
+      expect(data.stationSyndication.find(station => station.callsign === 'WROQFM').unsubscribed).to.eql(true);
+    });
+
+    it('syndication data should include mapped primary and secondary section fronts, if present', async () => {
+      const data = {
+        ...mockData.data,
+        sectionFront: 'music',
+        secondarySectionFront: 'rock'
+      };
+
+      await applyContentSubscriptions(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(5);
+      expect(data.stationSyndication[4].sectionFront).to.eql('RADIOCOM');
     });
   });
 });

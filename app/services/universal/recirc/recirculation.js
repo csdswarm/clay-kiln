@@ -9,6 +9,7 @@
  * Component expects the following fields in the schema.yml
  * populateFrom
  * contentType
+ * authors
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -95,6 +96,7 @@ const
       moreContent
     };
   },
+
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => {
     const
@@ -137,11 +139,29 @@ const
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
-    urlIsValid: validatedItem.urlIsValid,
     canonicalUrl: curatedItem.url || validatedItem.canonicalUrl,
     feedImgUrl: curatedItem.overrideImage || validatedItem.feedImgUrl,
     sectionFront: validatedItem.sectionFront
   }),
+  /**
+   * Handles inserting stationSlug into a values list for multiple section fronts
+   * @param {string} key
+   * @param {function} createObj
+   * @param {boolean} [includeSyndicated]
+   * @param {string} [stationSlug]
+   * @returns {function(*=): (*)}
+   */
+  listFilter = ({ key, createObj, includeSyndicated, stationSlug }) => value => {
+    if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+      return createObj(
+        value,
+        stationSlug,
+        includeSyndicated
+      );
+    } else {
+      return createObj(value);
+    }
+  },
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
     author: {
@@ -166,7 +186,7 @@ const
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ sectionFront })
+              ...multiCaseFilter({ sectionFront })
             ]
           }
         },
@@ -177,18 +197,21 @@ const
       ].filter(Boolean))
     },
     secondarySectionFronts: {
-      createObj: (secondarySectionFront, stationSlug, includeSyndicated = true) => minimumShouldMatch([
+      filterCondition: 'must',
+      unique: true,
+      createObj: ({ sectionFront, secondarySectionFront }, stationSlug, includeSyndicated = true) => minimumShouldMatch([
         {
           bool: {
             must: [
               filterMainStation(stationSlug),
-              multiCaseFilter({ secondarySectionFront })
-            ]
+              ...multiCaseFilter({ sectionFront, ...secondarySectionFront && { secondarySectionFront } })
+            ].filter(Boolean)
           }
         },
         includeSyndicated && syndicatedSectionFrontFilter(
           stationSlug,
-          { 'stationSyndication.secondarySectionFront': secondarySectionFront }
+          { 'stationSyndication.sectionFront': sectionFront },
+          secondarySectionFront && { 'stationSyndication.secondarySectionFront': secondarySectionFront }
         )
       ].filter(Boolean))
     },
@@ -288,25 +311,22 @@ const
    *                       as is and lowercase against the data
    * @returns {{bool: {should: Array, minimum_should_match: number}}}
    */
-  multiCaseFilter = obj => {
-    const [key, value] = Object.entries(obj)[0] || [];
-
-    return minimumShouldMatch([
-      { match: { [ key ]: `${value}` } },
-      { match: { [ key ]: `${value}`.toLowerCase() } }
-    ]);
-  },
+  multiCaseFilter = obj => Object.entries(obj).map(([key, value]) => minimumShouldMatch([
+    { match: { [ key ]: `${value}` } },
+    { match: { [ key ]: `${value}`.toLowerCase() } }
+  ])),
 
   /**
    * Creates a filter for a syndicated sectionFront or secondarySectionFront
    * @param {string} stationSlug - The station to filter by
-   * @param {object} obj - The syndicated property and value to filter
+   * @param {object} sectionFront - The section front property and value to filter
+   * @param {object} secondarySectionFront - The secondary section front property and value to filter
    * @returns {*|
    *   {nested: {path: string, query: {bool: {must: [{match: {'stationSyndication.stationSlug': *}},
    *   {bool: {should: Array, minimum_should_match: number}}]}}}}
    * }
    */
-  syndicatedSectionFrontFilter = (stationSlug, obj) => ({
+  syndicatedSectionFrontFilter = (stationSlug, sectionFront, secondarySectionFront) => ({
     nested: {
       path: 'stationSyndication',
       query: {
@@ -317,8 +337,8 @@ const
                 'stationSyndication.stationSlug': stationSlug
               }
             },
-            multiCaseFilter(obj)
-          ]
+            ...multiCaseFilter({ ...sectionFront, ...secondarySectionFront })
+          ].filter(Boolean)
         }
       }
     }
@@ -397,14 +417,24 @@ const
 
     if (Array.isArray(value)) {
       if (unique && value.length) {
-        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
+        const items = value.map(listFilter({
+          createObj,
+          includeSyndicated,
+          key,
+          stationSlug
+        }));
+
+        queryService[getQueryType(condition)](query, minimumShouldMatch(items));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
     } else {
       if (!createObj || !value) {
         if (key === 'stationSlug') {
-          queryService[getQueryType('must')](query, queryFilters.stationSlug.createObj(''));
+          queryService[getQueryType('must')](
+            query,
+            queryFilters.stationSlug.createObj(DEFAULT_STATION.site_slug)
+          );
         }
         return;
       }
@@ -444,12 +474,9 @@ const
    * @return {string} host
    */
   getHost = (data, locals) => {
-    const host = _get(locals, 'host') || _get(locals, 'params.host');
+    data.host = coalesce(locals, 'host', 'params.host');
 
-    // Used for load-more queries
-    data.host = host;
-
-    return { host };
+    return data.host;
   },
   /**
    * Pull stationSlug from local params if dynamic station page
@@ -547,6 +574,18 @@ const
   }),
 
   /**
+   * assigns urlIsValid to item if the key exists on result
+   *
+   * @param {object} result
+   * @param {object} item - this is mutated
+   */
+  handleUrlIsValid = (result, item) => {
+    if (result.hasOwnProperty('urlIsValid')) {
+      item.urlIsValid = result.urlIsValid;
+    }
+  },
+
+  /**
    * Use filters to query elastic for content
    *
    * @param {object} config
@@ -578,8 +617,9 @@ const
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
+    const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
+
     Object.entries(filters).forEach(([key, value]) => {
-      const { includeSyndicated, stationSlug = DEFAULT_STATION.site_slug } = filters;
 
       switch (key) {
         case 'sectionFronts':
@@ -589,7 +629,17 @@ const
           value = { value, stationSlug, includeSyndicated };
           break;
         case 'secondarySectionFronts':
-          value = { value, stationSlug, includeSyndicated };
+          if (_isEmpty(value)) {
+            return;
+          }
+          value = {
+            value: {
+              sectionFront: filters.sectionFronts,
+              secondarySectionFront: value
+            },
+            stationSlug,
+            includeSyndicated
+          };
           break;
         case 'includeSyndicated':
           return;
@@ -609,7 +659,14 @@ const
       }
       addCondition(query, key, value);
     });
-    Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
+
+    Object.entries(excludes)
+      .forEach(([key, value]) => {
+        if (['sectionFronts', 'secondarySectionFronts'].includes(key)) {
+          value = { value, stationSlug };
+        }
+        addCondition(query, key, value, 'mustNot');
+      });
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
@@ -715,7 +772,14 @@ const
             [contentKey]: await Promise.all(
               [...curated, ...content.map(syndicationUrlPremap(getStationSlug(locals), isRdcContent))]
                 .slice(0, maxItems)
-                .map(async (item) => mapResultsToTemplate(locals, item))),
+                .map(async (result) => {
+                  const item = {};
+
+                  handleUrlIsValid(result, item);
+
+                  return mapResultsToTemplate(locals, result, item);
+                })
+            ),
             initialLoad: !pagination.page,
             moreContent: totalHits > maxItems
           });
@@ -740,6 +804,8 @@ const
           result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
         item.uri = result._id;
+
+        handleUrlIsValid(result, item);
 
         return mapResultsToTemplate(locals, result, item);
       }));

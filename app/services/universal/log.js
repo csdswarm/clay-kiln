@@ -26,7 +26,7 @@ function init(version, browser) {
       name: 'clay',
       meta: instanceMeta
     },
-    clayLogPretty = process && process.env && !browser ? { pretty: true } : null;
+    clayLogPretty = process && process.env && !browser ? { pretty: process.env.CLAY_LOG_PRETTY } : null;
 
   // Initialize the logger
   clayLog.init({ ...clayLogOptions, ...clayLogPretty });
@@ -46,7 +46,7 @@ function setup(meta) {
   meta = _defaults({}, meta, { file: 'File not specified! Please declare a file' });
 
   if (!sitesLogInstance) {
-    clayLog.init({ name: 'clay', pretty: true });
+    clayLog.init({ name: 'clay', pretty: process.env.CLAY_LOG_PRETTY });
     sitesLogInstance = clayLog.getLogger();
   }
 

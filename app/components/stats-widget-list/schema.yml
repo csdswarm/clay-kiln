@@ -1,0 +1,39 @@
+_description: |
+  List of stats widgets.
+
+content:
+  _label: Widgets component
+  _placeholder:
+    text: Widgets component
+  _componentList:
+    fuzzy: false
+    include:
+      - stats-standings
+
+title:
+  _label: Stats List Title
+  _has:
+    validate:
+      required: false
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+titleVisible:
+  _label: Show Stats List Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+  
+_groups:
+  settings:
+    _label: Stats List Title
+    _placeholder:
+      text: Stats List Title
+      height: 40px
+      ifEmpty: title
+    fields:
+      - title
+      - titleVisible
+

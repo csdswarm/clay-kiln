@@ -2,7 +2,7 @@
 
 const parseDate = require('date-fns/parse'),
   isEmpty = require('lodash/isEmpty'),
-  { rendererPipeline } = require('./utils');
+  rendererPipeline = require('./renderer-pipeline');
 
 /**
  * @param  {String} ref

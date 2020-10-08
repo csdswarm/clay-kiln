@@ -1,7 +1,13 @@
 'use strict';
 
-const helpers = require('./helpers'),
-  { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save');
+const { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save'),
+  getBaseUrlFromLocals = require('../../services/universal/get-base-url-from-locals'),
+  helpers = require('./helpers');
+
+module.exports.render = (ref, data, locals) => {
+  data.localUrl = getBaseUrlFromLocals(locals);
+  return data;
+};
 
 module.exports.save = (ref, data, locals) => {
   helpers.setFromLocals(data, locals);

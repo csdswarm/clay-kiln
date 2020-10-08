@@ -6,6 +6,7 @@
 @import "_global/colors";
 @import "_global/alert-banner";
 @import "_global/layouts";
+@import "_global/permissions";
 
 .layout--two-column {
   margin: 0;
@@ -94,6 +95,11 @@
     .content__sidebar {
       visibility: visible;
       margin-top: em(153);
+    }
+    &[data-main-component="article"] {
+      .content__sidebar {
+        margin-top: em(253);
+      }
     }
   },
   &[data-main-component="contest"] {

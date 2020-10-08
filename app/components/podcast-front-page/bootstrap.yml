@@ -6,6 +6,8 @@ _components:
     content: []
     instances:
       default:
+        title: Podcasts
+        enableHero: false
         hero:
           - _ref: /_components/podcast-hero-carousel/instances/new
         content: []

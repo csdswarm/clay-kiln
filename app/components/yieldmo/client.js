@@ -9,14 +9,7 @@ function injectYieldmo() {
     bodyContent = document.getElementsByClassName('body__content')[0];
 
   if (bodyContent) {
-    const firstParagraph = bodyContent.querySelector('p'),
-      secondParagraph = bodyContent.querySelector('p:nth-of-type(2)');
-
-    if (secondParagraph) {
-      secondParagraph.insertAdjacentElement('afterend', yieldmo);
-    } else if (firstParagraph) {
-      firstParagraph.insertAdjacentElement('afterend', yieldmo);
-    }
+    bodyContent.insertAdjacentElement('afterbegin', yieldmo);
   }
 
   // if the yieldmo script has already been loaded, request a spa pageview, else initialize it.

@@ -27,8 +27,6 @@ const expect = require('chai').expect,
         [{ _ref: 'clay.radio.com/_components/paragraph/instances/new' }],
       tags: { _ref: 'clay.radio.com/_components/tags/instances/new' },
       adTags: { _ref: 'clay.radio.com/_components/ad-tags/instances/new' },
-      contentPageSponsorLogo:
-        { _ref: 'clay.radio.com/_components/google-ad-manager/instances/contentPageLogoSponsorship' },
       sideShare: { _ref: 'clay.radio.com/_components/share/instances/new' },
       feeds:
       {
@@ -301,6 +299,30 @@ describe(`${dirname}/${filename}`, () => {
 
       expect(data.stationSyndication).to.have.lengthOf(1);
       expect(data.stationSyndication[0].stationName).to.eql('Mix 94.7');
+    });
+
+    it('keep previously unsubscribed content as part of the data syndication entries', async () => {
+      const data = {
+        ...mockData.data,
+        editorialFeeds: {
+          Alternative: true
+        },
+        stationSyndication: [
+          {
+            source: 'editorial feed',
+            callsign: 'WROQFM',
+            stationName: 'Classic Rock 101.1',
+            stationSlug: 'classicrock1011',
+            syndicatedArticleSlug: '/classicrock1011/the-greatest-band-of-all-times',
+            unsubscribed: true
+          }
+        ]
+      };
+
+      await addStationsByEditorialGroup(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(2);
+      expect(data.stationSyndication.find(station => station.callsign === 'WROQFM').unsubscribed).to.eql(true);
     });
   });
 });

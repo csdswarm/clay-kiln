@@ -107,7 +107,6 @@ module.exports = recirculationData({
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       subHeadline: item.overrideSubHeadline || result.subHeadline,
       pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
       label,

@@ -412,10 +412,6 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     });
   }
 
-  if (isArticleOrGallery(pageData)) {
-    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
-  }
-
   return adTargetingData;
 }
 
@@ -644,6 +640,15 @@ function debounceRefresh() {
  */
 window.disableAdRefresh = function (ads) {
   ads.forEach(ad => disabledRefreshAds.add(ad));
+};
+
+/**
+ * Tells a list of ads to restore refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.enableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.delete(ad));
 };
 
 /**

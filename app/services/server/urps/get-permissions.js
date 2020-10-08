@@ -3,8 +3,8 @@
 const formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
   getFromUrps = require('./get-from-urps'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { createUnityPermissions } = require('./utils'),
-  { unityAppDomainName } = require('../../universal/urps');
+  { createUnityPermissions, USE_URPS_CORE_ID } = require('./utils'),
+  { unityAppDomain, unityAppDomainName } = require('../../universal/urps');
 
 /**
  * Gets all permissions for user with jwt from URPS and organizes them as a simple object for checking
@@ -16,7 +16,7 @@ const formatPossibleAxiosError = require('../../universal/format-possible-axios-
  *  permissions checking, which will simultaneously reduce overall bandwidth, while improving security
  *
  * @param {string} idToken the jwt Token of the authenticated user to authorizations for
- * @param {string[]} stationDomainNames
+ * @param {Array} stationDomainNames
  * @returns {Promise<Object>}
  *
  * @example
@@ -40,10 +40,10 @@ module.exports = async (idToken, stationDomainNames) => {
     if (!idToken) {
       throw new Error('idToken is a required parameter');
     }
-
+    
     const { data: permissionsList } = await getFromUrps(
       '/permissions/by-domain',
-      { domains: [unityAppDomainName, ...stationDomainNames] },
+      { domains: USE_URPS_CORE_ID ? [unityAppDomain, ...stationDomainNames] : [unityAppDomainName, ...stationDomainNames] },
       idToken
     );
 

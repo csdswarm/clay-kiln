@@ -23,7 +23,7 @@
           Download
         </a>
       </div>
-        <a class="podcast-episode-list__title">
+        <a class="podcast-episode-list__title" href="{{episode_detail_url}}">
           {{truncate title 52}}
         </a>
       <div class="podcast-episode-list__description">{{truncate description 210}}</div>
@@ -56,7 +56,9 @@
       {{> podcastListItem podcast.attributes podcastId=podcast.id }}
     {{/each}}
   </ol>
+  {{#if _computed.showLoadMoreBtn}}
   <div class="podcast-episode-list__load-more">
     <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
   </div>
+  {{/if}}
 </div>

@@ -1,6 +1,7 @@
 /* eslint-disable max-nested-callbacks */
 'use strict';
-const
+
+const _noop = require('lodash/noop'),
   chai = require('chai'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
@@ -232,6 +233,9 @@ describe('server', () => {
 
         __.getAllStations.bySlug = stubs.bySlug;
 
+        __.updatePageMetadata = options.updatePageMetadata || _noop;
+        __.ensureSyndicatedUrl = options.ensureSyndicatedUrl || _noop;
+
         const result = await importArticle(apMeta, stationMappings, locals);
 
         return {
@@ -329,6 +333,58 @@ describe('server', () => {
         expect(stubs.dbGet).to.have.been.calledWith(sinon.match('_pages/new-two-col'));
       });
 
+      it('updates the page meta components when a new article is created', async () => {
+        const updatePageMetadata = sinon.spy(),
+          { result } = await setup_importArticle({
+            apMeta: {
+              altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+            },
+            stationMappings: {
+              'test-station': [],
+              'second-station': []
+            },
+            stationsBySlug: {
+              'test-station': {},
+              'second-station': {}
+            },
+            updatePageMetadata
+          }),
+          { metaDescription, metaImage, metaTags, metaTitle } = result;
+
+        expect(updatePageMetadata).to.have.been.calledOnce;
+        expect(updatePageMetadata).to.have.been.calledWithMatch({
+          metaDescription,
+          metaImage,
+          metaTags,
+          metaTitle
+        });
+      });
+
+      it('calls ensureSyndicatedUrl correctly when a new article is created', async () => {
+        const ensureSyndicatedUrl = sinon.spy(),
+          { result } = await setup_importArticle({
+            apMeta: {
+              altids: { itemid: 'not-in-unity-yet', etag: 'not-in-unity-yet_1234' }
+            },
+            stationMappings: {
+              'test-station': [],
+              'second-station': []
+            },
+            stationsBySlug: {
+              'test-station': {},
+              'second-station': {}
+            },
+            ensureSyndicatedUrl
+          }),
+          { metaUrl, pageRef } = result;
+
+        expect(ensureSyndicatedUrl).to.have.been.calledOnce;
+        expect(ensureSyndicatedUrl).to.have.been.calledWithMatch({
+          metaUrl,
+          pageData: { _ref: pageRef }
+        });
+      });
+
       it('traps errors when checking for existing elastic content', async () => {
         const
           noItemId = sinon.match(value => value.body.query.term['ap.itemid'] === undefined),
@@ -370,6 +426,7 @@ describe('server', () => {
                   etag: 'xyz123_mod1'
                 },
                 version: 1,
+                firstcreated: '2020-02-02T02:02:02Z',
                 ednote: 'go ahead and publish, there are no problems here.',
                 headline: 'Something tragic happened',
                 headline_extended: 'Something tragic happened on the way to heaven',
@@ -399,9 +456,10 @@ describe('server', () => {
         }
 
         it('maps AP data to article', async () => {
-          const { result } = await setup_modifiedByAP(),
+          const
+            expectedTitle = 'Something bad happened',
+            { result } = await setup_modifiedByAP({ apMeta: { headline: expectedTitle, firstcreated: '2020-05-04T07:14:00Z' } }),
             { article } = result,
-            expectedTitle = 'Something tragic happened',
             expected = {
               ap:
                 {
@@ -411,6 +469,8 @@ describe('server', () => {
                   uri: 'https://api.ap.org/media/v/content/ababcde?qt=123456a&et=5a1aza0c0&include=*',
                   version: 1
                 },
+              articleDate: '2020-05-04',
+              articleTime: '07:14',
               headline: expectedTitle,
               msnTitle: expectedTitle,
               pageDescription: 'Something tragic happened on the way to heaven',
@@ -421,7 +481,9 @@ describe('server', () => {
               seoDescription: 'Something tragic happened on the way to heaven',
               seoHeadline: expectedTitle,
               shortHeadline: expectedTitle,
-              slug: 'something-tragic-happened',
+              slug: 'something-bad-happened',
+              stationLogoUrl: '',
+              stationURL: '',
               teaser: expectedTitle
             };
 
@@ -445,35 +507,9 @@ describe('server', () => {
               { text: 'Tragedy', slug: 'tragedy' }
             ]
           });
-
         });
 
-        it('maps AP data to meta title', async () => {
-          const
-            expectedTitle = 'You can go your own way!',
-            { result } = await setup_modifiedByAP({ apMeta: { headline: expectedTitle } }),
-            { metaTitle } = result;
-
-          expect(metaTitle).to.deep.include({
-            kilnTitle: expectedTitle,
-            ogTitle: expectedTitle,
-            title: expectedTitle,
-            twitterTitle: expectedTitle
-          });
-        });
-
-        it('maps AP data to meta description', async () => {
-          const
-            expected = 'You can go your own way, but it might be really, really far!',
-            { result } = await setup_modifiedByAP({ apMeta: { headline_extended: expected } }),
-            { metaDescription } = result;
-
-          expect(metaDescription).to.deep.include({
-            description: expected
-          });
-        });
-
-        it('maps AP image data to the article and meta-image', async () => {
+        it('maps AP image data to the article', async () => {
           const
             imageTitle = 'Something is on Fire',
             newImageUrl = 'https://images.radio.com/aiu-media/SomethingIsOnFire4832149-43125-5415.jpg',
@@ -508,7 +544,7 @@ describe('server', () => {
                 url: newImageUrl
               }
             }),
-            { article, metaImage } = result;
+            { article } = result;
 
           expect(article).to.deep.include({
             feedImgUrl: newImageUrl
@@ -535,10 +571,6 @@ describe('server', () => {
 
           expect(article.sideShare).to.deep.include({
             pinImage: newImageUrl
-          });
-
-          expect(metaImage).to.deep.include({
-            imageUrl: newImageUrl
           });
         });
 
@@ -579,7 +611,7 @@ describe('server', () => {
                         <ol>${BULLETS}</ol>
                         <p>${P_TEXT}</p>
                         ${PRE_TEXT}
-                        ${TABLE_TEXT}                 
+                        ${TABLE_TEXT}
                         <ul>${BULLETS}</ul>
                       </block>
                     </nitf>`
@@ -757,11 +789,11 @@ describe('server', () => {
       describe.skip('not publishable', () => {
         // TODO: write tests for unpublishable content
         it('unpublishes if the article exists', async () => {
-          
+
         });
-        
+
         it('does nothing if the article does not exists', async () => {
-          
+
         });
       });
     });
@@ -786,7 +818,8 @@ function buildApData(idPostFix, host, data) {
       TITLE: `${host}/_components/meta-title/instances/${INSTANCE_ID}`,
       DESCRIPTION: `${host}/_components/meta-description/instances/${INSTANCE_ID}`,
       IMAGE: `${host}/_components/meta-image/instances/${INSTANCE_ID}`,
-      TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`
+      TAGS: `${host}/_components/meta-tags/instances/${INSTANCE_ID}`,
+      URL: `${host}/_components/meta-url/instances/${INSTANCE_ID}`
     };
 
   return {
