@@ -55,7 +55,7 @@ function createSessionStore() {
  * @param {integer} time
  */
 const logRequestTime = (req, res, time) => {
-  const msg = `SLOW ${req.method} REQUEST`,
+  const msg = `Slow ${req.method} request`,
     timeTaken = time.toFixed(3);
 
   if (timeTaken > SLOW_REQUEST_TIME) {
@@ -63,7 +63,7 @@ const logRequestTime = (req, res, time) => {
       method: req.method,
       path: req.path,
       statusCode: res.statusCode,
-      timeTaken: `${timeTaken}ms`
+      timeTaken: `${timeTaken}`
     });
   }
 };
@@ -124,7 +124,7 @@ function setupApp(app) {
   app.use(locals);
 
   addToLocals.loadedIds(app);
-  
+
   addInterceptor.loadedIds(app);
 
   app.use(currentStation);
