@@ -3,7 +3,7 @@
 
 const _get = require('lodash/get'),
   _debounce = require('lodash/debounce'),
-  _isEmpty = require('lodash/isEmpty'),
+  _uniq = require('lodash/uniq'),
   adMapping = require('./adMapping'),
   googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
@@ -343,7 +343,7 @@ function getAuthors(pageData) {
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {string[]}
  */
-function getContentTags(pageData) {
+function getContentAdTags(pageData) {
   if (!isArticleOrGallery(pageData)) {
     return [];
   }
@@ -361,56 +361,36 @@ function getContentTags(pageData) {
  *   drupal api).  When the nielsen marketing cloud meta tags are imported, we
  *   should ignore them and just get the tracking data from the dom.
  *
- * @param {boolean} shouldUseNmcTags
  * @param {object} currentStation - the station object
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {object}
  */
-function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
+function getInitialAdTargetingData(currentStation, pageData) {
   // we can't refer to the NMC tags for author since NMC only holds a single
   //   author for some reason.
   const authors = getAuthors(pageData),
-    contentTags = getContentTags(pageData),
+    contentTags = getContentAdTags(pageData),
     trackingData = getTrackingData({
       pathname: window.location.pathname,
       station: currentStation,
       pageData,
       contentTags
     }),
-    nmcTags = getMetaTagContent('name', NMC.tag),
+    // imported content tags is been created with slashes instead of commas, using this pattern when the importer is updated we won't need to update Unity side.
+    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ',').split(','),
+    targetingTagData = _uniq(nmcTags.concat(trackingData.tag)).filter(Boolean),
     adTargetingData = {
       targetingAuthors: authors,
-      // Use the nmc tags only when the add-tags are empty/not-present and imported nmc:tag is not empty.
-      // In case that there is no tags we should not sent information to GAM.
-      targetingTags:
-        _isEmpty(contentTags.filter(Boolean)) &&
-        !_isEmpty(nmcTags)
-          ? (nmcTags || '').replace(/\//g, ',')
-          : trackingData.tag
+      targetingTags: targetingTagData.join(',')
     };
 
-  if (shouldUseNmcTags) {
-    const market = pageData.page === 'stationDetail'
-      ? getMetaTagContent('name', NMC.market)
-      : undefined;
-
-    Object.assign(adTargetingData, {
-      targetingCategory: getMetaTagContent('name', NMC.cat),
-      targetingGenre: getMetaTagContent('name', NMC.genre),
-      targetingMarket: market,
-      targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags: nmcTags
-    });
-  } else {
-    Object.assign(adTargetingData, {
-      targetingCategory: trackingData.cat,
-      targetingGenre: trackingData.genre,
-      targetingMarket: trackingData.market,
-      targetingPageId: trackingData.pid,
-      targetingRadioStation: trackingData.station
-    });
-  }
+  Object.assign(adTargetingData, {
+    targetingCategory: trackingData.cat,
+    targetingGenre: trackingData.genre,
+    targetingMarket: trackingData.market,
+    targetingPageId: trackingData.pid,
+    targetingRadioStation: trackingData.station
+  });
 
   return adTargetingData;
 }
@@ -444,13 +424,8 @@ function getAdTargeting(pageData) {
      * because it is not available in client.js.
      */
     { env } = googleAdEl.dataset,
-    // this query selector should always succeed
-    firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
-    hasNmcTags = !!firstNmcTag,
-    isNmcDataImported = hasNmcTags && firstNmcTag.getAttribute('data-was-imported') === 'true',
-    shouldUseNmcTags = hasNmcTags && !isNmcDataImported,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    adTargetingData = getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData);
+    adTargetingData = getInitialAdTargetingData(currentStation, pageData);
 
   // Set up targeting and ad paths based on current page
   switch (pageData.page) {
