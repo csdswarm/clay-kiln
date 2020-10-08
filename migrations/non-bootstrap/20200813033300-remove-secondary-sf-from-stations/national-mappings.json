@@ -1,0 +1,50 @@
+{
+  "primary": {
+    "national": {
+      "music": [
+        "Alternative",
+        "Country",
+        "Entertainment",
+        "Pop",
+        "Urban"
+      ],
+      "news": [
+        "National News",
+        "Watercooler",
+        "Country",
+        "Small Business Pulse"
+      ],
+      "sports": [
+        "Sports"
+      ],
+      "i'm listening": [
+        "I'm Listening"
+      ],
+      "1thing": [
+        "1Thing"
+      ]
+    }
+  },
+  "secondary": {
+    "national": {
+      "Pop": "Pop",
+      "Alternative": "Alternative",
+      "Country": "Country",
+      "Urban": "Hip Hop R&B",
+      "Rock": "Rock",
+      "Classic Rock": "Classic Rock",
+      "Movies": "Movies",
+      "Television": "Television",
+      "National News": "National News",
+      "Politics": "Politics",
+      "Local Politics": "Local Politics",
+      "NFL": "NFL",
+      "MLB": "MLB",
+      "NBA": "NBA",
+      "NHL hockey": "NHL",
+      "NCAA Football": "NCAA Football",
+      "NCAA Basketball": "NCAA Basketball",
+      "Small Business Pulse": "Small Business Pulse"
+    }
+  }
+}
