@@ -60,15 +60,15 @@ async function updateTags (rows) {
 
 async function getTagComponents (db) {
   const result = await db.query(`
-    SELECT
-      count(*) as count,
-      jsonb_array_elements(data -> 'items')::jsonb ->> 'text' as text
-    FROM
-      components.tags
-    WHERE
-      id NOT LIKE '%@published'
-    GROUP BY
-      jsonb_array_elements(data -> 'items')::jsonb ->> 'text'
+  SELECT
+    count(*) as count,
+    i ->> 'text' as text
+  FROM
+    components.tags t, jsonb_array_elements(data -> 'items') i
+  WHERE
+    t.id NOT LIKE '%@published'
+  GROUP BY
+    i ->> 'text'
   `)
 
   return result.rows
