@@ -7,7 +7,7 @@ const _noop = require('lodash/noop'),
 
   locals = {},
   nationalStationSlug = '',
-  testStation = { name: 'test station', site_slug: 'testSlug' },
+  testStation = { name: 'test station', site_slug: 'testSlug', mapped_section_fronts: {} },
   success = [testStation],
 
   filterDefaults = getFilterDefaults(),
@@ -15,7 +15,7 @@ const _noop = require('lodash/noop'),
   mockContent = getMockContent(),
 
   makeFn = mock =>
-    proxyquire('./get-stations-subscribed-to-content', {
+    proxyquire('./get-subscriptions-with-station-props', {
       './amphora-storage-postgres': _noop,
       './get-content-subscriptions': () => mock,
       './station-utils': {
@@ -27,7 +27,7 @@ const _noop = require('lodash/noop'),
       }
     });
 
-describe('getStationsSubscribedToContent', () => {
+describe('getSubscriptionsWithStationProps', () => {
   it('should not match per excluded tags', async () => {
     const fn = makeFn(mockSubscriptions.excludeTags);
 
@@ -196,7 +196,8 @@ function toMockSubscriptions(mockSubscriptions, val, key) {
     mockSubscriptions[key] = val.map(filter => ({
       filter,
       station_slug: testStation.site_slug,
-      from_station_slug: nationalStationSlug
+      from_station_slug: nationalStationSlug,
+      mapped_section_fronts: {}
     }));
   } else {
     mockSubscriptions[key] = _reduce(val, toMockSubscriptions, {});

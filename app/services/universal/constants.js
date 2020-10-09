@@ -134,10 +134,11 @@ const _get = require('lodash/get'),
   // I realize these are defined in colors.css but that obviously isn't importable
   // so starting a mirrored object here
   COLORS = {
-    lightningYellow: '#FEC517',
-    sunsetOrange: '#FF4940',
     azureRadience: '#0099FF',
-    robinsEggBlue: '#00CCB7'
+    black: '#00000',
+    lightningYellow: '#FEC517',
+    robinsEggBlue: '#00CCB7',
+    sunsetOrange: '#FF4940'
   },
 
   topicPagePrefixes = ['topic', 'music', 'news', 'sports'];

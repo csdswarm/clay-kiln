@@ -169,7 +169,7 @@ module.exports = router => {
   addEndpoints.syndicatedContent(router);
   addEndpoints.validSource(router);
   addEndpoints.signOut(router);
-  addEndpoints.getStationsSubscribedToContent(router);
   addEndpoints.stationOptions(router);
+  addEndpoints.getSubscriptionsWithStationProps(router);
   addEndpoints.stationUtils(router);
 };
