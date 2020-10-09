@@ -1,3 +1,4 @@
+_version: 1.0
 _description: An event page that includes headline, lede, event venue info, description with presenters & tags.
 _confirmRemoval: true
 
@@ -301,6 +302,10 @@ _groups:
   circulationFeedsGroup:
     fields:
       - feedImgUrl
+  settings:
+    fields:
+      - feeds
+      - noIndexNoFollow
 #/ groups
 
 # Non user editable. Set by model.js. Included in schema to use _publish functionality
@@ -337,3 +342,25 @@ plaintextShortHeadline:
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
 #/ Non user editable.
+
+# Feeds
+noIndexNoFollow:
+  _publish: noIndexNoFollow
+  _label: No Index / No Follow
+  _has: checkbox
+
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: RSS Feeds
+        value: rss
+      - name: Apple News
+        value: apple-news
+      - name: MSN
+        value: msn
+      - name: Smart News
+        value: smartNews
+    help: By default, events are included in rss feed. Uncheck these if you don't want this event to appear in there, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+#/ Feeds
