@@ -69,6 +69,7 @@
     @mixin titleColor sports, $azureRadience;
     @mixin titleColor podcasts, $robinsEggBlue;
     @mixin titleColor station-front, theme(primaryColor, $parisM);
+    margin-bottom: 0;
 
     .divider_title{
       &:before{
