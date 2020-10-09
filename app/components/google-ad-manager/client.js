@@ -233,6 +233,7 @@ function lazyLoadAd(changes, observer) {
   changes.forEach(change => {
     if (change.intersectionRatio > 0) {
       // Stop watching and load the ad
+
       googletag.pubads().refresh([allAdSlots[change.target.id]], { changeCorrelator: false });
       observer.unobserve(change.target);
     }
