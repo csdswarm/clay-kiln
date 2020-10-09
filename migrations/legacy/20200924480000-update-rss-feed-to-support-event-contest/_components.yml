@@ -1,0 +1,70 @@
+_components:
+  feeds:
+    instances:
+      reversechron:
+        index: published-content
+        meta:
+          title: Radio.com Reverse Chron Feed
+          renderer: rss,
+          contentType: application/rss+xml,
+          description: Most recent content from Radio.com,
+          fileExtension: rss
+        query:
+          size: 20
+          sort:
+            date: desc
+          query:
+            bool:
+              filter:
+              - match:
+                  feeds.rss: true
+              - bool:
+                  must_not:
+                    term:
+                      noIndexNoFollow: true
+              should:
+              - term:
+                  byline:
+                    value: []
+              - nested:
+                  path: byline
+                  query:
+                    bool:
+                      must_not:
+                        match:
+                          byline.sources.text: The Associated Press
+        
+        transform: article
+      frequency:  
+        index: published-content
+        meta:
+          title: Radio.com Frequency Feed,
+          renderer: freq,
+          contentType: application/rss+xml,
+          description: Most recent content from Radio.com,
+          fileExtension: freq
+        query:
+          size: 20
+          sort:
+            date: desc
+          query:
+            bool:
+              filter:
+              - match:
+                  feeds.rss: true
+              - bool:
+                  must_not:
+                    term:
+                      noIndexNoFollow: true
+              should:
+              - term:
+                  byline:
+                    value: "[]"
+              - nested:
+                  path: byline
+                  query:
+                    bool:
+                      must_not:
+                        match:
+                          byline.sources.text: The Associated Press
+        transform: content
