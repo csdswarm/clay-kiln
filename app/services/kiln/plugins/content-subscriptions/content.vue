@@ -229,15 +229,6 @@
   })
   const nationalFromStationOption = toStationOption(DEFAULT_STATION)
 
-  // needed for using simple-list outside of kiln
-  _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
-    const style = _get(this, '$el.style')
-
-    if (style) {
-      style.height = 'auto';
-    }
-  })
-
   class ContentSubscription {
     constructor (options = {
       from_station_slug: nationalFromStationOption.value,
@@ -578,7 +569,7 @@
         return Object.values(stationOptions).map(toStationOption)
       },
       enableModalButton(){
-        return this.workingSubscription.short_desc.trim().length > 0 && 
+        return this.workingSubscription.short_desc.trim().length > 0 &&
           this.workingSubscription.mapped_section_fronts.primarySectionFront.trim().length > 0;
       }
     },
