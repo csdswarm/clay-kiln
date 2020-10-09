@@ -5,6 +5,8 @@ const _get = require('lodash/get'),
   db = require('../../services/server/db'),
   utils = require('../../services/universal/utils'),
   { createPage } = require('../../services/server/page-utils'),
+  protocol = process.env.CLAY_SITE_PROTOCOL,
+  rest = require('../../services/universal/rest'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils');
 
 const removeSectionFronts = (content) => ({
@@ -22,6 +24,29 @@ const removeSectionFronts = (content) => ({
     'stationTimezone',
     'stationURL'
   ]),
+
+  googleAdManagerInstance = '/_components/google-ad-manager/instances',
+
+  removeAdsFromCloned = (article) => {
+    const adsArray = article.content
+        .filter(content => content._ref.includes(googleAdManagerInstance))
+        .map(contentObj => contentObj._ref),
+      newContent = article.content.filter(content => !content._ref.includes(googleAdManagerInstance));
+
+    // remove created google-ad-manager instances by createPage cloning.
+    adsArray.forEach(async adInstance => {
+      try {
+        await rest.delete(`${protocol}://${adInstance}`, {}, true);
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    return {
+      ...article,
+      content: newContent
+    };
+  },
 
   updateSyndication = (content, ogCanonicalUrl) => ({
     ...content,
@@ -66,7 +91,8 @@ const removeSectionFronts = (content) => ({
     let resultContent = await db.get(resultContentUri);
 
     resultContent = updateSyndication(resultContent, canonicalUrl),
-    resultContent = removeSectionFronts(resultContent);
+    resultContent = removeSectionFronts(resultContent),
+    resultContent = removeAdsFromCloned(resultContent);
 
     if (!stationSlug) {
       resultContent = removeStationProps(resultContent);

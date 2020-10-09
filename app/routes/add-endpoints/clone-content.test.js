@@ -21,10 +21,12 @@ describe('clone-content', () => {
         // stationSyndication isn't a 'station prop'
         return key === 'stationSyndication'
           || !key.startsWith('station');
-      });
+      }),
+      hasNoAdManagerInstance = !put.args[0][1].content.includes('_component/google-ad-manager/instances');
 
     expect(put.calledOnce).to.be.true;
     expect(hasNoStationProps).to.be.true;
+    expect(hasNoAdManagerInstance).to.be.true;
   });
 });
 
@@ -56,7 +58,14 @@ function getMockResultContent() {
     stationName: 'WWJ Newsradio 950',
     stationSlug: 'wwjnewsradio',
     stationTimezone: 'some timezone',
-    stationURL: 'https://wwjnewsradio.radio.com/'
+    stationURL: 'https://wwjnewsradio.radio.com/',
+    content: [
+      {
+        _ref: 'clay.radio.com/_components/paragraph/instances/1234567890'
+      }, {
+        _ref: 'clay.radio.com/_components/google-ad-manager/instances/xyzabcdefghijk'
+      }
+    ]
   };
 }
 
@@ -71,11 +80,13 @@ function getCloneContent({ db } = {}) {
     },
     db
   );
-
   const { cloneContent } = proxyquire('./clone-content', {
     '../../services/server/db': db,
     '../../services/server/page-utils': {
       createPage: () => Promise.resolve({ main: [''] })
+    },
+    '../../services/universal/rest': {
+      delete: () => Promise.resolve({ data: { status: 200 } })
     }
   });
 
