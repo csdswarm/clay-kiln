@@ -72,31 +72,37 @@ function addCondition(query, queryParamVal, aCondition, conditionType) {
       ? queryParamVal.split(',')
       : [queryParamVal];
 
-  items.forEach(instance => {
-    if (multiQuery) {
-      createObj(instance).forEach(cond => {
-        if (cond.nested) {
-          let nestedQuery = queryService.newNestedQuery(cond.nested);
+  // type is a one-off until we agree to a syntax which allows us to
+  //   express this kind of logic moving forward
+  if (aCondition === conditions.type) {
+    queryService[conditionType](localQuery, createObj(items));
+  } else {
+    items.forEach(instance => {
+      if (multiQuery) {
+        createObj(instance).forEach(cond => {
+          if (cond.nested) {
+            let nestedQuery = queryService.newNestedQuery(cond.nested);
 
-          nestedQuery = queryService[conditionType](nestedQuery, cond);
+            nestedQuery = queryService[conditionType](nestedQuery, cond);
 
-          const queryOp = conditionType === 'addMustNot'
-            ? 'addMust'
-            : conditionType;
+            const queryOp = conditionType === 'addMustNot'
+              ? 'addMust'
+              : conditionType;
 
-          queryService[queryOp](localQuery, nestedQuery);
-        } else {
-          queryService[conditionType](localQuery, cond);
-        }
-      });
-    } else {
-      queryService[conditionType](localQuery, createObj(instance));
-    }
+            queryService[queryOp](localQuery, nestedQuery);
+          } else {
+            queryService[conditionType](localQuery, cond);
+          }
+        });
+      } else {
+        queryService[conditionType](localQuery, createObj(instance));
+      }
 
-    if (conditionType === 'addShould') {
-      queryService.addMinimumShould(localQuery, 1);
-    }
-  });
+      if (conditionType === 'addShould') {
+        queryService.addMinimumShould(localQuery, 1);
+      }
+    });
+  }
 
   // add nested queries back into the main query
   if (nested) {
