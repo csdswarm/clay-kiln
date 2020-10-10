@@ -744,6 +744,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     const mainDiv = document.getElementsByTagName('body')[0];
 
     bgdiv.remove();
+
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
       mainDiv.classList.remove('has-global-sponsorship-ad');
