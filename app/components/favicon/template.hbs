@@ -1,10 +1,13 @@
-{{!-- Favicons --}}
-<link rel="icon" type="image/png" href="/media/components/favicon/favicon.png" sizes="16x16">
-<link rel="icon" type="image/png" href="/media/components/favicon/favicon.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/media/components/favicon/favicon.png" sizes="96x96">
-
-{{!-- Apple Touch Icons --}}
-<link rel="apple-touch-icon-precomposed" href="/media/components/favicon/apple-touch-icon.png"> {{!-- iPhone 4 and older (120px) --}}
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/media/components/favicon/apple-touch-icon.png"> {{!-- iPhone 6+ and up --}}
-<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/media/components/favicon/apple-touch-icon.png"> {{!-- iPad Retina --}}
-<link rel="apple-touch-icon-precomposed" sizes="167x167" href="/media/components/favicon/apple-touch-icon.png"> {{!-- iPad Pro --}}
+{{!-- Favicons & Apple Touch Icons --}}
+{{#each _computed.icons as |icon|}}
+  <link
+    rel="{{ icon.rel }}"
+    {{#if icon.type}}
+      type="{{ icon.type }}"
+    {{/if}}
+    {{#if icon.sizes}}
+      sizes="{{ icon.sizes }}"
+    {{/if}}
+    href="{{ icon.href }}"
+  >
+{{/each}}
