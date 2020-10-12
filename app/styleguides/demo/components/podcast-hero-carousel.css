@@ -258,3 +258,8 @@
     }
   }
 }
+
+/* until the padding is fixed on layout__content from ON-2425 */
+.has-fullpage-ad .podcast-hero-carousel {
+  margin-top: em(-30);
+}
