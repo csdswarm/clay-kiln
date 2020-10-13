@@ -3,7 +3,8 @@
 const _set = require('lodash/set'),
   { SECOND } = require('../../universal/constants').time;
 
-const PERM_CHECK_INTERVAL = 30 * SECOND;
+const PERM_CHECK_INTERVAL = 30 * SECOND,
+  USE_URPS_CORE_ID = process.env.USE_URPS_CORE_ID == 'true';
 
 /**
  * assigns the value 'true' to the path `${action}.${target}`
@@ -49,5 +50,6 @@ function createUnityPermissions(permissionsList) {
 
 module.exports = {
   createUnityPermissions,
-  PERM_CHECK_INTERVAL
+  PERM_CHECK_INTERVAL,
+  USE_URPS_CORE_ID
 };

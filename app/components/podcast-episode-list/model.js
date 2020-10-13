@@ -8,7 +8,8 @@ const
   _get = require('lodash/get'),
   radioApiService = require('../../services/server/radioApi'),
   { replaceWithString } = require('../../services/universal/sanitize'),
-  { playingClass } = require('../../services/universal/spaLocals');
+  { playingClass } = require('../../services/universal/spaLocals'),
+  { pageSize } = require('./constants');
 
 /**
  * returns a boolean for if the media is from omny
@@ -57,10 +58,10 @@ function getEpisodesInShow(locals) {
       sort = 'newest',
       page = 1,
       'podcast-site-slug': podcastSiteSlug
-    } = _get(locals,'query',{}),
+    } = _get(locals, 'query', {}),
     params = {
       'filter[podcast_site_slug]': _get(locals, 'params.dynamicSlug') || podcastSiteSlug,
-      'page[size]': 20,
+      'page[size]': pageSize,
       'page[number]': page
     };
 
@@ -75,10 +76,14 @@ function getEpisodesInShow(locals) {
 
   return radioApiService.get(route, params, null, {}, locals)
     .then(response => {
+
       if (locals.podcast) {
-        return response.data || [];
+        return { ...response, data: response.data || [] };
       } else {
-        return getMissingPodcast(locals, podcastSiteSlug, response.data || []);
+        return {
+          ...response,
+          ...getMissingPodcast(locals, podcastSiteSlug, response.data || [])
+        };
       }
     });
 }
@@ -122,7 +127,7 @@ function buildEpisodeDetailLink(episode, locals) {
  */
 function getMissingPodcast(locals, podcastSiteSlug, episodes) {
   return radioApiService
-    .get('podcasts', { 'filter[site_slug]':  _get(locals, 'params.dynamicSlug') || podcastSiteSlug }, null, {}, locals)
+    .get('podcasts', { 'filter[site_slug]': _get(locals, 'params.dynamicSlug') || podcastSiteSlug }, null, {}, locals)
     .then(response => {
       locals.podcast = _get(response, 'data[0]', {});
       return episodes;
@@ -144,9 +149,10 @@ module.exports = unityComponent({
       return data;
     }
 
-    const episodes = await getEpisodesInShow(locals),
+    const { data: episodes, meta: { count: episodeCount } } = await getEpisodesInShow(locals),
       PODCAST_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
 
+    data._computed.showLoadMoreBtn = episodeCount > pageSize;
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
         { attributes } = episodeData,

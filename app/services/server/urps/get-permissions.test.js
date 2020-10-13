@@ -2,21 +2,20 @@
 
 const proxyquire = require('proxyquire').noCallThru(),
   sinon = require('sinon'),
-  { DEFAULT_STATION } = require('../../universal/constants'),
   { expect } = require('chai'),
-  { unityAppDomainName } = require('../../universal/urps');
+  { unityAppDomain, unityAppDomainName, nationalMarket } = require('../../universal/urps');
 
-const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 
 describe('getPermissions', () => {
   const mockUrpsPermissions = [{ some: 'permission' }],
     getFromUrps = sinon.spy(() => ({ data: mockUrpsPermissions })),
     createUnityPermissions = sinon.spy(),
+    USE_URPS_CORE_ID = true,
     idToken = 'idToken',
-    stationDomainNames = [rdcDomainName],
+    stationDomainNames = [nationalMarket],
     getPermissions = proxyquire('./get-permissions', {
       './get-from-urps': getFromUrps,
-      './utils': { createUnityPermissions }
+      './utils': { createUnityPermissions, USE_URPS_CORE_ID }
     });
 
   beforeEach(() => {
@@ -24,7 +23,23 @@ describe('getPermissions', () => {
     createUnityPermissions.resetHistory();
   });
 
-  it('getFromUrps is called with the correct arguments', async () => {
+  it('getFromUrps is called with the correct arguments => USE_URPS_CORE_ID = true', async () => {
+    await getPermissions(idToken, stationDomainNames);
+
+    expect(getFromUrps.calledOnce).to.be.true;
+    expect(getFromUrps.firstCall.args).to.deep.equal([
+      '/permissions/by-domain',
+      { domains: [unityAppDomain, ...stationDomainNames] },
+      idToken
+    ]);
+  });
+
+  it('getFromUrps is called with the correct arguments => USE_URPS_CORE_ID = false', async () => {
+    const getPermissions = proxyquire('./get-permissions', {
+      './get-from-urps': getFromUrps,
+      './utils': { createUnityPermissions, USE_URPS_CORE_ID: false }
+    });
+    
     await getPermissions(idToken, stationDomainNames);
 
     expect(getFromUrps.calledOnce).to.be.true;

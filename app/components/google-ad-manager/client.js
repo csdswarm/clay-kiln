@@ -412,10 +412,6 @@ function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
     });
   }
 
-  if (isArticleOrGallery(pageData)) {
-    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
-  }
-
   return adTargetingData;
 }
 
@@ -647,6 +643,15 @@ window.disableAdRefresh = function (ads) {
 };
 
 /**
+ * Tells a list of ads to restore refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.enableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.delete(ad));
+};
+
+/**
  * Legacy code ported over from frequency to implement the takeover.
  *
  * @param {string} imageUrl
@@ -660,8 +665,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
     globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
-    resetElements = resizeForSkin(),
-    stationData = getCurrentStation();
+    resetElements = resizeForSkin();
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -718,12 +722,6 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
         // Create our wrapper div element
         updateSkinStyles(true);
         mainDiv.classList.add('has-fullpage-ad');
-
-        const sponsorship = document.querySelector('.google-ad-manager--global-logo-sponsorship');
-
-        if (sponsorship && stationData.site_slug) {
-          mainDiv.classList.add('has-global-sponsorship-ad');
-        }
       }
     };
   }
@@ -747,7 +745,6 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
 
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
-      mainDiv.classList.remove('has-global-sponsorship-ad');
     }
 
     resetElements();

@@ -37,6 +37,22 @@
             :value="workingFromStation"
             @input="handleNewFromStation"
           ></ui-select>
+          <ui-select
+            label='To Primary Section Front'
+            :placeholder="'To Primary Section Front'"
+            hasSearch
+            :options="stationPrimarySectionFronts"
+            :value="workingSubscription.mapped_section_fronts.primarySectionFront"
+            @input="opt => updateMappedSectionFront('primarySectionFront', opt)"/>
+
+          <ui-select
+            label='To Secondary Section Front'
+            :placeholder="'To Secondary Section Front'"
+            hasSearch
+            :options="stationSecondarySectionFronts"
+            :value="workingSubscription.mapped_section_fronts.secondarySectionFront"
+            @input="opt => updateMappedSectionFront('secondarySectionFront', opt)"/>
+
           <ui-textbox
               error="The short description may not be more than 50 characters"
               help="Write a short description not more than 50 characters"
@@ -69,9 +85,7 @@
             has-search
             label="Section Front"
             placeholder="Select Primary Section Front to Include"
-
             :options="primarySectionFronts"
-
             :value="workingSectionFront"
             @input="opt => setSectionFrontFilter('sectionFront', opt)"
           ></ui-select>
@@ -81,9 +95,7 @@
             has-search
             label="Secondary Section Front"
             placeholder="Select Secondary Section Front to Include"
-
             :options="secondarySectionFronts"
-
             :value="workingSecondarySectionFront"
             @input="opt => setSectionFrontFilter('secondarySectionFront', opt)"
           ></ui-select>
@@ -105,9 +117,7 @@
             label="Exclude Section Fronts"
             placeholder="Select Primary Section Fronts to Exclude"
             multiple
-
             :options="primarySectionFronts"
-
             :value="workingExcludeSectionFronts"
             @input="opt => setSectionFrontFilter('excludeSectionFronts', opt)"
           ></ui-select>
@@ -117,19 +127,17 @@
             label="Exclude Secondary Section Fronts"
             placeholder="Select Secondary Section Fronts to Exclude"
             multiple
-
             :options="secondarySectionFronts"
-
             :value="workingExcludeSecondarySectionFronts"
             @input="opt => setSectionFrontFilter('excludeSecondarySectionFronts', opt)"
           ></ui-select>
         </form>
         <div slot="footer">
           <template v-if="modalMode === 'new'">
-            <ui-button color="primary" @click="createSubscription" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
+            <ui-button color="primary" @click="createSubscription" :disabled="!enableModalButton">Add</ui-button>
           </template>
-          <template v-else="">
-            <ui-button color="primary" @click="updateSubscription" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
+          <template v-else>
+            <ui-button color="primary" @click="updateSubscription" :disabled="!enableModalButton">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
         </div>
@@ -234,6 +242,10 @@
     constructor (options = {
       from_station_slug: nationalFromStationOption.value,
       station_slug: window.kiln.locals.station.site_slug,
+      mapped_section_fronts: {
+        primarySectionFront: '',
+        secondarySectionFront: ''
+      },
       short_desc: '',
       filter: {
         // as currently described in get-content-subscriptions.js
@@ -253,6 +265,7 @@
       this.station_slug = options.station_slug
       this.short_desc = options.short_desc
       this.filter = { ...options.filter }
+      this.mapped_section_fronts = { ...options.mapped_section_fronts }
     }
   }
 
@@ -281,6 +294,8 @@
         subscriptions: [...window.kiln.locals.contentSubscriptions],
         primarySectionFronts: [],
         secondarySectionFronts: [],
+        stationPrimarySectionFronts: [],
+        stationSecondarySectionFronts: [],
         stationName,
         isLoading: false,
         modalMode: null,
@@ -289,6 +304,9 @@
       return Object.assign(initialData, getNewWorkingProps())
     },
     methods: {
+      updateMappedSectionFront(property, opt) {
+        this.workingSubscription.mapped_section_fronts[property] = opt.value ? opt.value : ''
+      },
       setSectionFrontFilter(key, option) {
         this['working' + capitalize(key)] = option
 
@@ -319,7 +337,8 @@
           fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
-          filter: { ...this.workingSubscription.filter }
+          filter: { ...this.workingSubscription.filter },
+          mapped_section_fronts: { ...this.workingSubscription.mapped_section_fronts },
         }
         axios.post(`/rdc/content-subscription`, newSub)
           .then(response => {
@@ -348,13 +367,19 @@
       },
       async loadSectionFronts() {
         const slug = this.workingSubscription.from_station_slug,
+          currentStationSlug = window.kiln.locals.station.site_slug,
           listPrefix = slug
             ? slug + '-'
+            : '',
+          currentStationPrefix = currentStationSlug
+            ? currentStationSlug + '-'
             : '';
 
         await Promise.all([
           this.loadList(`${listPrefix}primary-section-fronts`, 'primarySectionFronts'),
-          this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts')
+          this.loadList(`${listPrefix}secondary-section-fronts`, 'secondarySectionFronts'),
+          this.loadList(`${currentStationPrefix}primary-section-fronts`, 'stationPrimarySectionFronts'),
+          this.loadList(`${currentStationPrefix}secondary-section-fronts`, 'stationSecondarySectionFronts')
         ])
       },
       updateSubscription () {
@@ -364,7 +389,8 @@
           fromStationSlug: this.workingSubscription.from_station_slug,
           stationSlug: this.workingSubscription.station_slug,
           shortDescription: this.workingSubscription.short_desc,
-          filter: { ...this.workingSubscription.filter }
+          filter: { ...this.workingSubscription.filter },
+          mapped_section_fronts: { ...this.workingSubscription.mapped_section_fronts },
         }
         axios.put(`/rdc/content-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
@@ -400,6 +426,11 @@
       },
       onEditSubscriptionRow (subscription) {
         this.modalMode = 'edit'
+
+        if(!_get(subscription, 'mapped_section_fronts.primarySectionFront')){
+            _set(subscription, 'mapped_section_fronts.primarySectionFront', '')
+            _set(subscription, 'mapped_section_fronts.secondarySectionFront', '')
+        }
 
         const { filter } = subscription;
 
@@ -545,6 +576,10 @@
         )
 
         return Object.values(stationOptions).map(toStationOption)
+      },
+      enableModalButton(){
+        return this.workingSubscription.short_desc.trim().length > 0 && 
+          this.workingSubscription.mapped_section_fronts.primarySectionFront.trim().length > 0;
       }
     },
     components: {
