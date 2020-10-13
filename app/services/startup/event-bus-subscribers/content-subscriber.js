@@ -19,7 +19,8 @@ const
     getUri: uri.getUri,
     handlePublishStationSyndication,
     setUri: uri.setUri,
-    getByUrl: uri.getByUrl
+    getByUrl: uri.getByUrl,
+    updateModifiedUrls
   };
 
 /**
@@ -163,6 +164,25 @@ async function updateSyndicationRedirects(page) {
 }
 
 /**
+ * Updates modified urls (udpated slug) to point to the new uri record
+ * @param {array<{id: string, data: string, url: string}>} modifiedUrls
+ * @param {array<contentData.stationSyndication>} syndicationEntries - contentData.stationSyndication
+ * @param {string} host
+ * @returns {Promise<[]>}
+ */
+function updateModifiedUrls(modifiedUrls = [], syndicationEntries = [], host) {
+  return modifiedUrls.map(urlEntry => {
+    const updatedStation = syndicationEntries.find(station => station.stationSlug === urlEntry.url.split('/')[1]);
+    
+    if (updatedStation) {
+      const url = `${host}${updatedStation.syndicatedArticleSlug}`;
+
+      return __.dbPut(urlEntry.id, `${host}/_uris/${buffer.encode(url)}`);
+    }
+  });
+}
+
+/**
  * Creates URIs for station syndications.
  * @param {object} page
  * @returns {Promise<void>}
@@ -178,8 +198,26 @@ async function handlePublishStationSyndication(page) {
       originalArticleId = await __.getCanonicalRedirect(`${canonicalInstance.host}${canonicalInstance.pathname}`),
       redirectUri = _get(originalArticleId, '0.id'),
       syndicationEntries = (contentData.stationSyndication || []).filter(station => !_get(station, 'unsubscribed', false)),
-      outDatedUrls = _differenceWith(allSyndicatedUrls, syndicationEntries, (prev, next) => prev.url === `${host}${next.syndicatedArticleSlug}`),
-      removeCanonical = outDatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
+      allSyndicatedUrlsWithoutCanonical = allSyndicatedUrls.filter(({ url }) => !contentData.canonicalUrl.includes(url)),
+      
+      syndicatedUrlsNotRemoved = _differenceWith(
+        allSyndicatedUrlsWithoutCanonical,
+        syndicationEntries,
+        (prev, next) => prev.url === `${host}${next.syndicatedArticleSlug}`
+      ),
+
+      removedUrls = _differenceWith(
+        allSyndicatedUrlsWithoutCanonical,
+        syndicationEntries,
+        (prev, next) => prev.url.split('/')[1] === next.stationSlug
+      ),
+
+      modifiedUrls = _differenceWith(
+        syndicatedUrlsNotRemoved,
+        removedUrls,
+        (prev, next) => prev.url === next.url
+      ),
+
       queue = (syndicationEntries || []).map(station => {
         if (station.syndicatedArticleSlug) {
           const url = `${host}${station.syndicatedArticleSlug}`,
@@ -188,12 +226,16 @@ async function handlePublishStationSyndication(page) {
           return __.dbPut(`${host}/_uris/${buffer.encode(url)}`, redirect);
         }
       }),
-      updateDeprecatedUrls = removeCanonical.map(({ url }) => {
+
+      updateModifiedUrls = __.updateModifiedUrls(modifiedUrls, syndicationEntries, host),
+
+      updateRemovedUrls = removedUrls.map(({ url }) => {
         return __.setUri(redirectUri, url);
       });
 
     await Promise.all(queue);
-    await Promise.all(updateDeprecatedUrls);
+    await Promise.all(updateModifiedUrls);
+    await Promise.all(updateRemovedUrls);
   }
 }
 

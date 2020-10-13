@@ -30,16 +30,16 @@ describe('content-subscriber', () => {
         },
         contentData = {
           canonicalUrl: 'http://clay.radio.com/news/wines-vines-and-vinyls',
-          stationSyndication:
-        [
-          { syndicatedArticleSlug: '/kwiq/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/1007fmthewordkkht/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/wbtspecialevent/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/jackontheweb/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/starpittsburgh/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/101thebeard/wines-vines-and-vinyls' },
-          { syndicatedArticleSlug: '/1011fmtheanswer/wines-vines-and-vinyls' }
-        ] },
+          stationSyndication: [
+            { syndicatedArticleSlug: '/kwiq/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/1007fmthewordkkht/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/wbtspecialevent/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/jackontheweb/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/starpittsburgh/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/101thebeard/wines-vines-and-vinyls' },
+            { syndicatedArticleSlug: '/1011fmtheanswer/wines-vines-and-vinyls' }
+          ]
+        },
         allSyndicatedUrls = [
           { url: 'clay.radio.com/1009theeagle/wines-vines-and-vinyls' },
           { url: 'clay.radio.com/wbtspecialevent/wines-vines-and-vinyls' },
@@ -52,8 +52,9 @@ describe('content-subscriber', () => {
           { url: 'clay.radio.com/thebull/wines-vines-and-vinyls' },
           { url: 'clay.radio.com/kwiq/wines-vines-and-vinyls' },
           { url: 'clay.radio.com/1007fmthewordkkht/wines-vines-and-vinyls' },
-          { url: 'clay.radio.com/1011fmtheanswer/wines-vines-and-vinyls' } ],
-        originalArticleId = [ { id: 'clay.radio.com/_uris/Y2xheS5yYWRpby5jb20vbmV3cy93aW5lcy12aW5lcy1hbmQtdmlueWxz' } ],
+          { url: 'clay.radio.com/1011fmtheanswer/wines-vines-and-vinyls' }
+        ],
+        originalArticleId = [ { id: 'clay.radio.com/_uris/Y2xheS5yYWRpby5jb20vbmV3cy93aW5lcy12aW5lcy1hbmQtdmlueWxz' }],
         { handlePublishStationSyndication } = __;
 
       sinon.spy(__, 'getComponentName');
@@ -62,6 +63,7 @@ describe('content-subscriber', () => {
       sinon.stub(__, 'getUri').resolves(allSyndicatedUrls);
       sinon.stub(__, 'dbPut').resolves();
       sinon.stub(__, 'setUri').resolves();
+      sinon.spy(__, 'updateModifiedUrls');
 
       return { handlePublishStationSyndication, __, page, mainComponent, uri };
     }
@@ -99,6 +101,41 @@ describe('content-subscriber', () => {
       expect(__.getUri).to.have.been.calledWith(uri);
       expect(__.getCanonicalRedirect).to.have.been.calledOnce;
       expect(__.dbPut.getCalls().length).is.eql(7);
+      expect(__.updateModifiedUrls).to.have.been.calledOnce;
+    });
+
+    it('should update redirect to previous url', async () => {
+      const syndicationEntries = [
+          {
+            source: 'manual syndication',
+            callsign: 'KAMPHD2',
+            stationName: 'We Are Channel Q',
+            stationSlug: 'wearechannelq',
+            sectionFront: 'gloc',
+            syndicatedArticleSlug:
+              '/wearechannelq/gloc/new-slug-prince-william-david-attenborough-launch-earthshot-award'
+          }
+        ],
+        modifiedUrls = [
+          {
+            id: 'clay.radio.com/_uris/Y2xheS5yYWRpby5jb20vd2VhcmVjaGFubmVscS9nbG9jL3ByaW5jZS13aWxsaWFtLWRhdmlkLWF0dGVuYm9yb3VnaC1sYXVuY2gtZWFydGhzaG90LWF3YXJk',
+            data: 'clay.radio.com/_pages/ckg0vvquv000a0yon4ma4e2d2',
+            url: 'clay.radio.com/wearechannelq/gloc/slug-prince-william-david-attenborough-launch-earthshot-award'
+          }
+        ],
+        { __ } = setup_handlePublishStationSyndication(),
+        host = 'clay.radio.com',
+        url = `${host}${syndicationEntries[0].syndicatedArticleSlug}`;
+
+      await __.updateModifiedUrls(modifiedUrls, syndicationEntries, host);
+      
+      expect(__.updateModifiedUrls).to.have.been.calledOnce;
+      expect(__.dbPut).to.have.been.calledOnce;
+      expect(__.dbPut).to.have.been.calledWith(
+        modifiedUrls[0].id,
+        `${host}/_uris/${Buffer.from(url, 'utf8').toString('base64')}`
+      );
+      expect(modifiedUrls[0].id).not.to.be.equal(`${host}/_uris/${Buffer.from(url, 'utf8').toString('base64')}`);
     });
   });
 
