@@ -22,8 +22,6 @@ _components:
     slidesNumbered: false
     reverseOrder: false
     includeInlineAds: true
-    contentPageSponsorLogo:
-      _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
     inlineAd:
       _ref: /_components/google-ad-manager/instances/billboardGallery
     rightRailStickyAd:

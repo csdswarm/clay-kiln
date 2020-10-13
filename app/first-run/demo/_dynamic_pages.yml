@@ -1,0 +1,125 @@
+_pages:
+  author:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/author
+      - /_components/dynamic-meta-description/instances/author
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layout: /_layouts/one-column-layout/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/author-page/instances/new
+  contest-rules-page:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    layout: /_layouts/two-column-layout/instances/contest
+    main:
+      - /_components/contest-rules-page/instances/new
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+      - /_components/contest-rules-page-header/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+  frequency-iframe-page:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    layout: /_layouts/one-column-layout/instances/frequency-iframe
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/frequency-iframe/instances/default
+  host:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/host
+      - /_components/dynamic-meta-description/instances/host
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+      - /_components/meta-tags/instances/general
+    layout: /_layouts/one-column-layout/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/host-page/instances/new
+    pageHeader:
+      - /_components/host-page-header/instances/new
+  podcast-episode:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/dynamic-meta-title/instances/podcast-episode
+      - /_components/dynamic-meta-description/instances/podcast-episode
+      - /_components/dynamic-meta-image/instances/podcast-episode
+      - /_components/meta-tags/instances/general
+    layout: /_layouts/two-column-layout/instances/podcast-episode
+    layoutHeader: []
+    main:
+      - /_components/podcast-episode-page/instances/default
+    tertiary:
+      - /_components/podcast-trending/instances/default
+  podcast-show:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/podcast-show
+      - /_components/dynamic-meta-description/instances/podcast-show
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/dynamic-meta-image/instances/podcast-show
+      - /_components/meta-tags/instances/general
+    layout: /_layouts/two-column-layout/instances/podcast-show
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/podcast-show-page/instances/default
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/podcast-trending/instances/default
+  station:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/station
+      - /_components/dynamic-meta-description/instances/station
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/station
+    layout: /_layouts/two-column-layout/instances/station
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/station-detail/instances/default
+    tertiary:
+      - /_components/smart-speaker/instances/default
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
+  station-detail-listen-only:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/station
+      - /_components/dynamic-meta-description/instances/station
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-tags/instances/general
+      - /_components/dynamic-meta-image/instances/station
+    layout: /_layouts/two-column-layout/instances/station-detail-listen-only
+    layoutHeader:
+      - /_components/station-detail-listen-only-banner/instances/default
+    main:
+      - /_components/station-detail/instances/default
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
+  topic:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/topic
+      - /_components/dynamic-meta-description/instances/topic
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/og-logo
+    layout: /_layouts/one-column-layout/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/topic-page/instances/new
+    pageHeader:
+      - /_components/topic-page-header/instances/new
