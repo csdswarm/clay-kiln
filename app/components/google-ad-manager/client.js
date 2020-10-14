@@ -43,7 +43,7 @@ let refreshCount = 0,
   numStationsDirectoryInline = 1,
   adIndices = {},
   adsMounted = false,
-  prevLocation = window.location.href,
+  prevLocation = getCurrentLocation(),
   windowWidth = 0;
 
 // On page load set up sizeMappings
@@ -95,8 +95,10 @@ window.onload = function () {
     bodyList = document.querySelector('body'),
     observer = new MutationObserver( mutations => {
       mutations.forEach( () => {
-        if (prevLocation !== window.location.href) {
-          prevLocation = window.location.href;
+        const curLocation = getCurrentLocation();
+
+        if (prevLocation !== curLocation) {
+          prevLocation = curLocation;
           refreshAllSlots();
         }
       });
@@ -352,7 +354,7 @@ function getContentAdTags(pageData) {
   const adTagsEl = document.querySelector('.component--ad-tags');
 
   return adTagsEl
-    ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
+    ? (adTagsEl.dataset.adTags || '').split(',')
     : [];
 }
 
@@ -608,6 +610,18 @@ function debounceRefresh() {
   );
 }
 
+/**
+ * returns the current url without the hash
+ *
+ * @returns {string}
+ */
+function getCurrentLocation() {
+  const url = new URL(window.location.href);
+
+  url.hash = '';
+
+  return url.toString();
+}
 
 /**
  * Tells a list of ads to stop refreshing, whether they've loaded yet or not.

@@ -158,7 +158,7 @@ describe(`${dirname}/${filename}`, () => {
     const [arg0, arg1, arg2] = args;
 
     expect(args.length).to.equal(3);
-    expect(arg0).to.equal('error');
+    expect(arg0).to.equal('warn');
     expect(typeof arg1).to.equal('string');
     expect(typeof arg2).to.equal('object');
   });

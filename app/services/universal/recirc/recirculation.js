@@ -10,6 +10,7 @@
  * populateFrom
  * contentType
  * authors
+ * hosts
  * sectionFront - (use sectionFrontManual if sectionFront is using subscribe)
  * secondarySectionFront - (use secondarySectionFrontManual if secondarySectionFront is using subscribe)
  * tags - (use tagsManual if tags is using subscribe)
@@ -116,6 +117,7 @@ const
         contentTypes: boolKeys(data.contentType),
         ..._pick({
           authors: { condition: 'should', value: data.authors },
+          hosts: { condition: 'should', value: data.hosts },
           sectionFronts: sectionOrTagCondition(data.populateFrom, primarySF),
           secondarySectionFronts: sectionOrTagCondition(data.populateFrom, secondarySF),
           tags: sectionOrTagCondition(data.populateFrom, tag)
@@ -168,15 +170,19 @@ const
       filterCondition: 'must',
       createObj: author => ({ match: { 'authors.normalized': author } })
     },
+    authors: {
+      createObj: authors => boolKeys(authors)
+        .map(author => ({ match: { 'authors.normalized': author } }))
+    },
     canonicalUrls: { createObj: canonicalUrl => ({ match: { canonicalUrl } }) },
     contentTypes: {
       filterCondition: 'must',
       unique: true,
       createObj: contentType => ({ match: { contentType } })
     },
-    host: {
-      filterCondition: 'must',
-      createObj: host => ({ match: { 'hosts.normalized': host } })
+    hosts: {
+      createObj: hosts => boolKeys(hosts)
+        .map(aHost => ({ match: { 'hosts.normalized': aHost } }))
     },
     sectionFronts: {
       filterCondition: 'must',
@@ -403,7 +409,7 @@ const
    */
   addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
-      log('error', `No filter current exists for ${key}`);
+      log('error', `No filter currently exists for ${key}`);
       return;
     }
 
@@ -503,7 +509,7 @@ const
     if (Array.isArray(tags)) {
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
-    
+
     if (tags === '') {
       return [];
     }
@@ -539,6 +545,8 @@ const
         return tags;
       case 'section-front':
         return sectionFronts;
+      case 'byline':
+        return ['authors', 'hosts'];
       case 'all-content':
         return [];
       default:
@@ -587,18 +595,19 @@ const
 
   /**
    * Use filters to query elastic for content
-   *
-   * @param {object} config
-   * @param {object} config.filters
-   * @param {object} config.excludes
-   * @param {array} config.elasticFields
-   * @param {number} config.maxItems
-   * @param {boolean} config.shouldAddAmphoraTimings
-   * @param {boolean} config.isRdcContent
+   * @param {{
+   *   filters: object,
+   *   excludes: object,
+   *   elasticFields: string[],
+   *   maxItems: number,
+   *   shouldAddAmphoraTimings: boolean,
+   *   isRdcContent: boolean
+   * }} config
    * @param {Object} [locals]
    * @returns {array} elasticResults
    */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent }, locals) => {
+  fetchRecirculation = async (config, locals) => {
+    const { filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings, isRdcContent } = config;
     let results = {
       content: [],
       totalHits: 0

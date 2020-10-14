@@ -10,6 +10,7 @@ const socialSvgs = require('./social-svgs'),
  * Comma separate authors
  * @param {Object[]} authorsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
  * @param {Object[]} hostsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
+ * @param {Object[]} sources e.g. [{text: "RADIO.COM", isSource: true}]
  * @param {Object} options
  * @param {String} options.authorHost e.g. 'nymag.com'
  * @param {Boolean} options.showSocial
@@ -17,23 +18,36 @@ const socialSvgs = require('./social-svgs'),
  * @param {String} [options.linkClass]
  * @return {String}
  */
-function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, options) {
-  const listAndMeta = [...authorsAndMeta, ...hostsAndMeta];
+function formatNumAuthorsHosts(authorsAndMeta, hostsAndMeta, sources, options) {
+  const listAndMeta = listToHtml([...authorsAndMeta, ...hostsAndMeta], options),
+    listSources = listToHtml([...sources], options);
 
-  return listAndMeta.reduce(function (acc, item, index) {
-    if (listAndMeta.length === 1) { // only display socials if there is one author
+  return `${listAndMeta} ${listSources ? listSources : ''}`;
+    
+}
+
+/**
+ * Create html string of the list
+ *
+ * @param {Object[]} list
+ * @param {Object} options
+ * @return {string}
+ */
+function listToHtml(list, options) {
+  return list.reduce(function (acc, item, index) {
+    if (list.length === 1) { // only display socials if there is one author
       if (options.showSocial) {
         return acc + createAuthorHostHtml(item, options) + createSocialsHtml(item);
       }
       return acc + createAuthorHostHtml(item, options);
     } else {
-      if (index === listAndMeta.length - 1) {
-        if (listAndMeta.length === 2) {
+      if (index === list.length - 1) {
+        if (list.length === 2) {
           return `${acc}<span> and </span>${createAuthorHostHtml(item, options)}`;
         } else {
           return `${acc}<span>, </span> <span> and </span>${createAuthorHostHtml(item, options)}`;
         }
-      } else if (index > 0 && index < listAndMeta.length - 1) {
+      } else if (index > 0 && index < list.length - 1) {
         return `${acc}<span>, </span>${createAuthorHostHtml(item, options)}`;
       } else {
         return acc + createAuthorHostHtml(item, options);
@@ -109,17 +123,24 @@ function createAuthorHostHtml(data, options) {
   const nameOrText = data.name || data.text,
     link = slugifyService(nameOrText),
     name = data.isHost ? 'host' : 'author',
+    isSource = data.isSource,
     { authorHost, isContentFromAP, linkClass, nameClass, siteSlug, stationSlug } = options,
     slug = isContentFromAP ? siteSlug : stationSlug,
     linkAuthorHostPage = `${authorHost + (slug ? `/${slug}` : '')}/${name}s/${link}`;
 
-
-  // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
-    `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
-    `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
-    `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
+  if (isSource) {
+    // multiline interpolation doesn't work here because whitespace will get interpreted literally
+    return `<span itemprop="source" itemscope itemtype="http://schema.org/Person" class="source" data-source="${nameOrText}">` +
+      `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
+      `<meta itemprop="name" content="${nameOrText}"/></span>`;
+  } else {
+    // multiline interpolation doesn't work here because whitespace will get interpreted literally
+    return `<span itemprop="${name}" itemscope itemtype="http://schema.org/Person" class="${name}" data-${name}="${nameOrText}">` +
+      `<a href="//${linkAuthorHostPage}" rel="author" class="${linkClass ? linkClass : name + '__anchor'}">` +
+      `<span${nameClass ? ` class="${nameClass}"` : ''}>${nameOrText}</span>` +
+      `<meta itemprop="name" content="${nameOrText}"/>` +
+      `<link itemprop="sameAs" href="//${linkAuthorHostPage}"/></a></span>`;
+  }
 }
 
 // For testing
