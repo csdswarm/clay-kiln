@@ -1569,17 +1569,14 @@ _components:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https:///_components/meta-url/instances/sports.json'
       music:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https:///_components/meta-url/instances/music.json'
       news:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https:///_components/meta-url/instances/news.json'
   minified-content-feed:
     instances:
       home:
