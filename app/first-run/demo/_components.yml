@@ -1569,17 +1569,14 @@ _components:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https://www.radio.com/_components/meta-url/instances/sports.json'
       music:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https://www.radio.com/_components/meta-url/instances/music.json'
       news:
         _version: 2
         syndicatedUrl: ''
         defaultSyndicatedUrl: ''
-        localUrl: 'https://www.radio.com/_components/meta-url/instances/news.json'
   minified-content-feed:
     instances:
       home:
@@ -1823,7 +1820,7 @@ _components:
         sectionFront: ''
         sharethroughTag:
           _ref: >-
-            www.radio.com/_components/google-ad-manager/instances/sharethroughTag
+            /_components/google-ad-manager/instances/sharethroughTag
         station: null
         tag: []
         tagManual: []
@@ -2744,12 +2741,12 @@ _components:
       section-front:
         col1:
         - _ref: >-
-            www.radio.com/_components/more-content-feed/instances/section-front
+            /_components/more-content-feed/instances/section-front
         col2:
         - _ref: >-
-            www.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+            /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
         - _ref: >-
-            www.radio.com/_components/google-ad-manager/instances/halfPageBottomTopic
+            /_components/google-ad-manager/instances/halfPageBottomTopic
       station-front:
         col1:
         - _ref: /_components/more-content-feed/instances/station-basic-music
