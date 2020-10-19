@@ -5,6 +5,9 @@ _permission:
 featuredLinks:
   _subscribe: featuredLinks
 
+hideOnAirSchedule:
+  _subscribe: hideOnAirSchedule
+
 hidePodcastsLink:
   _subscribe: hidePodcastsLink
 
