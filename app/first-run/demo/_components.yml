@@ -315,7 +315,7 @@ _components:
         routeParam: dynamicAuthor
         suffix: ' | RADIO.COM'
         urlMatches: []
-      author-rofile:
+      author-profile:
         routeParam: author
         suffix: ' | RADIO.COM'
         urlMatches: []
