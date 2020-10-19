@@ -8,10 +8,8 @@
       </div>
       <div class="station-footer__social">
         {{#each _computed.socialButtons as |button|}}
-          <a href="{{button.url}}" title="{{ button.url }}">
-            <object type="image/svg+xml" data="/media/components/station-footer/{{ button.type }}.svg">
-              <img src="/media/components/station-footer/{{ button.type }}.svg">
-            </object>
+          <a href="{{button.url}}" title="{{ button.url }}" alt="{{concat 'components/station-footer/media/' button.type '.svg'}}">
+            {{{ read (concat 'components/station-footer/media/' button.type '.svg') }}}
           </a>
         {{/each}}
       </div>
