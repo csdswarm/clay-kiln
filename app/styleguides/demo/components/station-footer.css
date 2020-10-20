@@ -37,16 +37,22 @@
     }
 
     &__social {
-      margin: em(26);
+      margin: em(26) 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       > a {
-        display: inline-block;
+        display: block;
         text-decoration: none;
-      }
-      > a object {
-        @mixin inline-block;
-        height: em(30);
         margin: 0 em(10);
-        pointer-events: none;
+        max-height: em(30);
+      }
+      > a svg {
+        height: em(30);
+        fill: $white;
+        #you-tube-fill {
+          fill: var(--theme-primaryColor, $parisM);
+        }
       }
     }
 
