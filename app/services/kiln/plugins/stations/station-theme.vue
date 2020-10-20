@@ -1,7 +1,10 @@
-<!-- Station Theme Manager -->
+<docs>
+  # Station Settings Theme Manager
+</docs>
+
 <template>
   <div class="station-theme-manager">
-    <h3>Station Theme Colors</h3>
+    <h3 class="station-settings__main-title">Theme Colors:</h3>
     <div class="theme-color-input">
       <ui-textbox
         required
@@ -184,6 +187,9 @@
         ],
         colorHexError: 'Enter a valid color hex. Format should be # followed by 3 or 6 letters (a-f) or numbers'
       }
+    },
+    props: {
+      stationName: String
     },
     /**
      * Load current theme when component is created

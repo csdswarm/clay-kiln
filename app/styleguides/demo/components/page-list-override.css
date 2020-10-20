@@ -1,16 +1,31 @@
 
 .page-list-controls__column {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-.page-list-override__station-select {
+.page-list-override {
+  &__station-select {
     display: flex;
     margin: em(8) 0;
 
     .ui-select {
-        margin: 0 3px 8px 0;
-        flex-grow: 1;
+      margin: 0 3px 8px 0;
+      flex-grow: 1;
     }
+  }
+  &__header-source, &__item-source {
+    flex: 0 0 130px;
+    text-align: left;
+  },
+  &__item-source {
+    color: rgba(0,0,0,0.54);
+    font-family: Noto Sans,Arial,sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    text-transform: uppercase;
+  }
 }

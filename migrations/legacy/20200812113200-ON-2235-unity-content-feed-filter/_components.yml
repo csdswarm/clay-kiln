@@ -1,0 +1,60 @@
+_components:
+  feeds:
+    instances:
+      postup:
+        attr:
+          xmlns:radio: https://www.radio.com
+        index: published-content
+        meta:
+          title: Radio.com PostUp Feed
+          renderer: rss
+          contentType: application/rss+xml
+          description: Most recent content from Radio.com
+          fileExtension: rss
+        query:
+          size: 20
+          sort:
+            date: desc
+          bool:
+            filter:
+              terms:
+                contentType:
+                - article
+                - gallery
+        transform: article
+
+      smart-news:
+        attr:
+          xmlns:snf: http://www.smartnews.be/snf
+        meta:
+          opt:
+            - snf:logo:
+            - url: https://images.radio.com/aiu-media/rdclogo290x50-8a7d28ca-8a39-49f5-9c39-97147503755d.png
+          link: https://dev-clay.radio.com
+          title: RADIO.COM
+          renderer: rss
+          contentType: rss
+          description: RADIO.COM's latest news
+          fileExtension: rss
+        index: published-content
+        query:
+          size: 50
+          sort:
+            date: desc
+          query:
+            bool:
+              filter:
+              - match:
+                  feeds.smartNews: true
+              - bool:
+                  must_not:
+                    term:
+                      noIndexNoFollow: true
+              - terms:
+                  contentType:
+                    - article
+                    - gallery
+        format: smart-news
+        transform: content
+
+

@@ -24,6 +24,7 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import FaviconManager from '@/lib/FaviconManager'
 import SpaScroll from '@/lib/SpaScroll'
 import URL from 'url-parse'
 import { getLocals } from '../../app/services/client/spaLocals'
@@ -38,6 +39,7 @@ const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 // Instantiate libraries.
 const metaManager = new MetaManager()
 const queryPayload = new QueryPayload()
+const faviconManager = new FaviconManager()
 
 export default {
   name: 'LayoutRouter',
@@ -294,6 +296,9 @@ export default {
 
         // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
         metaManager.updateExternalTags(this.$store.state.spaPayload)
+
+        // Update favicon and Apple Touch Icons in the head since outside the Vue app mounting point
+        faviconManager.updateIcons(this.$store.state.spaPayload)
 
         // Stop loading animation.
         this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)

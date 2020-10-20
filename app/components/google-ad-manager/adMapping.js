@@ -3,6 +3,9 @@ const adSizes = {
   billboard: {
     defaultSize: [970,250]
   },
+  'footer-billboard': {
+    defaultSize: [970,250]
+  },
   'super-leaderboard': {
     defaultSize: [970,90]
   },
@@ -52,6 +55,12 @@ module.exports = {
         .addSize([1024, 0], [[970, 250], [970, 90], [728, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
+        .build();
+
+      sizeMapping['footer-billboard'] = googletag.sizeMapping()
+        .addSize([1279, 0], [[970, 250], [970, 90], [728, 90]])
+        .addSize([480, 0], [[728, 90]])
+        .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50], [300,250]])
         .build();
 
       sizeMapping['super-leaderboard'] = googletag.sizeMapping()

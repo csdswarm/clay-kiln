@@ -18,6 +18,9 @@ adSize:
         name: Billboard (970x250)
         value: billboard
       -
+        name: Footer Billboard (970x250)
+        value: footer-billboard
+      -
         name: Super Leaderboard (970x90)
         value: super-leaderboard
       -

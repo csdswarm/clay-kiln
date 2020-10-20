@@ -35,7 +35,7 @@ module.exports = {
   // contentType
   type: {
     filterConditionType: 'addMust',
-    createObj: contentType => ({ match: { contentType } })
+    createObj: contentType => ({ terms: { contentType } })
   },
   // corporate websites (corporateSyndication)
   corporate: {

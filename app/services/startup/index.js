@@ -128,6 +128,7 @@ function setupApp(app) {
   addInterceptor.loadedIds(app);
 
   app.use(currentStation);
+  addToLocals.stationOptions(app);
 
   addInterceptor.cacheControl(app);
 
