@@ -52,7 +52,8 @@ async function run() {
       'events-listing-page',
       'contest',
       'author-page',
-      'podcast-front-page'
+      'podcast-front-page',
+      'host-page'
     ],
     queryForPageType = `
 SELECT
