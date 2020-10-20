@@ -155,6 +155,7 @@ module.exports = router => {
    */
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
+
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);

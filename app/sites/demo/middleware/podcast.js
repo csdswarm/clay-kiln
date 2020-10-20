@@ -10,7 +10,7 @@ const { getPodcastShow } = require('../../../services/universal/podcast'),
 * @param {object} next
 * @returns {Promise<object>}
 */
-const podcast = wrapInTryCatch(async ( req, res, next ) => {
+const podcastMiddleware = wrapInTryCatch(async ( req, res, next ) => {
   const { dynamicSlug } = req.params,
     locals = res.locals,
     podcastShow = await getPodcastShow(locals, dynamicSlug);
@@ -24,5 +24,5 @@ const podcast = wrapInTryCatch(async ( req, res, next ) => {
 });
 
 module.exports = {
-  podcast
+  podcastMiddleware
 };

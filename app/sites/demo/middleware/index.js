@@ -1,11 +1,9 @@
 'use strict';
 
-const { episode } = require('./episode'),
-  { podcast } = require('./podcast'),
-  { dynamicPage } = require('./dynamicPage');
+const { episodeMiddleware } = require('./episode'),
+  { podcastMiddleware } = require('./podcast');
 
 module.exports = {
-  episode,
-  podcast,
-  dynamicPage
+  episodeMiddleware,
+  podcastMiddleware
 };

@@ -9,7 +9,7 @@ const { wrapInTryCatch } = require('../../../services/startup/middleware-utils')
   * @param {object} next
   * @returns {Promise<object>}
   */
-const episode = wrapInTryCatch(async ( req, res, next ) => {
+const episodeMiddleware = wrapInTryCatch(async ( req, res, next ) => {
   const { dynamicSlug, dynamicEpisode } = req.params,
     locals = res.locals,
     [ podcast, episode ] = await Promise.all([
@@ -24,5 +24,5 @@ const episode = wrapInTryCatch(async ( req, res, next ) => {
 });
 
 module.exports = {
-  episode
+  episodeMiddleware
 };

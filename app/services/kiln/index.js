@@ -32,7 +32,6 @@ module.exports = () => {
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
   require('./plugins/editorial-feeds')();
-  require('./plugins/dynamic-page-alert')();
   require('./validators')();
   secureAllSchemas();
   addStationCheckToSelect();
