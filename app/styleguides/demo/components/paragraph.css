@@ -4,6 +4,10 @@
 @import "_global/colors";
 @import "_global/mixins";
 
+@define-mixin paragraph-font-two-col-rr {
+  @mixin font CircularStd-Medium, 16px, $black, -0.26px, 25px;
+}
+
 .paragraph,
 .paragraph ol li,
 .paragraph p,
@@ -85,5 +89,11 @@
   .paragraph~ul li {
     font-size: em(11, 16);
     line-height: em(12, 11);
+  }
+}
+
+.two-column-component__column--2 {
+  .paragraph {
+    @mixin paragraph-font-two-col-rr;
   }
 }

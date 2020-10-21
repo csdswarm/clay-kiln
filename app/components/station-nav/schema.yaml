@@ -163,6 +163,11 @@ featuredLinks:
           validate:
             required: true
 
+hideOnAirSchedule:
+  _publish: hideOnAirSchedule
+  _label: HIDE ON-AIR SCHEDULE
+  _has: checkbox
+
 hidePodcastsLink:
   _publish: hidePodcastsLink
   _label: HIDE PODCAST LINK
@@ -266,6 +271,7 @@ _groups:
     fields:
       - stationLogo (Main Nav & Drawer)
       - primaryLinks (Main Nav & Drawer)
+      - hideOnAirSchedule (Listen Nav Drawer)
       - hidePodcastsLink (Listen Nav Drawer)
       - podcastsUrl (Listen Nav Drawer)
       - featuredLinks (Listen Nav Drawer)
