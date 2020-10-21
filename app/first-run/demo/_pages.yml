@@ -156,6 +156,20 @@ _pages:
     layout: /_layouts/one-column-layout/instances/general
     main:
       - /_components/article/instances/new
+  new-static-page:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+    layout: /_layouts/two-column-layout/instances/static-page
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+    main:
+      - /_components/static-page/instances/new
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
   new-two-col:
     head:
       - /_components/meta-title/instances/general
