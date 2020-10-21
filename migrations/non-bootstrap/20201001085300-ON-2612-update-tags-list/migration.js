@@ -1,7 +1,7 @@
 'use strict'
 const { axios } = require('../../utils/base'),
   fs = require('fs'),
-  _findIndex = require('lodash/findIndex'),
+  _findIndex = require('../../../app/node_modules/lodash/findIndex'),
   {
     formatAxiosError,
     parseHost,
@@ -44,6 +44,8 @@ async function updateTags (rows) {
     }
   })
   console.log(`Updated tags #${existingTags.length}`)
+  console.dir(existingTags, {depth: null});
+  return;
   const data = JSON.stringify(existingTags)
   const headers = {
     Authorization: 'token accesskey',
