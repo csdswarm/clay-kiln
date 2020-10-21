@@ -113,7 +113,6 @@ function getExpectedQuery() {
         body: {
           query: {
             bool: {
-              filter: [{ terms: { contentType: ['article', 'gallery'] } }],
               must: [
                 {
                   bool: {
@@ -138,8 +137,7 @@ function getExpectedQuery() {
           query: {
             bool: {
               should: [{ match: { 'tags.normalized': 'sports' } }],
-              minimum_should_match: 1,
-              filter: [{ terms: { contentType: ['article', 'gallery'] } }]
+              minimum_should_match: 1
             }
           },
           size: 20,
@@ -158,7 +156,6 @@ function getExpectedQuery() {
               { match: { 'feeds.msn': true } },
               { range: { msnTitleLength: { gt: 20 } } },
               { bool: { must_not: { term: { noIndexNoFollow: true } } } },
-              { terms: { contentType: ['article', 'gallery'] } },
               { terms: { contentType: ['article', 'gallery'] } }
             ],
             must: [

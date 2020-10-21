@@ -1,11 +1,33 @@
 settings:
   analysis:
+    filter:
+      my_ascii_folding:
+        type: asciifolding
+        preserve_original: 'true'
+    char_filter:
+      remove_whitespace:
+        pattern: "\\s+"
+        type: pattern_replace
+        replacement: "-"
+      remove_punctuation:
+        pattern: "[.,/#!$%\\^&\\*;:{}=\\-_`~()']"
+        type: pattern_replace
+        replacement: ''
     normalizer:
       lowercase:
         filter:
           - lowercase
         type: custom
     analyzer:
+      station_analyzer:
+        filter:
+          - standard
+          - my_ascii_folding
+          - lowercase
+        char_filter:
+          - remove_whitespace
+          - remove_punctuation
+        tokenizer: standard
       stdEnglish:
         type: standard
         stopwords: _english_
@@ -92,6 +114,41 @@ _doc:
     stationSlug:
       type: keyword
       normalizer: lowercase
+    stationSyndication:
+      type: nested
+      properties:
+        callsign:
+          type: keyword
+          fields:
+            normalized:
+              type: text
+              analyzer: station_analyzer
+        importer:
+          type: boolean
+        secondarySectionFront:
+          type: keyword
+        sectionFront:
+          type: keyword
+        slug:
+          type: text
+          fields:
+            keyword:
+              type: keyword
+              ignore_above: 256
+        source:
+          type: keyword
+        stationName:
+          type: text
+          fields:
+            keyword:
+              type: keyword
+              ignore_above: 256
+        stationSlug:
+          type: keyword
+        syndicatedArticleSlug:
+          type: text
+        unsubscribed:
+          type: boolean
     tertiary:
       type: text
       fields:

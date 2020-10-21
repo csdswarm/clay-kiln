@@ -15,6 +15,7 @@ module.exports = {
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
+  stationOptions: require('./station-options'),
   stationUtils: require('./station-utils'),
   syndicatedContent: require('./syndicated-content'),
   validSource: require('./valid-source')

@@ -7,5 +7,6 @@
  */
 
 module.exports = {
-  loadedIds: require('./loaded-ids')
+  loadedIds: require('./loaded-ids'),
+  stationOptions: require('./station-options')
 };

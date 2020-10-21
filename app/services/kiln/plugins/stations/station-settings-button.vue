@@ -1,7 +1,10 @@
-<!-- Station Theme Manager Button -->
+<docs>
+    # Station Settings Mamanger Kiln Drawer Button
+</docs>
+
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
-        <span>Station Theme</span>
+        <span>Station Settings</span>
     </nav-menu-button>
 </template>
 
@@ -11,7 +14,7 @@ const navMenuButton = window.kiln.utils.components.navMenuButton;
 export default {
     data() {
         return {
-            id: 'station-theme'
+            id: 'station-settings-manager'
         }
     },
     methods: {

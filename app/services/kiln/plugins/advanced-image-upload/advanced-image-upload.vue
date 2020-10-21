@@ -19,6 +19,8 @@
   * **uploadHelp** - Description / helper text for the file upload button.
   * **maxEditorDisplayHeight** - height for when used in a complex list.
   * **enableDelete** - enables delete functionality.  'delete' in this context refers to the url field, not the image on s3.  By default this is false
+  * **uploadCallback** - a hook for when used outside of Kiln
+  * **additionNonKilnValidators** - additional validators for when used outside of Kiln
 
 </docs>
 
@@ -65,6 +67,7 @@
 <script>
 
 import { uploadFile } from '../../../client/s3'
+import _every from 'lodash/every'
 
 const { UiFileupload, UiButton } = window.kiln.utils.components
 
@@ -110,7 +113,11 @@ export default {
 
       try {
         const image = await this.getImageDimensions(file);
-        const valid = this.checkImageDimemsions(image);
+        let valid = this.checkImageDimemsions(image);
+        // if additonal non-kiln validators
+        if (this.args.additionNonKilnValidators) {
+          valid = valid && _every(this.args.additionNonKilnValidators, (validator, index, array) => validator(image));
+        }
         // If file attached, exec upload logic.
         if (file && valid) {
           /*
@@ -122,9 +129,17 @@ export default {
           const s3 = await uploadFile(file);
           // Build the full s3 image url.
           this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+          // hooking into for non-kiln use
+          if (this.args.uploadCallback) {
+            this.args.uploadCallback(null, this.imageUrl);
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        // hooking into for non-kiln use
+        if (this.args.uploadCallback) {
+          this.args.uploadCallback(error);
+        }
       } finally {
         this.fileUploadButtonDisabled = false; // Re-enable file upload button.
       }

@@ -257,6 +257,9 @@
             value: sf.value
           }));
 
+        // remove previous values for station section fronts
+        this.stationSectionFronts = null;
+
         Promise.all([
           retrieveList(`${stationSlug}primary-section-fronts`),
           retrieveList(`${stationSlug}secondary-section-fronts`),

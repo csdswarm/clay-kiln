@@ -31,6 +31,7 @@ const
   } = require('clayutils'),
   { pageTypesToCheck } = require('./utils'),
   { refreshPath } = require('../../../routes/add-endpoints/refresh-permissions'),
+  { unsafeMethods } = require('./utils'),
   { wrapInTryCatch } = require('../../startup/middleware-utils');
 
 const componentsToCheck = getComponentsWithPermissions();
@@ -98,26 +99,32 @@ function userPermissionRouter() {
   updateLocals.stationForPermissions(userPermissionRouter);
 
   userPermissionRouter.use('/', async (req, res, next) => {
+    const arePermissionsNecessary = res.locals.user
+      && (
+        res.locals.edit
+        || unsafeMethods.has(req.method)
+      );
+
     // if we're refreshing permissions then don't load permissions because they
     //   may get loaded twice
-    if (req.path === refreshPath) {
+    if (
+      req.path === refreshPath
+      || !arePermissionsNecessary
+    ) {
       return next();
     }
 
     try {
-      const { locals } = res;
+      const { locals } = res,
+        { provider } = res.locals.user;
 
-      if (locals.user) {
-        const { provider } = res.locals.user;
-
-        if (provider === 'cognito') {
-          await urps.loadStationPermissions(req.session, locals);
-          locals.permissions = req.session.auth.permissions;
-        }
-        addPermissions(locals);
-
-        locals.componentPermissions = componentsToCheck;
+      if (provider === 'cognito') {
+        await urps.loadStationPermissions(req.session, locals);
+        locals.permissions = req.session.auth.permissions;
       }
+      addPermissions(locals);
+
+      locals.componentPermissions = componentsToCheck;
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
     }

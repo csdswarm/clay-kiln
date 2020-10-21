@@ -235,6 +235,7 @@ function lazyLoadAd(changes, observer) {
   changes.forEach(change => {
     if (change.intersectionRatio > 0) {
       // Stop watching and load the ad
+
       googletag.pubads().refresh([allAdSlots[change.target.id]], { changeCorrelator: false });
       observer.unobserve(change.target);
     }
@@ -345,7 +346,7 @@ function getAuthors(pageData) {
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {string[]}
  */
-function getContentTags(pageData) {
+function getContentAdTags(pageData) {
   if (!isArticleOrGallery(pageData)) {
     return [];
   }
@@ -363,50 +364,36 @@ function getContentTags(pageData) {
  *   drupal api).  When the nielsen marketing cloud meta tags are imported, we
  *   should ignore them and just get the tracking data from the dom.
  *
- * @param {boolean} shouldUseNmcTags
  * @param {object} currentStation - the station object
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {object}
  */
-function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
+function getInitialAdTargetingData(currentStation, pageData) {
   // we can't refer to the NMC tags for author since NMC only holds a single
   //   author for some reason.
   const authors = getAuthors(pageData),
-    contentTags = getContentTags(pageData),
+    contentTags = getContentAdTags(pageData),
     trackingData = getTrackingData({
       pathname: window.location.pathname,
       station: currentStation,
       pageData,
       contentTags
     }),
-    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ','), // imported content tags are been created with slashes instead of commas.
-    targetingTagData = _uniq(trackingData.tag.concat(nmcTags.split(','))).filter(Boolean),
+    // imported content tags is been created with slashes instead of commas, using this pattern when the importer is updated we won't need to update Unity side.
+    nmcTags = (getMetaTagContent('name', NMC.tag) || '').replace(/\//g, ',').split(','),
+    targetingTagData = _uniq(nmcTags.concat(trackingData.tag)).filter(Boolean),
     adTargetingData = {
       targetingAuthors: authors,
       targetingTags: targetingTagData.join(',')
     };
 
-  if (shouldUseNmcTags) {
-    const market = pageData.page === 'stationDetail'
-      ? getMetaTagContent('name', NMC.market)
-      : undefined;
-
-    Object.assign(adTargetingData, {
-      targetingCategory: getMetaTagContent('name', NMC.cat),
-      targetingGenre: getMetaTagContent('name', NMC.genre),
-      targetingMarket: market,
-      targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station)
-    });
-  } else {
-    Object.assign(adTargetingData, {
-      targetingCategory: trackingData.cat,
-      targetingGenre: trackingData.genre,
-      targetingMarket: trackingData.market,
-      targetingPageId: trackingData.pid,
-      targetingRadioStation: trackingData.station
-    });
-  }
+  Object.assign(adTargetingData, {
+    targetingCategory: trackingData.cat,
+    targetingGenre: trackingData.genre,
+    targetingMarket: trackingData.market,
+    targetingPageId: trackingData.pid,
+    targetingRadioStation: trackingData.station
+  });
 
   return adTargetingData;
 }
@@ -440,13 +427,8 @@ function getAdTargeting(pageData) {
      * because it is not available in client.js.
      */
     { env } = googleAdEl.dataset,
-    // this query selector should always succeed
-    firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
-    hasNmcTags = !!firstNmcTag,
-    isNmcDataImported = hasNmcTags && firstNmcTag.getAttribute('data-was-imported') === 'true',
-    shouldUseNmcTags = hasNmcTags && !isNmcDataImported,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    adTargetingData = getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData);
+    adTargetingData = getInitialAdTargetingData(currentStation, pageData);
 
   // Set up targeting and ad paths based on current page
   switch (pageData.page) {
@@ -673,7 +655,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
     globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
-    resetElements = resizeForSkin();
+    resetElements = resizeForSkin(),
+    stationData = getCurrentStation();
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -730,6 +713,12 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
         // Create our wrapper div element
         updateSkinStyles(true);
         mainDiv.classList.add('has-fullpage-ad');
+
+        const sponsorship = document.querySelector('.google-ad-manager--global-logo-sponsorship');
+
+        if (sponsorship && stationData.site_slug) {
+          mainDiv.classList.add('has-global-sponsorship-ad');
+        }
       }
     };
   }
@@ -750,8 +739,10 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     const mainDiv = document.getElementsByTagName('body')[0];
 
     bgdiv.remove();
+
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
+      mainDiv.classList.remove('has-global-sponsorship-ad');
     }
 
     resetElements();

@@ -1,39 +1,44 @@
 {{!-- Parent tag is 'li' when ad is Sharethrough since it is injected
   as an item within more-content-feed's 'ul' --}}
-{{ set "tag" (if (compare adSize "sharethrough-tag") "li" else="div") }}
 
-<{{default tag '!--'}}
-  data-uri="{{ default _ref _self }}"
-  data-placeholder="adSize"
-  data-ad-position="{{ adPosition }}"
-  data-ad-location="{{ adLocation }}"
-  data-ad-size="{{ adSize }}"
-  data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
-  data-environment="{{ environment }}"
-  data-ad-refresh-interval="{{ adRefreshInterval }}"
-  data-aps-pub-id="{{ @root.locals.site.apsPubId }}"
-  data-aps-bid-timeout="{{ @root.locals.site.apsBidTimeout }}"
-  data-aps-load-timeout="{{ @root.locals.site.apsLoadTimeout }}"
-  data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
-  data-gam-station-data="{{ _computed.station }}"
-  class="component component--google-ad-manager google-ad-manager--{{adSize}}{{#if sticky }} sticky {{#if hasStationNav}}sticky--station-nav{{/if}}{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
->
-  {{#unless @root.locals.edit}}
-    {{#if (compare adSize "outOfPage")}}
-      <div
-        class="google-ad-manager__slot google-ad-manager__slot--{{adSize}} dfp-tag-wrapper element-hidden"
-        id="dfp-ad-takeover_skin_1800x1400_-wrapper_140328957"
-      >
+{{#unless _computed.renderGAM}}
+  <!-- google-ad-manager component not rendered '{{ default _ref _self }}' -->
+{{else}}
+  {{ set "tag" (if (compare adSize "sharethrough-tag") "li" else="div") }}
+
+  <{{default tag '!--'}}
+    data-uri="{{ default _ref _self }}"
+    data-placeholder="adSize"
+    data-ad-position="{{ adPosition }}"
+    data-ad-location="{{ adLocation }}"
+    data-ad-size="{{ adSize }}"
+    data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
+    data-environment="{{ environment }}"
+    data-ad-refresh-interval="{{ adRefreshInterval }}"
+    data-aps-pub-id="{{ @root.locals.site.apsPubId }}"
+    data-aps-bid-timeout="{{ @root.locals.site.apsBidTimeout }}"
+    data-aps-load-timeout="{{ @root.locals.site.apsLoadTimeout }}"
+    data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
+    data-gam-station-data="{{ _computed.station }}"
+    class="component component--google-ad-manager google-ad-manager--{{adSize}}{{#if sticky }} sticky {{#if hasStationNav}}sticky--station-nav{{/if}}{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
+  >
+    {{#unless @root.locals.edit}}
+      {{#if (compare adSize "outOfPage")}}
         <div
-          id="dfp-ad-takeover_skin_1800x1400__1753383032"
-          class="dfp-tag-wrapper dfp-skin"
-        ></div>
-      </div>
-    {{else}}
-      <div class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"></div>
-      {{#if (compare adSize "mobile-adhesion")}}
-        <div class="mobile-adhesion__close">&#215</div>
+          class="google-ad-manager__slot google-ad-manager__slot--{{adSize}} dfp-tag-wrapper element-hidden"
+          id="dfp-ad-takeover_skin_1800x1400_-wrapper_140328957"
+        >
+          <div
+            id="dfp-ad-takeover_skin_1800x1400__1753383032"
+            class="dfp-tag-wrapper dfp-skin"
+          ></div>
+        </div>
+      {{else}}
+        <div class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"></div>
+        {{#if (compare adSize "mobile-adhesion")}}
+          <div class="mobile-adhesion__close">&#215</div>
+        {{/if}}
       {{/if}}
-    {{/if}}
-  {{/unless}}
-</{{default tag '--'}}>
+    {{/unless}}
+  </{{default tag '--'}}>
+{{/unless}}
