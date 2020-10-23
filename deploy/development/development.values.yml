@@ -33,6 +33,7 @@ configmap:
     COGNITO_CONSUMER_DOMAIN: "https://dev-clay.radio.com"
     COGNITO_CONSUMER_REGION: "us-east-1"
     COGNITO_SERVER: "https://admin.auth.us-east-1.amazoncognito.com"
+    DATADOG_CLIENT_TOKEN: "pub680e956dedef15b07cfc4c6d66a78b64"
     DOUBLECLICK_BANNER_TAG: "ENT.TEST"
     ELASTIC_HOST: "http://dev-es.radio-dev.com:9200"
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"

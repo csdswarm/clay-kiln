@@ -17,6 +17,7 @@ module.exports = () => {
   require('./plugins/content-search')();
   require('./plugins/content-subscriptions')();
   require('./plugins/content-syndication')();
+  require('./plugins/datadog-logging')();
   require('./plugins/default-text-with-override')();
   require('./plugins/instagram')();
   require('./plugins/manage-syndicated-content')();

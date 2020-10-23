@@ -29,6 +29,7 @@ configmap:
     COGNITO_CONSUMER_REGION: "us-east-1"
     COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
     COMPACT_BUILD: "1"
+    DATADOG_CLIENT_TOKEN: "pub680e956dedef15b07cfc4c6d66a78b64"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
     ELASTIC_HOST: "https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com"
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
